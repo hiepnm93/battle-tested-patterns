@@ -9,16 +9,17 @@ Test set membership in O(k) time with zero false negatives — at the cost of a 
 A bloom filter is a space-efficient probabilistic data structure. It uses a bit array of size `m` and `k` independent hash functions. To **add** an element, hash it `k` times and set those bit positions. To **test**, hash it `k` times and check if all positions are set.
 
 ```text
-     hash1(x)=2    hash2(x)=5    hash3(x)=9
-         │              │              │
-         ▼              ▼              ▼
+  hash1=2         hash2=5               hash3=9
+     │               │                     │
+     ▼               ▼                     ▼
   ┌──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┐
-  │ 0│ 0│ 1│ 0│ 0│ 1│ 0│ 0│ 0│ 1│ 0│ 0│  m = 12 bits
+  │ 0│ 0│ 1│ 0│ 0│ 1│ 0│ 0│ 0│ 1│ 0│ 0│  m=12
   └──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┘
+    0  1  2  3  4  5  6  7  8  9 10 11
 
   add("apple")  → set bits 2, 5, 9
-  test("apple") → bits 2, 5, 9 all set → "maybe yes"
-  test("grape") → bit 7 not set        → "definitely no"
+  test("apple") → all set     → "maybe yes"
+  test("grape") → bit 7 not set → "definitely no"
 ```
 
 | Property | Value |

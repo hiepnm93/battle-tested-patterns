@@ -9,23 +9,21 @@
 传统模哈希（`hash(key) % n`）在 `n` 变化时几乎重映射所有键。一致性哈希将节点和键都放在循环环上。每个键映射到其位置顺时针方向的第一个节点。添加或移除节点只影响它和前驱之间弧段的键。
 
 ```text
-  Clockwise →
-        ┌─── 0 ───────────────────────────────┐
-        │                                      │
-      Node A ─── ● key:user:42 ─── Node B      │
-        │                            │         │
-        │                            │         │
-        │                            │         │
-      ● key:order:7          ● key:session:99  │
-        │                            │         │
-      Node C ────────────────────────┘         │
-        │                                      │
-        └──────────── 2^32 ────────────────────┘
+  Hash ring (0 to 2^32, wraps around):
 
-  Lookup: walk clockwise to the next node
-    key:user:42    → Node B
-    key:order:7    → Node C
-    key:session:99 → Node A
+  0         Node A    ●k1     Node B          ●k2     Node C    2^32→0
+  ├───────────┼─────────┼───────┼───────────────┼───────┼─────────┤
+              ▲         │       ▲               │       ▲         │
+              │         │       │               │       │         │
+              │         └───►───┘               └───►───┘         │
+              │              ↑                       ↑            │
+              │         k1→Node B              k2→Node C          │
+              └───────────────────────────────────────────────────┘
+                              k3 wraps around → Node A
+
+  ●k1 = key "user:42"     → next node clockwise = Node B
+  ●k2 = key "session:99"  → next node clockwise = Node C
+  ●k3 = key "order:7" (between Node C and 2^32) → wraps → Node A
 ```
 
 | 属性 | 值 |

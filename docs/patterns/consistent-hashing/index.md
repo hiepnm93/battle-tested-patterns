@@ -9,23 +9,21 @@ Distribute keys across nodes on a virtual ring so that adding or removing a node
 Traditional modular hashing (`hash(key) % n`) remaps almost every key when `n` changes. Consistent hashing places both nodes and keys on a circular ring. Each key maps to the first node clockwise from its position. Adding or removing a node only affects keys in the arc between it and its predecessor.
 
 ```text
-  Clockwise →
-        ┌─── 0 ───────────────────────────────┐
-        │                                      │
-      Node A ─── ● key:user:42 ─── Node B      │
-        │                            │         │
-        │                            │         │
-        │                            │         │
-      ● key:order:7          ● key:session:99  │
-        │                            │         │
-      Node C ────────────────────────┘         │
-        │                                      │
-        └──────────── 2^32 ────────────────────┘
+  Hash ring (0 to 2^32, wraps around):
 
-  Lookup: walk clockwise to the next node
-    key:user:42    → Node B
-    key:order:7    → Node C
-    key:session:99 → Node A
+  0         Node A    ●k1     Node B          ●k2     Node C    2^32→0
+  ├───────────┼─────────┼───────┼───────────────┼───────┼─────────┤
+              ▲         │       ▲               │       ▲         │
+              │         │       │               │       │         │
+              │         └───►───┘               └───►───┘         │
+              │              ↑                       ↑            │
+              │         k1→Node B              k2→Node C          │
+              └───────────────────────────────────────────────────┘
+                              k3 wraps around → Node A
+
+  ●k1 = key "user:42"     → next node clockwise = Node B
+  ●k2 = key "session:99"  → next node clockwise = Node C
+  ●k3 = key "order:7" (between Node C and 2^32) → wraps → Node A
 ```
 
 | Property | Value |

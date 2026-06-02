@@ -9,12 +9,17 @@ When an operation fails, retry it with progressively longer delays plus random j
 Instead of retrying immediately (which overloads the failing service) or giving up (which loses the request), exponential backoff doubles the wait time on each retry. Adding jitter randomizes the delay so thousands of clients don't retry simultaneously.
 
 ```text
-Attempt 1: failed → wait  1s + jitter
-Attempt 2: failed → wait  2s + jitter
-Attempt 3: failed → wait  4s + jitter
-Attempt 4: failed → wait  8s + jitter
-Attempt 5: failed → wait 16s + jitter (capped)
-Attempt 6: success ✓
+  Time ────────────────────────────────────────────────►
+
+  Attempt 1  ✗ ├─┤ 1s
+  Attempt 2  ✗ ├───┤ 2s
+  Attempt 3  ✗ ├───────┤ 4s
+  Attempt 4  ✗ ├───────────────┤ 8s
+  Attempt 5  ✗ ├───────────────────────────────┤ 16s (cap)
+  Attempt 6  ✓
+
+  Each bar = wait before next retry (doubles each time)
+  + jitter: randomize within each bar to avoid thundering herd
 ```
 
 The formula: `delay = min(base * 2^attempt + random(0, jitter), maxDelay)`
