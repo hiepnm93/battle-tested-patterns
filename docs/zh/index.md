@@ -25,10 +25,10 @@ features:
     details: TypeScript、Rust、Go、C 的地道实现——不是机械翻译，而是每种语言的原生表达。
   - icon: 🧪
     title: 可运行练习
-    details: 渐进式练习（基础 → 进阶 → 高级），配套测试用例，本地或浏览器 Playground 均可运行。
+    details: 渐进式练习（基础 → 进阶 → 高级），配套测试用例，本地即可运行。
   - icon: 🎮
-    title: 交互式 Playground
-    details: 基于 Monaco Editor 和 Vitest，直接在浏览器中编辑和运行代码，无需本地环境。
+    title: 官方 Playground
+    details: 一键跳转 TypeScript、Go、Rust、Python 官方在线环境，直接动手实践。
 ---
 
 ## 编程模式

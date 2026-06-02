@@ -2,9 +2,9 @@
 
 # Battle-Tested Patterns
 
-**Production-proven programming patterns from React, Linux, Go, and Chromium.**
+**Production-proven programming patterns from React, Linux, Go, Chromium, and more.**
 
-Precise source links · Multi-language examples · Interactive playground
+Precise source links · Multi-language examples · Runnable exercises
 
 [📖 Documentation](https://totoro-jam.github.io/battle-tested-patterns/) · [📖 中文文档](https://totoro-jam.github.io/battle-tested-patterns/zh/)
 
@@ -29,7 +29,7 @@ This project fills the gap: **code-level patterns extracted from production sour
 - **🔗 Production Proof** — Every pattern links to the exact lines in React, Linux, Go, or Chromium where it's used. No hand-waving.
 - **🌍 Multi-Language** — Idiomatic implementations in TypeScript, Rust, and Go. Not line-by-line translations.
 - **🧪 Runnable Exercises** — Progressive difficulty (basic → intermediate → advanced) with test suites.
-- **🎮 Interactive Playground** — Edit and run code in the browser. No local setup required.
+- **🎮 Official Playgrounds** — One-click links to TypeScript, Go, Rust, and Python official playgrounds for each pattern.
 
 ## Patterns
 
@@ -62,10 +62,9 @@ pnpm dev
 
 ```
 battle-tested-patterns/
-├── docs/                 # VitePress documentation site
-│   ├── patterns/         #   English pattern pages
-│   ├── zh/               #   Chinese translation
-│   └── .vitepress/       #   Site configuration
+├── docs/                 # VitePress documentation site (en + zh)
+│   ├── patterns/         #   Pattern pages (one dir per pattern)
+│   └── zh/               #   Chinese translation
 ├── exercises/            # Runnable exercises
 │   ├── typescript/       #   Vitest test files
 │   ├── rust/             #   Cargo project

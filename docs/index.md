@@ -4,7 +4,7 @@ layout: home
 hero:
   name: Battle-Tested Patterns
   text: Production-Proven Programming Patterns
-  tagline: Extracted from React, Linux, Go, Chromium and more. Precise source links, multi-language examples, interactive playground.
+  tagline: Extracted from React, Linux, Go, Chromium and more. Precise source links, multi-language examples, runnable exercises.
   actions:
     - theme: brand
       text: Get Started
@@ -25,10 +25,10 @@ features:
     details: Idiomatic implementations in TypeScript, Rust, Go, and C — not mechanical translations, but native expressions of each pattern.
   - icon: 🧪
     title: Runnable Exercises
-    details: Progressive exercises (basic → intermediate → advanced) with test suites you can run locally or in the browser playground.
+    details: Progressive exercises (basic → intermediate → advanced) with test suites you can run locally.
   - icon: 🎮
-    title: Interactive Playground
-    details: Edit and run code directly in the browser with Monaco Editor and Vitest — no local setup required.
+    title: Official Playgrounds
+    details: One-click links to TypeScript, Go, Rust, and Python official online playgrounds for hands-on practice.
 ---
 
 ## Patterns

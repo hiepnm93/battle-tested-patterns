@@ -33,5 +33,6 @@
 
 - **浏览模式** — 阅读概念，研究生产验证，然后尝试练习
 - **本地运行练习** — TypeScript: `pnpm test` · Rust: `cargo test` · Go: `go test`
-- **使用 Playground** — 直接在浏览器中编辑和运行代码
+- **在线尝试** — 将代码示例复制到官方 Playground 运行：
+  - [TypeScript Playground](https://www.typescriptlang.org/play) · [Go Playground](https://go.dev/play/) · [Rust Playground](https://play.rust-lang.org/) · [Python Online](https://www.online-python.com/)
 - **参与贡献** — 参见[如何贡献](./how-to-contribute)

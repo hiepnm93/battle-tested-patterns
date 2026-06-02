@@ -2,9 +2,9 @@
 
 # Battle-Tested Patterns
 
-**从 React、Linux、Go、Chromium 等顶级项目源码中提炼的编程模式。**
+**从 React、Linux、Go、Chromium 等顶级开源项目源码中提炼的编程模式。**
 
-精确源码链接 · 多语言实现 · 交互式 Playground
+精确源码链接 · 多语言实现 · 可运行练习
 
 [📖 Documentation](https://totoro-jam.github.io/battle-tested-patterns/) · [📖 中文文档](https://totoro-jam.github.io/battle-tested-patterns/zh/)
 
@@ -29,7 +29,7 @@
 - **🔗 生产验证** — 每个模式链接到 React、Linux、Go 或 Chromium 中使用它的精确行号。不是空口白话。
 - **🌍 多语言实现** — TypeScript、Rust、Go 的地道实现。不是逐行机械翻译。
 - **🧪 可运行练习** — 渐进式难度（基础 → 进阶 → 高级），配套测试用例。
-- **🎮 交互式 Playground** — 直接在浏览器中编辑和运行代码，无需本地环境。
+- **🎮 官方 Playground** — 一键跳转 TypeScript、Go、Rust、Python 官方在线环境，直接运行每个模式的代码。
 
 ## 编程模式
 
@@ -62,10 +62,9 @@ pnpm dev
 
 ```text
 battle-tested-patterns/
-├── docs/                 # VitePress 文档站
-│   ├── patterns/         #   英文模式页面
-│   ├── zh/               #   中文翻译
-│   └── .vitepress/       #   站点配置
+├── docs/                 # VitePress 文档站（中英文）
+│   ├── patterns/         #   模式页面（每个模式一个目录）
+│   └── zh/               #   中文翻译
 ├── exercises/            # 可运行练习
 │   ├── typescript/       #   Vitest 测试文件
 │   ├── rust/             #   Cargo 项目

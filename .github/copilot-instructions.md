@@ -22,7 +22,7 @@ Exercises (≥2 tests with difficulty labels), When to Use, When NOT to Use.
 
 ## Tech Stack
 
-- Monorepo: pnpm workspace (docs/, exercises/, playground/)
+- Monorepo: pnpm workspace (docs/, exercises/)
 - Docs: VitePress
 - Tests: Vitest (TS), cargo test (Rust), go test (Go)
 - Commits: Conventional Commits

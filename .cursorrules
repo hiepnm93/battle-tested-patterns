@@ -22,10 +22,9 @@ Every pattern must have: One Liner (≤30 words), Core Idea (with diagram), Prod
 Implementation (TS required + ≥1 other language), Exercises (≥2 tests), When to Use, When NOT to Use.
 
 ## Tech Stack
-- Monorepo: pnpm workspace (docs/, exercises/, playground/)
+- Monorepo: pnpm workspace (docs/, exercises/)
 - Docs: VitePress → GitHub Pages
 - Tests: Vitest (TS), cargo test (Rust), go test (Go), pytest (Python)
-- Playground: Monaco Editor + Vitest Browser Mode
 - Commits: Conventional Commits (feat/fix/docs/ci/chore/test)
 
 ## Code Style

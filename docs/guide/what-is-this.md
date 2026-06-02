@@ -33,5 +33,6 @@ We never fabricate source links. If we can't find a verifiable reference, we don
 
 - **Browse patterns** — read the concept, study the production proof, then try the exercises
 - **Run exercises locally** — `pnpm test` for TypeScript, `cargo test` for Rust, `go test` for Go
-- **Use the playground** — edit and run code directly in the browser
+- **Try it online** — copy any code example into an official playground:
+  - [TypeScript Playground](https://www.typescriptlang.org/play) · [Go Playground](https://go.dev/play/) · [Rust Playground](https://play.rust-lang.org/) · [Python Online](https://www.online-python.com/)
 - **Contribute** — see [How to Contribute](./how-to-contribute)

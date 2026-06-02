@@ -7,8 +7,7 @@ Each pattern has precise source links, multi-language implementations, and runna
 
 - **Docs**: VitePress site deployed to GitHub Pages
 - **Exercises**: Vitest (TS) + cargo test (Rust) + go test (Go) + pytest (Python)
-- **Playground**: Monaco Editor + Vitest Browser Mode (in-page code execution)
-- **Monorepo**: pnpm workspace (`docs/`, `exercises/`, `playground/`)
+- **Monorepo**: pnpm workspace (`docs/`, `exercises/`)
 
 ## Quality Red Lines
 
