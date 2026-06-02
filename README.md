@@ -6,7 +6,9 @@
 
 Precise source links · Multi-language examples · Interactive playground
 
-[English](https://totoro-jam.github.io/battle-tested-patterns/) · [简体中文](https://totoro-jam.github.io/battle-tested-patterns/zh/)
+[📖 Documentation](https://totoro-jam.github.io/battle-tested-patterns/) · [📖 中文文档](https://totoro-jam.github.io/battle-tested-patterns/zh/)
+
+English | [简体中文](README.zh-CN.md)
 
 [![CI](https://github.com/Totoro-jam/battle-tested-patterns/actions/workflows/ci.yml/badge.svg)](https://github.com/Totoro-jam/battle-tested-patterns/actions/workflows/ci.yml)
 [![Deploy](https://github.com/Totoro-jam/battle-tested-patterns/actions/workflows/deploy.yml/badge.svg)](https://github.com/Totoro-jam/battle-tested-patterns/actions/workflows/deploy.yml)
