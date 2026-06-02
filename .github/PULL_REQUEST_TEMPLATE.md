@@ -26,7 +26,7 @@
 
 ### Multi-Language
 - [ ] TypeScript implementation present (required)
-- [ ] ≥ 1 other language (Rust / Go / C)
+- [ ] ≥ 1 other language (Rust / Go / Python / C)
 - [ ] Each implementation is idiomatic to its language
 
 ### Exercises

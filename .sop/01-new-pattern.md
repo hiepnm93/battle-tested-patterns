@@ -10,6 +10,36 @@ When proposing or implementing a new programming pattern for the project.
 - The pattern is cross-language (not specific to one language or framework)
 - The pattern is a code-level technique (not purely architectural)
 
+## Complete File Checklist
+
+Adding a new pattern (e.g. `bloom-filter`) requires creating and modifying these files:
+
+**Create:**
+
+```text
+docs/patterns/bloom-filter/index.md          # English pattern document
+docs/zh/patterns/bloom-filter/index.md       # Chinese translation
+exercises/typescript/bloom-filter/01-basic.test.ts   # Exercise (required)
+exercises/typescript/bloom-filter/02-*.test.ts       # More exercises (optional)
+```
+
+**Modify:**
+
+```text
+docs/.vitepress/config.ts    # Add to BOTH English and Chinese sidebar
+docs/index.md                # Add to English homepage pattern table
+docs/zh/index.md             # Add to Chinese homepage pattern table
+README.md                    # Add to pattern table
+README.zh-CN.md              # Add to pattern table
+```
+
+**Optional (if adding Rust exercises):**
+
+```text
+exercises/rust/src/bloom_filter.rs    # Create the Rust file
+exercises/rust/src/main.rs            # Add `mod bloom_filter;`
+```
+
 ## Steps
 
 ### 1. Topic Validation
@@ -22,72 +52,68 @@ When proposing or implementing a new programming pattern for the project.
 ### 2. Source Code Location
 
 - [ ] Locate the exact usage in each target project
-- [ ] Obtain GitHub permanent links (use `main`/`master` branch + line numbers)
+- [ ] Obtain GitHub permanent links (`main`/`master` branch + line numbers)
 - [ ] Verify each link returns HTTP 200: `curl -sI <url> | head -1`
+- [ ] Links must be precise to line numbers (`#L42-L80`), not file-level (`#L1`)
 - [ ] Read surrounding context to confirm your understanding is correct
 
 ### 3. Write the Pattern Document
 
-Create `docs/patterns/<pattern-name>.md` following the template:
+Create `docs/patterns/<pattern-name>/index.md` following the template:
 
-```
+```markdown
 # Pattern: [Name]
 ## One Liner          — ≤ 30 English words
-## Core Idea          — concept + ASCII diagram or Excalidraw
-## Production Proof   — table with ≥ 2 projects, precise URLs
-## Implementation     — TypeScript (required) + ≥ 1 other language
-## Exercises          — links to exercise files
+## Core Idea          — concept + diagram (Mermaid, ASCII, or table — whichever fits best)
+## Production Proof   — table with ≥ 2 projects, precise GitHub URLs to line numbers
+## Implementation     — TypeScript (required) + ≥ 1 other (Rust / Go / Python / C)
+## Exercises          — table linking to exercise files
 ## When to Use        — applicable scenarios
 ## When NOT to Use    — limitations and alternatives
 ```
 
 ### 4. Write Multi-Language Implementations
 
-- [ ] TypeScript implementation (required)
-- [ ] At least one other language (Rust / Go / C)
+Include implementations in the `:::code-group` block:
+
+- [ ] TypeScript (required)
+- [ ] At least one of: Rust / Go / Python / C
 - [ ] Each implementation is idiomatic to its language (follow SOP 03)
 
 ### 5. Design Exercises
 
-- [ ] Create ≥ 2 runnable test files (follow SOP 04)
-- [ ] Label difficulty: basic / intermediate / advanced
-- [ ] Verify all tests pass locally
+Create files in `exercises/typescript/<pattern-name>/`:
 
-### 6. Self-Review
+- [ ] ≥ 1 exercise file with difficulty label in filename (`01-basic`, `02-*`)
+- [ ] Use the TODO-stub format: functions with `// TODO: implement` comments containing the working solution (so CI passes), with a `// ─── Tests (do not modify) ───` separator
+- [ ] Learners are expected to delete the implementations and rewrite them to pass the tests
+- [ ] Verify all tests pass locally: `pnpm test`
 
-- [ ] Run full CI checks locally (`pnpm test`, `pnpm lint`, `pnpm typecheck`)
-- [ ] Walk through the Quality Checklist (see below)
-- [ ] Verify all source links with `pnpm verify-links`
+### 6. Create Chinese Translation
 
-### 7. Submit PR
+- [ ] Create `docs/zh/patterns/<pattern-name>/index.md`
+- [ ] Translate structural content (headings, explanations, When to Use)
+- [ ] Keep code blocks identical to English (code is not translated)
+- [ ] Production Proof links are the same in both languages
+- [ ] If you cannot translate, add `<!-- TODO: translate -->` markers
+
+### 7. Update Navigation
+
+- [ ] Add to `docs/.vitepress/config.ts` — both English and Chinese sidebar sections
+- [ ] Add to `docs/index.md` homepage pattern table
+- [ ] Add to `docs/zh/index.md` homepage pattern table
+- [ ] Add to `README.md` pattern table
+- [ ] Add to `README.zh-CN.md` pattern table
+
+### 8. Self-Review
+
+- [ ] Run `pnpm test` — all tests pass
+- [ ] Run `pnpm lint` — no markdown lint errors
+- [ ] Run `pnpm build` — docs site builds
+- [ ] Run `pnpm verify-links` — source links alive
+
+### 9. Submit PR
 
 - [ ] Use Conventional Commit: `feat: add <pattern-name> pattern`
 - [ ] Fill in the PR template checklist
 - [ ] Ensure CI is green
-
-## Quality Checklist
-
-### Content Completeness
-- [ ] All required sections present
-- [ ] One Liner ≤ 30 English words
-- [ ] Core Idea has visual diagram
-
-### Production Proof
-- [ ] ≥ 2 different projects with source links
-- [ ] Links precise to line numbers
-- [ ] Links verified HTTP 200
-- [ ] Links point to main/master branch
-
-### Multi-Language
-- [ ] TypeScript implementation (required)
-- [ ] ≥ 1 other language implementation
-- [ ] Each language follows its own conventions
-
-### Exercises
-- [ ] ≥ 2 runnable test cases
-- [ ] Tests pass (`pnpm test` / `cargo test` / `go test`)
-- [ ] Difficulty labels present
-
-### Code Quality
-- [ ] No lint errors
-- [ ] TypeScript strict mode passes
