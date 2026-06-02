@@ -29,8 +29,8 @@ sequenceDiagram
 
 | 项目 | 源码 | 用途 |
 |------|------|------|
-| React | [Scheduler.js](https://github.com/facebook/react/blob/main/packages/scheduler/src/forks/Scheduler.js#L1) | React 调度器使用 `shouldYieldToHost()` 检查 5ms 时间片是否已耗尽。`workLoop` 从最小堆中处理任务，到达截止时间时让出。 |
-| Go Runtime | [proc.go](https://github.com/golang/go/blob/master/src/runtime/proc.go#L1) | Go 的 goroutine 调度器使用协作抢占点。Goroutine 在函数序言中检查 `stackguard0` — 当运行时设置为 `stackPreempt` 时，goroutine 在下一个安全点让出。 |
+| React | [Scheduler.js#L188-L258](https://github.com/facebook/react/blob/main/packages/scheduler/src/forks/Scheduler.js#L188-L258) | `workLoop` 从最小堆中处理任务，每轮调用 `shouldYieldToHost()`（~行447）检查 5ms 时间片是否耗尽。 |
+| Go Runtime | [proc.go#L4143-L4200](https://github.com/golang/go/blob/master/src/runtime/proc.go#L4143-L4200) | `schedule()` 是调度器主循环。`Gosched()`（行394）是主动让出点，`goschedImpl`（行4315）处理协作式上下文切换。 |
 
 ## 实现
 

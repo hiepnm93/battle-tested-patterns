@@ -26,7 +26,7 @@ stateDiagram-v2
 | 项目 | 源码 | 用途 |
 |------|------|------|
 | React | [ReactFiber.js#L327-L355](https://github.com/facebook/react/blob/main/packages/react-reconciler/src/ReactFiber.js#L327-L355) | `createWorkInProgress` — 创建或复用 alternate fiber。注释写道：*"We use a double buffering pooling technique because we know that we'll only ever need at most two versions of a tree."* |
-| SDL | [SDL_render.c](https://github.com/libsdl-org/SDL/blob/main/src/render/SDL_render.c#L1) | SDL 渲染器使用前后 buffer 交换实现无撕裂的帧呈现 |
+| SDL | [SDL_render.c](https://github.com/libsdl-org/SDL/blob/main/src/render/SDL_render.c) | SDL 渲染器使用前后 buffer 交换实现无撕裂的帧呈现。（文件级链接——swap 逻辑跨多个渲染后端。） |
 
 ## 实现
 

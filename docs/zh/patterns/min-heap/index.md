@@ -28,7 +28,7 @@ graph TD
 | 项目 | 源码 | 用途 |
 |------|------|------|
 | React | [SchedulerMinHeap.js#L17-L90](https://github.com/facebook/react/blob/main/packages/scheduler/src/SchedulerMinHeap.js#L17-L90) | React 调度器将任务存储在按 `sortIndex`（过期时间）排序的最小堆中。`peek()` 以 O(1) 返回最高优先级任务。整个实现约 75 行。 |
-| Linux 内核 | [fair.c](https://github.com/torvalds/linux/blob/master/kernel/sched/fair.c#L1) | CFS（完全公平调度器）使用红黑树（提供类似最小堆的 O(log n) 操作）按虚拟运行时间跟踪进程。最左节点是下一个要运行的进程。 |
+| Linux 内核 | [fair.c#L1407-L1460](https://github.com/torvalds/linux/blob/master/kernel/sched/fair.c#L1407-L1460) | CFS 的 `update_curr` 更新虚拟运行时间。`pick_next_task_fair`（行9234）从红黑树中选择最小 vruntime 的任务——与最小堆"始终访问最小值"原理相同。 |
 
 ## 实现
 

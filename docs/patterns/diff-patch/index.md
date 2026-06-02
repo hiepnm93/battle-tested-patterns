@@ -26,8 +26,8 @@ React's reconciler uses this to determine which DOM nodes to create, update, or 
 
 | Project | Source | Usage |
 |---------|--------|-------|
-| React | [ReactChildFiber.js](https://github.com/facebook/react/blob/main/packages/react-reconciler/src/ReactChildFiber.js#L1) | `reconcileChildFibers` diffs old and new children arrays. It uses a key-based mapping to detect moves, insertions, and deletions — minimizing DOM mutations. |
-| Git | [diff.c](https://github.com/git/git/blob/master/diff.c#L1) | Git's core diff engine computes the minimal edit distance between file versions using Myers' diff algorithm, producing the familiar `+`/`-` patch output. |
+| React | [ReactChildFiber.js#L1169-L1340](https://github.com/facebook/react/blob/main/packages/react-reconciler/src/ReactChildFiber.js#L1169-L1340) | `reconcileChildrenArray` diffs old and new children. Line ~1294 calls `mapRemainingChildren` to build a key→fiber map, then iterates new children via `updateFromMap` to detect moves, insertions, and deletions. |
+| Git | [diff.c#L5020-L5060](https://github.com/git/git/blob/master/diff.c#L5020-L5060) | `run_diff` dispatches file-pair comparisons. `builtin_diff` (line 3839) handles the actual diffing, producing the familiar `+`/`-` patch output. Git uses an optimized Myers' algorithm internally (in `xdiff/`). |
 
 ## Implementation
 

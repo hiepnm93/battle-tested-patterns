@@ -30,7 +30,7 @@ Array layout: `[1, 3, 2, 7, 5, 4, 6]` — the tree above stored flat.
 | Project | Source | Usage |
 |---------|--------|-------|
 | React | [SchedulerMinHeap.js#L17-L90](https://github.com/facebook/react/blob/main/packages/scheduler/src/SchedulerMinHeap.js#L17-L90) | React's scheduler stores scheduled tasks in a min heap sorted by `sortIndex` (expiration time). `peek()` returns the highest-priority task in O(1). The entire implementation is ~75 lines. |
-| Linux Kernel | [fair.c](https://github.com/torvalds/linux/blob/master/kernel/sched/fair.c#L1) | The CFS (Completely Fair Scheduler) uses a red-black tree (which provides min-heap-like O(log n) operations) to track processes by virtual runtime. The leftmost node is the next process to run. |
+| Linux Kernel | [fair.c#L1407-L1460](https://github.com/torvalds/linux/blob/master/kernel/sched/fair.c#L1407-L1460) | CFS's `update_curr` updates each task's virtual runtime. `pick_next_task_fair` (line 9234) selects the task with the smallest vruntime from a red-black tree — the same "always access the minimum" principle as a min heap. |
 
 ## Implementation
 

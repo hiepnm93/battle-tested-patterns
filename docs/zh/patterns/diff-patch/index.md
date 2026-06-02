@@ -26,8 +26,8 @@ React 的协调器用此确定要创建、更新或删除哪些 DOM 节点。Git
 
 | 项目 | 源码 | 用途 |
 |------|------|------|
-| React | [ReactChildFiber.js](https://github.com/facebook/react/blob/main/packages/react-reconciler/src/ReactChildFiber.js#L1) | `reconcileChildFibers` 对比新旧子节点数组。使用基于 key 的映射检测移动、插入和删除 — 最小化 DOM 变更。 |
-| Git | [diff.c](https://github.com/git/git/blob/master/diff.c#L1) | Git 的核心 diff 引擎使用 Myers 差异算法计算文件版本间的最小编辑距离，生成 `+`/`-` 格式的补丁输出。 |
+| React | [ReactChildFiber.js#L1169-L1340](https://github.com/facebook/react/blob/main/packages/react-reconciler/src/ReactChildFiber.js#L1169-L1340) | `reconcileChildrenArray` 对比新旧子节点，~行1294 调用 `mapRemainingChildren` 构建 key→fiber 映射，检测移动、插入和删除。 |
+| Git | [diff.c#L5020-L5060](https://github.com/git/git/blob/master/diff.c#L5020-L5060) | `run_diff` 分派文件对比，`builtin_diff`（行3839）处理实际 diff。Git 内部使用优化版 Myers 算法（在 `xdiff/` 中）。 |
 
 ## 实现
 

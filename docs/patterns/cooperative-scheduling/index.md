@@ -31,8 +31,8 @@ The pattern: run a loop, check a deadline after each unit of work, and `yield` i
 
 | Project | Source | Usage |
 |---------|--------|-------|
-| React | [Scheduler.js](https://github.com/facebook/react/blob/main/packages/scheduler/src/forks/Scheduler.js#L1) | React's scheduler uses `shouldYieldToHost()` to check if the 5ms time slice has elapsed. The `workLoop` function processes tasks from a min-heap, yielding between each task when the deadline is reached. |
-| Go Runtime | [proc.go](https://github.com/golang/go/blob/master/src/runtime/proc.go#L1) | Go's goroutine scheduler uses cooperative preemption points. Goroutines check `stackguard0` at function prologues — when the runtime sets it to `stackPreempt`, the goroutine yields at the next safe point. |
+| React | [Scheduler.js#L188-L258](https://github.com/facebook/react/blob/main/packages/scheduler/src/forks/Scheduler.js#L188-L258) | The `workLoop` function processes tasks from a min-heap. At each iteration it calls `shouldYieldToHost()` (line ~447) to check if the 5ms time slice has elapsed — if so, it breaks and schedules a continuation via `MessageChannel`. |
+| Go Runtime | [proc.go#L4143-L4200](https://github.com/golang/go/blob/master/src/runtime/proc.go#L4143-L4200) | The `schedule()` function is the goroutine scheduler's main loop. `Gosched()` (line 394) is the voluntary yield point, and `goschedImpl` (line 4315) handles the actual context switch. |
 
 ## Implementation
 
