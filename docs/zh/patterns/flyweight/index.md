@@ -74,6 +74,6 @@ print(a is b)  # True — 享元！
 - **值全部唯一** — 池增加查找开销
 - **可变对象** — 享元假设共享对象不可变
 
-## 其他使用者
+## 更多生产案例
 
 Java `String.intern()`, V8 字符串表, Python 小整数缓存, Rust `string_cache`, .NET 字符串驻留.

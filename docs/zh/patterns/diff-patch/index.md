@@ -109,6 +109,6 @@ pub fn diff<T: PartialEq + Clone>(old: &[T], new: &[T]) -> Vec<Op<T>> {
 - **无序集合** — diff 假设顺序重要；对集合使用交集/差集
 - **大列表无 key** — 没有稳定标识符时，diff 退化为 O(n²)
 
-## 其他使用者
+## 更多生产案例
 
 VS Code (text buffer diff), jsdiff, Mercurial, SVN, React Native (shadow tree reconciliation), Vue 3 (template diff).

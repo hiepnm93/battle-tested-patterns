@@ -10,7 +10,7 @@ An iterator is an object that produces values one at a time via a `next()` metho
 
 ```mermaid
 flowchart LR
-    S["Source\n[1,2,3,4,5]"] --> F["filter\n(x > 2)"] --> M["map\n(x * 10)"] --> C["collect\n[30,40,50]"]
+    S["Source\n[1,2,3,4,5]"] --> F["filter\n(x > 2)"] --> M["map\n(x × 10)"] --> C["collect\n[30,40,50]"]
 ```
 
 No intermediate arrays are created. Each element flows through the entire chain before the next one starts.
@@ -131,6 +131,6 @@ Run exercises: `pnpm test`
 - **Multiple passes** — most iterators are single-use; use a collection if you need to traverse twice
 - **Simple loops** — a plain `for` loop is clearer than a one-step iterator chain
 
-## Also Used In
+## More Production Uses
 
 Java Streams, C# LINQ, Haskell lazy lists, Kotlin Sequences, Swift `LazySequence`, Clojure transducers.

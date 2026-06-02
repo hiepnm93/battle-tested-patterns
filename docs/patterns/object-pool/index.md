@@ -161,6 +161,6 @@ Run exercises: `pnpm test` · `cargo test` · `go test ./...`
 - **Small scale** — for a handful of objects, the pool overhead exceeds the savings
 - **Immutable objects** — pool only makes sense for mutable objects that need resetting
 
-## Also Used In
+## More Production Uses
 
 Java `ThreadPoolExecutor`, .NET `ArrayPool<T>`, Apache Commons Pool, HikariCP (JDBC connection pool), Unity `ObjectPool<T>`.

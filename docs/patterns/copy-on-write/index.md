@@ -164,6 +164,6 @@ Run exercises: `pnpm test`
 - **Concurrent writes** — CoW doesn't solve concurrent mutation; use locks or atomics
 - **Deep structures** — shallow CoW can lead to shared mutable sub-objects
 
-## Also Used In
+## More Production Uses
 
 Linux `fork()` (page table CoW), Swift value types, PHP strings (before PHP 7), Redis `BGSAVE`, ZFS/Btrfs filesystem snapshots.

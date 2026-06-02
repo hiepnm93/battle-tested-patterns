@@ -150,6 +150,6 @@ Run exercises: `pnpm test`
 - **Simple counters** — if you don't need blocking, use an atomic counter
 - **Queue-based flow** — if order matters, use a bounded queue instead
 
-## Also Used In
+## More Production Uses
 
 Java `Semaphore`, Python `threading.Semaphore`, Nginx worker connections, PostgreSQL `max_connections`, Kubernetes resource quotas.

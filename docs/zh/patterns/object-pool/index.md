@@ -113,6 +113,6 @@ class ObjectPool:
 - **不可变对象** — 池只对需要重置的可变对象有意义
 - **小规模** — 少量对象时，池的开销超过节省
 
-## 其他使用者
+## 更多生产案例
 
 Java `ThreadPoolExecutor`, .NET `ArrayPool<T>`, Apache Commons Pool, HikariCP (JDBC connection pool), Unity `ObjectPool<T>`.

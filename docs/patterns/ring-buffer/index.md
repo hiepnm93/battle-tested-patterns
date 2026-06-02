@@ -197,6 +197,6 @@ Run exercises: `pnpm test`
 - **Random access by key** — ring buffers are sequential; use a hash map
 - **Variable-size elements** — packing different-sized items is complex; use a message queue
 
-## Also Used In
+## More Production Uses
 
 Linux `io_uring`, ZeroMQ, Kafka (log segments), audio DSP buffers, UART serial communication, Chrome trace event buffer.

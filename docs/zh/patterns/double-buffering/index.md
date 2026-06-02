@@ -125,6 +125,6 @@ func (db *DoubleBuffer[T]) Swap() {
 - **内存受限环境** — 需要 2 倍内存开销
 - **需要实时读取进行中的写入** — 双缓冲会隐藏更新直到交换完成
 
-## 其他使用者
+## 更多生产案例
 
 OpenGL/Vulkan (swap chains), PostgreSQL MVCC (snapshot isolation), Unreal Engine (frame rendering), database WAL (write-ahead log).

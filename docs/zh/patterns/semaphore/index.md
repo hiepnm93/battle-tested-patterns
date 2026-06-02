@@ -75,6 +75,6 @@ async def limited_work():
 - **互斥** — 如果需要独占访问（max=1），用 mutex
 - **简单计数** — 不需要阻塞就用原子计数器
 
-## 其他使用者
+## 更多生产案例
 
 Java `Semaphore`, Python `threading.Semaphore`, Nginx worker connections, PostgreSQL `max_connections`.

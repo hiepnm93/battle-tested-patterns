@@ -98,6 +98,6 @@ class Cow:
 - **小数据** — 复制小结构比 CoW 记账更便宜
 - **并发写入** — CoW 不解决并发修改问题
 
-## 其他使用者
+## 更多生产案例
 
 Linux `fork()` (page table CoW), Swift value types, PHP strings (before PHP 7), Redis `BGSAVE`, ZFS/Btrfs filesystem snapshots.

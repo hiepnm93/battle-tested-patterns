@@ -160,6 +160,6 @@ Run exercises: `pnpm test`
 - **Small volume** — if you rarely have more than 1 item, batching adds complexity for no gain
 - **Order-dependent** — if processing order must be strict, batching may reorder
 
-## Also Used In
+## More Production Uses
 
 React `unstable_batchedUpdates`, DataLoader (GraphQL N+1), Redis Pipeline, PostgreSQL `COPY`, Elasticsearch Bulk API, browser `requestAnimationFrame`.

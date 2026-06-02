@@ -78,6 +78,6 @@ def retry_with_backoff(fn, max_retries=5, base=1.0, cap=30.0):
 - **非幂等操作** — 重试非幂等 POST 可能创建重复数据
 - **用户等待场景** — 指数退避意味着 30+ 秒等待
 
-## 其他使用者
+## 更多生产案例
 
 AWS SDK, Azure SDK, Google Cloud 客户端, Envoy, Istio, Celery, Sidekiq.

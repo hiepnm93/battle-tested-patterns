@@ -159,6 +159,6 @@ Run exercises: `pnpm test`
 - **User-facing latency** — exponential backoff means 30+ second waits; show an error instead
 - **Local operations** — file not found, parse error — these won't fix themselves on retry
 
-## Also Used In
+## More Production Uses
 
 AWS SDK (all services), Azure SDK, Google Cloud client libraries, Envoy proxy, Istio service mesh, Celery (Python task queue), Sidekiq (Ruby background jobs).

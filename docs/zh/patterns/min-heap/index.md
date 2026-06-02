@@ -155,6 +155,6 @@ func (h *MinHeap) Pop() (int, bool) {
 - **排序迭代** — 如果需要所有元素有序，排序一次更好；反复 pop 是 O(n log n)
 - **小规模固定集合** — 少于 10 个元素时，线性扫描更简单且通常更快
 
-## 其他使用者
+## 更多生产案例
 
 Node.js timer queue (`libuv`), Java `PriorityQueue`, Python `heapq`, Dijkstra/Prim graph algorithms, Kubernetes scheduler.

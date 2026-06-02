@@ -189,6 +189,6 @@ Run exercises: `pnpm test`
 - **Unbounded states** — if the state space is continuous (positions, scores), use plain variables
 - **No invalid transitions** — if any state can transition to any other, you don't need constraints
 
-## Also Used In
+## More Production Uses
 
 Regex engines (NFA/DFA), HTTP/2 stream states (RFC 7540), TLS handshake, Kubernetes pod lifecycle, game AI (behavior trees + FSM), systemd unit states.

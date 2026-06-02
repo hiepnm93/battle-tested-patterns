@@ -10,7 +10,7 @@
 
 ```mermaid
 flowchart LR
-    S["源\n[1,2,3,4,5]"] --> F["filter\n(x > 2)"] --> M["map\n(x * 10)"] --> C["collect\n[30,40,50]"]
+    S["源\n[1,2,3,4,5]"] --> F["filter\n(x > 2)"] --> M["map\n(x × 10)"] --> C["collect\n[30,40,50]"]
 ```
 
 ## 生产验证
@@ -72,6 +72,6 @@ first_10 = [next(evens) for _ in range(10)]
 - **随机访问** — 迭代器是顺序的，用数组做索引访问
 - **多次遍历** — 大多数迭代器是一次性的
 
-## 其他使用者
+## 更多生产案例
 
 Java Streams, C# LINQ, Haskell lazy lists, Kotlin Sequences, Swift `LazySequence`.

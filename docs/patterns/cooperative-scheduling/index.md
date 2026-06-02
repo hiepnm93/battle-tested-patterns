@@ -224,6 +224,6 @@ Run exercises: `pnpm test`
 - **CPU-bound with no interaction** — if nothing else needs the thread, yielding wastes time
 - **When `requestIdleCallback` suffices** — for non-urgent work, the browser's built-in API may be enough
 
-## Also Used In
+## More Production Uses
 
 Lua coroutines, Python `asyncio`, Erlang/BEAM VM (reduction counting), Windows Fibers, Unity coroutines, Zig async.

@@ -107,6 +107,6 @@ class RingBuffer:
 - **无界增长** — 无法预测最大大小时用链表或 deque
 - **按 key 随机访问** — 环形缓冲区是顺序的，用哈希表
 
-## 其他使用者
+## 更多生产案例
 
 Linux `io_uring`, ZeroMQ, Kafka (log segments), audio DSP buffers, UART serial communication, Chrome trace event buffer.

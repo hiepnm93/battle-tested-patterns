@@ -296,6 +296,6 @@ Run exercises: `pnpm test` · `cargo test` · `go test ./...`
 - **Small fixed sets** — for < 10 elements, a linear scan is simpler and often faster
 - **Need stable ordering** — equal-priority items may change order across operations
 
-## Also Used In
+## More Production Uses
 
 Node.js timer queue (`libuv`), Java `PriorityQueue`, Python `heapq`, Dijkstra/Prim graph algorithms, Kubernetes scheduler.

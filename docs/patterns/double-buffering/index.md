@@ -186,6 +186,6 @@ Run exercises: `pnpm test`
 - **Memory-constrained environments** — you're paying 2x memory cost
 - **Frequent partial reads** — if readers need real-time access to in-progress writes, double buffering hides updates until the swap
 
-## Also Used In
+## More Production Uses
 
 OpenGL/Vulkan (swap chains), PostgreSQL MVCC (snapshot isolation), Unreal Engine (frame rendering), database WAL (write-ahead log).

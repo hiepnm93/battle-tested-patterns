@@ -91,6 +91,6 @@ print(msgs)  # ["hello"]
 - **事件风暴** — 太多事件难以调试；考虑批处理
 - **循环依赖** — A 观察 B，B 观察 A → 无限循环
 
-## 其他使用者
+## 更多生产案例
 
 RxJS (reactive streams), Vue 3 reactivity (`effect` / `track` / `trigger`), MobX, DOM `addEventListener`, Java `PropertyChangeListener`, C# events.

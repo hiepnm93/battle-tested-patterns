@@ -195,6 +195,6 @@ assert not has_flag(editor, DELETE)  # True
 - **可读性比性能更重要** — 命名布尔字段对大多数开发者更清晰
 - **动态标志集** — 如果可能的标志集在编译时未知，使用 `Set<string>`
 
-## 其他使用者
+## 更多生产案例
 
 Chromium (layer compositing flags), SQLite (VFS flags), Nginx (event flags), V8 (object type maps), most ECS game engines, Unix `fcntl` flags.

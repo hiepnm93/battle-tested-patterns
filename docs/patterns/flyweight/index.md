@@ -162,6 +162,6 @@ Run exercises: `pnpm test`
 - **Short-lived data** — if objects are created and discarded quickly, interning adds lookup cost
 - **Thread safety** — concurrent intern requires synchronization
 
-## Also Used In
+## More Production Uses
 
 Java `String.intern()`, V8 string table, Python small int cache (-5..256), Rust `string_cache` crate, .NET string interning, CSS value deduplication in browsers.
