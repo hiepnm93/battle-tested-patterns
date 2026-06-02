@@ -44,6 +44,8 @@ This project: **code-level techniques from React, Linux, Go, Chromium — each w
 | [**Iterator**](https://totoro-jam.github.io/battle-tested-patterns/patterns/iterator/) | Lazy sequences, zero intermediate allocations | [Rust Iterator](https://github.com/rust-lang/rust/blob/main/library/core/src/iter/traits/iterator.rs#L68-L112) · [Python gen](https://github.com/python/cpython/blob/main/Objects/genobject.c)|
 | [**Semaphore**](https://totoro-jam.github.io/battle-tested-patterns/patterns/semaphore/) | Bounded concurrency with a counter | [Linux](https://github.com/torvalds/linux/blob/master/include/linux/semaphore.h#L15-L55) · [Go x/sync](https://github.com/golang/sync/blob/master/semaphore/semaphore.go)|
 | [**Batch Processing**](https://totoro-jam.github.io/battle-tested-patterns/patterns/batch-processing/) | Accumulate ops, execute as group | [Kafka](https://github.com/apache/kafka/blob/trunk/clients/src/main/java/org/apache/kafka/clients/producer/internals/RecordAccumulator.java#L69-L120)|
+| [**Retry with Backoff**](https://totoro-jam.github.io/battle-tested-patterns/patterns/retry-backoff/) | Exponential delay + jitter on failure | [Kubernetes](https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/apimachinery/pkg/util/wait/backoff.go#L30-L50) · [gRPC](https://github.com/grpc/grpc/blob/master/doc/connection-backoff.md)|
+| [**Flyweight**](https://totoro-jam.github.io/battle-tested-patterns/patterns/flyweight/) | Share identical objects, avoid duplicates | [Python int cache](https://github.com/python/cpython/blob/main/Objects/longobject.c#L61-L75)|
 
 > Every "Proven In" link goes to the **exact lines** in the source code. Not a directory. Not a file. The lines.
 

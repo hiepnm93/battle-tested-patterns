@@ -45,3 +45,5 @@ features:
 | [Iterator / Lazy Eval](/patterns/iterator/) | Process sequences lazily, zero intermediate allocations | Rust Iterator, Python generators |
 | [Semaphore](/patterns/semaphore/) | Limit concurrent operations with a counter | Linux kernel, Go x/sync |
 | [Batch Processing](/patterns/batch-processing/) | Accumulate ops, execute as a group for throughput | Kafka RecordAccumulator, React batched setState |
+| [Retry with Backoff](/patterns/retry-backoff/) | Retry with exponential delay + jitter | Kubernetes, gRPC |
+| [Flyweight / Interning](/patterns/flyweight/) | Share identical objects, avoid duplicate allocations | Python int cache, V8 |

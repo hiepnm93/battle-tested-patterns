@@ -45,3 +45,5 @@ features:
 | [迭代器 (Iterator)](/zh/patterns/iterator/) | 惰性处理序列，零中间分配 | Rust Iterator, Python 生成器 |
 | [信号量 (Semaphore)](/zh/patterns/semaphore/) | 用计数器限制并发操作 | Linux 内核, Go x/sync |
 | [批处理 (Batch Processing)](/zh/patterns/batch-processing/) | 累积操作批量执行提升吞吐 | Kafka, React batched setState |
+| [指数退避重试 (Retry)](/zh/patterns/retry-backoff/) | 指数增长延迟重试 + 抖动 | Kubernetes, gRPC |
+| [享元/驻留 (Flyweight)](/zh/patterns/flyweight/) | 共享相同对象，避免重复分配 | Python 整数缓存, V8 |
