@@ -159,3 +159,41 @@ HasFlag(editor, Delete)  // false
 - **互斥状态** — 如果同一时间只能有一个值激活，使用 `enum`
 - **可读性比性能更重要** — 命名布尔字段对大多数开发者更清晰
 - **动态标志集** — 如果可能的标志集在编译时未知，使用 `Set<string>`
+
+## 动手试试
+
+<script setup>
+const bitmaskCode = [
+  '// 定义权限标志为 2 的幂',
+  'var READ    = 1 << 0;  // 0b0001',
+  'var WRITE   = 1 << 1;  // 0b0010',
+  'var EXECUTE = 1 << 2;  // 0b0100',
+  'var DELETE  = 1 << 3;  // 0b1000',
+  '',
+  '// 用 OR 组合标志',
+  'var editor = READ | WRITE;',
+  '',
+  '// 用 AND 检查',
+  'assert((editor & READ) !== 0, "editor has READ");',
+  'assert((editor & WRITE) !== 0, "editor has WRITE");',
+  'assert((editor & EXECUTE) === 0, "editor does NOT have EXECUTE");',
+  '',
+  '// 一次检查所有标志',
+  'var required = READ | WRITE;',
+  'assertEquals((editor & required) === required, true, "editor has all required");',
+  '',
+  '// 用 AND NOT 清除标志',
+  'editor = editor & ~WRITE;',
+  'assert((editor & WRITE) === 0, "WRITE cleared");',
+  '',
+  '// 用 XOR 切换标志',
+  'editor = editor ^ EXECUTE;',
+  'assert((editor & EXECUTE) !== 0, "EXECUTE toggled on");',
+  'editor = editor ^ EXECUTE;',
+  'assert((editor & EXECUTE) === 0, "EXECUTE toggled off");',
+  '',
+  'console.log("All assertions passed!");',
+].join('\n');
+</script>
+
+<CodePlayground title="位掩码 Playground" lang="typescript" :code="bitmaskCode" />

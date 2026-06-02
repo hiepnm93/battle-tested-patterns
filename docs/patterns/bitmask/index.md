@@ -168,3 +168,41 @@ Run exercises: `pnpm test` (TypeScript) · `cargo test` (Rust) · `go test ./...
 - **Mutually exclusive states** — if only one value can be active at a time, use an `enum` instead
 - **Readability matters more than performance** — named boolean fields are clearer to most developers
 - **Dynamic flag sets** — if the set of possible flags is not known at compile time, use a `Set<string>`
+
+## Try It
+
+<script setup>
+const bitmaskCode = [
+  '// Define permission flags as powers of 2',
+  'var READ    = 1 << 0;  // 0b0001',
+  'var WRITE   = 1 << 1;  // 0b0010',
+  'var EXECUTE = 1 << 2;  // 0b0100',
+  'var DELETE  = 1 << 3;  // 0b1000',
+  '',
+  '// Combine flags with OR',
+  'var editor = READ | WRITE;',
+  '',
+  '// Check with AND',
+  'assert((editor & READ) !== 0, "editor has READ");',
+  'assert((editor & WRITE) !== 0, "editor has WRITE");',
+  'assert((editor & EXECUTE) === 0, "editor does NOT have EXECUTE");',
+  '',
+  '// Check all flags at once',
+  'var required = READ | WRITE;',
+  'assertEquals((editor & required) === required, true, "editor has all required permissions");',
+  '',
+  '// Clear a flag with AND NOT',
+  'editor = editor & ~WRITE;',
+  'assert((editor & WRITE) === 0, "WRITE cleared");',
+  '',
+  '// Toggle with XOR',
+  'editor = editor ^ EXECUTE;',
+  'assert((editor & EXECUTE) !== 0, "EXECUTE toggled on");',
+  'editor = editor ^ EXECUTE;',
+  'assert((editor & EXECUTE) === 0, "EXECUTE toggled off");',
+  '',
+  'console.log("All assertions passed!");',
+].join('\n');
+</script>
+
+<CodePlayground title="Bitmask Playground" lang="typescript" :code="bitmaskCode" />
