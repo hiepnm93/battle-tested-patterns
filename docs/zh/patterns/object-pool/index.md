@@ -112,3 +112,7 @@ class ObjectPool:
 - **廉价对象** — 如果分配快且 GC 不是问题，池增加了不必要的复杂性
 - **不可变对象** — 池只对需要重置的可变对象有意义
 - **小规模** — 少量对象时，池的开销超过节省
+
+## 其他使用者
+
+Java `ThreadPoolExecutor`, .NET `ArrayPool<T>`, Apache Commons Pool, HikariCP (JDBC connection pool), Unity `ObjectPool<T>`.

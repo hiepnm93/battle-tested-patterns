@@ -152,3 +152,7 @@ func (s *Scheduler) WorkLoop() bool {
 - **实时保证** — 协作调度无法保证截止时间；使用抢占式调度
 - **CPU 密集且无交互** — 如果没有其他东西需要线程，让出浪费时间
 - **`requestIdleCallback` 足够时** — 对于非紧急工作，浏览器内置 API 可能就够了
+
+## 其他使用者
+
+Lua coroutines, Python `asyncio`, Erlang/BEAM VM (reduction counting), Windows Fibers, Unity coroutines, Zig async.

@@ -97,3 +97,7 @@ class Cow:
 - **写多读少** — 每次写入触发复制，抵消收益
 - **小数据** — 复制小结构比 CoW 记账更便宜
 - **并发写入** — CoW 不解决并发修改问题
+
+## 其他使用者
+
+Linux `fork()` (page table CoW), Swift value types, PHP strings (before PHP 7), Redis `BGSAVE`, ZFS/Btrfs filesystem snapshots.

@@ -95,3 +95,7 @@ light.send("TIMER")  # "yellow"
 - **简单布尔切换** — `true`/`false` 不需要状态机
 - **无界状态** — 连续状态空间（位置、分数）用普通变量
 - **无非法转换** — 如果任何状态可以转到任何其他状态，不需要约束
+
+## 其他使用者
+
+Regex engines (NFA/DFA), HTTP/2 stream states (RFC 7540), TLS handshake, Kubernetes pod lifecycle, game AI (behavior trees + FSM), systemd unit states.

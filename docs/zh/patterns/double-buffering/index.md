@@ -124,3 +124,7 @@ func (db *DoubleBuffer[T]) Swap() {
 - **简单状态更新** — 如果状态是单值且更新是原子的，双缓冲增加了不必要的复杂性
 - **内存受限环境** — 需要 2 倍内存开销
 - **需要实时读取进行中的写入** — 双缓冲会隐藏更新直到交换完成
+
+## 其他使用者
+
+OpenGL/Vulkan (swap chains), PostgreSQL MVCC (snapshot isolation), Unreal Engine (frame rendering), database WAL (write-ahead log).

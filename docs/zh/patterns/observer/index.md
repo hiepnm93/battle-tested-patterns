@@ -90,3 +90,7 @@ print(msgs)  # ["hello"]
 - **同步管线** — 如果处理顺序和完成很重要，直接调用函数
 - **事件风暴** — 太多事件难以调试；考虑批处理
 - **循环依赖** — A 观察 B，B 观察 A → 无限循环
+
+## 其他使用者
+
+RxJS (reactive streams), Vue 3 reactivity (`effect` / `track` / `trigger`), MobX, DOM `addEventListener`, Java `PropertyChangeListener`, C# events.
