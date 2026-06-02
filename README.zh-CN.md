@@ -35,11 +35,11 @@
 
 | 模式 | 核心洞察 | 来源项目 | 语言 |
 |------|---------|---------|------|
-| [位掩码 (Bitmask)](https://totoro-jam.github.io/battle-tested-patterns/zh/patterns/bitmask/) | 将多个标志打包到一个整数中 | React, Linux, Go | TS, Rust, Go |
-| 双缓冲 (Double Buffering) | 在两份副本间切换以实现原子更新 | React Fiber, PostgreSQL | _即将推出_ |
-| 协作调度 (Cooperative Scheduling) | 主动让出控制权以保持响应 | React, Go Runtime | _即将推出_ |
-| 最小堆 (Min Heap) | O(1) 访问最高优先级元素 | React Scheduler, Linux CFS | _即将推出_ |
-| 差异/补丁 (Diff/Patch) | 计算两个状态之间的最小变更 | React Reconciler, Git | _即将推出_ |
+| [位掩码 (Bitmask)](https://totoro-jam.github.io/battle-tested-patterns/zh/patterns/bitmask/) | 将多个标志打包到一个整数中 | React, Linux, Go | TS, Rust, Go, Python |
+| 双缓冲 (Double Buffering) | 在两份副本间切换以实现原子更新 | React Fiber, PostgreSQL | TS, Rust, Go, Python |
+| 协作调度 (Cooperative Scheduling) | 主动让出控制权以保持响应 | React, Go Runtime | TS, Rust, Go, Python |
+| 最小堆 (Min Heap) | O(1) 访问最高优先级元素 | React Scheduler, Linux CFS | TS, Rust, Go, Python |
+| 差异/补丁 (Diff/Patch) | 计算两个状态之间的最小变更 | React Reconciler, Git | TS, Rust, Go, Python |
 
 ## 快速开始
 

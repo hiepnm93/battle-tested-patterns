@@ -35,11 +35,11 @@ This project fills the gap: **code-level patterns extracted from production sour
 
 | Pattern | Key Insight | Source Projects | Languages |
 |---------|------------|-----------------|-----------|
-| [Bitmask](https://totoro-jam.github.io/battle-tested-patterns/patterns/bitmask/) | Pack multiple flags into a single integer | React, Linux, Go | TS, Rust, Go |
-| Double Buffering | Swap between two copies for atomic updates | React Fiber, PostgreSQL | _coming soon_ |
-| Cooperative Scheduling | Voluntarily yield control to stay responsive | React, Go Runtime | _coming soon_ |
-| Min Heap | O(1) access to the highest-priority item | React Scheduler, Linux CFS | _coming soon_ |
-| Diff / Patch | Compute minimal changes between two states | React Reconciler, Git | _coming soon_ |
+| [Bitmask](https://totoro-jam.github.io/battle-tested-patterns/patterns/bitmask/) | Pack multiple flags into a single integer | React, Linux, Go | TS, Rust, Go, Python |
+| Double Buffering | Swap between two copies for atomic updates | React Fiber, PostgreSQL | TS, Rust, Go, Python |
+| Cooperative Scheduling | Voluntarily yield control to stay responsive | React, Go Runtime | TS, Rust, Go, Python |
+| Min Heap | O(1) access to the highest-priority item | React Scheduler, Linux CFS | TS, Rust, Go, Python |
+| Diff / Patch | Compute minimal changes between two states | React Reconciler, Git | TS, Rust, Go, Python |
 
 ## Quick Start
 

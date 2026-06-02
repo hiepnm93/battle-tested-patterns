@@ -24,7 +24,7 @@ Implementation (TS required + ≥1 other language), Exercises (≥2 tests), When
 ## Tech Stack
 - Monorepo: pnpm workspace (docs/, exercises/, playground/)
 - Docs: VitePress → GitHub Pages
-- Tests: Vitest (TS), cargo test (Rust), go test (Go)
+- Tests: Vitest (TS), cargo test (Rust), go test (Go), pytest (Python)
 - Playground: Monaco Editor + Vitest Browser Mode
 - Commits: Conventional Commits (feat/fix/docs/ci/chore/test)
 
@@ -32,4 +32,5 @@ Implementation (TS required + ≥1 other language), Exercises (≥2 tests), When
 - TypeScript: strict mode, no `any`
 - Rust: idiomatic, use `#[cfg(test)]` modules
 - Go: standard library preferred, table-driven tests
+- Python: standard library preferred, type hints, pytest for tests
 - Markdown: follow `.markdownlint.json` rules

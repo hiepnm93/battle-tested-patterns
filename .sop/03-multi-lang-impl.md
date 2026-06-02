@@ -38,6 +38,14 @@ The algorithm/pattern is the same; the expression should feel native to each lan
 - Keep it simple — Go favors explicit over clever
 - Use `go vet` and `gofmt`
 
+### Python
+
+- Use type hints for function signatures
+- Standard library preferred (`heapq`, `collections`, etc.)
+- Use pytest for tests
+- Follow PEP 8 naming: `snake_case` for functions, `PascalCase` for classes
+- Python has no integer size limit — bitwise operations work on arbitrary-precision integers
+
 ### C
 
 - Use C11 or later
