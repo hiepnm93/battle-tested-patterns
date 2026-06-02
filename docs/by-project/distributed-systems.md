@@ -11,6 +11,12 @@ High-throughput messaging and trading systems push throughput patterns to the ex
 | [Backpressure](/patterns/backpressure/) | Reactive Streams | `Subscription.java` | `request(n)` pull-based flow control specification |
 | [Write-Ahead Log](/patterns/write-ahead-log/) | etcd | `wal.go` | Raft consensus WAL — source of truth for distributed state |
 | [Write-Ahead Log](/patterns/write-ahead-log/) | PostgreSQL | `xlog.c` | Transaction WAL for crash recovery, replication, PITR |
+| [MVCC](/patterns/mvcc/) | PostgreSQL | `heapam_visibility.c` | `HeapTupleSatisfiesMVCC` — snapshot isolation visibility check |
+| [MVCC](/patterns/mvcc/) | etcd | `kvstore.go` | Multi-version key-value store powering Kubernetes config |
+| [Consistent Hashing](/patterns/consistent-hashing/) | groupcache | `consistenthash.go` | Hash ring with virtual replicas for distributed caching |
+| [Actor Model](/patterns/actor-model/) | Akka | `Actor.scala` | `trait Actor` — message-driven concurrency for JVM |
+| [Actor Model](/patterns/actor-model/) | Erlang/OTP | `erl_process.h` | BEAM VM process struct — lightweight actor with mailbox |
+| [Rate Limiter](/patterns/rate-limiter/) | Nginx | `ngx_http_limit_req_module.c` | Leaky bucket rate limiting for HTTP requests |
 
 ## Further Reading
 

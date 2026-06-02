@@ -57,3 +57,8 @@ features:
 | [Trie 前缀树](/zh/patterns/trie/) | 按键长度 O(k) 查找，共享前缀共享节点 | Linux FIB, Redis rax |
 | [跳表](/zh/patterns/skip-list/) | 概率 O(log n) 有序结构 | Redis 有序集合, LevelDB |
 | [限流器](/zh/patterns/rate-limiter/) | 令牌桶控制吞吐量，支持突发 | Go x/time/rate, Nginx |
+| [工作窃取](/zh/patterns/work-stealing/) | 空闲线程从繁忙线程窃取任务 | Go runtime, Tokio |
+| [MVCC](/zh/patterns/mvcc/) | 带时间戳的版本让读者永不阻塞写者 | PostgreSQL, etcd |
+| [空闲链表](/zh/patterns/free-list/) | 已释放槽位链表实现 O(1) 分配/释放 | Go runtime, Linux SLUB |
+| [依赖图](/zh/patterns/dependency-graph/) | DAG + 拓扑排序确定合法执行顺序 | Cargo, pnpm |
+| [Actor 模型](/zh/patterns/actor-model/) | 私有状态 + 信箱，无共享状态 | Akka, Erlang/OTP |

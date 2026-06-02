@@ -10,6 +10,10 @@ The Linux kernel has been refined over 30+ years. These patterns have survived d
 | [State Machine](/patterns/state-machine/) | `net/ipv4/tcp_input.c` | TCP connection state machine (SYN_SENT → ESTABLISHED → FIN_WAIT) |
 | [Semaphore](/patterns/semaphore/) | `include/linux/semaphore.h` | Kernel counting semaphore with `down()`/`up()` |
 | [Backpressure](/patterns/backpressure/) | `net/ipv4/tcp_output.c` | TCP congestion window (`cwnd`) — flow control backpressure |
+| [Free List](/patterns/free-list/) | `mm/slub.c` | SLUB slab allocator — intrusive free list with XOR-hardened pointers |
+| [Bloom Filter](/patterns/bloom-filter/) | `crypto/` / user-space | Used in ext4 and various subsystems for probabilistic membership tests |
+| [Trie](/patterns/trie/) | `net/ipv4/fib_trie.c` | IP routing table as a compressed trie (LC-trie) |
+| [Skip List](/patterns/skip-list/) | `lib/` | Generic skip list for ordered data in kernel subsystems |
 
 ## Further Reading
 

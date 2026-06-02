@@ -31,8 +31,8 @@ LRU 缓存将哈希表（O(1) 键查找）与双向链表（O(1) 访问顺序跟
 
 | 项目 | 源码 | 用途 |
 |------|------|------|
-| Go groupcache | [lru.go#L28-L76](https://github.com/golang/groupcache/blob/master/lru/lru.go#L28-L76) | `Cache` 结构体，含 `container/list` 双向链表和 map。`Add`（L52）将已有条目移到前端；`Get`（L64）将访问条目移到前端；`RemoveOldest`（L72）从尾部淘汰。作者 Brad Fitzpatrick（memcached 创造者）。 |
-| Linux Kernel | [list_lru.h#L15-L55](https://github.com/torvalds/linux/blob/master/include/linux/list_lru.h#L15-L55) | `list_lru` — 内核 LRU 链表，用于 slab 分配器、dentry 缓存和 inode 缓存的内存回收。支持 NUMA 感知的 per-node 和 per-memcg 隔离。 |
+| Go groupcache | [lru.go#L23-L104](https://github.com/golang/groupcache/blob/master/lru/lru.go#L23-L104) | `Cache` 结构体（L23-L34），含双向链表 + 哈希表。`Add`（L56-L71）插入/更新并移到前端；`Get`（L74-L83）命中时移到前端；`RemoveOldest`（L96-L104）从尾部淘汰。作者 Brad Fitzpatrick（memcached 创造者）。 |
+| Redis | [evict.c#L55-L83](https://github.com/redis/redis/blob/unstable/src/evict.c#L55-L83) | 近似 LRU——缩减位宽的 LRU 时钟和带绕回处理的空闲时间估算。`evictionPoolPopulate`（L134-L225）采样 N 个键插入排序淘汰池。工程权衡：以 O(1) 内存开销换取规模化性能。 |
 
 ## 实现
 

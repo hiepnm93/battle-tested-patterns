@@ -9,3 +9,9 @@
 | [背压](/zh/patterns/backpressure/) | Reactive Streams | `Subscription.java` | `request(n)` 拉模型流控规范 |
 | [预写日志](/zh/patterns/write-ahead-log/) | etcd | `wal.go` | Raft 共识 WAL——分布式状态的事实来源 |
 | [预写日志](/zh/patterns/write-ahead-log/) | PostgreSQL | `xlog.c` | 事务 WAL 用于崩溃恢复、复制、PITR |
+| [MVCC](/zh/patterns/mvcc/) | PostgreSQL | `heapam_visibility.c` | `HeapTupleSatisfiesMVCC` — 快照隔离可见性检查 |
+| [MVCC](/zh/patterns/mvcc/) | etcd | `kvstore.go` | 多版本键值存储，驱动 Kubernetes 配置 |
+| [一致性哈希](/zh/patterns/consistent-hashing/) | groupcache | `consistenthash.go` | 带虚拟副本的哈希环，用于分布式缓存 |
+| [Actor 模型](/zh/patterns/actor-model/) | Akka | `Actor.scala` | `trait Actor` — JVM 上的消息驱动并发 |
+| [Actor 模型](/zh/patterns/actor-model/) | Erlang/OTP | `erl_process.h` | BEAM VM 进程结构体 — 带信箱的轻量级 Actor |
+| [限流器](/zh/patterns/rate-limiter/) | Nginx | `ngx_http_limit_req_module.c` | HTTP 请求的漏桶限流 |

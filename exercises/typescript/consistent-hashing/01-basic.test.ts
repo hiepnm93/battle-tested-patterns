@@ -79,7 +79,7 @@ describe('Consistent Hashing - Basic', () => {
     const counts: Record<string, number> = { A: 0, B: 0, C: 0 };
     for (let i = 0; i < 300; i++) {
       const node = ring.getNode(`key-${i}`)!;
-      counts[node]++;
+      counts[node] = (counts[node] ?? 0) + 1;
     }
     expect(counts['A']).toBeGreaterThan(0);
     expect(counts['B']).toBeGreaterThan(0);

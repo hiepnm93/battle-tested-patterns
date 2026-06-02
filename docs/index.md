@@ -57,3 +57,8 @@ features:
 | [Trie (Prefix Tree)](/patterns/trie/) | O(k) lookup by key length, shared prefixes share nodes | Linux FIB, Redis rax |
 | [Skip List](/patterns/skip-list/) | Probabilistic O(log n) sorted structure | Redis sorted sets, LevelDB |
 | [Rate Limiter](/patterns/rate-limiter/) | Token bucket controls throughput with burst capacity | Go x/time/rate, Nginx |
+| [Work Stealing](/patterns/work-stealing/) | Idle threads steal tasks from busy threads' queues | Go runtime, Tokio |
+| [MVCC](/patterns/mvcc/) | Timestamped versions let readers never block writers | PostgreSQL, etcd |
+| [Free List](/patterns/free-list/) | Linked list of freed slots for O(1) alloc/free | Go runtime, Linux SLUB |
+| [Dependency Graph](/patterns/dependency-graph/) | DAG + topological sort for valid execution order | Cargo, pnpm |
+| [Actor Model](/patterns/actor-model/) | Private state + mailbox, no shared state, just messages | Akka, Erlang/OTP |

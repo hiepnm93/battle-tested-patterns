@@ -33,8 +33,8 @@ An LRU cache combines a hash map (for O(1) key lookup) with a doubly linked list
 
 | Project | Source | Usage |
 |---------|--------|-------|
-| Go groupcache | [lru.go#L28-L76](https://github.com/golang/groupcache/blob/master/lru/lru.go#L28-L76) | `Cache` struct with `container/list` doubly linked list and a map. `Add` (L52) moves existing entries to front; `Get` (L64) moves accessed entries to front; `RemoveOldest` (L72) evicts from back. By Brad Fitzpatrick (memcached creator). |
-| Linux Kernel | [list_lru.h#L15-L55](https://github.com/torvalds/linux/blob/master/include/linux/list_lru.h#L15-L55) | `list_lru` — kernel LRU list used by the slab allocator, dentry cache, and inode cache for memory reclaim. Per-node and per-memcg isolation for NUMA-aware eviction. |
+| Go groupcache | [lru.go#L23-L104](https://github.com/golang/groupcache/blob/master/lru/lru.go#L23-L104) | `Cache` struct (L23-L34) with doubly linked list + hash map. `Add` (L56-L71) inserts/updates and moves to front; `Get` (L74-L83) moves to front on hit; `RemoveOldest` (L96-L104) evicts from back. By Brad Fitzpatrick (memcached creator). |
+| Redis | [evict.c#L55-L83](https://github.com/redis/redis/blob/unstable/src/evict.c#L55-L83) | Approximated LRU — reduced-bit LRU clock and idle-time estimation with wraparound. `evictionPoolPopulate` (L134-L225) samples N keys and inserts into a sorted eviction pool. Engineering tradeoff: O(1) memory overhead at scale vs exact LRU. |
 
 ## Implementation
 

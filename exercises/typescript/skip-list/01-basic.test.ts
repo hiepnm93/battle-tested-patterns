@@ -62,7 +62,7 @@ class SkipList {
 
     const node = new SkipNode(key, value, newLevel);
     for (let i = 0; i <= newLevel; i++) {
-      node.forward[i] = update[i]!.forward[i];
+      node.forward[i] = update[i]!.forward[i] ?? null;
       update[i]!.forward[i] = node;
     }
   }
@@ -96,7 +96,7 @@ class SkipList {
 
     for (let i = 0; i <= this.level; i++) {
       if (update[i]!.forward[i] !== target) break;
-      update[i]!.forward[i] = target.forward[i];
+      update[i]!.forward[i] = target.forward[i] ?? null;
     }
     while (this.level > 0 && !this.header.forward[this.level]) this.level--;
     return true;
