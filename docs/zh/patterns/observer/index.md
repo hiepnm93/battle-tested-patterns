@@ -17,6 +17,10 @@ flowchart LR
 
 这种解耦是该模式无处不在的原因：从 DOM `addEventListener` 到 Redux `store.subscribe` 到 Node.js `EventEmitter`。
 
+**动手试试** — 发射事件，观察它们扇出到所有订阅者：
+
+<ObserverViz />
+
 ## 生产验证
 
 | 项目 | 源码 | 用途 |

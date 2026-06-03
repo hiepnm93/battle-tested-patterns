@@ -13,6 +13,10 @@ import EventLoopViz from './components/EventLoopViz.vue';
 import RateLimiterViz from './components/RateLimiterViz.vue';
 import MerkleTreeViz from './components/MerkleTreeViz.vue';
 import BPlusTreeViz from './components/BPlusTreeViz.vue';
+import DependencyGraphViz from './components/DependencyGraphViz.vue';
+import ObserverViz from './components/ObserverViz.vue';
+import BackpressureViz from './components/BackpressureViz.vue';
+import CopyOnWriteViz from './components/CopyOnWriteViz.vue';
 import './custom.css';
 
 export default {
@@ -31,5 +35,9 @@ export default {
     app.component('RateLimiterViz', RateLimiterViz);
     app.component('MerkleTreeViz', MerkleTreeViz);
     app.component('BPlusTreeViz', BPlusTreeViz);
+    app.component('DependencyGraphViz', DependencyGraphViz);
+    app.component('ObserverViz', ObserverViz);
+    app.component('BackpressureViz', BackpressureViz);
+    app.component('CopyOnWriteViz', CopyOnWriteViz);
   },
 } satisfies Theme;

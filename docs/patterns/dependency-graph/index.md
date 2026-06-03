@@ -28,6 +28,10 @@ A dependency graph represents items as nodes and ordering constraints as directe
 | Cycle detection | Built into topological sort (remaining nodes = cycle) |
 | Space | O(V + E) — adjacency list |
 
+**Try it yourself** — add nodes and edges, then run topological sort to watch Kahn's algorithm step through:
+
+<DependencyGraphViz />
+
 ## Production Proof
 
 | Project | Source | Usage |

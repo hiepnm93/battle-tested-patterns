@@ -20,6 +20,10 @@ flowchart LR
 
 This decoupling is why the pattern is everywhere: from DOM `addEventListener` to Redux `store.subscribe` to Node.js `EventEmitter` to React's `useEffect` cleanup pattern.
 
+**Try it yourself** — emit events and watch them fan out to all subscribers:
+
+<ObserverViz />
+
 ## Production Proof
 
 | Project | Source | Usage |

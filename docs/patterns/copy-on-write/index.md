@@ -19,6 +19,10 @@ flowchart LR
 
 The key insight: **most data is read far more often than it is written**. CoW exploits this asymmetry — free sharing for reads, pay-per-write for mutations.
 
+**Try it yourself** — click "Write" on any reader to trigger a copy-on-write and watch reference counts change:
+
+<CopyOnWriteViz />
+
 ## Production Proof
 
 | Project | Source | Usage |
