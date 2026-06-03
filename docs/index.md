@@ -11,7 +11,7 @@ hero:
       link: /guide/what-is-this
     - theme: alt
       text: Browse Patterns
-      link: /patterns/bitmask/
+      link: /patterns/
 
 features:
   - icon: 🎮

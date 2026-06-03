@@ -48,7 +48,7 @@ export default withMermaid(defineConfig({
       themeConfig: {
         nav: [
           { text: 'Guide', link: '/guide/what-is-this' },
-          { text: 'Patterns', link: '/patterns/bitmask/' },
+          { text: 'Patterns', link: '/patterns/' },
           { text: 'By Project', link: '/by-project/react' },
         ],
         sidebar: {
@@ -166,7 +166,7 @@ export default withMermaid(defineConfig({
       themeConfig: {
         nav: [
           { text: '指南', link: '/zh/guide/what-is-this' },
-          { text: '模式', link: '/zh/patterns/bitmask/' },
+          { text: '模式', link: '/zh/patterns/' },
           { text: '按项目', link: '/zh/by-project/react' },
         ],
         sidebar: {
@@ -280,6 +280,8 @@ export default withMermaid(defineConfig({
     },
   },
 
+  lastUpdated: true,
+
   themeConfig: {
     socialLinks: [
       { icon: 'github', link: 'https://github.com/Totoro-jam/battle-tested-patterns' },
@@ -288,6 +290,8 @@ export default withMermaid(defineConfig({
     search: {
       provider: 'local',
     },
+
+    outline: { level: [2, 3] },
 
     editLink: {
       pattern: 'https://github.com/Totoro-jam/battle-tested-patterns/edit/main/docs/:path',

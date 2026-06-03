@@ -11,7 +11,7 @@ hero:
       link: /zh/guide/what-is-this
     - theme: alt
       text: 浏览模式
-      link: /zh/patterns/bitmask/
+      link: /zh/patterns/
 
 features:
   - icon: 🎮
