@@ -193,3 +193,31 @@ Run exercises: `pnpm test`
 - [Guava Cache](https://github.com/google/guava) — `CacheBuilder.maximumSize()` with LRU eviction
 - [Python functools](https://github.com/python/cpython) — `@lru_cache` decorator
 - [Caffeine](https://github.com/ben-manes/caffeine) — high-performance Java cache (Window TinyLfu, inspired by LRU)
+
+## Challenge Questions
+
+::: details Q1: LRU cache with capacity 3. Operations: put(A), put(B), put(C), put(D), get(B). What's in the cache?
+**Answer:** `{B, D, C}`
+
+After put(A,B,C), cache is full. put(D) evicts A (least recently used). Now `{D, C, B}`. get(B) moves B to front. Final order most→least recent: `B, D, C`.
+
+Key insight: `get()` counts as "use" — it moves the entry to the front, not just returns it.
+:::
+
+::: details Q2: You have a web server with an LRU cache for API responses. A bot crawls every page once. What happens?
+**Answer:** The bot evicts all your hot cache entries.
+
+Each crawled page is accessed once, pushed to front, and evicts a frequently-used page. After the crawl, your cache is full of pages nobody will request again. This is the **scan resistance** problem — LRU is vulnerable to sequential scans. Solutions: LRU-K (evict only if accessed < K times), ARC (adaptive), or a two-tier cache.
+:::
+
+::: details Q3: Why does Redis use "approximated LRU" instead of exact LRU?
+**Answer:** Exact LRU requires a doubly linked list per key — that's 2 pointers (16 bytes on 64-bit) per key just for ordering. With millions of keys, that's significant overhead.
+
+Redis instead stores a 24-bit LRU clock per key (3 bytes) and samples N random keys when eviction is needed, evicting the one with the oldest clock. This trades perfect eviction order for O(1) memory overhead per key. In practice, sampling 10 keys gives results very close to exact LRU.
+:::
+
+::: details Q4: Can you build an LRU cache in O(1) without a doubly linked list?
+**Answer:** Yes — using a language with ordered hash maps. In JavaScript, `Map` preserves insertion order. Delete and re-insert on access to move to "most recent." This is exactly what the TypeScript implementation above does.
+
+In languages without ordered maps (C, Go), you need the classic hash map + doubly linked list approach. Go's `groupcache` does this with `container/list`.
+:::
