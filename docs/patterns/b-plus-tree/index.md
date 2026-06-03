@@ -540,3 +540,9 @@ In a standard B+ tree, a split requires locking the parent to insert the new chi
 
 This is why PostgreSQL can handle concurrent index insertions without locking the entire tree.
 :::
+
+::: details Q4: Your B+ tree index works well for `SELECT * FROM orders WHERE price BETWEEN 10 AND 50`, but `SELECT * FROM orders WHERE status = 'pending' AND region = 'US'` is slow despite having a composite index on (status, region). What happened?
+**Answer:** The query likely isn't using the index's leftmost prefix, or the column order in the composite index doesn't match the query pattern.
+
+A B+ tree composite index on (status, region) stores entries sorted first by status, then by region within each status. This index handles `WHERE status = 'pending'` and `WHERE status = 'pending' AND region = 'US'` efficiently. But if the query filters on `region` alone without `status`, the B+ tree can't skip to the right leaf -- it must scan the entire index. This is the "leftmost prefix" rule: a composite B+ tree index is only useful for queries that filter on a prefix of the indexed columns in order. For multi-column filtering on arbitrary combinations, consider separate indexes or a different indexing strategy.
+:::

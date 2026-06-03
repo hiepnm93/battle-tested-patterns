@@ -228,3 +228,9 @@ The modulo operator `%` compiles to a division instruction, which takes 20-40 CP
 
 A ring buffer is inherently bounded — that's its strength (predictable memory) and its limitation (data loss under sustained load). The pattern used by Linux's `io_uring` and kernel trace buffers is to have a consumer that reads entries and persists them. The ring buffer absorbs bursts, and the consumer handles steady-state throughput. This separates the write-fast concern from the store-everything concern.
 :::
+
+::: details Q4: You're building a single-producer, single-consumer (SPSC) ring buffer for an audio pipeline. The producer writes 48,000 samples/sec and the consumer reads in 1024-sample blocks. Occasionally the consumer stalls for 50ms (e.g., disk I/O). What capacity do you choose, and what happens if you get it wrong?
+**Answer:** At least 48000 * 0.05 = 2,400 samples to survive a 50ms stall, rounded up to the next power of 2 (4,096). In practice, double or quadruple that (8,192 or 16,384) to handle back-to-back stalls.
+
+If the buffer is too small, the producer overwrites unread samples (audio glitches) or blocks (pipeline stall). If too large, you add latency -- the consumer is always reading samples that were written further in the past. Audio systems typically size the buffer to 2-3x the maximum expected stall duration as a safety margin. This is the fundamental ring buffer tradeoff: capacity = maximum burst tolerance, and every extra slot adds one sample period of worst-case latency.
+:::

@@ -359,3 +359,9 @@ Even if all currently-live replicas acknowledge the deletion, a temporarily-offl
 
 This is why Cassandra uses `gc_grace_seconds` -- it's the maximum expected time for a node to be offline. The tombstone lives at least that long to guarantee it outlives any stale replica.
 :::
+
+::: details Q4: Your application performs a bulk delete of 10 million rows using tombstones. Immediately after, a range scan over the deleted range takes 30 seconds instead of the expected 0 seconds. Explain why the range scan isn't instant, even though all rows are "deleted."
+**Answer:** The tombstones themselves are data that must be read and evaluated during the scan.
+
+A range scan doesn't know which keys are deleted until it reads each entry and checks for the tombstone marker. With 10 million tombstones, the scan reads 10 million entries, evaluates each one, and returns zero results. This is the "tombstone scan" problem -- the work is proportional to the number of tombstones, not the number of live results. Solutions include: range tombstones (RocksDB's `DeleteRange` marks an entire key range deleted with a single marker instead of per-key tombstones), immediate compaction of the affected range, or using a separate index that tracks only live keys.
+:::

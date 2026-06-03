@@ -538,3 +538,9 @@ impl BPlusTree {
 
 这就是 PostgreSQL 能够在不锁定整棵树的情况下处理并发索引插入的原因。
 :::
+
+::: details Q4: 你的 B+ 树索引对 `SELECT * FROM orders WHERE price BETWEEN 10 AND 50` 工作良好，但 `SELECT * FROM orders WHERE status = 'pending' AND region = 'US'` 很慢，尽管已经在 (status, region) 上建了组合索引。出了什么问题？
+**答案：** 查询可能没有使用组合索引的最左前缀，或者组合索引的列顺序与查询模式不匹配。
+
+(status, region) 上的 B+ 树组合索引按 status 排序在先，在每个 status 内再按 region 排序。这个索引能高效处理 `WHERE status = 'pending'` 和 `WHERE status = 'pending' AND region = 'US'`。但如果查询只过滤 `region` 而没有 `status`，B+ 树无法直接跳到正确的叶节点——必须扫描整个索引。这就是"最左前缀"规则：组合 B+ 树索引只对按列顺序前缀过滤的查询有效。如果需要对任意列组合进行多列过滤，考虑使用单独的索引或不同的索引策略。
+:::

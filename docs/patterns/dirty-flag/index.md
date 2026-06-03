@@ -270,3 +270,9 @@ Common causes:
 
 Fix: ensure the compute function reads current values at call time, not captured values from registration time. In React, this is why `useMemo` takes a dependency array -- it creates a new compute function when dependencies change.
 :::
+
+::: details Q4: Your build system uses file modification timestamps as dirty flags. A developer checks out an old branch, which resets file timestamps to "now." The build system sees all files as "dirty" and triggers a full rebuild. How would you fix this?
+**Answer:** Use content hashes instead of (or in addition to) timestamps as the dirty flag.
+
+Timestamps are cheap to check but semantically fragile -- they track *when* a file changed, not *whether* it actually changed. Git checkout, file copy, CI artifact extraction, and clock skew all produce misleading timestamps. Content-based dirty flags (e.g., SHA-256 of the file) are immune to these problems: if the hash matches, the file hasn't changed, regardless of its timestamp. This is why Bazel and Buck use content hashing over timestamps. The tradeoff is that computing a hash is more expensive than `stat()`, but for build systems the cost of unnecessary recompilation far exceeds the cost of hashing.
+:::

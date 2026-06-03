@@ -292,3 +292,9 @@ In a balanced BST, range queries require an in-order traversal that bounces betw
 
 LevelDB's LSM-tree architecture funnels all writes through a single write-ahead log and then into the memtable. Since there's only one writer, a mutex is trivial and adds no contention. The skip list uses atomic operations for the forward pointers so that the single writer and multiple reader threads can operate simultaneously without read locks. This is the SWMR (single-writer, multiple-reader) insight: optimize for the actual concurrency pattern, not the general case.
 :::
+
+::: details Q4: You're implementing a skip list for a leaderboard that needs the top-100 players by score. A naive approach iterates from the head of level 0. Your colleague says "just maintain a pointer to the tail for reverse iteration." Why doesn't this work as easily as it does in a doubly-linked list?
+**Answer:** Skip lists are inherently forward-only structures. Adding backward pointers at every level doubles the pointer count and complicates insertion/deletion, negating the simplicity advantage over balanced trees.
+
+In a doubly-linked list, maintaining a tail pointer and iterating backward is trivial. In a skip list, you'd need backward pointers at every level to get O(log n) reverse traversal -- otherwise you'd fall back to O(n) at level 0. This essentially turns the skip list into a bidirectional skip list, which is significantly more complex. The practical solution for "top-K" queries is to store scores negated (or use a reverse comparator) so that the highest scores sort first, then iterate forward from the head. Redis sorted sets take this approach with `ZREVRANGE` by walking forward pointers on a skip list that supports both directions at level 0 only.
+:::

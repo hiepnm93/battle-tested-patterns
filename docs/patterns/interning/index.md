@@ -200,3 +200,9 @@ This was a real vulnerability (CVE-2013-0156). The fix: never intern user-contro
 
 Since symbols appear everywhere in the compiler's data structures (AST nodes, types, scopes), halving their size provides meaningful cache efficiency improvements. This is a deliberate space-time tradeoff: the compiler's performance is memory-bound, so smaller data = fewer cache misses.
 :::
+
+::: details Q4: Your multi-threaded application uses a global string interner protected by a mutex. Profiling shows the intern lock is the top contention point. How would you reduce contention without giving up interning?
+**Answer:** Use per-thread (thread-local) interners for the hot path, and merge into a global table only when cross-thread comparison is needed.
+
+A single global interner becomes a serialization bottleneck when many threads intern concurrently. The solution is sharded or thread-local interning: each thread maintains its own interner for fast, lock-free interning. Symbols from different thread-local interners are not directly comparable, so cross-thread comparison requires either a merge step or a two-level scheme (local ID + thread ID). The Rust compiler uses a scoped interner per session, and some JVMs use concurrent hash maps with striped locks to reduce contention. The key insight is that most equality checks are thread-local (within a single compilation unit or query), so paying for global synchronization on every intern is wasteful.
+:::

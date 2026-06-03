@@ -258,3 +258,9 @@ This is both the strength and weakness of consistent hashing. When B is removed,
 
 Consistent hashing solves the key *assignment* problem, not the key *popularity* problem. A single hot key always maps to one node. Solutions include: read replicas (cache the hot key on multiple nodes), request-level load balancing (route reads for hot keys randomly), or key splitting (split "homepage_banner" into "homepage_banner:1" through "homepage_banner:10" spread across nodes). The bounded-loads extension to consistent hashing addresses this by redirecting overflow traffic to the next node on the ring.
 :::
+
+::: details Q4: You need to migrate your cache cluster from 3 nodes to 5 nodes with zero downtime. During migration, both old and new nodes coexist. A key that remaps to a new node returns a cache miss even though the data exists on the old node. How do you handle this?
+**Answer:** Use double-read during migration: look up the key on the new ring first, and on miss, fall back to the old ring.
+
+Consistent hashing guarantees minimal remapping (~1/n keys move), but the keys that do move will miss on the new node until they're populated. The migration strategy is: (1) compute the key's owner on both the old and new rings, (2) read from the new node first, (3) on miss, read from the old node and backfill the new node. Once all keys are migrated (or the TTL expires naturally), remove the old ring. This is the approach used by systems like Memcached and Redis Cluster during resharding -- the consistent hash ring defines the target state, but a transition period handles the gap.
+:::
