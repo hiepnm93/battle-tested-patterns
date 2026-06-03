@@ -191,24 +191,24 @@ flowchart TD
 
 | 模式 | React | Redis | Go Runtime | Linux | PostgreSQL | Kafka |
 |------|:-----:|:-----:|:----------:|:-----:|:----------:|:-----:|
-| **Bitmask** | x | | | x | | |
-| **Min Heap** | x | | x | x | | |
-| **Cooperative Scheduling** | x | | x | | | |
-| **Diff / Patch** | x | | | | | |
-| **Double Buffering** | x | | | | | |
-| **Skip List** | | x | | | | |
-| **LRU Cache** | | x | | | x | |
-| **Trie** | | x | | x | | |
-| **Bloom Filter** | | x | | | x | |
-| **Batch Processing** | | x | | | | x |
-| **Work Stealing** | | | x | | | |
-| **Free List** | | | x | x | | |
-| **Semaphore** | | | x | x | | |
-| **Object Pool** | | | x | | | |
-| **State Machine** | | | | x | | |
-| **Ring Buffer** | | | | x | | x |
-| **Backpressure** | | | | x | | x |
-| **MVCC** | | | | | x | |
-| **Write-Ahead Log** | | | | | x | |
-| **Retry Backoff** | | | | | | x |
-| **Consistent Hashing** | | | | | | x |
+| **Bitmask** | ✅ | | | ✅ | | |
+| **Min Heap** | ✅ | | ✅ | ✅ | | |
+| **Cooperative Scheduling** | ✅ | | ✅ | | | |
+| **Diff / Patch** | ✅ | | | | | |
+| **Double Buffering** | ✅ | | | | | |
+| **Skip List** | | ✅ | | | | |
+| **LRU Cache** | | ✅ | | | ✅ | |
+| **Trie** | | ✅ | | ✅ | | |
+| **Bloom Filter** | | ✅ | | | ✅ | |
+| **Batch Processing** | | ✅ | | | | ✅ |
+| **Work Stealing** | | | ✅ | | | |
+| **Free List** | | | ✅ | ✅ | | |
+| **Semaphore** | | | ✅ | ✅ | | |
+| **Object Pool** | | | ✅ | | | |
+| **State Machine** | | | | ✅ | | |
+| **Ring Buffer** | | | | ✅ | | ✅ |
+| **Backpressure** | | | | ✅ | | ✅ |
+| **MVCC** | | | | | ✅ | |
+| **Write-Ahead Log** | | | | | ✅ | |
+| **Retry Backoff** | | | | | | ✅ |
+| **Consistent Hashing** | | | | | | ✅ |
