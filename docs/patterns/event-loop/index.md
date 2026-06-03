@@ -36,6 +36,10 @@ Instead of dedicating one thread per connection (expensive context switches, hig
 | Latency | Low for I/O-bound work; one slow callback blocks everything |
 | Memory | O(connections) for state, not O(connections * stack_size) |
 
+**Try it yourself** — add tasks to the call stack and queues, then step through the event loop execution order:
+
+<EventLoopViz />
+
 ## Production Proof
 
 | Project | Source | Usage |

@@ -35,6 +35,10 @@ A B+ tree separates routing from storage. Internal nodes hold only keys and chil
 | Space | O(n) |
 | Fan-out | Typically 100-1000 keys per node |
 
+**Try it yourself** — insert keys and watch the B+ tree split nodes to stay balanced:
+
+<BPlusTreeViz />
+
 ## Production Proof
 
 | Project | Source | Usage |

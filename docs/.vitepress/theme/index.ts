@@ -9,6 +9,10 @@ import MinHeapViz from './components/MinHeapViz.vue';
 import SkipListViz from './components/SkipListViz.vue';
 import TrieViz from './components/TrieViz.vue';
 import StateMachineViz from './components/StateMachineViz.vue';
+import EventLoopViz from './components/EventLoopViz.vue';
+import RateLimiterViz from './components/RateLimiterViz.vue';
+import MerkleTreeViz from './components/MerkleTreeViz.vue';
+import BPlusTreeViz from './components/BPlusTreeViz.vue';
 import './custom.css';
 
 export default {
@@ -23,5 +27,9 @@ export default {
     app.component('SkipListViz', SkipListViz);
     app.component('TrieViz', TrieViz);
     app.component('StateMachineViz', StateMachineViz);
+    app.component('EventLoopViz', EventLoopViz);
+    app.component('RateLimiterViz', RateLimiterViz);
+    app.component('MerkleTreeViz', MerkleTreeViz);
+    app.component('BPlusTreeViz', BPlusTreeViz);
   },
 } satisfies Theme;

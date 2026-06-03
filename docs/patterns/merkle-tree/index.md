@@ -36,6 +36,10 @@ A Merkle tree is a binary tree of hashes. Each leaf node contains the hash of a 
 | Space for proof | O(log n) sibling hashes |
 | Tamper detection | Any change flips the root hash |
 
+**Try it yourself** — verify a leaf's integrity by tracing the proof path, or tamper with data to see the root hash change:
+
+<MerkleTreeViz />
+
 ## Production Proof
 
 | Project | Source | Usage |

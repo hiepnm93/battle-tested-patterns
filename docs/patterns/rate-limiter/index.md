@@ -27,6 +27,10 @@ A token bucket starts full with `capacity` tokens and refills at `rate` tokens p
 | **Sliding Window** | Counts requests in a time window; no burst control |
 | **Fixed Window** | Counts requests per time interval; boundary burst problem |
 
+**Try it yourself** — send requests and watch tokens drain from the bucket, then start auto-refill:
+
+<RateLimiterViz />
+
 ## Production Proof
 
 | Project | Source | Usage |
