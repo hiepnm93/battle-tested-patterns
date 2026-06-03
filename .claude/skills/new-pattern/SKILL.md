@@ -85,7 +85,7 @@ Add `## Challenge Questions` at the end of the EN doc:
 - Questions test understanding through production scenarios
 - Verify factual accuracy of all answers
 - Escape `|` in table cells, use `×` instead of `*` for multiplication
-- Copy to ZH doc with header `## 挑战题` (content stays in English)
+- Copy to ZH doc with header `## 挑战题`, translate Q&A to Chinese (keep technical terms and code in English)
 
 ## Step 7: Create Chinese Translation
 
@@ -93,8 +93,8 @@ Create `docs/zh/patterns/<pattern-name>/index.md`:
 - Translate structural content (headings, explanations, When to Use)
 - Keep code blocks identical to English
 - Keep Production Proof links identical
-- Keep Challenge Questions content in English (only header in Chinese)
-- CJK in ASCII diagrams: verify alignment with 2-column-width compensation
+- Challenge Questions: translate questions + answers to Chinese, keep technical terms/code in English
+- ASCII diagrams: use English labels inside box-drawing diagrams (no CJK in diagrams)
 
 ## Step 8: Update Navigation
 
@@ -118,8 +118,16 @@ pnpm lint          # Markdown lint clean
 pnpm build         # VitePress builds
 ```
 
-## Step 10: Commit and Tag
+## Step 10: Site Accessibility Verification
+
+After build, verify all new pages are reachable:
+- `ls docs/.vitepress/dist/patterns/<name>/index.html` — EN page exists
+- `ls docs/.vitepress/dist/zh/patterns/<name>/index.html` — ZH page exists
+- After deploy, spot-check live URLs in both languages
+
+## Step 11: Commit and Tag
 
 - Commit message: `feat: add <pattern-name> pattern`
 - If adding multiple patterns: one commit per batch with list
 - Push and verify CI is green before tagging
+- Tag: `git tag -a v1.X.0 -m "description"` + `git push origin v1.X.0`

@@ -160,7 +160,19 @@ Add `## Challenge Questions` section at the end of the pattern doc:
 - [ ] Fill in the PR template checklist
 - [ ] Ensure CI is green
 
-### 10. Tag Release
+### 10. Site Accessibility Verification
+
+After pushing, verify all pages are reachable:
+
+- [ ] Run `pnpm build` — confirm new pattern pages appear in `docs/.vitepress/dist/`
+- [ ] Verify EN page exists: `ls docs/.vitepress/dist/patterns/<name>/index.html`
+- [ ] Verify ZH page exists: `ls docs/.vitepress/dist/zh/patterns/<name>/index.html`
+- [ ] After deploy completes, spot-check live URLs:
+  - `https://totoro-jam.github.io/battle-tested-patterns/patterns/<name>/`
+  - `https://totoro-jam.github.io/battle-tested-patterns/zh/patterns/<name>/`
+- [ ] Check sidebar links navigate correctly in both languages
+
+### 11. Tag Release
 
 After each batch of new patterns is merged and CI passes:
 
