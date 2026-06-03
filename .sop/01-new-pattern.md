@@ -127,6 +127,8 @@ Add `## Challenge Questions` section at the end of the pattern doc:
 - [ ] Update `docs/zh/by-project/*.md` — sync Chinese versions
 - [ ] Update `README.md` cheat sheet table — add to correct category (Data Structures / Concurrency / Systems / Memory / Behavioral)
 - [ ] Update `README.zh-CN.md` cheat sheet table — sync Chinese version
+- [ ] Update `docs/guide/pattern-connections.md` — if pattern fits an existing system case study (React/Redis/Go/Linux/PostgreSQL/Kafka), add it to the relevant section and summary table
+- [ ] Update `docs/zh/guide/pattern-connections.md` — sync Chinese version
 
 ### 8. Self-Review
 
