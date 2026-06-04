@@ -94,6 +94,7 @@ Standard Operating Procedures live in `.sop/`. Read them before:
 - Vue component build pitfalls → `.sop/09-vue-build-pitfalls.md`
 - Interactive viz component audit → `.sop/10-viz-component-audit.md`
 - Difficulty classification criteria → `.sop/11-difficulty-classification.md`
+- Related Patterns bidirectionality → `.sop/12-related-patterns-audit.md`
 
 ## Node Version
 

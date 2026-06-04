@@ -16,3 +16,4 @@ Follow the relevant SOP before starting work to ensure consistency and quality.
 | 09 | [Vue Build Pitfalls](09-vue-build-pitfalls.md) | Avoiding Vue component build failures |
 | 10 | [Viz Component Audit](10-viz-component-audit.md) | Auditing interactive visualization components |
 | 11 | [Difficulty Classification](11-difficulty-classification.md) | Classifying pattern difficulty (beginner/intermediate/advanced) |
+| 12 | [Related Patterns Audit](12-related-patterns-audit.md) | Verifying bidirectional Related Patterns links |

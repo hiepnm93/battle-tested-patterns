@@ -183,6 +183,8 @@ Add `## Challenge Questions` section at the end of the pattern doc:
 - [ ] Challenge answers: don't conflate similar systems (Redis Cluster uses hash slots, NOT consistent hashing)
 - [ ] Challenge answers: check for outdated claims (React 18 auto-batches; Redis 6.0 has I/O threads)
 - [ ] Challenge answers: distinguish Go runtime concepts correctly (P = logical processor, M = OS thread)
+- [ ] Related Patterns bidirectionality: if this pattern lists pattern X, verify that X's Related Patterns table also lists this pattern back (EN + ZH)
+- [ ] Pattern connections matrix: if pattern is used in React/Redis/Go/Linux/PostgreSQL/Kafka, verify the checkmark exists AND that the Viz component data in `PatternConnectionsViz.vue` is consistent
 - [ ] Sidebar: updated in BOTH English and Chinese sections of `config.ts`
 - [ ] README: updated in BOTH `README.md` and `README.zh-CN.md`
 - [ ] README cheat sheet: add to the categorized table in README
