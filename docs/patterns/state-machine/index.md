@@ -33,6 +33,13 @@ stateDiagram-v2
 
 The power: **impossible transitions don't exist**. You can't go from `success` to `error` because no such transition is defined. The compiler (or runtime) enforces this.
 
+| Property | Value |
+|----------|-------|
+| Transition | O(1) — lookup in state×event table |
+| Current state | O(1) — single variable |
+| Valid events | Enumerable per state — enables exhaustive checking |
+| Space | O(states × events) for the transition table |
+
 **Try it yourself** — click events to trigger transitions and observe which events are valid in each state:
 
 <StateMachineViz />

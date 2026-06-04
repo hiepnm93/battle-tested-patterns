@@ -31,7 +31,7 @@ difficulty: "intermediate"
     0  1  2  3  4  5  6  7  8  9 10 11
 
   add("apple")  → set bits 2, 5, 9
-  test("apple") → all set       → "maybe yes"
+  test("apple") → all set     → "maybe yes"
   test("grape") → bit 7 not set → "definitely no"
 ```
 

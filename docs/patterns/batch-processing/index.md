@@ -36,6 +36,13 @@ flowchart LR
     end
 ```
 
+| Property | Value |
+|----------|-------|
+| Throughput | Amortizes per-item overhead — N items at near-1-item cost |
+| Latency | Increased per-item (waits for batch to fill or timer to fire) |
+| Flush triggers | Size threshold, time deadline, or explicit flush |
+| Memory | O(batch size) — bounded buffer for pending items |
+
 **Try it yourself** — add items and watch them batch up, then flush together:
 
 <BatchProcessingViz />

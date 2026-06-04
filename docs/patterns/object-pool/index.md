@@ -38,6 +38,13 @@ sequenceDiagram
 
 The pool acts as a cache of allocated objects. The key trade-off: memory usage (idle objects sitting in the pool) vs. CPU/GC savings (no allocation on the hot path).
 
+| Property | Value |
+|----------|-------|
+| Get (pool has idle) | O(1) — return existing object |
+| Get (pool empty) | O(alloc) — create new object |
+| Put (return) | O(1) — push to free list + reset |
+| Memory | O(pool size) — idle objects held in reserve |
+
 **Try it yourself** — acquire connections from the pool and watch what happens when it's exhausted:
 
 <ObjectPoolViz />

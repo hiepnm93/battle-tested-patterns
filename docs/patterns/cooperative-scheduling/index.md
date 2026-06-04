@@ -40,6 +40,13 @@ sequenceDiagram
 
 The pattern: run a loop, check a deadline after each unit of work, and `yield` if time is up.
 
+| Property | Value |
+|----------|-------|
+| Scheduling model | Non-preemptive — tasks must yield voluntarily |
+| Yield check | O(1) — compare current time to deadline |
+| Starvation risk | One task that never yields blocks everything |
+| Typical chunk budget | 5–16 ms (one frame at 60 fps) |
+
 **Try it yourself** — start tasks and watch cooperative round-robin scheduling with yielding:
 
 <CooperativeSchedulingViz />

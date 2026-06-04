@@ -35,6 +35,13 @@ flowchart LR
 
 React's reconciler uses this to determine which DOM nodes to create, update, or remove. Git uses it to show what changed between commits.
 
+| Property | Value |
+|----------|-------|
+| Diff (Myers') | O(n·d) where d = edit distance; O(n) when similar |
+| Diff (list with keys) | O(n) — key-based matching avoids quadratic search |
+| Patch apply | O(patch size) — each operation is O(1) |
+| Space | O(n) — for the edit script / patch |
+
 **Try it yourself** — edit old and new text, then compute and apply the diff:
 
 <DiffPatchViz />

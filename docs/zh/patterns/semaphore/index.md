@@ -25,14 +25,22 @@ difficulty: "beginner"
 sequenceDiagram
     participant T1 as 任务 1
     participant S as 信号量 (max=2)
+    participant T2 as 任务 2
     participant T3 as 任务 3
 
-    T1->>S: acquire (2→1)
-    Note over S: 任务 2 也 acquire (1→0)
-    T3->>S: acquire (阻塞)
-    T1->>S: release (0→1)
-    S->>T3: 解除阻塞 (1→0)
+    T1->>S: acquire (计数: 2→1)
+    T2->>S: acquire (计数: 1→0)
+    T3->>S: acquire (阻塞 — 计数=0)
+    T1->>S: release (计数: 0→1)
+    S->>T3: 解除阻塞 (计数: 1→0)
 ```
+
+| 属性 | 值 |
+|------|------|
+| acquire | O(1) 如有许可；计数为 0 时阻塞 |
+| release | O(1) — 递增计数器，唤醒一个等待者 |
+| 公平性 | 取决于实现（FIFO 或任意） |
+| 空间 | O(1) 用于计数器 + O(等待者数) 用于阻塞任务 |
 
 **动手试试** — 获取许可证，观察信号量满时工作线程如何排队等待：
 

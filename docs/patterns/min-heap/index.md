@@ -38,6 +38,13 @@ Two operations maintain the invariant:
 
 Array layout: `[1, 3, 2, 7, 5, 4, 6]` — the tree above stored flat.
 
+| Property | Value |
+|----------|-------|
+| peek (get min) | O(1) — always at index 0 |
+| push (insert) | O(log n) — sift up from bottom |
+| pop (extract min) | O(log n) — swap root with last, sift down |
+| Space | O(n) — flat array, no pointers |
+
 **Try it yourself** — insert values and extract the minimum to see sift-up and sift-down in action:
 
 <MinHeapViz />

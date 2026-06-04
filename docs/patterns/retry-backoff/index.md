@@ -37,6 +37,13 @@ Instead of retrying immediately (which overloads the failing service) or giving 
 
 The formula: `delay = min(base * 2^attempt + random(0, jitter), maxDelay)`
 
+| Property | Value |
+|----------|-------|
+| Delay growth | Exponential — doubles each attempt |
+| Max delay | Capped (typically 30–60 s) to bound worst-case wait |
+| Jitter | Randomized to prevent thundering herd |
+| Total attempts | Bounded (typically 3–10) to avoid infinite loops |
+
 **Try it yourself** — send a request and watch exponential backoff with jitter in action:
 
 <RetryBackoffViz />

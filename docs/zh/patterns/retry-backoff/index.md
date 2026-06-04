@@ -35,6 +35,13 @@ difficulty: "beginner"
   + jitter: randomize within each bar to avoid thundering herd
 ```
 
+| 属性 | 值 |
+|------|------|
+| 延迟增长 | 指数级 — 每次尝试翻倍 |
+| 最大延迟 | 有上限（通常 30–60 秒）以限制最坏情况等待 |
+| 抖动 | 随机化以防止惊群效应 |
+| 总尝试次数 | 有限（通常 3–10 次）以避免无限循环 |
+
 **动手试试** — 发送请求，观察指数退避与抖动的实际效果：
 
 <RetryBackoffViz />

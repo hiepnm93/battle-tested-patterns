@@ -36,6 +36,13 @@ A ring buffer uses a fixed array with two pointers — `head` (next read positio
 
 The wrap-around `index % capacity` is what makes it "ring" — it never runs out of space in the array, it just overwrites old data (or blocks, depending on the implementation).
 
+| Property | Value |
+|----------|-------|
+| enqueue / write | O(1) — write at tail, advance pointer |
+| dequeue / read | O(1) — read at head, advance pointer |
+| Space | O(capacity) — fixed, pre-allocated |
+| Overflow policy | Block (bounded queue) or overwrite oldest (log buffer) |
+
 **Try it yourself** — enqueue and dequeue items to see how head/tail pointers wrap around:
 
 <RingBufferViz />

@@ -35,6 +35,13 @@ sequenceDiagram
     S->>T3: unblock (count: 1→0)
 ```
 
+| Property | Value |
+|----------|-------|
+| acquire | O(1) if permits available; blocks if count = 0 |
+| release | O(1) — increment counter, wake one waiter |
+| Fairness | Implementation-dependent (FIFO or arbitrary) |
+| Space | O(1) for counter + O(waiters) for blocked tasks |
+
 **Try it yourself** — acquire permits and watch workers queue when the semaphore is full:
 
 <SemaphoreViz />

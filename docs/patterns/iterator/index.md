@@ -28,6 +28,13 @@ flowchart LR
 
 No intermediate arrays are created. Each element flows through the entire chain before the next one starts. `take(3)` stops after 3 results — elements 6-10 are never touched.
 
+| Property | Value |
+|----------|-------|
+| next() | O(1) per element — one step through the pipeline |
+| Memory | O(1) — no intermediate collections, one element at a time |
+| Short-circuit | `take(k)` stops early — only k elements are processed |
+| Composability | Chain map/filter/fold without allocating intermediate arrays |
+
 **Try it yourself** — step through array and tree iterators, watching elements get visited one at a time:
 
 <IteratorViz />

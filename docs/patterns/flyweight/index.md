@@ -33,6 +33,13 @@ flowchart LR
 
 Two requests for `"hello"` get the **same object** — not a copy. This is why `"hello" === "hello"` in many languages (string interning).
 
+| Property | Value |
+|----------|-------|
+| Lookup/intern | O(1) amortized — hash table lookup |
+| Memory savings | O(unique) instead of O(total) instances |
+| Equality check | O(1) — pointer comparison instead of value comparison |
+| Trade-off | Pool memory + lookup cost vs. per-object allocation cost |
+
 **Try it yourself** — add characters and see how flyweight objects are shared:
 
 <FlyweightViz />
