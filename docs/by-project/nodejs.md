@@ -20,6 +20,46 @@ Node.js, Redux, and XState demonstrate event-driven and state management pattern
 | [Event Loop](/patterns/event-loop/) | Node.js (libuv) | [`deps/uv/src/unix/core.c`](https://github.com/nodejs/node/blob/main/deps/uv/src/unix/core.c) | `uv_run()` — single-threaded I/O multiplexing via epoll/kqueue |
 | [Middleware Chain](/patterns/middleware-chain/) | Koa.js | [`koa-compose`](https://github.com/koajs/compose/blob/master/index.js) | Compose middleware into an onion-model pipeline with `async/await` |
 
+## How They Compose: An HTTP Request
+
+When an Express/Koa server handles a request, patterns compose from the network layer through to the response:
+
+```text
+Incoming HTTP request
+  │
+  ▼
+┌───────────────────────────────────────────────────┐
+│ 1. EVENT LOOP — libuv's uv_run() picks up the     │
+│    socket event from epoll/kqueue. The request is  │
+│    dispatched to the JS callback on the main       │
+│    thread. No threads blocked.                     │
+├───────────────────────────────────────────────────┤
+│ 2. RATE LIMITER — express-rate-limit checks the    │
+│    token bucket. If the client exceeded their       │
+│    quota, respond 429 immediately.                 │
+├───────────────────────────────────────────────────┤
+│ 3. MIDDLEWARE CHAIN — Koa-compose runs middleware   │
+│    in onion order: auth → validate → handler →     │
+│    log. Each calls next() to proceed or short-      │
+│    circuits on error.                              │
+├───────────────────────────────────────────────────┤
+│ 4. OBSERVER — the handler emits events (e.g.,      │
+│    'userCreated'). EventEmitter notifies all        │
+│    subscribers: cache invalidation, audit log,     │
+│    notification service — all decoupled.            │
+├───────────────────────────────────────────────────┤
+│ 5. BACKPRESSURE — if the response streams a large  │
+│    file, the Writable stream applies highWaterMark.│
+│    When the client reads slowly, the 'drain' event │
+│    pauses the producer to prevent memory blowup.   │
+└───────────────────────────────────────────────────┘
+  │
+  ▼
+ Response sent to client
+```
+
+The event loop is the foundation: everything runs on a single thread, and I/O never blocks. This is why Node.js can handle thousands of concurrent connections — each request uses patterns (middleware, observers, backpressure) rather than spawning threads.
+
 ## Further Reading
 
 - [Node.js (GitHub)](https://github.com/nodejs/node) · [Redux (GitHub)](https://github.com/reduxjs/redux) · [XState (GitHub)](https://github.com/statelyai/xstate)

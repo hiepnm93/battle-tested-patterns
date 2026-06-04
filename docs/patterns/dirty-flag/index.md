@@ -53,7 +53,7 @@ The dirty flag pattern avoids redundant computation by tracking whether derived 
 
 | Project | Source | Usage |
 |---------|--------|-------|
-| Chromium/Blink | [layout_object.h (NeedsLayout)](https://github.com/nicedoc/chromium/blob/main/third_party/blink/renderer/core/layout/layout_object.h#L900-L950) | `NeedsLayout()` returns whether the layout object's geometry is dirty. When CSS properties change, `SetNeedsLayout()` marks the node and ancestors dirty. Layout computation only happens during the next layout pass -- not on every style change. This batches hundreds of DOM mutations into a single layout computation. |
+| Chromium/Blink | [layout_object.h (NeedsLayout)](https://github.com/chromium/chromium/blob/main/third_party/blink/renderer/core/layout/layout_object.h) | `NeedsLayout()` returns whether the layout object's geometry is dirty. When CSS properties change, `SetNeedsLayout()` marks the node and ancestors dirty. Layout computation only happens during the next layout pass -- not on every style change. This batches hundreds of DOM mutations into a single layout computation. |
 | React | [ReactFiberFlags.js#L18-L22](https://github.com/facebook/react/blob/main/packages/react-reconciler/src/ReactFiberFlags.js#L18-L22) | Fiber flags like `Placement`, `Update`, `Deletion` are dirty flags on fiber nodes. When state changes, fibers are marked with flags. The commit phase only processes fibers with non-zero flags, skipping unchanged subtrees entirely. |
 
 ## Implementation
@@ -243,7 +243,7 @@ Run exercises: `pnpm test` (TypeScript) · `cargo test` (Rust) · `go test ./...
 ## More Production Uses
 
 - [Unity Engine](https://github.com/Unity-Technologies/UnityCsReference) -- `Transform.hasChanged` flag defers world matrix recomputation
-- [Qt Framework](https://github.com/nicedoc/nicedoc.io) -- `QWidget::update()` marks regions dirty; painting happens in the next event loop iteration
+- Qt Framework — `QWidget::update()` marks regions dirty; painting happens in the next event loop iteration
 - [Make](https://www.gnu.org/software/make/) -- file modification times as dirty flags; only rebuild targets newer than sources
 - [Excel/Google Sheets](https://support.google.com) -- cell dependency graph with dirty propagation; only recalculates changed subgraph
 
