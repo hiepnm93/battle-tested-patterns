@@ -28,6 +28,11 @@ impl StateMachine {
         &self.current
     }
 
+    pub fn can(&self, event: &str) -> bool {
+        let key = (self.current.clone(), event.to_string());
+        self.transitions.contains_key(&key)
+    }
+
     pub fn state(&self) -> &str {
         &self.current
     }

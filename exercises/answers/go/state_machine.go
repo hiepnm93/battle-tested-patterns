@@ -26,4 +26,9 @@ func (sm *StateMachine) Send(event string) string {
 	return sm.current
 }
 
+func (sm *StateMachine) Can(event string) bool {
+	_, ok := sm.transitions[sm.current][event]
+	return ok
+}
+
 func (sm *StateMachine) State() string { return sm.current }

@@ -32,6 +32,11 @@ impl StateMachine {
         }
     }
 
+    pub fn can(&self, event: &str) -> bool {
+        let key = (self.current.clone(), event.to_string());
+        self.transitions.contains_key(&key)
+    }
+
     pub fn current(&self) -> &State {
         &self.current
     }
@@ -72,5 +77,12 @@ mod tests {
         sm.send("reject").unwrap();
         sm.send("resubmit").unwrap();
         assert_eq!(sm.current(), &State::Pending);
+    }
+
+    #[test]
+    fn test_can() {
+        let sm = approval_machine();
+        assert!(sm.can("submit"));
+        assert!(!sm.can("approve"));
     }
 }

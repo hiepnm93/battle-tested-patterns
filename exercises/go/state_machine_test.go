@@ -39,6 +39,15 @@ func (sm *StateMachine) Send(event string) error {
 	return errors.New("invalid transition")
 }
 
+func (sm *StateMachine) Can(event string) bool {
+	for _, t := range sm.transitions {
+		if t.from == sm.current && t.event == event {
+			return true
+		}
+	}
+	return false
+}
+
 func (sm *StateMachine) Current() SMState { return sm.current }
 
 func newApprovalMachine() *StateMachine {
@@ -82,5 +91,15 @@ func TestStateMachineResubmit(t *testing.T) {
 	}
 	if sm.Current() != Pending {
 		t.Errorf("expected Pending after resubmit, got %s", sm.Current())
+	}
+}
+
+func TestStateMachineCan(t *testing.T) {
+	sm := newApprovalMachine()
+	if !sm.Can("submit") {
+		t.Error("should be able to submit from idle")
+	}
+	if sm.Can("approve") {
+		t.Error("should not be able to approve from idle")
 	}
 }

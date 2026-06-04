@@ -57,3 +57,13 @@ def test_empty_dequeue():
     rb = RingBuffer(4)
     assert len(rb) == 0
     assert rb.dequeue() is None
+
+def test_full_cycle():
+    rb = RingBuffer(4)
+    for cycle in range(10):
+        for i in range(4):
+            assert rb.enqueue(cycle * 4 + i)
+        assert rb.is_full()
+        for i in range(4):
+            assert rb.dequeue() == cycle * 4 + i
+        assert len(rb) == 0

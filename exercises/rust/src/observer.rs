@@ -21,6 +21,12 @@ impl EventBus {
         self.listeners.entry(event.to_string()).or_default().push(listener_id);
     }
 
+    pub fn unsubscribe(&mut self, event: &str, listener_id: usize) {
+        if let Some(ids) = self.listeners.get_mut(event) {
+            ids.retain(|&id| id != listener_id);
+        }
+    }
+
     pub fn publish(&mut self, event: &str) {
         if let Some(ids) = self.listeners.get(event).cloned() {
             for id in ids {
@@ -67,5 +73,17 @@ mod tests {
         bus.subscribe("click", id);
         bus.publish("scroll");
         assert!(bus.events_for(id).is_empty());
+    }
+
+    #[test]
+    fn test_unsubscribe() {
+        let mut bus = EventBus::new();
+        let id = bus.add_listener();
+        bus.subscribe("click", id);
+        bus.publish("click");
+        assert_eq!(bus.events_for(id).len(), 1);
+        bus.unsubscribe("click", id);
+        bus.publish("click");
+        assert_eq!(bus.events_for(id).len(), 1);
     }
 }

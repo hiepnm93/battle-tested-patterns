@@ -18,6 +18,16 @@ func (eb *EventBus) Subscribe(event string, obs Observer) {
 	eb.listeners[event] = append(eb.listeners[event], obs)
 }
 
+func (eb *EventBus) Unsubscribe(event string, obs Observer) {
+	subs := eb.listeners[event]
+	for i, o := range subs {
+		if o == obs {
+			eb.listeners[event] = append(subs[:i], subs[i+1:]...)
+			return
+		}
+	}
+}
+
 func (eb *EventBus) Publish(event string) {
 	for _, obs := range eb.listeners[event] {
 		obs.Update(event)
@@ -65,5 +75,20 @@ func TestObserverNoFalseNotifications(t *testing.T) {
 
 	if len(r.events) != 0 {
 		t.Error("should not receive events for unsubscribed topics")
+	}
+}
+
+func TestObserverUnsubscribe(t *testing.T) {
+	bus := NewEventBus()
+	r := &recorder{}
+	bus.Subscribe("click", r)
+	bus.Publish("click")
+	if len(r.events) != 1 {
+		t.Fatalf("expected 1 event, got %d", len(r.events))
+	}
+	bus.Unsubscribe("click", r)
+	bus.Publish("click")
+	if len(r.events) != 1 {
+		t.Errorf("expected 1 event after unsubscribe, got %d", len(r.events))
 	}
 }

@@ -80,3 +80,26 @@ func TestRingBufferEmpty(t *testing.T) {
 		t.Error("dequeue on empty should fail")
 	}
 }
+
+func TestRingBufferFullCycle(t *testing.T) {
+	rb := NewRingBuffer[int](4)
+	for cycle := 0; cycle < 10; cycle++ {
+		for i := 0; i < 4; i++ {
+			if !rb.Enqueue(cycle*4 + i) {
+				t.Fatalf("cycle %d: enqueue %d failed", cycle, i)
+			}
+		}
+		if !rb.IsFull() {
+			t.Fatalf("cycle %d: should be full", cycle)
+		}
+		for i := 0; i < 4; i++ {
+			got, ok := rb.Dequeue()
+			if !ok || got != cycle*4+i {
+				t.Fatalf("cycle %d: dequeue got %d, want %d", cycle, got, cycle*4+i)
+			}
+		}
+		if rb.Len() != 0 {
+			t.Fatalf("cycle %d: should be empty", cycle)
+		}
+	}
+}
