@@ -65,6 +65,7 @@ difficulty: "beginner"
 ::: code-group
 
 ```typescript [TypeScript]
+// Define flags as powers of 2
 const Flags = {
   Read:    1 << 0,  // 0b0001
   Write:   1 << 1,  // 0b0010
@@ -89,13 +90,14 @@ const clearFlag = (set: FlagSet, flag: number): FlagSet =>
 const toggleFlag = (set: FlagSet, flag: number): FlagSet =>
   set ^ flag;
 
-// 用法：组合多个标志
+// Usage: combine multiple flags
 const editorPerms = Flags.Read | Flags.Write;
 hasFlag(editorPerms, Flags.Read);    // true
 hasFlag(editorPerms, Flags.Delete);  // false
 ```
 
 ```rust [Rust]
+// Idiomatic Rust: typed constants, bitwise ops on u32
 pub const READ:    u32 = 1 << 0;
 pub const WRITE:   u32 = 1 << 1;
 pub const EXECUTE: u32 = 1 << 2;
@@ -121,12 +123,14 @@ pub fn toggle_flag(flags: u32, flag: u32) -> u32 {
     flags ^ flag
 }
 
+// Usage
 let editor = READ | WRITE;
-assert!(has_flag(editor, READ));
-assert!(!has_flag(editor, DELETE));
+assert!(has_flag(editor, READ));     // true
+assert!(!has_flag(editor, DELETE));  // false
 ```
 
 ```go [Go]
+// Idiomatic Go: typed constants with iota
 type Permission uint32
 
 const (
@@ -149,16 +153,21 @@ func SetFlag(flags, flag Permission) Permission {
 }
 
 func ClearFlag(flags, flag Permission) Permission {
-    return flags &^ flag // Go 的 AND NOT 运算符
+    return flags &^ flag // Go's AND NOT operator
 }
 
+func ToggleFlag(flags, flag Permission) Permission {
+    return flags ^ flag
+}
+
+// Usage
 editor := Read | Write
 HasFlag(editor, Read)    // true
 HasFlag(editor, Delete)  // false
 ```
 
 ```python [Python]
-# Python: 原生位运算，整数无大小限制
+# Python: native bitwise operators, no size limit on integers
 READ    = 1 << 0  # 0b0001
 WRITE   = 1 << 1  # 0b0010
 EXECUTE = 1 << 2  # 0b0100
@@ -179,7 +188,7 @@ def clear_flag(flags: int, flag: int) -> int:
 def toggle_flag(flags: int, flag: int) -> int:
     return flags ^ flag
 
-# 用法
+# Usage
 editor = READ | WRITE
 assert has_flag(editor, READ)       # True
 assert not has_flag(editor, DELETE)  # True

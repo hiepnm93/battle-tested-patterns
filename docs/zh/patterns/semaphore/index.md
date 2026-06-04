@@ -53,24 +53,38 @@ sequenceDiagram
 class Semaphore {
   private queue: (() => void)[] = [];
   private count: number;
-  constructor(max: number) { this.count = max; }
+
+  constructor(private max: number) {
+    this.count = max;
+  }
+
   async acquire(): Promise<void> {
-    if (this.count > 0) { this.count--; return; }
+    if (this.count > 0) {
+      this.count--;
+      return;
+    }
     return new Promise<void>((resolve) => this.queue.push(resolve));
   }
+
   release(): void {
     const next = this.queue.shift();
-    if (next) next(); else this.count++;
+    if (next) {
+      next();
+    } else {
+      this.count++;
+    }
+  }
+
+  get available(): number {
+    return this.count;
   }
 }
-```
 
-```python [Python]
-import asyncio
-sem = asyncio.Semaphore(5)
-async def limited_work():
-    async with sem:
-        await do_work()
+async function withSemaphore<T>(sem: Semaphore, fn: () => Promise<T>): Promise<T> {
+  await sem.acquire();
+  try { return await fn(); }
+  finally { sem.release(); }
+}
 ```
 
 ```go [Go]
@@ -92,6 +106,17 @@ func processWithLimit(items []string, maxConcurrent int) {
 	}
 	wg.Wait()
 }
+```
+
+```python [Python]
+import asyncio
+
+async def fetch_with_limit(urls: list[str], max_concurrent: int = 5):
+    sem = asyncio.Semaphore(max_concurrent)
+    async def fetch_one(url: str):
+        async with sem:  # acquire + release via context manager
+            return await do_fetch(url)
+    return await asyncio.gather(*(fetch_one(u) for u in urls))
 ```
 
 ```rust [Rust]

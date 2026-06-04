@@ -44,30 +44,46 @@ flowchart LR
 ```typescript [TypeScript]
 class Iter<T> {
   constructor(private source: () => Generator<T>) {}
+
   static from<T>(items: T[]): Iter<T> {
     return new Iter(function* () { yield* items; });
   }
+
   map<U>(fn: (x: T) => U): Iter<U> {
-    const s = this.source;
-    return new Iter(function* () { for (const i of s()) yield fn(i); });
+    const source = this.source;
+    return new Iter(function* () {
+      for (const item of source()) yield fn(item);
+    });
   }
+
   filter(pred: (x: T) => boolean): Iter<T> {
-    const s = this.source;
-    return new Iter(function* () { for (const i of s()) if (pred(i)) yield i; });
+    const source = this.source;
+    return new Iter(function* () {
+      for (const item of source()) if (pred(item)) yield item;
+    });
   }
-  collect(): T[] { return [...this.source()]; }
+
+  take(n: number): Iter<T> {
+    const source = this.source;
+    return new Iter(function* () {
+      let i = 0;
+      for (const item of source()) {
+        if (i++ >= n) break;
+        yield item;
+      }
+    });
+  }
+
+  collect(): T[] {
+    return [...this.source()];
+  }
+
+  fold<U>(init: U, fn: (acc: U, x: T) => U): U {
+    let acc = init;
+    for (const item of this.source()) acc = fn(acc, item);
+    return acc;
+  }
 }
-```
-
-```python [Python]
-def fibonacci():
-    a, b = 0, 1
-    while True:
-        yield a
-        a, b = b, a + b
-
-evens = (x for x in fibonacci() if x % 2 == 0)
-first_10 = [next(evens) for _ in range(10)]
 ```
 
 ```rust [Rust]
@@ -81,8 +97,21 @@ fn example() {
 }
 ```
 
+```python [Python]
+# Python generators are native lazy iterators
+def fibonacci():
+    a, b = 0, 1
+    while True:
+        yield a
+        a, b = b, a + b
+
+# Take first 10 even Fibonacci numbers — lazy, infinite-safe
+evens = (x for x in fibonacci() if x % 2 == 0)
+first_10 = [next(evens) for _ in range(10)]
+```
+
 ```go [Go]
-// Go 1.23+ iter.Seq 实现惰性迭代
+// Go 1.23+ iter.Seq for lazy iteration
 package iterator
 
 import "iter"
@@ -127,7 +156,7 @@ func Collect[T any](seq iter.Seq[T]) []T {
 	return out
 }
 
-// 用法：惰性管道 — 只处理 5 个元素就找到 3 个奇数
+// Usage: lazy pipeline — only processes 5 elements to find 3 odd ones
 // source := slices.Values([]int{1,2,3,4,5,6,7,8,9,10})
 // result := Collect(Take(Map(Filter(source, isOdd), times10), 3))
 // → [10, 30, 50]

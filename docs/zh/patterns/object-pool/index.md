@@ -62,51 +62,27 @@ class ObjectPool<T> {
   constructor(factory: () => T, reset: (obj: T) => void, initialSize = 0) {
     this.factory = factory;
     this.reset = reset;
-    for (let i = 0; i < initialSize; i++) this.pool.push(factory());
+    for (let i = 0; i < initialSize; i++) {
+      this.pool.push(factory());
+    }
   }
 
   get(): T {
-    return this.pool.length > 0 ? this.pool.pop()! : this.factory();
+    if (this.pool.length > 0) {
+      return this.pool.pop()!;
+    }
+    return this.factory();
   }
 
   release(obj: T): void {
     this.reset(obj);
     this.pool.push(obj);
   }
+
+  get size(): number {
+    return this.pool.length;
+  }
 }
-```
-
-```go [Go]
-import "sync"
-
-var bufPool = sync.Pool{
-	New: func() any { return make([]byte, 0, 4096) },
-}
-
-func Process(data []byte) []byte {
-	buf := bufPool.Get().([]byte)
-	buf = buf[:0]
-	buf = append(buf, data...)
-	result := make([]byte, len(buf))
-	copy(result, buf)
-	bufPool.Put(buf)
-	return result
-}
-```
-
-```python [Python]
-class ObjectPool:
-    def __init__(self, factory, reset, initial=0):
-        self._factory = factory
-        self._reset = reset
-        self._pool = [factory() for _ in range(initial)]
-
-    def get(self):
-        return self._pool.pop() if self._pool else self._factory()
-
-    def release(self, obj):
-        self._reset(obj)
-        self._pool.append(obj)
 ```
 
 ```rust [Rust]
@@ -130,6 +106,51 @@ impl<T> ObjectPool<T> {
         self.pool.push(obj);
     }
 }
+```
+
+```go [Go]
+package pool
+
+import "sync"
+
+// In production, use sync.Pool directly:
+var bufPool = sync.Pool{
+	New: func() any {
+		return make([]byte, 0, 4096)
+	},
+}
+
+func ProcessRequest(data []byte) []byte {
+	buf := bufPool.Get().([]byte)
+	buf = buf[:0] // reset length, keep capacity
+	buf = append(buf, data...)
+	// ... process ...
+	result := make([]byte, len(buf))
+	copy(result, buf)
+	bufPool.Put(buf) // return to pool
+	return result
+}
+```
+
+```python [Python]
+from typing import TypeVar, Callable, List
+
+T = TypeVar("T")
+
+class ObjectPool:
+    def __init__(self, factory: Callable[[], T], reset: Callable[[T], None], initial: int = 0):
+        self._factory = factory
+        self._reset = reset
+        self._pool: List[T] = [factory() for _ in range(initial)]
+
+    def get(self) -> T:
+        if self._pool:
+            return self._pool.pop()
+        return self._factory()
+
+    def release(self, obj: T) -> None:
+        self._reset(obj)
+        self._pool.append(obj)
 ```
 
 :::

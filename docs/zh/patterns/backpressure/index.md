@@ -83,21 +83,21 @@ class BoundedQueue<T> {
 ```
 
 ```go [Go]
-// Go: 有界 channel 天然提供背压
+// Go: bounded channels provide backpressure natively
 func producer(ch chan<- int) {
 	for i := 0; ; i++ {
-		ch <- i // 满时阻塞
+		ch <- i // blocks when channel is full
 	}
 }
 
 func consumer(ch <-chan int) {
 	for v := range ch {
-		fmt.Println(v) // 按消费者速率处理
+		fmt.Println(v) // process at consumer's pace
 	}
 }
 
 func Run() {
-	ch := make(chan int, 10) // 有界缓冲区，容量 10
+	ch := make(chan int, 10) // bounded buffer of 10
 	go producer(ch)
 	consumer(ch)
 }
@@ -108,15 +108,15 @@ import asyncio
 
 async def producer(queue: asyncio.Queue[int]):
     for i in range(100):
-        await queue.put(i)  # 满时阻塞
+        await queue.put(i)  # blocks when queue is full
 
 async def consumer(queue: asyncio.Queue[int]):
     while True:
-        item = await queue.get()  # 空时阻塞
-        await asyncio.sleep(0.1)  # 模拟慢处理
+        item = await queue.get()  # blocks when queue is empty
+        await asyncio.sleep(0.1)  # simulate slow processing
 
 async def main():
-    queue: asyncio.Queue[int] = asyncio.Queue(maxsize=5)  # 有界
+    queue: asyncio.Queue[int] = asyncio.Queue(maxsize=5)  # bounded
     await asyncio.gather(producer(queue), consumer(queue))
 ```
 

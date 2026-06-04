@@ -49,47 +49,39 @@ stateDiagram-v2
 ::: code-group
 
 ```typescript [TypeScript]
-type StateConfig = Record<string, { on: Record<string, string> }>;
+type StateConfig<S extends string, E extends string> = {
+  [state in S]: {
+    on: Partial<Record<E, S>>;
+  };
+};
 
-class StateMachine {
-  private current: string;
-  constructor(private config: StateConfig, initial: string) {
+class StateMachine<S extends string, E extends string> {
+  private current: S;
+
+  constructor(
+    private config: StateConfig<S, E>,
+    initial: S,
+  ) {
     this.current = initial;
   }
-  get state(): string { return this.current; }
-  send(event: string): string {
-    const next = this.config[this.current]?.on[event];
-    if (next !== undefined) this.current = next;
+
+  get state(): S {
     return this.current;
   }
-  can(event: string): boolean {
-    return this.config[this.current]?.on[event] !== undefined;
+
+  send(event: E): S {
+    const transitions = this.config[this.current].on;
+    const next = transitions[event];
+    if (next !== undefined) {
+      this.current = next;
+    }
+    return this.current;
+  }
+
+  can(event: E): boolean {
+    return this.config[this.current].on[event] !== undefined;
   }
 }
-```
-
-```python [Python]
-class StateMachine:
-    def __init__(self, config, initial):
-        self._config = config
-        self._current = initial
-
-    @property
-    def state(self): return self._current
-
-    def send(self, event):
-        transitions = self._config.get(self._current, {}).get("on", {})
-        if event in transitions:
-            self._current = transitions[event]
-        return self._current
-
-# 用法：交通灯
-light = StateMachine({
-    "green":  {"on": {"TIMER": "yellow"}},
-    "yellow": {"on": {"TIMER": "red"}},
-    "red":    {"on": {"TIMER": "green"}},
-}, initial="green")
-light.send("TIMER")  # "yellow"
 ```
 
 ```rust [Rust]
@@ -157,6 +149,37 @@ func (sm *StateMachine) Send(event string) string {
 }
 
 func (sm *StateMachine) State() string { return sm.current }
+```
+
+```python [Python]
+class StateMachine:
+    def __init__(self, config: dict, initial: str):
+        self._config = config
+        self._current = initial
+
+    @property
+    def state(self) -> str:
+        return self._current
+
+    def send(self, event: str) -> str:
+        transitions = self._config.get(self._current, {}).get("on", {})
+        if event in transitions:
+            self._current = transitions[event]
+        return self._current
+
+    def can(self, event: str) -> bool:
+        return event in self._config.get(self._current, {}).get("on", {})
+
+# Usage
+traffic_light = StateMachine({
+    "green":  {"on": {"TIMER": "yellow"}},
+    "yellow": {"on": {"TIMER": "red"}},
+    "red":    {"on": {"TIMER": "green"}},
+}, initial="green")
+
+traffic_light.send("TIMER")  # "yellow"
+traffic_light.send("TIMER")  # "red"
+traffic_light.send("TIMER")  # "green"
 ```
 
 :::

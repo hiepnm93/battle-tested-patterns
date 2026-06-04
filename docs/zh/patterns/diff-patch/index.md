@@ -60,47 +60,88 @@ type Op<T> =
   | { type: 'insert'; value: T }
   | { type: 'delete'; value: T };
 
-function diff<T>(oldList: T[], newList: T[]): Op<T>[] {
+function diff<T>(oldList: T[], newList: T[], eq: (a: T, b: T) => boolean = (a, b) => a === b): Op<T>[] {
   const ops: Op<T>[] = [];
-  let oi = 0, ni = 0;
-  while (oi < oldList.length && ni < newList.length) {
-    if (oldList[oi] === newList[ni]) {
-      ops.push({ type: 'keep', value: oldList[oi]! }); oi++; ni++;
-    } else if (!newList.slice(ni).includes(oldList[oi]!)) {
-      ops.push({ type: 'delete', value: oldList[oi]! }); oi++;
+  let oldIdx = 0;
+  let newIdx = 0;
+
+  // Build a map of old items by value for O(1) lookup
+  const oldMap = new Map<string, number>();
+  oldList.forEach((item, i) => oldMap.set(String(item), i));
+
+  while (oldIdx < oldList.length && newIdx < newList.length) {
+    if (eq(oldList[oldIdx]!, newList[newIdx]!)) {
+      ops.push({ type: 'keep', value: oldList[oldIdx]! });
+      oldIdx++;
+      newIdx++;
+    } else if (!newList.some((n, ni) => ni >= newIdx && eq(n, oldList[oldIdx]!))) {
+      ops.push({ type: 'delete', value: oldList[oldIdx]! });
+      oldIdx++;
     } else {
-      ops.push({ type: 'insert', value: newList[ni]! }); ni++;
+      ops.push({ type: 'insert', value: newList[newIdx]! });
+      newIdx++;
     }
   }
-  while (oi < oldList.length) { ops.push({ type: 'delete', value: oldList[oi]! }); oi++; }
-  while (ni < newList.length) { ops.push({ type: 'insert', value: newList[ni]! }); ni++; }
+
+  while (oldIdx < oldList.length) {
+    ops.push({ type: 'delete', value: oldList[oldIdx]! });
+    oldIdx++;
+  }
+
+  while (newIdx < newList.length) {
+    ops.push({ type: 'insert', value: newList[newIdx]! });
+    newIdx++;
+  }
+
   return ops;
 }
 
-function patch<T>(ops: Op<T>[]): T[] {
-  return ops.filter(op => op.type !== 'delete').map(op => op.value);
+function patch<T>(oldList: T[], ops: Op<T>[]): T[] {
+  const result: T[] = [];
+  for (const op of ops) {
+    if (op.type === 'keep' || op.type === 'insert') result.push(op.value);
+  }
+  return result;
 }
 ```
 
 ```rust [Rust]
 #[derive(Debug, PartialEq)]
-pub enum Op<T> { Keep(T), Insert(T), Delete(T) }
+pub enum Op<T> {
+    Keep(T),
+    Insert(T),
+    Delete(T),
+}
 
 pub fn diff<T: PartialEq + Clone>(old: &[T], new: &[T]) -> Vec<Op<T>> {
     let mut ops = Vec::new();
     let (mut oi, mut ni) = (0, 0);
+
     while oi < old.len() && ni < new.len() {
         if old[oi] == new[ni] {
-            ops.push(Op::Keep(old[oi].clone())); oi += 1; ni += 1;
+            ops.push(Op::Keep(old[oi].clone()));
+            oi += 1;
+            ni += 1;
         } else if !new[ni..].contains(&old[oi]) {
-            ops.push(Op::Delete(old[oi].clone())); oi += 1;
+            ops.push(Op::Delete(old[oi].clone()));
+            oi += 1;
         } else {
-            ops.push(Op::Insert(new[ni].clone())); ni += 1;
+            ops.push(Op::Insert(new[ni].clone()));
+            ni += 1;
         }
     }
+
     while oi < old.len() { ops.push(Op::Delete(old[oi].clone())); oi += 1; }
     while ni < new.len() { ops.push(Op::Insert(new[ni].clone())); ni += 1; }
+
     ops
+}
+
+pub fn patch<T: Clone>(ops: &[Op<T>]) -> Vec<T> {
+    ops.iter().filter_map(|op| match op {
+        Op::Keep(v) | Op::Insert(v) => Some(v.clone()),
+        Op::Delete(_) => None,
+    }).collect()
 }
 ```
 

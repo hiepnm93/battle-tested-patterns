@@ -57,29 +57,38 @@ interface HeapNode {
   id: number;
 }
 
-class MinHeap {
-  private heap: HeapNode[] = [];
+class MinHeap<T extends HeapNode> {
+  private heap: T[] = [];
 
-  peek(): HeapNode | null { return this.heap[0] ?? null; }
+  peek(): T | null {
+    return this.heap[0] ?? null;
+  }
 
-  push(node: HeapNode): void {
+  push(node: T): void {
     this.heap.push(node);
     this.siftUp(this.heap.length - 1);
   }
 
-  pop(): HeapNode | null {
+  pop(): T | null {
     if (this.heap.length === 0) return null;
     const first = this.heap[0]!;
     const last = this.heap.pop()!;
-    if (this.heap.length > 0) { this.heap[0] = last; this.siftDown(0); }
+    if (this.heap.length > 0) {
+      this.heap[0] = last;
+      this.siftDown(0);
+    }
     return first;
+  }
+
+  get size(): number {
+    return this.heap.length;
   }
 
   private siftUp(i: number): void {
     while (i > 0) {
       const parent = (i - 1) >>> 1;
-      if (this.heap[i]!.sortIndex < this.heap[parent]!.sortIndex) {
-        [this.heap[i], this.heap[parent]] = [this.heap[parent]!, this.heap[i]!];
+      if (this.compare(this.heap[i]!, this.heap[parent]!) < 0) {
+        this.swap(i, parent);
         i = parent;
       } else break;
     }
@@ -87,16 +96,27 @@ class MinHeap {
 
   private siftDown(i: number): void {
     const len = this.heap.length;
-    while (true) {
+    const half = len >>> 1;
+    while (i < half) {
       let smallest = i;
-      const left = 2 * i + 1, right = 2 * i + 2;
-      if (left < len && this.heap[left]!.sortIndex < this.heap[smallest]!.sortIndex) smallest = left;
-      if (right < len && this.heap[right]!.sortIndex < this.heap[smallest]!.sortIndex) smallest = right;
+      const left = 2 * i + 1;
+      const right = 2 * i + 2;
+      if (left < len && this.compare(this.heap[left]!, this.heap[smallest]!) < 0) smallest = left;
+      if (right < len && this.compare(this.heap[right]!, this.heap[smallest]!) < 0) smallest = right;
       if (smallest !== i) {
-        [this.heap[i], this.heap[smallest]] = [this.heap[smallest]!, this.heap[i]!];
+        this.swap(i, smallest);
         i = smallest;
       } else break;
     }
+  }
+
+  private compare(a: T, b: T): number {
+    const diff = a.sortIndex - b.sortIndex;
+    return diff !== 0 ? diff : a.id - b.id;
+  }
+
+  private swap(i: number, j: number): void {
+    [this.heap[i], this.heap[j]] = [this.heap[j]!, this.heap[i]!];
   }
 }
 ```
@@ -108,6 +128,7 @@ pub struct MinHeap<T: Ord> {
 
 impl<T: Ord> MinHeap<T> {
     pub fn new() -> Self { MinHeap { data: Vec::new() } }
+
     pub fn peek(&self) -> Option<&T> { self.data.first() }
 
     pub fn push(&mut self, val: T) {
@@ -124,28 +145,80 @@ impl<T: Ord> MinHeap<T> {
         val
     }
 
-    // sift_up / sift_down 省略，参见完整实现
+    fn sift_up(&mut self, mut i: usize) {
+        while i > 0 {
+            let parent = (i - 1) / 2;
+            if self.data[i] < self.data[parent] {
+                self.data.swap(i, parent);
+                i = parent;
+            } else { break; }
+        }
+    }
+
+    fn sift_down(&mut self, mut i: usize) {
+        let len = self.data.len();
+        loop {
+            let (left, right) = (2 * i + 1, 2 * i + 2);
+            let mut smallest = i;
+            if left < len && self.data[left] < self.data[smallest] { smallest = left; }
+            if right < len && self.data[right] < self.data[smallest] { smallest = right; }
+            if smallest != i { self.data.swap(i, smallest); i = smallest; }
+            else { break; }
+        }
+    }
 }
 ```
 
 ```go [Go]
-type MinHeap struct {
-	data []int
+type HeapNode struct {
+	SortIndex int
+	ID        int
 }
 
-func (h *MinHeap) Push(val int) {
-	h.data = append(h.data, val)
+type MinHeap struct {
+	data []HeapNode
+}
+
+func (h *MinHeap) Peek() (HeapNode, bool) {
+	if len(h.data) == 0 { return HeapNode{}, false }
+	return h.data[0], true
+}
+
+func (h *MinHeap) Push(node HeapNode) {
+	h.data = append(h.data, node)
 	h.siftUp(len(h.data) - 1)
 }
 
-func (h *MinHeap) Pop() (int, bool) {
-	if len(h.data) == 0 { return 0, false }
+func (h *MinHeap) Pop() (HeapNode, bool) {
+	if len(h.data) == 0 { return HeapNode{}, false }
 	val := h.data[0]
 	last := len(h.data) - 1
 	h.data[0] = h.data[last]
 	h.data = h.data[:last]
 	if len(h.data) > 0 { h.siftDown(0) }
 	return val, true
+}
+
+func (h *MinHeap) siftUp(i int) {
+	for i > 0 {
+		parent := (i - 1) / 2
+		if h.less(i, parent) { h.data[i], h.data[parent] = h.data[parent], h.data[i]; i = parent } else { break }
+	}
+}
+
+func (h *MinHeap) siftDown(i int) {
+	n := len(h.data)
+	for {
+		left, right, smallest := 2*i+1, 2*i+2, i
+		if left < n && h.less(left, smallest) { smallest = left }
+		if right < n && h.less(right, smallest) { smallest = right }
+		if smallest != i { h.data[i], h.data[smallest] = h.data[smallest], h.data[i]; i = smallest } else { break }
+	}
+}
+
+func (h *MinHeap) less(i, j int) bool {
+	if h.data[i].SortIndex != h.data[j].SortIndex { return h.data[i].SortIndex < h.data[j].SortIndex }
+	return h.data[i].ID < h.data[j].ID
 }
 ```
 

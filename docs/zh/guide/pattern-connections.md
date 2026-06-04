@@ -92,37 +92,37 @@ Copy-on-Write    → slice append 容量不足时才复制
 
 | 模式 | React | Redis | Go Runtime | Linux | PostgreSQL | Kafka |
 |------|:-----:|:-----:|:----------:|:-----:|:----------:|:-----:|
-| **Bitmask** | ✅ | | ✅ | ✅ | | |
-| **Min Heap** | ✅ | | ✅ | ✅ | | |
-| **Cooperative Scheduling** | ✅ | | ✅ | | | |
-| **Diff / Patch** | ✅ | | | | | |
-| **Double Buffering** | ✅ | | | | | |
-| **Batch Processing** | ✅ | ✅ | | ✅ | | ✅ |
-| **Dirty Flag** | ✅ | | | | | |
-| **Observer** | ✅ | | | | | |
-| **Skip List** | | ✅ | | | | |
-| **LRU Cache** | | ✅ | ✅ | | ✅ | |
-| **Trie** | | ✅ | | ✅ | | |
-| **Bloom Filter** | | ✅ | | | ✅ | |
-| **Work Stealing** | | | ✅ | | | |
-| **Free List** | | | ✅ | ✅ | | |
-| **Semaphore** | | | ✅ | ✅ | | |
-| **Object Pool** | | | ✅ | | | |
-| **Rate Limiter** | | | ✅ | ✅ | | |
-| **Arena Allocator** | | | ✅ | | | |
-| **State Machine** | | | | ✅ | | |
-| **Ring Buffer** | | | | ✅ | | ✅ |
-| **Backpressure** | | | | ✅ | | ✅ |
-| **Vtable** | | | | ✅ | | |
-| **Reference Counting** | | | | ✅ | | |
-| **Copy-on-Write** | | ✅ | ✅ | ✅ | | |
-| **Tombstone** | | ✅ | | | | ✅ |
-| **MVCC** | | | | | ✅ | |
-| **Write-Ahead Log** | | | | | ✅ | ✅ |
-| **B+ Tree** | | | | ✅ | ✅ | |
-| **Checkpointing** | | | | | ✅ | |
-| **Event Loop** | | ✅ | ✅ | ✅ | | |
-| **Iterator** | ✅ | | ✅ | | | |
-| **Tagged Union** | ✅ | | ✅ | | | |
-| **Retry Backoff** | | | | | | ✅ |
-| **Consistent Hashing** | | | ✅ | | | ✅ |
+| [**Bitmask**](/zh/patterns/bitmask/) | ✅ | | ✅ | ✅ | | |
+| [**Min Heap**](/zh/patterns/min-heap/) | ✅ | | ✅ | ✅ | | |
+| [**Cooperative Scheduling**](/zh/patterns/cooperative-scheduling/) | ✅ | | ✅ | | | |
+| [**Diff / Patch**](/zh/patterns/diff-patch/) | ✅ | | | | | |
+| [**Double Buffering**](/zh/patterns/double-buffering/) | ✅ | | | | | |
+| [**Batch Processing**](/zh/patterns/batch-processing/) | ✅ | ✅ | | ✅ | | ✅ |
+| [**Dirty Flag**](/zh/patterns/dirty-flag/) | ✅ | | | | | |
+| [**Observer**](/zh/patterns/observer/) | ✅ | | | | | |
+| [**Skip List**](/zh/patterns/skip-list/) | | ✅ | | | | |
+| [**LRU Cache**](/zh/patterns/lru-cache/) | | ✅ | ✅ | | ✅ | |
+| [**Trie**](/zh/patterns/trie/) | | ✅ | | ✅ | | |
+| [**Bloom Filter**](/zh/patterns/bloom-filter/) | | ✅ | | | ✅ | |
+| [**Work Stealing**](/zh/patterns/work-stealing/) | | | ✅ | | | |
+| [**Free List**](/zh/patterns/free-list/) | | | ✅ | ✅ | | |
+| [**Semaphore**](/zh/patterns/semaphore/) | | | ✅ | ✅ | | |
+| [**Object Pool**](/zh/patterns/object-pool/) | | | ✅ | | | |
+| [**Rate Limiter**](/zh/patterns/rate-limiter/) | | | ✅ | ✅ | | |
+| [**Arena Allocator**](/zh/patterns/arena-allocator/) | | | ✅ | | | |
+| [**State Machine**](/zh/patterns/state-machine/) | | | | ✅ | | |
+| [**Ring Buffer**](/zh/patterns/ring-buffer/) | | | | ✅ | | ✅ |
+| [**Backpressure**](/zh/patterns/backpressure/) | | | | ✅ | | ✅ |
+| [**Vtable**](/zh/patterns/vtable/) | | | | ✅ | | |
+| [**Reference Counting**](/zh/patterns/reference-counting/) | | | | ✅ | | |
+| [**Copy-on-Write**](/zh/patterns/copy-on-write/) | | ✅ | ✅ | ✅ | | |
+| [**Tombstone**](/zh/patterns/tombstone/) | | ✅ | | | | ✅ |
+| [**MVCC**](/zh/patterns/mvcc/) | | | | | ✅ | |
+| [**Write-Ahead Log**](/zh/patterns/write-ahead-log/) | | | | | ✅ | ✅ |
+| [**B+ Tree**](/zh/patterns/b-plus-tree/) | | | | ✅ | ✅ | |
+| [**Checkpointing**](/zh/patterns/checkpointing/) | | | | | ✅ | |
+| [**Event Loop**](/zh/patterns/event-loop/) | | ✅ | ✅ | ✅ | | |
+| [**Iterator**](/zh/patterns/iterator/) | ✅ | | ✅ | | | |
+| [**Tagged Union**](/zh/patterns/tagged-union/) | ✅ | | ✅ | | | |
+| [**Retry Backoff**](/zh/patterns/retry-backoff/) | | | | | | ✅ |
+| [**Consistent Hashing**](/zh/patterns/consistent-hashing/) | | | ✅ | | | ✅ |

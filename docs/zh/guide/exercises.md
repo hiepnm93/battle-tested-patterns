@@ -1,3 +1,7 @@
+---
+description: "TypeScript、Rust、Go 和 Python 练习的分步设置指南 — 前置要求、测试运行方式和常见问题排查。"
+---
+
 # 练习指南
 
 本项目包含 **4 种语言的练习** — TypeScript、Rust、Go 和 Python。每个模式在每种语言下至少有一个练习文件，内含可运行的实现和 `TODO` 标记供你重写。

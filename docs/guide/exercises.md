@@ -1,3 +1,7 @@
+---
+description: "Step-by-step setup for TypeScript, Rust, Go, and Python exercises — prerequisites, how to run tests, and troubleshooting."
+---
+
 # Exercise Guide
 
 This project includes **exercises in 4 languages** — TypeScript, Rust, Go, and Python. Each pattern has at least one exercise per language with working implementations and `TODO` markers for you to rewrite.

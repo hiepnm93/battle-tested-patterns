@@ -222,34 +222,77 @@ class SkipList:
 ```
 
 ```rust [Rust]
+const MAX_LEVEL: usize = 4;
+
+struct SkipNode {
+    key: i64,
+    value: String,
+    forward: Vec<Option<usize>>,
+}
+
 pub struct SkipList {
-    max_level: usize,
+    nodes: Vec<SkipNode>,
+    head: usize,
     level: usize,
-    head_key: i64,
-    keys: Vec<i64>,
-    values: Vec<String>,
+    seed: u64,
 }
 
 impl SkipList {
     pub fn new() -> Self {
-        SkipList { max_level: 16, level: 0, head_key: i64::MIN, keys: Vec::new(), values: Vec::new() }
+        let head = SkipNode { key: i64::MIN, value: String::new(), forward: vec![None; MAX_LEVEL] };
+        SkipList { nodes: vec![head], head: 0, level: 0, seed: 42 }
+    }
+
+    fn random_level(&mut self) -> usize {
+        let mut lvl = 0;
+        while lvl < MAX_LEVEL - 1 {
+            self.seed ^= self.seed << 13;
+            self.seed ^= self.seed >> 7;
+            self.seed ^= self.seed << 17;
+            if self.seed % 2 == 0 { lvl += 1; } else { break; }
+        }
+        lvl
     }
 
     pub fn insert(&mut self, key: i64, value: &str) {
-        match self.keys.binary_search(&key) {
-            Ok(idx) => { self.values[idx] = value.to_string(); }
-            Err(idx) => {
-                self.keys.insert(idx, key);
-                self.values.insert(idx, value.to_string());
+        let mut update = [0usize; MAX_LEVEL];
+        let mut cur = self.head;
+        for i in (0..=self.level).rev() {
+            while let Some(nx) = self.nodes[cur].forward[i] {
+                if self.nodes[nx].key < key { cur = nx; } else { break; }
             }
+            update[i] = cur;
+        }
+        if let Some(nx) = self.nodes[cur].forward[0] {
+            if self.nodes[nx].key == key {
+                self.nodes[nx].value = value.to_string();
+                return;
+            }
+        }
+        let lvl = self.random_level();
+        if lvl > self.level {
+            for i in (self.level + 1)..=lvl { update[i] = self.head; }
+            self.level = lvl;
+        }
+        let idx = self.nodes.len();
+        self.nodes.push(SkipNode { key, value: value.to_string(), forward: vec![None; lvl + 1] });
+        for i in 0..=lvl {
+            self.nodes[idx].forward[i] = self.nodes[update[i]].forward[i];
+            self.nodes[update[i]].forward[i] = Some(idx);
         }
     }
 
     pub fn search(&self, key: i64) -> Option<&str> {
-        match self.keys.binary_search(&key) {
-            Ok(idx) => Some(&self.values[idx]),
-            Err(_) => None,
+        let mut cur = self.head;
+        for i in (0..=self.level).rev() {
+            while let Some(nx) = self.nodes[cur].forward[i] {
+                if self.nodes[nx].key < key { cur = nx; } else { break; }
+            }
         }
+        if let Some(nx) = self.nodes[cur].forward[0] {
+            if self.nodes[nx].key == key { return Some(&self.nodes[nx].value); }
+        }
+        None
     }
 }
 ```

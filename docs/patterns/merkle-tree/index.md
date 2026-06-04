@@ -15,7 +15,7 @@ Hash leaves, then hash pairs upward to a root -- verify any leaf's integrity in 
 
 ## Real-World Analogy
 
-A tamper-evident shipping seal system. Each box has a hash seal. Boxes are grouped into crates with their own seal (hash of box hashes). Crates go into containers. If one item is tampered with, every seal above it changes — and you can find the tampered box by checking just log(n) seals.
+A tamper-evident shipping seal system. Each box gets a unique wax seal. Boxes are grouped into crates, each crate sealed with a stamp derived from all its box seals. Crates go into containers with their own master seal. If one item is swapped, every seal above it breaks — and you can find the tampered box by checking just log(n) seals instead of opening every box.
 
 ## Core Idea
 

@@ -130,8 +130,10 @@ Add `## Challenge Questions` section at the end of the pattern doc:
 
 - [ ] Create `docs/zh/patterns/<pattern-name>/index.md`
 - [ ] Translate structural content (headings, explanations, When to Use)
-- [ ] Keep code blocks identical to English (code is not translated)
-- [ ] Production Proof links are the same in both languages
+- [ ] **Code blocks must be byte-identical to EN** — copy-paste from EN, never re-type or translate
+- [ ] **Code-group tab order must match EN** — e.g. if EN is `[TypeScript] [Rust] [Go] [Python]`, ZH must be the same
+- [ ] Production Proof table must have **identical rows** in both languages (same links, same project count)
+- [ ] Info/warning callout blocks (`::: info`, `::: tip`) must exist in both languages
 - [ ] Include `运行练习：\`pnpm test\`` after the exercise table (matching EN's `Run exercises: \`pnpm test\``)
 - [ ] If you cannot translate, add `<!-- TODO: translate -->` markers
 
@@ -184,6 +186,11 @@ Add `## Challenge Questions` section at the end of the pattern doc:
 - [ ] Markdown tables: every row must have the same column count as the header (MD056) — don't merge cells or leave columns empty
 - [ ] Fenced code blocks: always specify a language (`text` for ASCII art, `typescript`/`python`/etc. for code) — MD040
 - [ ] Guide pages: if adding a new guide, add to BOTH EN/ZH sidebar AND README "learning guides" row
+- [ ] Implementation correctness: code must actually implement the stated data structure/algorithm (e.g. a skip list must use forward pointers and levels, not a sorted Vec with binary search)
+- [ ] Real-World Analogy: use only non-technical vocabulary — no "hash", "thread", "mutex" etc. in the metaphor (save those for Core Idea)
+- [ ] ZH code sync: if editing EN code blocks, immediately update the corresponding ZH file with identical code
+- [ ] ZH tab order: code-group tabs must appear in the same language order as EN
+- [ ] ZH structural parity: every Production Proof row, info callout, and warning box in EN must also appear in ZH
 
 ### 9. Submit PR
 
@@ -214,6 +221,10 @@ Before tagging a release, run a comprehensive multi-dimensional audit:
 - [ ] **Build**: `pnpm build` — VitePress builds, all pages in dist/
 - [ ] **ASCII alignment**: spot-check new pattern diagrams in monospace font
 - [ ] **ZH sync**: all new patterns have ZH docs with Chinese challenge questions
+- [ ] **ZH code parity**: all ZH code blocks are byte-identical to EN, tab order matches
+- [ ] **ZH structural parity**: every Production Proof row, info/tip callout in EN also exists in ZH
+- [ ] **Implementation correctness**: each code block actually implements the stated data structure (not a simpler stand-in)
+- [ ] **Analogy quality**: Real-World Analogy sections use only non-technical vocabulary
 - [ ] **by-project**: new patterns added to ALL relevant project pages (EN+ZH)
 - [ ] **pattern-connections**: summary table updated if pattern fits a system case study (EN+ZH)
 - [ ] **Homepage/README**: pattern tables and cheat sheet updated (EN+ZH)

@@ -51,40 +51,27 @@ type Listener<T> = (data: T) => void;
 class EventEmitter<Events extends Record<string, unknown>> {
   private listeners = new Map<keyof Events, Set<Listener<any>>>();
 
-  on<K extends keyof Events>(event: K, fn: Listener<Events[K]>): () => void {
-    if (!this.listeners.has(event)) this.listeners.set(event, new Set());
-    this.listeners.get(event)!.add(fn);
-    return () => this.listeners.get(event)?.delete(fn);
+  on<K extends keyof Events>(event: K, listener: Listener<Events[K]>): () => void {
+    if (!this.listeners.has(event)) {
+      this.listeners.set(event, new Set());
+    }
+    this.listeners.get(event)!.add(listener);
+
+    return () => this.off(event, listener);
+  }
+
+  off<K extends keyof Events>(event: K, listener: Listener<Events[K]>): void {
+    this.listeners.get(event)?.delete(listener);
   }
 
   emit<K extends keyof Events>(event: K, data: Events[K]): void {
-    this.listeners.get(event)?.forEach((fn) => fn(data));
+    this.listeners.get(event)?.forEach((listener) => listener(data));
+  }
+
+  listenerCount(event: keyof Events): number {
+    return this.listeners.get(event)?.size ?? 0;
   }
 }
-```
-
-```python [Python]
-from collections import defaultdict
-
-class EventEmitter:
-    def __init__(self):
-        self._listeners = defaultdict(list)
-
-    def on(self, event, listener):
-        self._listeners[event].append(listener)
-        return lambda: self._listeners[event].remove(listener)
-
-    def emit(self, event, data=None):
-        for listener in self._listeners[event]:
-            listener(data)
-
-emitter = EventEmitter()
-msgs = []
-unsub = emitter.on("msg", lambda d: msgs.append(d))
-emitter.emit("msg", "hello")
-unsub()
-emitter.emit("msg", "ignored")
-print(msgs)  # ["hello"]
 ```
 
 ```rust [Rust]
@@ -136,6 +123,40 @@ func (e *EventEmitter) Emit(event string, data any) {
 		listener(data)
 	}
 }
+```
+
+```python [Python]
+from collections import defaultdict
+from typing import Callable, Any
+
+class EventEmitter:
+    def __init__(self):
+        self._listeners: dict[str, list[Callable]] = defaultdict(list)
+
+    def on(self, event: str, listener: Callable) -> Callable:
+        self._listeners[event].append(listener)
+        return lambda: self._listeners[event].remove(listener)
+
+    def emit(self, event: str, data: Any = None) -> None:
+        for listener in self._listeners[event]:
+            listener(data)
+
+    def listener_count(self, event: str) -> int:
+        return len(self._listeners[event])
+
+# Usage
+emitter = EventEmitter()
+
+messages = []
+unsub = emitter.on("message", lambda data: messages.append(data))
+
+emitter.emit("message", "hello")
+emitter.emit("message", "world")
+print(messages)  # ["hello", "world"]
+
+unsub()  # unsubscribe
+emitter.emit("message", "ignored")
+print(messages)  # ["hello", "world"] — unchanged
 ```
 
 :::

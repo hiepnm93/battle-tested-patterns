@@ -1,5 +1,10 @@
-import { defineConfig } from 'vitepress';
+import { defineConfig, type HeadConfig } from 'vitepress';
 import { withMermaid } from 'vitepress-plugin-mermaid';
+
+const SITE_URL = 'https://totoro-jam.github.io/battle-tested-patterns';
+const DEFAULT_TITLE = 'Battle-Tested Patterns — Code from React, Linux, Go & More';
+const DEFAULT_DESC = '46 production-proven patterns with interactive visualizations, precise source links, multi-language implementations, and exercises.';
+const OG_IMAGE = `${SITE_URL}/og-image.png`;
 
 export default withMermaid(defineConfig({
   title: 'Battle-Tested Patterns',
@@ -21,22 +26,41 @@ export default withMermaid(defineConfig({
       })),
   },
 
+  transformHead({ pageData }) {
+    const head: HeadConfig[] = [];
+    const title = pageData.title
+      ? `${pageData.title} | Battle-Tested Patterns`
+      : DEFAULT_TITLE;
+    const desc = pageData.frontmatter.description || DEFAULT_DESC;
+    const url = `${SITE_URL}/${pageData.relativePath.replace(/index\.md$/, '').replace(/\.md$/, '')}`;
+
+    head.push(['meta', { property: 'og:title', content: title }]);
+    head.push(['meta', { property: 'og:description', content: desc }]);
+    head.push(['meta', { property: 'og:url', content: url }]);
+    head.push(['meta', { name: 'twitter:title', content: title }]);
+    head.push(['meta', { name: 'twitter:description', content: desc }]);
+
+    const isZh = pageData.relativePath.startsWith('zh/');
+    const enPath = isZh ? pageData.relativePath.replace(/^zh\//, '') : pageData.relativePath;
+    const zhPath = isZh ? pageData.relativePath : `zh/${pageData.relativePath}`;
+    head.push(['link', { rel: 'canonical', href: `${SITE_URL}/${enPath.replace(/index\.md$/, '').replace(/\.md$/, '')}` }]);
+    head.push(['link', { rel: 'alternate', hreflang: 'en', href: `${SITE_URL}/${enPath.replace(/index\.md$/, '').replace(/\.md$/, '')}` }]);
+    head.push(['link', { rel: 'alternate', hreflang: 'zh', href: `${SITE_URL}/${zhPath.replace(/index\.md$/, '').replace(/\.md$/, '')}` }]);
+
+    return head;
+  },
+
   head: [
     ['link', { rel: 'icon', type: 'image/svg+xml', href: '/battle-tested-patterns/favicon.svg' }],
     ['meta', { property: 'og:type', content: 'website' }],
     ['meta', { property: 'og:site_name', content: 'Battle-Tested Patterns' }],
-    ['meta', { property: 'og:title', content: 'Battle-Tested Patterns — Code from React, Linux, Go & More' }],
-    ['meta', { property: 'og:description', content: '46 production-proven patterns with interactive visualizations, precise source links, multi-language implementations, and exercises.' }],
-    ['meta', { property: 'og:image', content: 'https://totoro-jam.github.io/battle-tested-patterns/og-image.png' }],
+    ['meta', { property: 'og:image', content: OG_IMAGE }],
     ['meta', { property: 'og:image:width', content: '1200' }],
     ['meta', { property: 'og:image:height', content: '630' }],
-    ['meta', { property: 'og:url', content: 'https://totoro-jam.github.io/battle-tested-patterns/' }],
     ['meta', { property: 'og:locale', content: 'en' }],
     ['meta', { property: 'og:locale:alternate', content: 'zh_CN' }],
     ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
-    ['meta', { name: 'twitter:title', content: 'Battle-Tested Patterns — Code from React, Linux, Go & More' }],
-    ['meta', { name: 'twitter:description', content: '46 production-proven patterns with interactive visualizations, precise source links, and multi-language implementations.' }],
-    ['meta', { name: 'twitter:image', content: 'https://totoro-jam.github.io/battle-tested-patterns/og-image.png' }],
+    ['meta', { name: 'twitter:image', content: OG_IMAGE }],
     ['meta', { name: 'author', content: 'Totoro-jam' }],
     ['meta', { name: 'keywords', content: 'programming patterns, design patterns, interactive visualizations, system design, data structures, algorithms, React, Linux, Go, Rust, TypeScript, Python, Redis, PostgreSQL, Kafka, interview preparation, computer science' }],
   ],

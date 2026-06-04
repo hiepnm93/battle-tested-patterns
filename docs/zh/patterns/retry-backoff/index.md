@@ -31,8 +31,8 @@ difficulty: "beginner"
   Attempt 5  ✗ ├───────────────────────────────┤ 16s (cap)
   Attempt 6  ✓
 
-  bar = retry wait (doubles each time)
-  + jitter: randomize to avoid thundering herd
+  Each bar = wait before next retry (doubles each time)
+  + jitter: randomize within each bar to avoid thundering herd
 ```
 
 **动手试试** — 发送请求，观察指数退避与抖动的实际效果：
@@ -51,34 +51,36 @@ difficulty: "beginner"
 ::: code-group
 
 ```typescript [TypeScript]
+interface BackoffConfig {
+  maxRetries: number;
+  baseDelay: number;
+  maxDelay: number;
+  jitter: number; // 0-1
+}
+
 async function retryWithBackoff<T>(
   fn: () => Promise<T>,
-  maxRetries = 5, baseDelay = 1000, maxDelay = 30000,
+  config: BackoffConfig = { maxRetries: 5, baseDelay: 1000, maxDelay: 30000, jitter: 0.5 },
 ): Promise<T> {
   let lastError: Error | undefined;
-  for (let i = 0; i <= maxRetries; i++) {
-    try { return await fn(); }
-    catch (err) {
+
+  for (let attempt = 0; attempt <= config.maxRetries; attempt++) {
+    try {
+      return await fn();
+    } catch (err) {
       lastError = err as Error;
-      if (i === maxRetries) break;
-      const delay = Math.min(baseDelay * Math.pow(2, i), maxDelay);
+      if (attempt === config.maxRetries) break;
+
+      const exponential = config.baseDelay * Math.pow(2, attempt);
+      const jitter = exponential * config.jitter * Math.random();
+      const delay = Math.min(exponential + jitter, config.maxDelay);
+
       await new Promise((r) => setTimeout(r, delay));
     }
   }
+
   throw lastError;
 }
-```
-
-```python [Python]
-import time, random
-
-def retry_with_backoff(fn, max_retries=5, base=1.0, cap=30.0):
-    for attempt in range(max_retries + 1):
-        try: return fn()
-        except Exception as e:
-            if attempt == max_retries: raise
-            delay = min(base * 2**attempt + random.random(), cap)
-            time.sleep(delay)
 ```
 
 ```rust [Rust]
@@ -132,6 +134,25 @@ func Retry(fn func() error, cfg Config) error {
 	}
 	return lastErr
 }
+```
+
+```python [Python]
+import time
+import random
+
+def retry_with_backoff(fn, max_retries=5, base_delay=1.0, max_delay=30.0, jitter=0.5):
+    last_error = None
+    for attempt in range(max_retries + 1):
+        try:
+            return fn()
+        except Exception as e:
+            last_error = e
+            if attempt == max_retries:
+                break
+            exponential = base_delay * (2 ** attempt)
+            delay = min(exponential + exponential * jitter * random.random(), max_delay)
+            time.sleep(delay)
+    raise last_error
 ```
 
 :::

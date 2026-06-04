@@ -54,9 +54,14 @@ sequenceDiagram
 ::: code-group
 
 ```typescript [TypeScript]
-type Task = () => boolean; // 返回 true 表示还有更多工作
+type Task = () => boolean; // returns true if more work remains
 
-function createScheduler(yieldInterval: number = 5) {
+interface Scheduler {
+  scheduleTask(task: Task): void;
+  flush(): void;
+}
+
+function createScheduler(yieldInterval: number = 5): Scheduler {
   const queue: Task[] = [];
   let isRunning = false;
 
@@ -66,14 +71,22 @@ function createScheduler(yieldInterval: number = 5) {
 
   function workLoop(): void {
     const startTime = performance.now();
+
     while (queue.length > 0) {
       if (shouldYield(startTime)) {
-        setTimeout(workLoop, 0); // 让出后继续
+        // Yield to the host — schedule continuation
+        setTimeout(workLoop, 0);
         return;
       }
+
       const task = queue[0]!;
-      if (!task()) queue.shift();
+      const hasMoreWork = task();
+
+      if (!hasMoreWork) {
+        queue.shift();
+      }
     }
+
     isRunning = false;
   }
 
@@ -84,6 +97,13 @@ function createScheduler(yieldInterval: number = 5) {
         isRunning = true;
         setTimeout(workLoop, 0);
       }
+    },
+    flush() {
+      while (queue.length > 0) {
+        const task = queue[0]!;
+        if (!task()) queue.shift();
+      }
+      isRunning = false;
     },
   };
 }
@@ -108,15 +128,20 @@ impl CooperativeScheduler {
         F: FnMut() -> bool,
     {
         let start = Instant::now();
+
         while !work_units.is_empty() {
             if start.elapsed() >= self.yield_interval {
-                return work_units; // 让出：返回剩余工作
+                // Yield: return remaining work to caller
+                return work_units;
             }
-            if (work_units[0])() {
+
+            let done = (work_units[0])();
+            if done {
                 work_units.remove(0);
             }
         }
-        work_units
+
+        work_units // empty = all done
     }
 }
 ```
@@ -126,24 +151,38 @@ package scheduling
 
 import "time"
 
-type Task func() bool
+type Task func() bool // returns true when done
 
 type Scheduler struct {
 	YieldInterval time.Duration
 	queue         []Task
 }
 
+func New(yieldInterval time.Duration) *Scheduler {
+	return &Scheduler{YieldInterval: yieldInterval}
+}
+
+func (s *Scheduler) Schedule(task Task) {
+	s.queue = append(s.queue, task)
+}
+
+// WorkLoop processes tasks, yielding when the time slice expires.
+// Returns true if all work is done, false if yielded.
 func (s *Scheduler) WorkLoop() bool {
 	start := time.Now()
+
 	for len(s.queue) > 0 {
 		if time.Since(start) >= s.YieldInterval {
-			return false // 让出
+			return false // yield
 		}
-		if s.queue[0]() {
+
+		done := s.queue[0]()
+		if done {
 			s.queue = s.queue[1:]
 		}
 	}
-	return true // 全部完成
+
+	return true // all done
 }
 ```
 

@@ -41,6 +41,10 @@ flowchart LR
 | Python (CPython) | [longobject.c#L61-L75](https://github.com/python/cpython/blob/main/Objects/longobject.c#L61-L75) | `get_small_int` 返回 -5 到 256 的预缓存整数对象。`a = 42; b = 42; a is b` 为 `True`。 |
 | Go 标准库 | [pool.go#L52-L97](https://github.com/golang/go/blob/master/src/sync/pool.go#L52-L97) | `sync.Pool` — 临时对象的享元模式。`Get()` 返回缓存实例，`Put()` 归还复用。广泛用于 `fmt`、`encoding/json`。 |
 
+::: info 说明
+Java 的 `String.intern()`、JavaScript 引擎字符串表（V8）和 Rust 的 `&'static str` 都实现了此模式的变体。JVM 自动驻留所有字符串字面量。
+:::
+
 ## 实现
 
 ::: code-group
@@ -48,28 +52,24 @@ flowchart LR
 ```typescript [TypeScript]
 class Interner<T> {
   private pool = new Map<string, T>();
+
   intern(key: string, create: () => T): T {
-    if (this.pool.has(key)) return this.pool.get(key)!;
-    const v = create();
-    this.pool.set(key, v);
-    return v;
+    if (this.pool.has(key)) {
+      return this.pool.get(key)!;
+    }
+    const value = create();
+    this.pool.set(key, value);
+    return value;
   }
-  get size() { return this.pool.size; }
+
+  has(key: string): boolean {
+    return this.pool.has(key);
+  }
+
+  get size(): number {
+    return this.pool.size;
+  }
 }
-```
-
-```python [Python]
-class Interner:
-    def __init__(self):
-        self._pool = {}
-    def intern(self, key, factory=None):
-        if key in self._pool: return self._pool[key]
-        self._pool[key] = factory() if factory else key
-        return self._pool[key]
-
-# Python 已内置小整数驻留：
-a = 256; b = 256
-print(a is b)  # True — 享元！
 ```
 
 ```rust [Rust]
@@ -99,6 +99,31 @@ impl Interner {
         &self.strings[id]
     }
 }
+```
+
+```python [Python]
+import sys
+
+class Interner:
+    def __init__(self):
+        self._pool: dict[str, object] = {}
+
+    def intern(self, key: str, factory=None):
+        if key in self._pool:
+            return self._pool[key]
+        value = factory() if factory else key
+        self._pool[key] = value
+        return value
+
+    @property
+    def size(self) -> int:
+        return len(self._pool)
+
+# Python already interns small integers:
+a = 256
+b = 256
+print(a is b)  # True — same object, flyweight!
+print(sys.getrefcount(256))  # many references to the same int
 ```
 
 ```go [Go]

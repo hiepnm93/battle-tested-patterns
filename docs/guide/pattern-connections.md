@@ -92,37 +92,37 @@ That's what React's team built. That's what Redis, Go, Linux, PostgreSQL, and Ka
 
 | Pattern | React | Redis | Go Runtime | Linux | PostgreSQL | Kafka |
 |---------|:-----:|:-----:|:----------:|:-----:|:----------:|:-----:|
-| **Bitmask** | ✅ | | ✅ | ✅ | | |
-| **Min Heap** | ✅ | | ✅ | ✅ | | |
-| **Cooperative Scheduling** | ✅ | | ✅ | | | |
-| **Diff / Patch** | ✅ | | | | | |
-| **Double Buffering** | ✅ | | | | | |
-| **Batch Processing** | ✅ | ✅ | | ✅ | | ✅ |
-| **Dirty Flag** | ✅ | | | | | |
-| **Observer** | ✅ | | | | | |
-| **Skip List** | | ✅ | | | | |
-| **LRU Cache** | | ✅ | ✅ | | ✅ | |
-| **Trie** | | ✅ | | ✅ | | |
-| **Bloom Filter** | | ✅ | | | ✅ | |
-| **Work Stealing** | | | ✅ | | | |
-| **Free List** | | | ✅ | ✅ | | |
-| **Semaphore** | | | ✅ | ✅ | | |
-| **Object Pool** | | | ✅ | | | |
-| **Rate Limiter** | | | ✅ | ✅ | | |
-| **Arena Allocator** | | | ✅ | | | |
-| **State Machine** | | | | ✅ | | |
-| **Ring Buffer** | | | | ✅ | | ✅ |
-| **Backpressure** | | | | ✅ | | ✅ |
-| **Vtable** | | | | ✅ | | |
-| **Reference Counting** | | | | ✅ | | |
-| **Copy-on-Write** | | ✅ | ✅ | ✅ | | |
-| **Tombstone** | | ✅ | | | | ✅ |
-| **MVCC** | | | | | ✅ | |
-| **Write-Ahead Log** | | | | | ✅ | ✅ |
-| **B+ Tree** | | | | ✅ | ✅ | |
-| **Checkpointing** | | | | | ✅ | |
-| **Event Loop** | | ✅ | ✅ | ✅ | | |
-| **Iterator** | ✅ | | ✅ | | | |
-| **Tagged Union** | ✅ | | ✅ | | | |
-| **Retry Backoff** | | | | | | ✅ |
-| **Consistent Hashing** | | | ✅ | | | ✅ |
+| [**Bitmask**](/patterns/bitmask/) | ✅ | | ✅ | ✅ | | |
+| [**Min Heap**](/patterns/min-heap/) | ✅ | | ✅ | ✅ | | |
+| [**Cooperative Scheduling**](/patterns/cooperative-scheduling/) | ✅ | | ✅ | | | |
+| [**Diff / Patch**](/patterns/diff-patch/) | ✅ | | | | | |
+| [**Double Buffering**](/patterns/double-buffering/) | ✅ | | | | | |
+| [**Batch Processing**](/patterns/batch-processing/) | ✅ | ✅ | | ✅ | | ✅ |
+| [**Dirty Flag**](/patterns/dirty-flag/) | ✅ | | | | | |
+| [**Observer**](/patterns/observer/) | ✅ | | | | | |
+| [**Skip List**](/patterns/skip-list/) | | ✅ | | | | |
+| [**LRU Cache**](/patterns/lru-cache/) | | ✅ | ✅ | | ✅ | |
+| [**Trie**](/patterns/trie/) | | ✅ | | ✅ | | |
+| [**Bloom Filter**](/patterns/bloom-filter/) | | ✅ | | | ✅ | |
+| [**Work Stealing**](/patterns/work-stealing/) | | | ✅ | | | |
+| [**Free List**](/patterns/free-list/) | | | ✅ | ✅ | | |
+| [**Semaphore**](/patterns/semaphore/) | | | ✅ | ✅ | | |
+| [**Object Pool**](/patterns/object-pool/) | | | ✅ | | | |
+| [**Rate Limiter**](/patterns/rate-limiter/) | | | ✅ | ✅ | | |
+| [**Arena Allocator**](/patterns/arena-allocator/) | | | ✅ | | | |
+| [**State Machine**](/patterns/state-machine/) | | | | ✅ | | |
+| [**Ring Buffer**](/patterns/ring-buffer/) | | | | ✅ | | ✅ |
+| [**Backpressure**](/patterns/backpressure/) | | | | ✅ | | ✅ |
+| [**Vtable**](/patterns/vtable/) | | | | ✅ | | |
+| [**Reference Counting**](/patterns/reference-counting/) | | | | ✅ | | |
+| [**Copy-on-Write**](/patterns/copy-on-write/) | | ✅ | ✅ | ✅ | | |
+| [**Tombstone**](/patterns/tombstone/) | | ✅ | | | | ✅ |
+| [**MVCC**](/patterns/mvcc/) | | | | | ✅ | |
+| [**Write-Ahead Log**](/patterns/write-ahead-log/) | | | | | ✅ | ✅ |
+| [**B+ Tree**](/patterns/b-plus-tree/) | | | | ✅ | ✅ | |
+| [**Checkpointing**](/patterns/checkpointing/) | | | | | ✅ | |
+| [**Event Loop**](/patterns/event-loop/) | | ✅ | ✅ | ✅ | | |
+| [**Iterator**](/patterns/iterator/) | ✅ | | ✅ | | | |
+| [**Tagged Union**](/patterns/tagged-union/) | ✅ | | ✅ | | | |
+| [**Retry Backoff**](/patterns/retry-backoff/) | | | | | | ✅ |
+| [**Consistent Hashing**](/patterns/consistent-hashing/) | | | ✅ | | | ✅ |

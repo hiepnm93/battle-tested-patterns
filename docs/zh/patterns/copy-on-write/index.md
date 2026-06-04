@@ -52,7 +52,10 @@ class Cow<T extends object> {
   private data: T;
   private shared: boolean;
 
-  constructor(data: T) { this.data = data; this.shared = false; }
+  constructor(data: T) {
+    this.data = data;
+    this.shared = false;
+  }
 
   static from<T extends object>(data: T): Cow<T> {
     const cow = new Cow(data);
@@ -60,7 +63,9 @@ class Cow<T extends object> {
     return cow;
   }
 
-  read(): Readonly<T> { return this.data; }
+  read(): Readonly<T> {
+    return this.data;
+  }
 
   write(): T {
     if (this.shared) {
@@ -69,29 +74,11 @@ class Cow<T extends object> {
     }
     return this.data;
   }
+
+  isOwned(): boolean {
+    return !this.shared;
+  }
 }
-```
-
-```python [Python]
-import copy
-
-class Cow:
-    def __init__(self, data, shared=False):
-        self._data = data
-        self._shared = shared
-
-    @classmethod
-    def share(cls, data):
-        return cls(data, shared=True)
-
-    def read(self):
-        return self._data
-
-    def write(self):
-        if self._shared:
-            self._data = copy.deepcopy(self._data)
-            self._shared = False
-        return self._data
 ```
 
 ```rust [Rust]
@@ -135,6 +122,38 @@ func (c *CowSlice[T]) Write() []T {
 	}
 	return c.data
 }
+```
+
+```python [Python]
+import copy
+
+class Cow:
+    """Copy-on-Write wrapper."""
+    def __init__(self, data, shared=False):
+        self._data = data
+        self._shared = shared
+
+    @classmethod
+    def share(cls, data):
+        return cls(data, shared=True)
+
+    def read(self):
+        return self._data
+
+    def write(self):
+        if self._shared:
+            self._data = copy.deepcopy(self._data)
+            self._shared = False
+        return self._data
+
+# Usage
+original = {"users": ["alice", "bob"]}
+view = Cow.share(original)
+print(view.read() is original)  # True — same object, no copy
+
+mutable = view.write()          # NOW it copies
+mutable["users"].append("charlie")
+print(original["users"])        # ["alice", "bob"] — unchanged
 ```
 
 :::
