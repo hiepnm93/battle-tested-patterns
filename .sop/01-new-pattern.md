@@ -176,6 +176,9 @@ Add `## Challenge Questions` section at the end of the pattern doc:
 - [ ] README cheat sheet: add to the categorized table in README
 - [ ] by-project pages: update `docs/by-project/more-projects.md` and ZH version
 - [ ] How Patterns Connect: update if the pattern relates to an existing system case study
+- [ ] Markdown tables: every row must have the same column count as the header (MD056) — don't merge cells or leave columns empty
+- [ ] Fenced code blocks: always specify a language (`text` for ASCII art, `typescript`/`python`/etc. for code) — MD040
+- [ ] Guide pages: if adding a new guide, add to BOTH EN/ZH sidebar AND README "learning guides" row
 
 ### 9. Submit PR
 
