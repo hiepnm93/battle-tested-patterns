@@ -140,6 +140,11 @@ function linkFor(entry: TimelineEntry) {
       >{{ isZh ? meta.labelZh : meta.label }} ({{ entries.filter(e => e.category === key).length }})</button>
     </div>
 
+    <div class="viz-status">{{ t(
+      'Click any pattern card to view its full documentation',
+      '点击任意模式卡片查看完整文档'
+    ) }}</div>
+
     <!-- Timeline -->
     <div class="tl-timeline">
       <div class="tl-line"></div>
@@ -160,11 +165,6 @@ function linkFor(entry: TimelineEntry) {
         </div>
       </div>
     </div>
-
-    <div class="viz-status">{{ t(
-      'Click any pattern card to view its full documentation',
-      '点击任意模式卡片查看完整文档'
-    ) }}</div>
   </div>
 </template>
 

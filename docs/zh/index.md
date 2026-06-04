@@ -1,5 +1,6 @@
 ---
 layout: home
+description: "46 个经过生产验证的编程模式，源自 React、Linux、Go、Chromium — 交互式可视化、精确源码链接、多语言实现、可运行练习。"
 
 hero:
   name: Battle-Tested Patterns

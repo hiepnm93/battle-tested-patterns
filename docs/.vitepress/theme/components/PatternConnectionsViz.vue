@@ -155,6 +155,11 @@ function patternLink(link: string) {
       </button>
     </div>
 
+    <div class="viz-status">{{ t(
+      'Click a tab to explore how each system composes patterns',
+      '点击标签查看每个系统如何组合模式'
+    ) }}</div>
+
     <div class="pc-system">
       <div class="pc-system-header">
         <span class="pc-system-icon" :style="{ background: currentSystem.color }">{{ currentSystem.icon }}</span>
@@ -182,11 +187,6 @@ function patternLink(link: string) {
         </a>
       </div>
     </div>
-
-    <div class="viz-status">{{ t(
-      'Click a tab to explore how each system composes patterns',
-      '点击标签查看每个系统如何组合模式'
-    ) }}</div>
   </div>
 </template>
 

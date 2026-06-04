@@ -1,5 +1,6 @@
 ---
 layout: home
+description: "46 battle-tested programming patterns from React, Linux, Go, and Chromium — interactive visualizations, precise source links, multi-language implementations, and runnable exercises."
 
 hero:
   name: Battle-Tested Patterns
