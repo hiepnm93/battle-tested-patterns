@@ -15,7 +15,7 @@ An LSM tree absorbs writes into an in-memory sorted structure (the memtable). Wh
 ```text
   Write Path                          Read Path
   ──────────                          ─────────
-  PUT k=v ──►  ┌───────────┐         GET k
+  PUT k=v ──►  ┌────────────┐         GET k
                │  Memtable  │ ◄──── 1. Check memtable
                │ (sorted,   │
                │  in-memory)│
@@ -23,14 +23,14 @@ An LSM tree absorbs writes into an in-memory sorted structure (the memtable). Wh
           flush when  │
           size > limit│
                       ▼
-               ┌───────────┐
+               ┌────────────┐
                │  Level 0   │ ◄──── 2. Check L0 files
                │  (SSTables)│
                └─────┬──────┘
           compact     │
           when full   │
                       ▼
-               ┌───────────┐
+               ┌────────────┐
                │  Level 1   │ ◄──── 3. Check L1 files
                │  (merged)  │
                └─────┬──────┘
