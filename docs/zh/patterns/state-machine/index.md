@@ -161,7 +161,7 @@ func (sm *StateMachine) State() string { return sm.current }
 | 基础 | 实现带 send/can 的状态机 | `exercises/typescript/state-machine/01-basic.test.ts` |
 | 进阶 | 带定时转换的交通灯控制器 | `exercises/typescript/state-machine/02-intermediate.test.ts` |
 
-运行练习：`pnpm test`
+运行练习：`pnpm test`（TypeScript）· `cargo test`（Rust）· `go test ./...`（Go）· `pytest`（Python）
 
 ## 何时使用
 

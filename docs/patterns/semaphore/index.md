@@ -148,7 +148,7 @@ impl Semaphore {
 | Basic | Implement a counting semaphore with acquire/release | `exercises/typescript/semaphore/01-basic.test.ts` |
 | Intermediate | Connection pool guarded by a semaphore | `exercises/typescript/semaphore/02-intermediate.test.ts` |
 
-Run exercises: `pnpm test` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go)
+Run exercises: `pnpm test` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
 
 ## When to Use
 

@@ -178,7 +178,7 @@ impl Pipeline {
 | 基础 | 构建带 use/execute 和短路功能的同步中间件管道 | `exercises/typescript/middleware-chain/01-basic.test.ts` |
 | 进阶 | 扩展异步中间件、错误捕获和洋葱模型清理 | `exercises/typescript/middleware-chain/02-intermediate.test.ts` |
 
-运行练习：`pnpm test`
+运行练习：`pnpm test`（TypeScript）· `cargo test`（Rust）· `go test ./...`（Go）· `pytest`（Python）
 
 ## 何时使用
 

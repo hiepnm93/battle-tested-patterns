@@ -222,7 +222,7 @@ impl HashRing {
 | 基础 | 实现带 addNode/getNode 的哈希环 | `exercises/typescript/consistent-hashing/01-basic.test.ts` |
 | 进阶 | 带虚拟节点的一致性哈希环 | `exercises/typescript/consistent-hashing/02-intermediate.test.ts` |
 
-运行练习：`pnpm test`
+运行练习：`pnpm test`（TypeScript）· `cargo test`（Rust）· `go test ./...`（Go）· `pytest`（Python）
 
 ## 何时使用
 

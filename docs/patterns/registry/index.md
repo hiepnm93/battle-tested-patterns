@@ -230,7 +230,7 @@ impl<T> Registry<T> {
 | Basic | Implement a typed registry with register/get/list | `exercises/typescript/registry/01-basic.test.ts` |
 | Intermediate | Add decorator-based auto-registration and dependency validation | `exercises/typescript/registry/02-intermediate.test.ts` |
 
-Run exercises: `pnpm test` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go)
+Run exercises: `pnpm test` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
 
 ## When to Use
 

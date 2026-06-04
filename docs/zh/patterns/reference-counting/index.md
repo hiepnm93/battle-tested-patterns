@@ -256,7 +256,7 @@ impl<T> Drop for Rc<T> {
 | 基础 | 实现带 clone/drop 和清理回调的引用计数值 | `exercises/typescript/reference-counting/01-basic.test.ts` |
 | 进阶 | 扩展弱引用，不阻止清理 | `exercises/typescript/reference-counting/02-intermediate.test.ts` |
 
-运行练习：`pnpm test`
+运行练习：`pnpm test`（TypeScript）· `cargo test`（Rust）· `go test ./...`（Go）· `pytest`（Python）
 
 ## 何时使用
 

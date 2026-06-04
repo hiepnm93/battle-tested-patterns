@@ -134,7 +134,7 @@ impl<T> ObjectPool<T> {
 | 基础 | 实现通用对象池 get/release | `exercises/typescript/object-pool/01-basic.test.ts` |
 | 进阶 | 构建带最大连接数的连接池 | `exercises/typescript/object-pool/02-connection-pool.test.ts` |
 
-运行练习：`pnpm test`
+运行练习：`pnpm test`（TypeScript）· `cargo test`（Rust）· `go test ./...`（Go）· `pytest`（Python）
 
 ## 何时使用
 

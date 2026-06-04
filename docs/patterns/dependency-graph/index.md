@@ -266,7 +266,7 @@ impl DependencyGraph {
 | Basic | Implement topological sort with cycle detection | `exercises/typescript/dependency-graph/01-basic.test.ts` |
 | Intermediate | Parallel execution planner — compute execution waves | `exercises/typescript/dependency-graph/02-intermediate.test.ts` |
 
-Run exercises: `pnpm test` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go)
+Run exercises: `pnpm test` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
 
 ## When to Use
 

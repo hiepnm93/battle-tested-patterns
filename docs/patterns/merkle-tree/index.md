@@ -369,7 +369,7 @@ impl MerkleTree {
 | Basic | Build a Merkle tree, get root hash, generate and verify proof | `exercises/typescript/merkle-tree/01-basic.test.ts` |
 | Intermediate | Detect tampered leaf and generate minimal proof path | `exercises/typescript/merkle-tree/02-intermediate.test.ts` |
 
-Run exercises: `pnpm test` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go)
+Run exercises: `pnpm test` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
 
 ## When to Use
 

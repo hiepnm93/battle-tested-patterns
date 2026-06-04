@@ -166,7 +166,7 @@ func Collect[T any](seq iter.Seq[T]) []T {
 | Basic | Implement a lazy iterator with map, filter, collect | `exercises/typescript/iterator/01-basic.test.ts` |
 | Intermediate | Lazy pipeline with flatMap, take, and reduce | `exercises/typescript/iterator/02-intermediate.test.ts` |
 
-Run exercises: `pnpm test` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go)
+Run exercises: `pnpm test` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
 
 ## When to Use
 

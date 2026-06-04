@@ -164,7 +164,7 @@ impl Interner {
 | Basic | Implement a string interner with intern/resolve | `exercises/typescript/interning/01-basic.test.ts` |
 | Intermediate | Type interner with structural equality | `exercises/typescript/interning/02-intermediate.test.ts` |
 
-Run exercises: `pnpm test` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go)
+Run exercises: `pnpm test` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
 
 ## When to Use
 

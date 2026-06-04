@@ -181,7 +181,7 @@ impl LRUCache {
 | Basic | Implement an LRU cache with get/put and eviction | `exercises/typescript/lru-cache/01-basic.test.ts` |
 | Intermediate | TTL-aware LRU cache with expiry | `exercises/typescript/lru-cache/02-intermediate.test.ts` |
 
-Run exercises: `pnpm test` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go)
+Run exercises: `pnpm test` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
 
 ## When to Use
 

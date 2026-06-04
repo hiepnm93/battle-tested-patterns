@@ -176,7 +176,7 @@ func (r *RingBuffer[T]) Len() int { return r.cnt }
 | 基础 | 实现环形缓冲区 enqueue/dequeue | `exercises/typescript/ring-buffer/01-basic.test.ts` |
 | 进阶 | 基于环形缓冲区的流式移动平均 | `exercises/typescript/ring-buffer/02-intermediate.test.ts` |
 
-运行练习：`pnpm test`
+运行练习：`pnpm test`（TypeScript）· `cargo test`（Rust）· `go test ./...`（Go）· `pytest`（Python）
 
 ## 何时使用
 

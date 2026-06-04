@@ -140,7 +140,7 @@ func (e *EventEmitter) Emit(event string, data any) {
 | 基础 | 实现 on/off/emit 事件发射器 | `exercises/typescript/observer/01-basic.test.ts` |
 | 进阶 | 类型安全的事件总线 on/once/off/emit | `exercises/typescript/observer/02-intermediate.test.ts` |
 
-运行练习：`pnpm test`
+运行练习：`pnpm test`（TypeScript）· `cargo test`（Rust）· `go test ./...`（Go）· `pytest`（Python）
 
 ## 何时使用
 

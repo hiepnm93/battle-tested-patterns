@@ -217,7 +217,7 @@ impl EventLoop {
 | Basic | Implement a mini event loop with handler registration and tick/run | `exercises/typescript/event-loop/01-basic.test.ts` |
 | Intermediate | Extend with timer support (one-shot timers interleaved with I/O) | `exercises/typescript/event-loop/02-intermediate.test.ts` |
 
-Run exercises: `pnpm test` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go)
+Run exercises: `pnpm test` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
 
 ## When to Use
 

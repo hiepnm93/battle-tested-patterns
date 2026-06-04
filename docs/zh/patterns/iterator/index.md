@@ -135,7 +135,7 @@ func Collect[T any](seq iter.Seq[T]) []T {
 | 基础 | 实现带 map、filter、collect 的惰性迭代器 | `exercises/typescript/iterator/01-basic.test.ts` |
 | 进阶 | 带 flatMap、take、reduce 的惰性管道 | `exercises/typescript/iterator/02-intermediate.test.ts` |
 
-运行练习：`pnpm test`
+运行练习：`pnpm test`（TypeScript）· `cargo test`（Rust）· `go test ./...`（Go）· `pytest`（Python）
 
 ## 何时使用
 

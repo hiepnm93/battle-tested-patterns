@@ -6,7 +6,7 @@ Production-proven programming patterns extracted from React, Linux, Go, Chromium
 Each pattern has precise source links, multi-language implementations, and runnable exercises.
 
 - **Docs**: VitePress site deployed to GitHub Pages
-- **Exercises**: Vitest (TS) + cargo test (Rust) + go test (Go)
+- **Exercises**: Vitest (TS) + cargo test (Rust) + go test (Go) + pytest (Python)
 - **Monorepo**: pnpm workspace (`docs/`, `exercises/`)
 
 ## Quality Red Lines
@@ -15,7 +15,7 @@ Each pattern has precise source links, multi-language implementations, and runna
 2. **Never claim "project X uses this pattern"** without a verifiable link
 3. **Code must be runnable** — no pseudocode
 4. **Multi-language implementations must be idiomatic** — not line-by-line translation
-5. **Exercise tests must pass** — verify with `pnpm test` / `cargo test` / `go test` / `pytest`
+5. **Exercise tests must pass** — verify with `pnpm test` / `cargo test` / `go test ./...` / `pytest`
 
 ## Source Link Standard
 
@@ -65,6 +65,7 @@ pnpm test         # Run TypeScript exercises (Vitest)
 pnpm lint         # Lint markdown files
 pnpm typecheck    # TypeScript strict type check
 pnpm verify-links # Verify all source URLs are alive
+cd exercises/python && pytest  # Run Python exercises
 ```
 
 ## Skills

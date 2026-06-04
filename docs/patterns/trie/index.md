@@ -226,7 +226,7 @@ impl Trie {
 | Basic | Implement a trie with insert/search/startsWith | `exercises/typescript/trie/01-basic.test.ts` |
 | Intermediate | Autocomplete with frequency-ranked results | `exercises/typescript/trie/02-intermediate.test.ts` |
 
-Run exercises: `pnpm test` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go)
+Run exercises: `pnpm test` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
 
 ## When to Use
 

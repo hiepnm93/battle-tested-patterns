@@ -224,7 +224,7 @@ impl<T, F: Fn() -> T> DirtyFlag<T, F> {
 | 基础 | 实现基于脏标记的惰性计算包装器 | `exercises/typescript/dirty-flag/01-basic.test.ts` |
 | 进阶 | 构建带脏标记世界坐标缓存的变换层级 | `exercises/typescript/dirty-flag/02-intermediate.test.ts` |
 
-运行练习：`pnpm test`
+运行练习：`pnpm test`（TypeScript）· `cargo test`（Rust）· `go test ./...`（Go）· `pytest`（Python）
 
 ## 何时使用
 

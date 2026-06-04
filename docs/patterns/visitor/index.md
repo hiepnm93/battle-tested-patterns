@@ -189,7 +189,7 @@ impl ExprVisitor for Evaluator {
 | Basic | AST visitor for math expressions (eval + print) | `exercises/typescript/visitor/01-basic.test.ts` |
 | Intermediate | Transform visitor that rewrites the tree (constant folding) | `exercises/typescript/visitor/02-intermediate.test.ts` |
 
-Run exercises: `pnpm test` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go)
+Run exercises: `pnpm test` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
 
 ## When to Use
 

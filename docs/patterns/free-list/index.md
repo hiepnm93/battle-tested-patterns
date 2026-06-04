@@ -192,7 +192,7 @@ impl FreeList {
 | Basic | Implement a free list allocator with alloc/free and tracking | `exercises/typescript/free-list/01-basic.test.ts` |
 | Intermediate | Generational pool with stale-handle detection | `exercises/typescript/free-list/02-intermediate.test.ts` |
 
-Run exercises: `pnpm test` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go)
+Run exercises: `pnpm test` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
 
 ## When to Use
 

@@ -163,7 +163,7 @@ impl<T> BoundedQueue<T> {
 | Basic | Implement a bounded async queue with flow control | `exercises/typescript/backpressure/01-basic.test.ts` |
 | Intermediate | Bounded async channel with blocking send/receive | `exercises/typescript/backpressure/02-intermediate.test.ts` |
 
-Run exercises: `pnpm test` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go)
+Run exercises: `pnpm test` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
 
 ## When to Use
 

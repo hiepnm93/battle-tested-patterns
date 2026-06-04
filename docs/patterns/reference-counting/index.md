@@ -256,7 +256,7 @@ impl<T> Drop for Rc<T> {
 | Basic | Implement a ref-counted value with clone/drop and cleanup callback | `exercises/typescript/reference-counting/01-basic.test.ts` |
 | Intermediate | Extend with weak references that don't prevent cleanup | `exercises/typescript/reference-counting/02-intermediate.test.ts` |
 
-Run exercises: `pnpm test` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go)
+Run exercises: `pnpm test` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
 
 ## When to Use
 

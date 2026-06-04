@@ -177,7 +177,7 @@ impl TokenBucket {
 | Basic | Implement a token bucket rate limiter | `exercises/typescript/rate-limiter/01-basic.test.ts` |
 | Intermediate | Sliding window counter rate limiter | `exercises/typescript/rate-limiter/02-intermediate.test.ts` |
 
-Run exercises: `pnpm test` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go)
+Run exercises: `pnpm test` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
 
 ## When to Use
 

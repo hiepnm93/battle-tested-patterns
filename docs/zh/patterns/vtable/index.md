@@ -187,7 +187,7 @@ fn create_rect(w: f64, h: f64) -> Shape {
 | 基础 | 实现形状的 vtable 分发（面积/周长） | `exercises/typescript/vtable/01-basic.test.ts` |
 | 进阶 | 基于 vtable 扩展点的插件系统 | `exercises/typescript/vtable/02-intermediate.test.ts` |
 
-运行练习：`pnpm test`
+运行练习：`pnpm test`（TypeScript）· `cargo test`（Rust）· `go test ./...`（Go）· `pytest`（Python）
 
 ## 何时使用
 

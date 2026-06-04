@@ -181,7 +181,7 @@ impl LamportClock {
 | 基础 | 实现带 tick/send/receive 的 Lamport 时钟 | `exercises/typescript/logical-clock/01-basic.test.ts` |
 | 进阶 | 构建多节点因果关系追踪的版本向量 | `exercises/typescript/logical-clock/02-intermediate.test.ts` |
 
-运行练习：`pnpm test`
+运行练习：`pnpm test`（TypeScript）· `cargo test`（Rust）· `go test ./...`（Go）· `pytest`（Python）
 
 ## 何时使用
 

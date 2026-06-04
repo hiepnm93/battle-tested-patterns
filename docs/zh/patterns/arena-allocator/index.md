@@ -160,7 +160,7 @@ class Arena:
 | 基础 | 实现带 alloc/reset 的 bump 分配器 | `exercises/typescript/arena-allocator/01-basic.test.ts` |
 | 进阶 | 基于句柄的字符串 Arena 分配器 | `exercises/typescript/arena-allocator/02-intermediate.test.ts` |
 
-运行练习：`pnpm test`
+运行练习：`pnpm test`（TypeScript）· `cargo test`（Rust）· `go test ./...`（Go）· `pytest`（Python）
 
 ## 何时使用
 

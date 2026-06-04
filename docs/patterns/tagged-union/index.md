@@ -181,7 +181,7 @@ impl Value {
 | Basic | Implement tagged values with type dispatch | `exercises/typescript/tagged-union/01-basic.test.ts` |
 | Intermediate | JSON-like value type with nested arrays/objects | `exercises/typescript/tagged-union/02-intermediate.test.ts` |
 
-Run exercises: `pnpm test` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go)
+Run exercises: `pnpm test` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
 
 ## When to Use
 

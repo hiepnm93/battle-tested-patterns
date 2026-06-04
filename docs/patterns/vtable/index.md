@@ -187,7 +187,7 @@ fn create_rect(w: f64, h: f64) -> Shape {
 | Basic | Implement vtable dispatch for shapes (area/perimeter) | `exercises/typescript/vtable/01-basic.test.ts` |
 | Intermediate | Plugin system with vtable-based extension points | `exercises/typescript/vtable/02-intermediate.test.ts` |
 
-Run exercises: `pnpm test` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go)
+Run exercises: `pnpm test` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
 
 ## When to Use
 

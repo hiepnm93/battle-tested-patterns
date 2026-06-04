@@ -139,7 +139,7 @@ func (c *CowSlice[T]) Write() []T {
 | 基础 | 实现写时复制包装器 | `exercises/typescript/copy-on-write/01-basic.test.ts` |
 | 进阶 | 带 CoW fork 的版本化配置存储 | `exercises/typescript/copy-on-write/02-intermediate.test.ts` |
 
-运行练习：`pnpm test`
+运行练习：`pnpm test`（TypeScript）· `cargo test`（Rust）· `go test ./...`（Go）· `pytest`（Python）
 
 ## 何时使用
 

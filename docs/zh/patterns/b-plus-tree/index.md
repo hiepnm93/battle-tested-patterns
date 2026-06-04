@@ -496,7 +496,7 @@ impl BPlusTree {
 | 基础 | 实现带插入和搜索的 B+ 树 | `exercises/typescript/b-plus-tree/01-basic.test.ts` |
 | 进阶 | 添加基于叶节点链表的范围查询 | `exercises/typescript/b-plus-tree/02-intermediate.test.ts` |
 
-运行练习：`pnpm test`
+运行练习：`pnpm test`（TypeScript）· `cargo test`（Rust）· `go test ./...`（Go）· `pytest`（Python）
 
 ## 何时使用
 

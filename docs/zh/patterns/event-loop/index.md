@@ -217,7 +217,7 @@ impl EventLoop {
 | 基础 | 实现带处理器注册和 tick/run 的迷你事件循环 | `exercises/typescript/event-loop/01-basic.test.ts` |
 | 进阶 | 扩展定时器支持（一次性定时器与 I/O 交错） | `exercises/typescript/event-loop/02-intermediate.test.ts` |
 
-运行练习：`pnpm test`
+运行练习：`pnpm test`（TypeScript）· `cargo test`（Rust）· `go test ./...`（Go）· `pytest`（Python）
 
 ## 何时使用
 

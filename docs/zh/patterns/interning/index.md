@@ -164,7 +164,7 @@ impl Interner {
 | 基础 | 实现带 intern/resolve 的字符串驻留器 | `exercises/typescript/interning/01-basic.test.ts` |
 | 进阶 | 带结构相等性的类型驻留器 | `exercises/typescript/interning/02-intermediate.test.ts` |
 
-运行练习：`pnpm test`
+运行练习：`pnpm test`（TypeScript）· `cargo test`（Rust）· `go test ./...`（Go）· `pytest`（Python）
 
 ## 何时使用
 

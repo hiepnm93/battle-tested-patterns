@@ -156,7 +156,7 @@ func (in *Interner) Resolve(id int) string {
 | Basic | Implement a string interner with intern/resolve | `exercises/typescript/flyweight/01-basic.test.ts` |
 | Intermediate | Icon registry that deduplicates objects by name | `exercises/typescript/flyweight/02-intermediate.test.ts` |
 
-Run exercises: `pnpm test` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go)
+Run exercises: `pnpm test` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
 
 ## When to Use
 

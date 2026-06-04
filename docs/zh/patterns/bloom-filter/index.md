@@ -195,7 +195,7 @@ class BloomFilter:
 | 基础 | 实现带 add/mightContain 的布隆过滤器 | `exercises/typescript/bloom-filter/01-basic.test.ts` |
 | 进阶 | 使用布隆过滤器字典的拼写检查器 | `exercises/typescript/bloom-filter/02-intermediate.test.ts` |
 
-运行练习：`pnpm test`
+运行练习：`pnpm test`（TypeScript）· `cargo test`（Rust）· `go test ./...`（Go）· `pytest`（Python）
 
 ## 何时使用
 

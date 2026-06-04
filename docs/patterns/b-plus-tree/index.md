@@ -496,7 +496,7 @@ impl BPlusTree {
 | Basic | Implement a B+ tree with insert and search | `exercises/typescript/b-plus-tree/01-basic.test.ts` |
 | Intermediate | Add range queries with linked leaf traversal | `exercises/typescript/b-plus-tree/02-intermediate.test.ts` |
 
-Run exercises: `pnpm test` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go)
+Run exercises: `pnpm test` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
 
 ## When to Use
 

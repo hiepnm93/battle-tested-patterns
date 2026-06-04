@@ -220,7 +220,7 @@ impl CircuitBreaker {
 | 基础 | 实现包含三种状态的熔断器 | `exercises/typescript/circuit-breaker/01-basic.test.ts` |
 | 进阶 | 基于失败率和滚动窗口的熔断器 | `exercises/typescript/circuit-breaker/02-intermediate.test.ts` |
 
-运行练习：`pnpm test`
+运行练习：`pnpm test`（TypeScript）· `cargo test`（Rust）· `go test ./...`（Go）· `pytest`（Python）
 
 ## 何时使用
 

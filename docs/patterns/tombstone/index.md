@@ -317,7 +317,7 @@ impl TombstoneStore {
 | Basic | Implement a key-value store with tombstone deletion | `exercises/typescript/tombstone/01-basic.test.ts` |
 | Intermediate | Add time-based compaction and tombstone metrics | `exercises/typescript/tombstone/02-intermediate.test.ts` |
 
-Run exercises: `pnpm test` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go)
+Run exercises: `pnpm test` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
 
 ## When to Use
 

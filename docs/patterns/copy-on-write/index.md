@@ -158,7 +158,7 @@ print(original["users"])        # ["alice", "bob"] — unchanged
 | Basic | Implement a Cow wrapper that defers copying until write | `exercises/typescript/copy-on-write/01-basic.test.ts` |
 | Intermediate | Versioned config store with CoW fork | `exercises/typescript/copy-on-write/02-intermediate.test.ts` |
 
-Run exercises: `pnpm test` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go)
+Run exercises: `pnpm test` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
 
 ## When to Use
 

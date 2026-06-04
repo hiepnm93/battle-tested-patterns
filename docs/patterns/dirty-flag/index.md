@@ -224,7 +224,7 @@ impl<T, F: Fn() -> T> DirtyFlag<T, F> {
 | Basic | Implement a dirty-flag-based lazy computation wrapper | `exercises/typescript/dirty-flag/01-basic.test.ts` |
 | Intermediate | Build a transform hierarchy with dirty-flag world position caching | `exercises/typescript/dirty-flag/02-intermediate.test.ts` |
 
-Run exercises: `pnpm test` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go)
+Run exercises: `pnpm test` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
 
 ## When to Use
 

@@ -177,7 +177,7 @@ impl TokenBucket {
 | 基础 | 实现令牌桶限流器 | `exercises/typescript/rate-limiter/01-basic.test.ts` |
 | 进阶 | 滑动窗口计数限流器 | `exercises/typescript/rate-limiter/02-intermediate.test.ts` |
 
-运行练习：`pnpm test`
+运行练习：`pnpm test`（TypeScript）· `cargo test`（Rust）· `go test ./...`（Go）· `pytest`（Python）
 
 ## 何时使用
 

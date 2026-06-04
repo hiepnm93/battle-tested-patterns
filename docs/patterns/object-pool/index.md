@@ -155,7 +155,7 @@ class ObjectPool:
 | Basic | Implement a generic object pool with get/release | `exercises/typescript/object-pool/01-basic.test.ts` |
 | Intermediate | Build a connection pool with max-size and timeout | `exercises/typescript/object-pool/02-connection-pool.test.ts` |
 
-Run exercises: `pnpm test` · `cargo test` · `go test ./...`
+Run exercises: `pnpm test` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
 
 ## When to Use
 

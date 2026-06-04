@@ -551,7 +551,7 @@ impl LSMTree {
 | 基础 | 实现带刷写到有序段的内存 memtable | `exercises/typescript/lsm-tree/01-basic.test.ts` |
 | 进阶 | 多层 compaction 与大小触发的合并 | `exercises/typescript/lsm-tree/02-intermediate.test.ts` |
 
-运行练习：`pnpm test`
+运行练习：`pnpm test`（TypeScript）· `cargo test`（Rust）· `go test ./...`（Go）· `pytest`（Python）
 
 ## 何时使用
 

@@ -263,7 +263,7 @@ pub fn merge_k_sorted(streams: &[Vec<i32>]) -> Vec<i32> {
 | Basic | Merge K sorted arrays into one sorted array | `exercises/typescript/merge-iterator/01-basic.test.ts` |
 | Intermediate | Merge with deduplication (latest-wins by key) | `exercises/typescript/merge-iterator/02-intermediate.test.ts` |
 
-Run exercises: `pnpm test` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go)
+Run exercises: `pnpm test` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
 
 ## When to Use
 

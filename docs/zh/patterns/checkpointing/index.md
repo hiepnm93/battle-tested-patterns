@@ -388,7 +388,7 @@ impl CheckpointableStore {
 | 基础 | 实现带检查点和恢复的 WAL | `exercises/typescript/checkpointing/01-basic.test.ts` |
 | 进阶 | 增量检查点（仅脏页） | `exercises/typescript/checkpointing/02-intermediate.test.ts` |
 
-运行练习：`pnpm test`
+运行练习：`pnpm test`（TypeScript）· `cargo test`（Rust）· `go test ./...`（Go）· `pytest`（Python）
 
 ## 何时使用
 

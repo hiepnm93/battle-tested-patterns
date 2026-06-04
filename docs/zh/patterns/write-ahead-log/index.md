@@ -239,7 +239,7 @@ impl WriteAheadLog {
 | 基础 | 实现内存中的预写日志 | `exercises/typescript/write-ahead-log/01-basic.test.ts` |
 | 进阶 | 检查点恢复 — 仅重放最后检查点之后的条目 | `exercises/typescript/write-ahead-log/02-intermediate.test.ts` |
 
-运行练习：`pnpm test`
+运行练习：`pnpm test`（TypeScript）· `cargo test`（Rust）· `go test ./...`（Go）· `pytest`（Python）
 
 ## 何时使用
 

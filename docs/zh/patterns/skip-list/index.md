@@ -256,7 +256,7 @@ impl SkipList {
 | 基础 | 实现带 insert/search/delete 的跳表 | `exercises/typescript/skip-list/01-basic.test.ts` |
 | 进阶 | 带范围查询的跳表 | `exercises/typescript/skip-list/02-intermediate.test.ts` |
 
-运行练习：`pnpm test`
+运行练习：`pnpm test`（TypeScript）· `cargo test`（Rust）· `go test ./...`（Go）· `pytest`（Python）
 
 ## 何时使用
 

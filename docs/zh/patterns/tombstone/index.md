@@ -317,7 +317,7 @@ impl TombstoneStore {
 | 基础 | 实现带墓碑删除的键值存储 | `exercises/typescript/tombstone/01-basic.test.ts` |
 | 进阶 | 添加基于时间的压缩和墓碑指标 | `exercises/typescript/tombstone/02-intermediate.test.ts` |
 
-运行练习：`pnpm test`
+运行练习：`pnpm test`（TypeScript）· `cargo test`（Rust）· `go test ./...`（Go）· `pytest`（Python）
 
 ## 何时使用
 
