@@ -216,11 +216,13 @@ Exercise files: Rust `exercises/rust/src/ring_buffer.rs` · Go `exercises/go/rin
 - **流数据** — 日志缓冲、音视频帧、网络包
 - **无锁并发** — 原子 head/tail 实现 wait-free SPSC 队列
 - **覆盖最旧** — 遥测数据、最近 N 条缓存
+- **嵌入式/实时** — 无堆分配、确定性时序
 
 ## 何时不用
 
 - **无界增长** — 无法预测最大大小时用链表或 deque
 - **按 key 随机访问** — 环形缓冲区是顺序的，用哈希表
+- **变长元素** — 打包不同大小的项很复杂；用消息缓冲区
 
 ## 更多生产案例
 

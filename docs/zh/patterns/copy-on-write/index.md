@@ -182,12 +182,14 @@ Exercise files: Rust `exercises/rust/src/copy_on_write.rs` · Go `exercises/go/c
 - **分支/版本控制** — Git 对象模型、数据库快照
 - **零拷贝解析** — Rust 的 `Cow<str>` 在输入已有效时避免分配
 - **撤销系统** — 共享状态快照，仅在修改时复制
+- **不可变优先架构** — React state、Redux reducers
 
 ## 何时不用
 
 - **写多读少** — 每次写入触发复制，抵消收益
 - **小数据** — 复制小结构比 CoW 记账更便宜
 - **并发写入** — CoW 不解决并发修改问题
+- **深层结构** — 浅 CoW 可能导致共享可变子对象
 
 ## 更多生产案例
 

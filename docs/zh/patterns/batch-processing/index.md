@@ -220,11 +220,14 @@ Exercise files: Rust `exercises/rust/src/batch_processing.rs` · Go `exercises/g
 - **API 调用** — 批量请求减少往返
 - **消息队列** — Kafka、SQS 批量发送/接收
 - **UI 更新** — React 批量 setState
+- **网络 I/O** — TCP Nagle 算法、HTTP/2 多路复用
 
 ## 何时不用
 
 - **延迟敏感** — 批处理增加延迟
 - **小量级** — 很少超过 1 个项时，批处理增加复杂性无收益
+- **部分失败隔离** — 批量中一项失败需要重试/死信处理逻辑
+- **无限内存** — 无大小限制时，流量高峰期批量可能无限增长
 
 ## 更多生产案例
 
