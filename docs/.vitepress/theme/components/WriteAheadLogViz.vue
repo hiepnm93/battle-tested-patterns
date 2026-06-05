@@ -2,9 +2,12 @@
 import { ref } from 'vue';
 import { useI18n } from '../composables/useI18n';
 import { useVizTimers } from '../composables/useVizTimers';
+import { useVizLog } from '../composables/useVizLog';
+import VizLogPanel from './VizLog.vue';
 
 const { t } = useI18n();
 const { delay, clearAll, speed, isAborted } = useVizTimers();
+const { entries: logEntries, log: vizLog, clear: clearLog } = useVizLog();
 
 interface LogEntry {
   lsn: number;
@@ -47,6 +50,7 @@ function writeOp(key: string, value: string) {
     `WAL: logged SET ${key}=${value} (LSN ${entry.lsn}). Sequential write to disk — O(1) append, not random I/O. Data is durable even before flush.`,
     `WAL：已记录 SET ${key}=${value} (LSN ${entry.lsn})。顺序写入磁盘 — O(1) 追加，非随机 I/O。数据在刷写前就已持久化。`
   );
+  vizLog(t(`SET ${key}=${value} (LSN ${entry.lsn})`, `SET ${key}=${value} (LSN ${entry.lsn})`), 'info');
 }
 
 function flush() {
@@ -75,6 +79,7 @@ function flush() {
     `Flushed ${unflushed.length} entries → table. This is the "checkpoint" — after this, the WAL entries can be garbage collected.`,
     `已刷写 ${unflushed.length} 条记录到表。这就是"检查点" — 之后，WAL 记录可以被垃圾回收。`
   );
+  vizLog(t(`flushed ${unflushed.length} entries (checkpoint)`, `刷写 ${unflushed.length} 条记录（检查点）`), 'success');
 }
 
 function simulateCrash() {
@@ -92,6 +97,7 @@ function simulateCrash() {
     `CRASH! ${unflushed.length} unflushed entries lost from table — but WAL on disk is intact. This is the key insight: WAL survives crashes because it's append-only on disk.`,
     `崩溃！${unflushed.length} 条未刷写记录从表中丢失 — 但磁盘上的 WAL 完好无损。核心洞察：WAL 因为是磁盘上的追加写入而能在崩溃中存活。`
   );
+  vizLog(t(`CRASH! ${unflushed.length} unflushed entries lost from table`, `崩溃！${unflushed.length} 条未刷写记录从表中丢失`), 'error');
 }
 
 function recover() {
@@ -113,6 +119,7 @@ function recover() {
     `Recovered! Replayed ${unflushed.length} WAL entries — data fully restored. PostgreSQL, SQLite, and etcd all use this exact recovery process.`,
     `已恢复！重放了 ${unflushed.length} 条 WAL 记录 — 数据完全还原。PostgreSQL、SQLite 和 etcd 都使用完全相同的恢复过程。`
   );
+  vizLog(t(`recovered: replayed ${unflushed.length} WAL entries`, `已恢复：重放 ${unflushed.length} 条 WAL 记录`), 'success');
 }
 
 function reset() {
@@ -123,6 +130,7 @@ function reset() {
   crashed.value = false;
   lastAction.value = '';
   presetRunning = false;
+  clearLog();
   message.value = t('Reset — start writing operations', '已重置 — 开始写入操作');
 }
 
@@ -195,6 +203,7 @@ async function presetUpdateInPlace() {
     'WAL preserves update history: counter went 1→2→3. Each LSN is immutable. This is why WAL enables point-in-time recovery in databases.',
     'WAL 保留更新历史：counter 从 1→2→3。每个 LSN 都是不可变的。这就是 WAL 在数据库中实现时间点恢复的原因。'
   );
+  vizLog(t('Immutable LSNs enable point-in-time recovery', '不可变 LSN 实现时间点恢复'), 'highlight');
   presetRunning = false;
 }
 
@@ -294,6 +303,7 @@ async function presetBatchFlush() {
     </div>
 
     <div class="viz-status" :class="{ 'wal-crash-status': crashed }">{{ message }}</div>
+    <VizLogPanel :entries="logEntries" @clear="clearLog" />
   </div>
 </template>
 

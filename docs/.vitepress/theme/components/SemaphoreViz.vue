@@ -2,8 +2,11 @@
 import { ref, computed } from 'vue';
 import { useI18n } from '../composables/useI18n';
 import { useVizTimers } from '../composables/useVizTimers';
+import { useVizLog } from '../composables/useVizLog';
+import VizLog from './VizLog.vue';
 const { t } = useI18n();
 const { safeInterval, delay, clearAll, speed, isAborted } = useVizTimers();
+const { entries: logEntries, log, clear: clearLog } = useVizLog();
 
 interface Worker {
   id: number;
@@ -84,6 +87,7 @@ function startWorkerTimer(w: Worker) {
 
 function releaseWorker(w: Worker) {
   message.value = t(`Worker #${w.id} released permit ${w.permitIndex + 1}`, `工作线程 #${w.id} 释放了许可 ${w.permitIndex + 1}`);
+  log(t(`W#${w.id} released permit ${w.permitIndex + 1}`, `W#${w.id} 释放许可 ${w.permitIndex + 1}`), 'success');
   w.state = 'done';
   workers.value = workers.value.filter((x) => x.id !== w.id);
   tryPromoteWaiting();
@@ -103,6 +107,7 @@ function acquire() {
     };
     workers.value.push(w);
     message.value = t(`Worker #${id} acquired permit ${slot + 1}`, `工作线程 #${id} 获取了许可 ${slot + 1}`);
+    log(t(`W#${id} acquired permit ${slot + 1}`, `W#${id} 获取许可 ${slot + 1}`), 'info');
     startWorkerTimer(w);
   } else {
     const w: Worker = {
@@ -114,6 +119,7 @@ function acquire() {
     };
     workers.value.push(w);
     message.value = t(`No permits available — Worker #${id} is waiting in queue`, `无可用许可 — 工作线程 #${id} 正在队列中等待`);
+    log(t(`W#${id} waiting (no permits)`, `W#${id} 等待中（无许可）`), 'warning');
   }
 }
 
@@ -122,6 +128,7 @@ function reset() {
   presetRunning = false;
   workers.value = [];
   nextId = 1;
+  clearLog();
   message.value = t('Reset — all workers cleared', '已重置 — 所有工作线程已清除');
 }
 
@@ -168,6 +175,7 @@ async function presetSaturation() {
     'Workers queued. In Java, Semaphore.tryAcquire(timeout) lets callers give up after waiting too long. Go\'s semaphore in sema.go uses a treap-based wait queue for O(log n) priority ordering.',
     '工作线程已排队。Java 中 Semaphore.tryAcquire(timeout) 允许调用者等待超时后放弃。Go 的 sema.go 使用基于 treap 的等待队列实现 O(log n) 优先级排序。',
   );
+  log(t('Saturation: excess workers queue until permits free', '饱和：多余工作线程排队等待许可释放'), 'highlight');
 
   presetRunning = false;
 }
@@ -205,6 +213,7 @@ async function presetQueueDrain() {
     'All queued workers eventually got permits. If drain rate < arrival rate, the queue grows unbounded — that\'s why Nginx has worker_connections and Java has LinkedBlockingQueue(capacity).',
     '所有排队的工作线程最终都获得了许可。如果排空速率 < 到达速率，队列将无限增长 — 这就是为什么 Nginx 有 worker_connections，Java 有 LinkedBlockingQueue(capacity)。',
   );
+  log(t('Queue drained: all waiters eventually served', '队列排空：所有等待者最终被服务'), 'highlight');
 
   presetRunning = false;
 }
@@ -235,6 +244,7 @@ async function presetMutex() {
     'The second worker had to wait — mutual exclusion enforced. Binary semaphores are the foundation of all locking primitives in modern operating systems.',
     '第二个工作线程必须等待 — 互斥排他性得到保证。二元信号量是现代操作系统中所有锁原语的基础。',
   );
+  log(t('Binary semaphore = mutex: permits=1', '二元信号量 = 互斥锁：permits=1'), 'highlight');
 
   presetRunning = false;
 }
@@ -424,6 +434,7 @@ async function presetMutex() {
     </div>
 
     <div class="viz-status">{{ message }}</div>
+    <VizLog :entries="logEntries" @clear="clearLog" />
   </div>
 </template>
 

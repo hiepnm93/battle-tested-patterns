@@ -2,9 +2,12 @@
 import { ref, computed } from 'vue';
 import { useI18n } from '../composables/useI18n';
 import { useVizTimers } from '../composables/useVizTimers';
+import { useVizLog } from '../composables/useVizLog';
+import VizLog from './VizLog.vue';
 
 const { t } = useI18n();
 const { delay, clearAll, speed, isAborted } = useVizTimers();
+const { entries: logEntries, log, clear: clearLog } = useVizLog();
 
 interface Attempt {
   number: number;
@@ -95,17 +98,20 @@ async function startRequest() {
         `Success on attempt #${i + 1}!${i > 0 ? ` Recovered after ${i} ${i === 1 ? 'retry' : 'retries'}. AWS SDKs and gRPC use this exact backoff strategy.` : ' First try succeeded — no backoff needed.'}`,
         `第 ${i + 1} 次尝试成功！${i > 0 ? `经过 ${i} 次重试后恢复。AWS SDK 和 gRPC 使用完全相同的退避策略。` : '首次尝试即成功 — 无需退避。'}`
       );
+      log(t(`attempt #${i + 1} succeeded`, `第 ${i + 1} 次尝试成功`), 'success');
       running.value = false;
       return;
     }
 
     attempts.value[i].result = 'fail';
+    log(t(`attempt #${i + 1} failed`, `第 ${i + 1} 次尝试失败`), 'warning');
     if (i === MAX_RETRIES - 1) {
       finalOutcome.value = 'exhausted';
       message.value = t(
         `All ${MAX_RETRIES} attempts failed — circuit breaker should open now. Total backoff time: ${timelineTotalMs.value}ms. Without a cap, exponential growth becomes dangerous.`,
         `全部 ${MAX_RETRIES} 次尝试均失败 — 断路器应该开启。总退避时间：${timelineTotalMs.value}ms。没有上限时，指数增长会变得危险。`
       );
+      log(t(`all ${MAX_RETRIES} retries exhausted`, `全部 ${MAX_RETRIES} 次重试耗尽`), 'error');
     }
   }
 
@@ -118,6 +124,7 @@ function reset() {
   attempts.value = [];
   finalOutcome.value = 'idle';
   presetRunning = false;
+  clearLog();
   message.value = t(
     'Configure failure rate and click "Send Request" — or pick a scenario below',
     '配置失败率并点击"发送请求" — 或选择下方场景'
@@ -353,6 +360,7 @@ async function presetNoBackoff() {
     <div class="viz-status" :style="{ borderLeft: `3px solid ${statusBorderColor}` }">
       {{ message }}
     </div>
+    <VizLog :entries="logEntries" @clear="clearLog" />
   </div>
 </template>
 

@@ -2,9 +2,12 @@
 import { ref, computed, reactive } from 'vue';
 import { useI18n } from '../composables/useI18n';
 import { useVizTimers } from '../composables/useVizTimers';
+import { useVizLog } from '../composables/useVizLog';
+import VizLog from './VizLog.vue';
 
 const { t } = useI18n();
 const { delay, clearAll, speed, isAborted } = useVizTimers();
+const { entries: logEntries, log, clear: clearLog } = useVizLog();
 
 let presetRunning = false;
 
@@ -139,6 +142,7 @@ async function callMethod() {
     `Dispatched to ${entry.implLabel} ${inheritNote} -- returns ${entry.output}`,
     `分派到 ${entry.implLabel} ${inheritNote} -- 返回 ${entry.output}`,
   );
+  log(t(`${objLabel}.${selectedMethod.value} → ${entry.implLabel} = ${entry.output}`, `${objLabel}.${selectedMethod.value} → ${entry.implLabel} = ${entry.output}`), 'info');
 
   history.push({
     obj: objLabel,
@@ -167,6 +171,7 @@ function reset() {
   selectedClassName.value = 'Dog';
   selectedMethod.value = 'speak()';
   history.splice(0);
+  clearLog();
   message.value = t(
     'Select an object and method, then click "Call Method" to see vtable dispatch',
     '选择对象和方法，然后点击「调用方法」查看 vtable 分派',
@@ -207,6 +212,7 @@ async function presetPolymorphicDispatch() {
     'The same method call resolves to different implementations at runtime. C++ stores a vptr in every polymorphic object (8 bytes overhead on x64). Java uses a similar vtable but also has interface method tables (itable). Rust dyn Trait uses fat pointers: (data_ptr, vtable_ptr).',
     '同一方法调用在运行时解析到不同实现。C++ 在每个多态对象中存储 vptr（x64 上 8 字节开销）。Java 使用类似的 vtable，还有接口方法表（itable）。Rust 的 dyn Trait 使用胖指针：(data_ptr, vtable_ptr)。',
   );
+  log(t('Same call, different impls — runtime polymorphism', '同一调用不同实现 — 运行时多态'), 'highlight');
   presetRunning = false;
 }
 
@@ -244,6 +250,7 @@ async function presetInheritedVsOverridden() {
     'In C++, forgetting `virtual` on the base class makes the method non-virtual -- the vtable entry won\'t exist and dispatch is static (resolved at compile time). Java makes all methods virtual by default; `final` prevents overriding. Rust has no inheritance -- traits provide vtable dispatch via dyn Trait.',
     '在 C++ 中，基类忘记加 `virtual` 会使方法成为非虚方法——vtable 中不会有该条目，分派是静态的（编译时确定）。Java 默认所有方法都是虚的；`final` 阻止重写。Rust 没有继承——trait 通过 dyn Trait 提供 vtable 分派。',
   );
+  log(t('Inherited reuses parent ptr; overridden replaces it', '继承复用父类指针；重写替换指针'), 'highlight');
   presetRunning = false;
 }
 
@@ -281,6 +288,7 @@ async function presetSameMethodDifferentImpl() {
     'This is how game engines work -- Entity::update() calls the right update function for each entity type. Unreal Engine uses UObject vtables. Unity uses component vtables. The CPU cost is one extra memory indirection per call (vtable lookup), roughly 1-5ns on modern hardware.',
     '游戏引擎正是这样工作的——Entity::update() 为每种实体类型调用正确的更新函数。Unreal Engine 使用 UObject vtable。Unity 使用组件 vtable。CPU 开销是每次调用多一次内存间接寻址（vtable 查找），在现代硬件上约 1-5ns。',
   );
+  log(t('Liskov Substitution: any subtype fits the base', '里氏替换：任何子类型适配基类型'), 'highlight');
   presetRunning = false;
 }
 </script>
@@ -490,6 +498,7 @@ async function presetSameMethodDifferentImpl() {
     </div>
 
     <div class="viz-status">{{ message }}</div>
+    <VizLog :entries="logEntries" @clear="clearLog" />
   </div>
 </template>
 

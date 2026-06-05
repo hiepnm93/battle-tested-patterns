@@ -2,9 +2,12 @@
 import { ref } from 'vue';
 import { useI18n } from '../composables/useI18n';
 import { useVizTimers } from '../composables/useVizTimers';
+import { useVizLog } from '../composables/useVizLog';
+import VizLog from './VizLog.vue';
 
 const { t } = useI18n();
 const { safeInterval, safeTimeout, clearAll, speed } = useVizTimers();
+const { entries: logEntries, log, clear: clearLog } = useVizLog();
 
 interface Task {
   id: number;
@@ -73,6 +76,7 @@ function startProcessing() {
           w.queue.push(stolen);
           w.stolen++;
           stealHighlight.value = `${busiest.name}->${w.name}`;
+          log(t(`${w.name} stole #${stolen.id} from ${busiest.name}`, `${w.name} 从 ${busiest.name} 窃取 #${stolen.id}`), 'warning');
           message.value = t(
             `${w.name} stole task #${stolen.id} from ${busiest.name}! Stealing from the TAIL of the deque minimizes contention — this is the key to Go's goroutine scheduler.`,
             `${w.name} 从 ${busiest.name} 窃取了任务 #${stolen.id}！从双端队列的尾部窃取最小化竞争 — 这是 Go goroutine 调度器的关键。`
@@ -90,6 +94,7 @@ function startProcessing() {
         `All tasks completed! ${totalStolen} steals occurred. Without stealing, W1 would finish first while others idle — wasting CPU.`,
         `所有任务已完成！发生了 ${totalStolen} 次窃取。没有窃取的话，W1 会先完成而其他线程空闲 — 浪费 CPU。`
       );
+      log(t(`done: ${totalStolen} steals`, `完成：${totalStolen} 次窃取`), 'success');
     }
   }, 300);
 }
@@ -109,6 +114,7 @@ function reset() {
     { name: 'W3', color: 'var(--viz-warning)', queue: [], stolen: 0 },
   ];
   stealHighlight.value = '';
+  clearLog();
   message.value = t('Reset — add tasks and start processing', '已重置 — 添加任务并开始处理');
 }
 
@@ -214,6 +220,7 @@ function presetOneWorker() {
     </div>
 
     <div class="viz-status">{{ message }}</div>
+    <VizLog :entries="logEntries" @clear="clearLog" />
   </div>
 </template>
 

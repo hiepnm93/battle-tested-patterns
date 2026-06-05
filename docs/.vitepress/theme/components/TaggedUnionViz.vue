@@ -2,9 +2,12 @@
 import { ref, computed, watch } from 'vue';
 import { useI18n } from '../composables/useI18n';
 import { useVizTimers } from '../composables/useVizTimers';
+import { useVizLog } from '../composables/useVizLog';
+import VizLog from './VizLog.vue';
 
 const { t } = useI18n();
 const { delay, clearAll, speed, isAborted } = useVizTimers();
+const { entries: logEntries, log, clear: clearLog } = useVizLog();
 
 let presetRunning = false;
 
@@ -81,6 +84,7 @@ function runMatch() {
   showMatchResult.value = true;
   matchResultText.value = matchOutputs[currentTag.value];
   message.value = t(`match dispatched to ${currentTag.value} branch -> ${matchResultText.value}`, `match 分派到 ${currentTag.value} 分支 -> ${matchResultText.value}`);
+  log(t(`match ${currentTag.value} → ${matchResultText.value}`, `match ${currentTag.value} → ${matchResultText.value}`), 'info');
 }
 
 watch(currentTag, () => {
@@ -95,6 +99,7 @@ function reset() {
   matchHighlight.value = null;
   showMatchResult.value = false;
   matchResultText.value = '';
+  clearLog();
   message.value = t('Click a type button to set the variable. Watch the tag and value change together.', '点击类型按钮设置变量。观察标签和值一起变化。');
 }
 
@@ -122,6 +127,7 @@ async function presetMatchDispatch() {
     'This is also how TypeScript discriminated unions work with switch(x.kind), and how Haskell/OCaml pattern matching dispatches on constructors. The compiler verifies all branches are covered.',
     '这也是 TypeScript 可辨识联合通过 switch(x.kind) 工作的方式，以及 Haskell/OCaml 模式匹配在构造器上分派的方式。编译器验证所有分支都被覆盖。'
   );
+  log(t('Exhaustive match: compiler verifies all branches', '穷尽匹配：编译器验证所有分支'), 'highlight');
   presetRunning = false;
 }
 
@@ -144,6 +150,7 @@ async function presetMemoryLayout() {
     'The total size equals max(variant sizes) + tag size. Rust\'s Option<&T> uses null-pointer optimization: None = 0x00 pointer, Some = non-null pointer, so no extra tag byte is needed — the same size as a raw pointer.',
     '总大小 = max(各变体大小) + 标签大小。Rust 的 Option<&T> 使用空指针优化：None = 0x00 指针，Some = 非空指针，因此不需要额外的标签字节——与裸指针大小相同。'
   );
+  log(t('Size = max(variants) + tag; Option<&T> is zero-cost', '大小 = max(变体) + 标签; Option<&T> 零开销'), 'highlight');
   presetRunning = false;
 }
 
@@ -169,6 +176,7 @@ async function presetExhaustiveness() {
     'C/C++ unions with manual tag checking have none of this safety — reading the wrong union member is undefined behavior. Swift enums and Kotlin sealed classes also enforce exhaustiveness, making invalid states unrepresentable.',
     'C/C++ 的 union 加手动标签检查没有这些安全保障——读取错误的 union 成员是未定义行为。Swift 枚举和 Kotlin 密封类同样强制穷尽性，使无效状态不可表达。'
   );
+  log(t('Exhaustiveness makes invalid states unrepresentable', '穷尽性使无效状态不可表达'), 'highlight');
   presetRunning = false;
 }
 </script>
@@ -290,6 +298,7 @@ async function presetExhaustiveness() {
     </div>
 
     <div class="viz-status">{{ message }}</div>
+    <VizLog :entries="logEntries" @clear="clearLog" />
   </div>
 </template>
 

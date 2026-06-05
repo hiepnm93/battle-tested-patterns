@@ -2,9 +2,12 @@
 import { ref, computed } from 'vue';
 import { useI18n } from '../composables/useI18n';
 import { useVizTimers } from '../composables/useVizTimers';
+import { useVizLog } from '../composables/useVizLog';
+import VizLog from './VizLog.vue';
 
 const { t } = useI18n();
 const { safeTimeout, delay, clearAll, speed, isAborted } = useVizTimers();
+const { entries: logEntries, log, clear: clearLog } = useVizLog();
 
 interface RCObject {
   id: number;
@@ -51,9 +54,11 @@ function dropRef(refIdx: number) {
     obj.freed = true;
     lastFreed.value = obj.id;
     message.value = t(`Dropped ${r.from} → ${obj.name} — rc=0, FREED!`, `已删除 ${r.from} → ${obj.name} — rc=0，已释放！`);
+    log(t(`${obj.name} freed (rc=0)`, `${obj.name} 已释放 (rc=0)`), 'success');
     safeTimeout(() => { lastFreed.value = -1; }, 600);
   } else {
     message.value = t(`Dropped ${r.from} → ${obj.name} — rc=${obj.refCount}`, `已删除 ${r.from} → ${obj.name} — rc=${obj.refCount}`);
+    log(t(`drop ${r.from} → ${obj.name}, rc=${obj.refCount}`, `删除 ${r.from} → ${obj.name}, rc=${obj.refCount}`), 'info');
   }
 }
 
@@ -99,6 +104,7 @@ function reset() {
     { from: 'var z', toId: 2, color: 'var(--viz-warning)' },
   ];
   lastFreed.value = -1;
+  clearLog();
   message.value = t('Reset — drop references to see ref counting in action', '已重置 — 删除引用以查看引用计数的工作过程');
 }
 
@@ -126,6 +132,7 @@ async function presetDropAll() {
     'All objects freed deterministically — no GC pause needed. CPython frees objects the instant rc=0. Compare with tracing GC (Java, Go): objects survive until the next mark-sweep cycle, causing latency spikes. The tradeoff: reference counting cannot detect cycles (A→B→A).',
     '所有对象确定性释放 — 无需 GC 暂停。CPython 在 rc=0 时立即释放。对比追踪式 GC (Java, Go)：对象存活到下一次标记-清除周期，导致延迟抖动。代价：引用计数无法检测循环引用 (A→B→A)。'
   );
+  log(t('Deterministic deallocation — no GC pause', '确定性释放 — 无 GC 暂停'), 'highlight');
   presetRunning = false;
 }
 
@@ -165,6 +172,7 @@ async function presetSharedOwnership() {
     'Obj A survives at rc=1 — the last owner keeps it alive. In Rust, Rc::strong_count() lets you inspect this. In Objective-C ARC, the compiler inserts retain/release calls automatically. Swift\'s ARC works the same way — every strong property is an rc increment.',
     'Obj A 以 rc=1 存活 — 最后一个所有者保持它存活。在 Rust 中，Rc::strong_count() 可以检查这个值。在 Objective-C ARC 中，编译器自动插入 retain/release 调用。Swift 的 ARC 也一样 — 每个 strong 属性都是一次 rc 递增。'
   );
+  log(t('Shared ownership: last owner keeps object alive', '共享所有权：最后一个所有者保持对象存活'), 'highlight');
   presetRunning = false;
 }
 
@@ -200,6 +208,7 @@ async function presetDanglingZero() {
     'Obj A and B freed, but the orphan object leaks! In CPython, the cyclic GC catches these. In C++ shared_ptr, you must ensure at least one shared_ptr is created — raw new without shared_ptr = leak. Weak references (weak_ptr, weakref) break cycles without incrementing rc.',
     'Obj A 和 B 已释放，但孤儿对象泄漏了！在 CPython 中，循环 GC 会捕获这些。在 C++ shared_ptr 中，必须确保至少创建一个 shared_ptr — 不用 shared_ptr 的 raw new = 泄漏。弱引用 (weak_ptr, weakref) 在不递增 rc 的情况下打破循环。'
   );
+  log(t('Orphan object leaked — rc=0 but never freed', '孤儿对象泄漏 — rc=0 但未释放'), 'highlight');
   presetRunning = false;
 }
 </script>
@@ -272,6 +281,7 @@ async function presetDanglingZero() {
     </div>
 
     <div class="viz-status">{{ message }}</div>
+    <VizLog :entries="logEntries" @clear="clearLog" />
   </div>
 </template>
 

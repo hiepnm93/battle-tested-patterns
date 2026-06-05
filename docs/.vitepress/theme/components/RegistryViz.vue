@@ -2,9 +2,12 @@
 import { ref, computed } from 'vue';
 import { useI18n } from '../composables/useI18n';
 import { useVizTimers } from '../composables/useVizTimers';
+import { useVizLog } from '../composables/useVizLog';
+import VizLog from './VizLog.vue';
 
 const { t } = useI18n();
 const { safeTimeout, delay, clearAll, speed, isAborted } = useVizTimers();
+const { entries: logEntries, log, clear: clearLog } = useVizLog();
 
 interface Handler {
   name: string;
@@ -49,6 +52,7 @@ function registerHandler(pluginName: string) {
   lookupResult.value = null;
   lookupNotFound.value = false;
   message.value = t(`Registered "${plugin.name}" (order #${handler.registeredAt}). Registry now has ${registry.value.length} handler(s).`, `已注册 "${plugin.name}"（顺序 #${handler.registeredAt}）。注册表现有 ${registry.value.length} 个处理器。`);
+  log(t(`register "${plugin.name}" (#${handler.registeredAt})`, `注册 "${plugin.name}" (#${handler.registeredAt})`), 'info');
   safeTimeout(() => { flashId.value = -1; }, 600);
 }
 
@@ -80,11 +84,13 @@ function doLookup() {
       lookupNotFound.value = false;
       flashId.value = found.id;
       message.value = t(`FOUND: "${found.name}" -> ${found.description}`, `已找到："${found.name}" -> ${found.description}`);
+      log(t(`lookup "${found.name}" → found`, `查找 "${found.name}" → 已找到`), 'success');
       safeTimeout(() => { flashId.value = -1; }, 600);
     } else {
       lookupResult.value = null;
       lookupNotFound.value = true;
       message.value = t(`NOT FOUND: No handler registered for "${q}".`, `未找到：没有为 "${q}" 注册的处理器。`);
+      log(t(`lookup "${q}" → not found`, `查找 "${q}" → 未找到`), 'warning');
     }
     safeTimeout(() => { dispatchTarget.value = null; }, 800);
   }, 300);
@@ -109,6 +115,7 @@ function reset() {
   lookupNotFound.value = false;
   dispatchTarget.value = null;
   flashId.value = -1;
+  clearLog();
   message.value = t('Registry cleared. Register handlers to begin.', '注册表已清空。注册处理器以开始。');
 }
 
@@ -149,6 +156,7 @@ async function presetRegisterAndLookup() {
     'Register-then-resolve is the service locator pattern — Java ServiceLoader, Spring @Component scanning, and VSCode extension host all use a registry to decouple providers from consumers. Lookup is O(1) by name.',
     '先注册再解析是服务定位器模式 — Java ServiceLoader、Spring @Component 扫描和 VSCode 扩展主机都使用注册表来解耦提供者和消费者。按名称查找是 O(1)。'
   );
+  log(t('Service locator: register then resolve O(1)', '服务定位器：注册后 O(1) 解析'), 'highlight');
   presetRunning = false;
 }
 
@@ -204,6 +212,7 @@ async function presetLateBind() {
     'Late binding: plugins registered at runtime, not compile time. This is how Express middleware (app.use), Webpack loaders (module.rules), and browser custom elements (customElements.define) work — register anytime, resolve on demand.',
     '延迟绑定：插件在运行时注册，而非编译时。Express 中间件（app.use）、Webpack 加载器（module.rules）和浏览器自定义元素（customElements.define）都是这样工作的 — 随时注册，按需解析。'
   );
+  log(t('Late binding: register at runtime, resolve on demand', '延迟绑定：运行时注册，按需解析'), 'highlight');
   presetRunning = false;
 }
 
@@ -244,6 +253,7 @@ async function presetMissAndFallback() {
     'Key not found — the registry has no fallback. In production: HTTP returns 404, MIME sniffing kicks in, or a default handler catches unregistered types. Kubernetes uses admission webhooks as a registry with deny-by-default.',
     '键未找到 — 注册表没有回退机制。在生产环境中：HTTP 返回 404，MIME 嗅探介入，或默认处理器捕获未注册的类型。Kubernetes 使用准入 webhook 作为默认拒绝的注册表。'
   );
+  log(t('Miss with no fallback — production needs default handlers', '未命中无回退 — 生产环境需要默认处理器'), 'highlight');
   presetRunning = false;
 }
 </script>
@@ -385,6 +395,7 @@ async function presetMissAndFallback() {
     </div>
 
     <div class="viz-status">{{ message }}</div>
+    <VizLog :entries="logEntries" @clear="clearLog" />
   </div>
 </template>
 

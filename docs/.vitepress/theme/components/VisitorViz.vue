@@ -2,9 +2,12 @@
 import { ref, reactive, computed } from 'vue';
 import { useI18n } from '../composables/useI18n';
 import { useVizTimers } from '../composables/useVizTimers';
+import { useVizLog } from '../composables/useVizLog';
+import VizLog from './VizLog.vue';
 
 const { t } = useI18n();
 const { delay, clearAll, speed, isAborted } = useVizTimers();
+const { entries: logEntries, log, clear: clearLog } = useVizLog();
 
 interface AstNode {
   id: number;
@@ -98,8 +101,10 @@ async function startVisit() {
   currentNodeId.value = -1;
   if (visitorType.value === 'print') {
     message.value = t(`Print Visitor finished — visited ${totalNodes.value} nodes`, `Print Visitor 完成 — 访问了 ${totalNodes.value} 个节点`);
+    log(t(`Print Visitor: ${totalNodes.value} nodes`, `Print Visitor：${totalNodes.value} 个节点`), 'success');
   } else {
     message.value = t(`Count Visitor finished — total: ${nodeCount.value} nodes`, `Count Visitor 完成 — 总计：${nodeCount.value} 个节点`);
+    log(t(`Count Visitor: total=${nodeCount.value}`, `Count Visitor：总计=${nodeCount.value}`), 'success');
   }
   visiting.value = false;
 }
@@ -112,6 +117,7 @@ function reset() {
   currentNodeId.value = -1;
   output.length = 0;
   nodeCount.value = 0;
+  clearLog();
   message.value = t('Select a visitor type and click "Visit" to traverse the AST', '选择访问者类型并点击"访问"以遍历 AST');
 }
 
@@ -208,6 +214,7 @@ async function presetPrintVisitor() {
     'The visitor traversed depth-first (pre-order). Each node type can have its own handler. Adding a new operation (like type-checking) means adding a new visitor class, not modifying the AST node classes — this is the Open/Closed Principle.',
     '访问者进行了深度优先（前序）遍历。每种节点类型可以有自己的处理程序。添加新操作（如类型检查）意味着添加新的访问者类，而不是修改 AST 节点类 — 这就是开闭原则。'
   );
+  log(t('Open/Closed: new visitor, not new node methods', '开闭原则：新增访问者，不修改节点方法'), 'highlight');
   presetRunning = false;
 }
 
@@ -228,6 +235,7 @@ async function presetCountVisitor() {
     'Both visitors traverse the same tree structure but produce different results. This is the key insight: the structure is stable, the operations vary. Java\'s FileVisitor and Python\'s ast.NodeVisitor follow this same pattern.',
     '两个访问者遍历相同的树结构但产生不同的结果。这是关键洞察：结构是稳定的，操作是变化的。Java 的 FileVisitor 和 Python 的 ast.NodeVisitor 遵循相同的模式。'
   );
+  log(t('Same structure, different visitors — stable vs varying', '同结构不同访问者 — 稳定 vs 变化'), 'highlight');
   presetRunning = false;
 }
 
@@ -254,6 +262,7 @@ async function presetBothVisitors() {
     'In real compilers, the AST is visited many times — once for type checking, once for optimization, once for code generation. Clang/LLVM uses the CRTP visitor pattern (RecursiveASTVisitor) for this exact purpose.',
     '在真实的编译器中，AST 会被多次访问 — 一次用于类型检查，一次用于优化，一次用于代码生成。Clang/LLVM 使用 CRTP 访问者模式（RecursiveASTVisitor）正是为了这个目的。'
   );
+  log(t('Double dispatch: node type × visitor type', '双重分派：节点类型 × 访问者类型'), 'highlight');
   presetRunning = false;
 }
 </script>
@@ -358,6 +367,7 @@ async function presetBothVisitors() {
     </div>
 
     <div class="viz-status">{{ message }}</div>
+    <VizLog :entries="logEntries" @clear="clearLog" />
   </div>
 </template>
 
