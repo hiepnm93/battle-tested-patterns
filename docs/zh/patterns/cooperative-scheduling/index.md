@@ -252,7 +252,7 @@ Exercise files: Rust `exercises/rust/src/cooperative_scheduling.rs` · Go `exerc
 
 - [Lua](https://github.com/lua/lua) — coroutines
 - Python [asyncio](https://github.com/python/cpython/tree/main/Lib/asyncio)
-- [Erlang/BEAM VM](https://github.com/erlang/otp/blob/master/erts/emulator/beam/beam_emu.c) — reduction counting（每 ~4000 次 reduction 后 yield）
+- [Erlang/BEAM VM](https://github.com/erlang/otp/blob/master/erts/emulator/beam/emu/beam_emu.c#L305-L350) — reduction counting（每 ~4000 次 reduction 后 yield）
 - [Unity](https://github.com/Unity-Technologies/UnityCsReference/blob/master/Runtime/Export/Scripting/Coroutines.cs) — 使用 `yield return` 的协程
 
 ## 相关模式
