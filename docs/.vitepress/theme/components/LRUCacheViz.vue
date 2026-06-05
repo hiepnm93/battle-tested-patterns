@@ -185,7 +185,7 @@ const emptySlots = computed(() => Math.max(0, CAPACITY - entries.value.length));
           <div class="lru-node-key">{{ entry.key }}</div>
           <div class="lru-node-val">{{ entry.value }}</div>
         </div>
-        <svg v-if="i < entries.length - 1 || emptySlots > 0" class="lru-arrow" viewBox="0 0 24 12" width="24" height="12">
+        <svg v-if="i < entries.length - 1 || emptySlots > 0" class="lru-arrow" viewBox="0 0 24 12" width="24" height="12" aria-hidden="true">
           <path d="M0 6 L18 6 M14 2 L18 6 L14 10" stroke="var(--viz-muted)" stroke-width="1.5" fill="none"/>
         </svg>
       </template>
@@ -194,7 +194,7 @@ const emptySlots = computed(() => Math.max(0, CAPACITY - entries.value.length));
           <div class="lru-node-key">-</div>
           <div class="lru-node-val">&nbsp;</div>
         </div>
-        <svg v-if="j < emptySlots" class="lru-arrow" viewBox="0 0 24 12" width="24" height="12">
+        <svg v-if="j < emptySlots" class="lru-arrow" viewBox="0 0 24 12" width="24" height="12" aria-hidden="true">
           <path d="M0 6 L18 6 M14 2 L18 6 L14 10" stroke="var(--viz-border)" stroke-width="1.5" fill="none"/>
         </svg>
       </template>
@@ -225,7 +225,7 @@ const emptySlots = computed(() => Math.max(0, CAPACITY - entries.value.length));
       <button class="viz-btn" @click="presetZipf">{{ t('Zipf (Hot Keys)', 'Zipf（热键）') }}</button>
     </div>
 
-    <div class="viz-status" :class="{
+    <div class="viz-status" aria-live="polite" :class="{
       'viz-status--hit': animAction === 'hit',
       'viz-status--miss': animAction === 'miss',
       'viz-status--evict': animAction === 'evict',

@@ -310,7 +310,7 @@ async function presetBatchFlush() {
       <button class="viz-btn" @click="presetBatchFlush">{{ t('Batch Flush', '批量刷写') }}</button>
     </div>
 
-    <div class="viz-status" :class="{ 'wal-crash-status': crashed }">{{ message }}</div>
+    <div class="viz-status" aria-live="polite" :class="{ 'wal-crash-status': crashed }">{{ message }}</div>
     <VizLogPanel :entries="logEntries" @clear="clearLog" />
   </div>
 </template>

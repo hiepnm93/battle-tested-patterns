@@ -216,7 +216,7 @@ async function presetDuplicates() {
     </div>
 
     <div class="mi-merge-arrow">
-      <svg viewBox="0 0 24 24" width="20" height="20">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
         <path d="M12 4 L12 18 M8 14 L12 18 L16 14" stroke="var(--viz-primary)" stroke-width="2" fill="none"/>
       </svg>
       <span>{{ t('merge (pick min)', '合并（选最小值）') }}</span>
@@ -251,7 +251,7 @@ async function presetDuplicates() {
       <button class="viz-btn" @click="presetDuplicates">{{ t('Duplicates', '重复键') }}</button>
     </div>
 
-    <div class="viz-status">{{ message }}</div>
+    <div class="viz-status" aria-live="polite">{{ message }}</div>
     <VizLog :entries="logEntries" @clear="clearLog" />
   </div>
 </template>

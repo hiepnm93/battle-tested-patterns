@@ -166,7 +166,7 @@ async function presetDrainAndBlock() {
     <!-- Bucket visualization -->
     <div class="rl-bucket-wrap">
       <div class="rl-bucket-label">{{ tokens }}/{{ capacity }} {{ t('tokens', '令牌') }}</div>
-      <svg :viewBox="`0 0 ${capacity * 32 + 16} 48`" class="rl-svg">
+      <svg :viewBox="`0 0 ${capacity * 32 + 16} 48`" class="rl-svg" role="img" :aria-label="t('Token bucket visualization', '令牌桶可视化')">
         <rect
           v-for="i in capacity"
           :key="i"
@@ -226,7 +226,7 @@ async function presetDrainAndBlock() {
       <button class="viz-btn" @click="presetDrainAndBlock">{{ t('Drain & Block', '耗尽阻塞') }}</button>
     </div>
 
-    <div class="viz-status">{{ message }}</div>
+    <div class="viz-status" aria-live="polite">{{ message }}</div>
     <VizLog :entries="logEntries" @clear="clearLog" />
   </div>
 </template>

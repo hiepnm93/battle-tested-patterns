@@ -228,7 +228,7 @@ function edgeLabelPos(from: State, to: State, curve: number): { x: number; y: nu
   <div class="viz-container">
     <div class="viz-title">{{ t('Interactive State Machine', '交互式状态机') }}</div>
 
-    <svg viewBox="0 0 380 280" class="sm-svg">
+    <svg viewBox="0 0 380 280" class="sm-svg" role="img" :aria-label="t('State machine diagram', '状态机图')">
       <defs>
         <marker id="sm-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
           <polygon points="0 0, 8 3, 0 6" fill="var(--viz-border)" />
@@ -313,7 +313,7 @@ function edgeLabelPos(from: State, to: State, curve: number): { x: number; y: nu
       <button class="viz-btn" @click="presetImpossibleStates">{{ t('Impossible States', '不可能状态') }}</button>
     </div>
 
-    <div class="viz-status">{{ message }}</div>
+    <div class="viz-status" aria-live="polite">{{ message }}</div>
     <VizLog :entries="logEntries" @clear="clearLog" />
   </div>
 </template>

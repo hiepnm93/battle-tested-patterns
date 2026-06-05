@@ -328,7 +328,7 @@ const edges = computed(() => getEdges(treeLayout.value));
   <div class="viz-container">
     <div class="viz-title">{{ t('Interactive B+ Tree', '交互式 B+ Tree') }} (order={{ ORDER }})</div>
 
-    <svg :viewBox="`0 0 ${svgW} ${svgH}`" class="bptree-svg">
+    <svg :viewBox="`0 0 ${svgW} ${svgH}`" class="bptree-svg" role="img" :aria-label="t('B+ tree visualization', 'B+ 树可视化')">
       <!-- Edges -->
       <line
         v-for="(e, i) in edges"
@@ -392,7 +392,7 @@ const edges = computed(() => getEdges(treeLayout.value));
       <button class="viz-btn" @click="presetRangeQuery">{{ t('Range Query', '范围查询') }}</button>
     </div>
 
-    <div class="viz-status">{{ message }}</div>
+    <div class="viz-status" aria-live="polite">{{ message }}</div>
     <VizLog :entries="logEntries" @clear="clearLog" />
   </div>
 </template>

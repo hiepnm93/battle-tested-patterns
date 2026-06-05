@@ -255,7 +255,7 @@ async function presetReactCommit() {
 
       <!-- Swap Arrow -->
       <div class="db-swap-arrow" :class="{ 'db-swap-arrow--animating': swapping }">
-        <svg width="48" height="48" viewBox="0 0 48 48">
+        <svg width="48" height="48" viewBox="0 0 48 48" aria-hidden="true">
           <path
             d="M8 18h24l-8-8"
             fill="none"
@@ -322,7 +322,7 @@ async function presetReactCommit() {
       <button class="viz-btn" @click="presetReactCommit">{{ t('React Commit', 'React 提交') }}</button>
     </div>
 
-    <div class="viz-status">{{ message }}</div>
+    <div class="viz-status" aria-live="polite">{{ message }}</div>
     <VizLog :entries="logEntries" @clear="clearLog" />
   </div>
 </template>

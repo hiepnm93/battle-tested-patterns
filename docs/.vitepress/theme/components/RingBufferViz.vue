@@ -188,7 +188,7 @@ async function presetOverflow() {
   <div class="viz-container">
     <div class="viz-title">{{ t('Interactive Ring Buffer', '交互式环形缓冲区') }} · size={{ SIZE }}</div>
     <div class="ringbuf-layout">
-      <svg viewBox="0 0 280 280" class="ringbuf-svg">
+      <svg viewBox="0 0 280 280" class="ringbuf-svg" role="img" :aria-label="t('Ring buffer visualization', '环形缓冲区可视化')">
         <circle :cx="CX" :cy="CY" :r="R" fill="none" stroke="var(--viz-border)" stroke-width="1" stroke-dasharray="4,4" />
 
         <g v-for="cell in cells" :key="cell.index">
@@ -250,7 +250,7 @@ async function presetOverflow() {
           <button class="viz-btn" @click="presetProducerConsumer">{{ t('Producer-Consumer', '生产消费') }}</button>
           <button class="viz-btn" @click="presetOverflow">{{ t('Overflow', '溢出') }}</button>
         </div>
-        <div class="viz-status">{{ message }}</div>
+        <div class="viz-status" aria-live="polite">{{ message }}</div>
         <VizLog :entries="logEntries" @clear="clearLog" />
       </div>
     </div>

@@ -288,7 +288,7 @@ async function presetMultiBatch() {
       <button class="viz-btn" @click="presetMultiBatch">{{ t('Multi-Batch', '多批次') }}</button>
     </div>
 
-    <div class="viz-status">{{ message }}</div>
+    <div class="viz-status" aria-live="polite">{{ message }}</div>
     <VizLog :entries="logEntries" @clear="clearLog" />
   </div>
 </template>

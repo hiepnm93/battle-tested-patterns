@@ -266,7 +266,7 @@ async function presetLevelTraversal() {
   <div class="viz-container">
     <div class="viz-title">{{ t('Interactive Skip List', '交互式 Skip List') }}</div>
 
-    <svg :viewBox="`0 0 ${svgW} ${svgH}`" class="skiplist-svg">
+    <svg :viewBox="`0 0 ${svgW} ${svgH}`" class="skiplist-svg" role="img" :aria-label="t('Skip list visualization', 'Skip List 可视化')">
       <!-- Level labels -->
       <text
         v-for="lvl in maxLevel"
@@ -400,7 +400,7 @@ async function presetLevelTraversal() {
       <button class="viz-btn" @click="presetLevelTraversal">{{ t('Level Distribution', '层级分布') }}</button>
     </div>
 
-    <div class="viz-status">{{ message }}</div>
+    <div class="viz-status" aria-live="polite">{{ message }}</div>
     <VizLog :entries="logEntries" @clear="clearLog" />
   </div>
 </template>

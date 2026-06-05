@@ -293,7 +293,7 @@ const phaseColor = computed(() => {
       <button class="viz-btn" @click="loadStarvation">{{ t('Microtask Starvation', '微任务饥饿') }}</button>
     </div>
 
-    <div class="viz-status">{{ message }}</div>
+    <div class="viz-status" aria-live="polite">{{ message }}</div>
     <VizLog :entries="logEntries" @clear="clearLog" />
   </div>
 </template>

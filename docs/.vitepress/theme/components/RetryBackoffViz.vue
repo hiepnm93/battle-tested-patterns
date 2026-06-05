@@ -302,7 +302,7 @@ async function presetNoBackoff() {
 
     <!-- Empty state -->
     <div v-else class="rb-empty">
-      <svg viewBox="0 0 200 80" class="rb-empty-svg">
+      <svg viewBox="0 0 200 80" class="rb-empty-svg" role="img" :aria-label="t('Retry timeline placeholder', '重试时间线占位')">
         <text x="100" y="20" text-anchor="middle" fill="var(--viz-muted)" font-size="11">{{ t('Retry timeline will appear here', '重试时间线将在此显示') }}</text>
         <g v-for="i in 5" :key="i">
           <rect
@@ -360,7 +360,7 @@ async function presetNoBackoff() {
       <button class="viz-btn" @click="presetNoBackoff">{{ t('Exponential Growth', '指数增长') }}</button>
     </div>
 
-    <div class="viz-status" :style="{ borderLeft: `3px solid ${statusBorderColor}` }">
+    <div class="viz-status" aria-live="polite" :style="{ borderLeft: `3px solid ${statusBorderColor}` }">
       {{ message }}
     </div>
     <VizLog :entries="logEntries" @clear="clearLog" />

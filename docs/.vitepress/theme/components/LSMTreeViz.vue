@@ -375,7 +375,7 @@ async function presetUpdateOverwrite() {
       </div>
 
       <div class="lsm-arrow" :class="{ 'lsm-arrow--active': flushing }">
-        <svg width="24" height="28" viewBox="0 0 24 28">
+        <svg width="24" height="28" viewBox="0 0 24 28" aria-hidden="true">
           <path d="M12 2 L12 20 M7 16 L12 22 L17 16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
         <span class="lsm-arrow-label">{{ t('flush', '刷盘') }}</span>
@@ -416,7 +416,7 @@ async function presetUpdateOverwrite() {
       </div>
 
       <div class="lsm-arrow" :class="{ 'lsm-arrow--active': compacting }">
-        <svg width="24" height="28" viewBox="0 0 24 28">
+        <svg width="24" height="28" viewBox="0 0 24 28" aria-hidden="true">
           <path d="M12 2 L12 20 M7 16 L12 22 L17 16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
         <span class="lsm-arrow-label">{{ t('compact', '压缩') }}</span>
@@ -499,7 +499,7 @@ async function presetUpdateOverwrite() {
       <button class="viz-btn" @click="presetUpdateOverwrite">{{ t('Update Key', '更新键') }}</button>
     </div>
 
-    <div class="viz-status">{{ message }}</div>
+    <div class="viz-status" aria-live="polite">{{ message }}</div>
     <VizLog :entries="logEntries" @clear="clearLog" />
   </div>
 </template>

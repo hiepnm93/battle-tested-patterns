@@ -258,7 +258,7 @@ function fillColor() {
       <span class="viz-speed-val">{{ speed }}x</span>
     </div>
 
-    <div class="viz-status">{{ message }}</div>
+    <div class="viz-status" aria-live="polite">{{ message }}</div>
     <VizLog :entries="logEntries" @clear="clearLog" />
   </div>
 </template>

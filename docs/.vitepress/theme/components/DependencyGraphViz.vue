@@ -258,7 +258,7 @@ const sortedIdx = computed(() => {
   <div class="viz-container">
     <div class="viz-title">{{ t('Interactive Dependency Graph', '交互式依赖图') }}</div>
 
-    <svg viewBox="0 0 380 160" class="depgraph-svg">
+    <svg viewBox="0 0 380 160" class="depgraph-svg" role="img" :aria-label="t('Dependency graph visualization', '依赖图可视化')">
       <defs>
         <marker id="dg-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
           <polygon points="0 0, 8 3, 0 6" fill="var(--viz-border)" />
@@ -334,7 +334,7 @@ const sortedIdx = computed(() => {
       <button class="viz-btn" @click="presetLinearChain">{{ t('Linear Chain', '线性链') }}</button>
     </div>
 
-    <div class="viz-status">{{ message }}</div>
+    <div class="viz-status" aria-live="polite">{{ message }}</div>
     <VizLog :entries="logEntries" @clear="clearLog" />
   </div>
 </template>

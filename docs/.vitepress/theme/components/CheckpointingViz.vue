@@ -323,7 +323,7 @@ async function presetFrequentCheckpoints() {
             </div>
             <!-- Checkpoint marker -->
             <div v-if="isCheckpointAfter(entry.id)" class="cp-marker">
-              <svg width="100%" height="20" viewBox="0 0 200 20" preserveAspectRatio="none">
+              <svg width="100%" height="20" viewBox="0 0 200 20" preserveAspectRatio="none" aria-hidden="true">
                 <line x1="0" y1="10" x2="60" y2="10" stroke="var(--viz-success)" stroke-width="2" stroke-dasharray="4,3"/>
                 <polygon points="62,5 72,10 62,15" fill="var(--viz-success)"/>
                 <line x1="128" y1="10" x2="200" y2="10" stroke="var(--viz-success)" stroke-width="2" stroke-dasharray="4,3"/>
@@ -399,7 +399,7 @@ async function presetFrequentCheckpoints() {
       <button class="viz-btn" @click="presetFrequentCheckpoints">{{ t('Frequent CP', '频繁检查点') }}</button>
     </div>
 
-    <div class="viz-status" :class="{ 'cp-status--crash': crashed }">{{ message }}</div>
+    <div class="viz-status" aria-live="polite" :class="{ 'cp-status--crash': crashed }">{{ message }}</div>
     <VizLog :entries="logEntries" @clear="clearLog" />
   </div>
 </template>

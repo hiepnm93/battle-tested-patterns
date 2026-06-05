@@ -440,7 +440,7 @@ async function presetComparisonDemo() {
             }"
           >
             <span class="in-var-name">{{ v.name }}</span>
-            <svg class="in-ref-arrow" viewBox="0 0 28 12" width="28" height="12">
+            <svg class="in-ref-arrow" viewBox="0 0 28 12" width="28" height="12" aria-hidden="true">
               <path d="M0 6 L22 6 M18 2 L22 6 L18 10" stroke="var(--viz-primary)" stroke-width="1.5" fill="none"/>
             </svg>
             <span class="in-var-target">"{{ v.targetValue }}"</span>
@@ -566,7 +566,7 @@ async function presetComparisonDemo() {
     </div>
 
     <!-- Status message -->
-    <div class="viz-status" :class="{
+    <div class="viz-status" aria-live="polite" :class="{
       'in-status--new': highlightAction === 'new',
       'in-status--reuse': highlightAction === 'reuse',
       'in-status--remove': highlightAction === 'remove',

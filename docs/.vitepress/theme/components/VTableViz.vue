@@ -497,7 +497,7 @@ async function presetSameMethodDifferentImpl() {
       <button class="viz-btn" @click="presetSameMethodDifferentImpl">{{ t('Same Interface, Different Behavior', '同接口不同行为') }}</button>
     </div>
 
-    <div class="viz-status">{{ message }}</div>
+    <div class="viz-status" aria-live="polite">{{ message }}</div>
     <VizLog :entries="logEntries" @clear="clearLog" />
   </div>
 </template>

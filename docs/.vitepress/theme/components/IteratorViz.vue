@@ -280,7 +280,7 @@ async function presetStepByStep() {
       </div>
 
       <div class="it-arrow" :class="{ 'it-arrow--active': stageActive('filter') || stageActive('source') }">
-        <svg width="24" height="20" viewBox="0 0 24 20">
+        <svg width="24" height="20" viewBox="0 0 24 20" aria-hidden="true">
           <path d="M2 10 L18 10 M14 5 L20 10 L14 15" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </div>
@@ -295,7 +295,7 @@ async function presetStepByStep() {
       </div>
 
       <div class="it-arrow" :class="{ 'it-arrow--active': stageActive('map') }">
-        <svg width="24" height="20" viewBox="0 0 24 20">
+        <svg width="24" height="20" viewBox="0 0 24 20" aria-hidden="true">
           <path d="M2 10 L18 10 M14 5 L20 10 L14 15" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </div>
@@ -309,7 +309,7 @@ async function presetStepByStep() {
       </div>
 
       <div class="it-arrow" :class="{ 'it-arrow--active': stageActive('take') }">
-        <svg width="24" height="20" viewBox="0 0 24 20">
+        <svg width="24" height="20" viewBox="0 0 24 20" aria-hidden="true">
           <path d="M2 10 L18 10 M14 5 L20 10 L14 15" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </div>
@@ -323,7 +323,7 @@ async function presetStepByStep() {
       </div>
 
       <div class="it-arrow" :class="{ 'it-arrow--active': stageActive('collect') }">
-        <svg width="24" height="20" viewBox="0 0 24 20">
+        <svg width="24" height="20" viewBox="0 0 24 20" aria-hidden="true">
           <path d="M2 10 L18 10 M14 5 L20 10 L14 15" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </div>
@@ -358,7 +358,7 @@ async function presetStepByStep() {
       <button class="viz-btn" @click="presetStepByStep">{{ t('Step by Step', '逐步') }}</button>
     </div>
 
-    <div class="viz-status">{{ message }}</div>
+    <div class="viz-status" aria-live="polite">{{ message }}</div>
     <VizLog :entries="logEntries" @clear="clearLog" />
   </div>
 </template>

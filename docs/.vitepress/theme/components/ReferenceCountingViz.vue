@@ -280,7 +280,7 @@ async function presetDanglingZero() {
       <button class="viz-btn" @click="presetDanglingZero">{{ t('Orphan Leak', '孤儿泄漏') }}</button>
     </div>
 
-    <div class="viz-status">{{ message }}</div>
+    <div class="viz-status" aria-live="polite">{{ message }}</div>
     <VizLog :entries="logEntries" @clear="clearLog" />
   </div>
 </template>

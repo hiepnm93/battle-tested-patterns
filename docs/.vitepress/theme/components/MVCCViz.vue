@@ -424,7 +424,7 @@ async function presetVersionChainGrowth() {
       <button class="viz-btn" @click="presetVersionChainGrowth">{{ t('Version Growth', '版本增长') }}</button>
     </div>
 
-    <div class="viz-status">{{ message }}</div>
+    <div class="viz-status" aria-live="polite">{{ message }}</div>
     <VizLog :entries="logEntries" @clear="clearLog" />
   </div>
 </template>

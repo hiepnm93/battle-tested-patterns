@@ -271,7 +271,7 @@ async function presetMergeSorted() {
     <div class="viz-title">{{ t('Interactive Min Heap', '交互式 Min Heap') }}</div>
 
     <!-- Tree view -->
-    <svg :viewBox="`0 0 ${SVG_W} ${Math.max(SVG_H, (Math.floor(Math.log2(Math.max(heap.length, 1))) + 1) * 50 + 40)}`" class="heap-svg">
+    <svg :viewBox="`0 0 ${SVG_W} ${Math.max(SVG_H, (Math.floor(Math.log2(Math.max(heap.length, 1))) + 1) * 50 + 40)}`" class="heap-svg" role="img" :aria-label="t('Min heap tree visualization', '最小堆树可视化')">
       <line
         v-for="e in edges"
         :key="e.key"
@@ -336,7 +336,7 @@ async function presetMergeSorted() {
       <button class="viz-btn" @click="presetMergeSorted">{{ t('Merge Streams', '合并流') }}</button>
     </div>
 
-    <div class="viz-status">{{ message }}</div>
+    <div class="viz-status" aria-live="polite">{{ message }}</div>
     <VizLog :entries="logEntries" @clear="clearLog" />
   </div>
 </template>

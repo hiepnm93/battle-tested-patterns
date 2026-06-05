@@ -219,7 +219,7 @@ async function presetDiffSync() {
   <div class="viz-container">
     <div class="viz-title">{{ t('Interactive Merkle Tree', '交互式 Merkle Tree') }}</div>
 
-    <svg viewBox="0 0 400 230" class="merkle-svg">
+    <svg viewBox="0 0 400 230" class="merkle-svg" role="img" :aria-label="t('Merkle tree visualization', 'Merkle 树可视化')">
       <!-- Edges -->
       <line
         v-for="[from, to] in edges"
@@ -279,7 +279,7 @@ async function presetDiffSync() {
       <button class="viz-btn" @click="presetDiffSync">{{ t('Diff Sync', '差异同步') }}</button>
     </div>
 
-    <div class="viz-status">{{ message }}</div>
+    <div class="viz-status" aria-live="polite">{{ message }}</div>
     <VizLog :entries="logEntries" @clear="clearLog" />
   </div>
 </template>

@@ -250,7 +250,7 @@ const presetTests = ['cat', 'rat', 'fox', 'ant'];
       <button class="viz-btn" @click="presetCapacityLimit">{{ t('Capacity Limit', '容量极限') }}</button>
     </div>
 
-    <div class="viz-status" :class="{
+    <div class="viz-status" aria-live="polite" :class="{
       'viz-status--hit': highlightType === 'hit',
       'viz-status--miss': highlightType === 'miss',
       'viz-status--fp': highlightType === 'false-positive',

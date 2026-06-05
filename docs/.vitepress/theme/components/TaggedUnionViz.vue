@@ -297,7 +297,7 @@ async function presetExhaustiveness() {
       <button class="viz-btn" @click="presetExhaustiveness">{{ t('Exhaustive Match', '穷尽匹配') }}</button>
     </div>
 
-    <div class="viz-status">{{ message }}</div>
+    <div class="viz-status" aria-live="polite">{{ message }}</div>
     <VizLog :entries="logEntries" @clear="clearLog" />
   </div>
 </template>

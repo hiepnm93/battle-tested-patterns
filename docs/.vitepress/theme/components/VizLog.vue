@@ -47,10 +47,18 @@ function toggle() {
 </script>
 
 <template>
-  <div class="viz-log" :class="{ 'viz-log--collapsed': collapsed }">
-    <div class="viz-log-header" @click="toggle">
+  <div class="viz-log" :class="{ 'viz-log--collapsed': collapsed }" role="region" aria-label="Log">
+    <div
+      class="viz-log-header"
+      role="button"
+      :tabindex="collapsible ? 0 : undefined"
+      :aria-expanded="!collapsed"
+      @click="toggle"
+      @keydown.enter.prevent="toggle"
+      @keydown.space.prevent="toggle"
+    >
       <span class="viz-log-title">
-        <span v-if="collapsible" class="viz-log-arrow">{{ collapsed ? '▶' : '▼' }}</span>
+        <span v-if="collapsible" class="viz-log-arrow" aria-hidden="true">{{ collapsed ? '▶' : '▼' }}</span>
         Log
         <span class="viz-log-count">({{ entries.length }})</span>
       </span>
@@ -58,6 +66,7 @@ function toggle() {
         v-if="!collapsed && entries.length > 0"
         class="viz-log-clear"
         @click.stop="emit('clear')"
+        aria-label="Clear log"
       >
         Clear
       </button>
@@ -66,6 +75,8 @@ function toggle() {
       v-show="!collapsed"
       ref="listRef"
       class="viz-log-entries"
+      role="log"
+      aria-live="polite"
       :style="{ maxHeight: maxHeight + 'px' }"
       @scroll="onScroll"
     >

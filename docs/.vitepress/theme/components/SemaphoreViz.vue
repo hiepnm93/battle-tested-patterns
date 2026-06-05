@@ -273,6 +273,8 @@ async function presetMutex() {
         :viewBox="`0 0 400 ${180 + Math.max(0, waitingWorkers.length - 1) * 34}`"
         class="sem-svg"
         xmlns="http://www.w3.org/2000/svg"
+        role="img"
+        :aria-label="t('Semaphore slot visualization', '信号量槽位可视化')"
       >
         <!-- Semaphore box -->
         <rect
@@ -433,7 +435,7 @@ async function presetMutex() {
       <button class="viz-btn" @click="presetMutex">{{ t('Mutex (1 Permit)', '互斥锁') }}</button>
     </div>
 
-    <div class="viz-status">{{ message }}</div>
+    <div class="viz-status" aria-live="polite">{{ message }}</div>
     <VizLog :entries="logEntries" @clear="clearLog" />
   </div>
 </template>

@@ -566,7 +566,7 @@ async function presetReadThroughTombstone() {
       <button class="viz-btn" @click="presetReadThroughTombstone">{{ t('Read Tombstone', '读取墓碑') }}</button>
     </div>
 
-    <div class="viz-status">{{ message }}</div>
+    <div class="viz-status" aria-live="polite">{{ message }}</div>
     <VizLog :entries="logEntries" @clear="clearLog" />
   </div>
 </template>

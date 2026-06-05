@@ -312,7 +312,7 @@ const diffPrefix = (type: string) => {
       <button class="viz-btn" @click="presetFullRewrite">{{ t('Full Rewrite', '完全重写') }}</button>
     </div>
 
-    <div class="viz-status">{{ message }}</div>
+    <div class="viz-status" aria-live="polite">{{ message }}</div>
     <VizLog :entries="logEntries" @clear="clearLog" />
   </div>
 </template>

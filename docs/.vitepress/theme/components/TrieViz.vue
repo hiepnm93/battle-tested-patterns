@@ -268,7 +268,7 @@ const edges = computed(() => edgesFromLayout(treeLayout.value));
   <div class="viz-container">
     <div class="viz-title">{{ t('Interactive Trie (Prefix Tree)', '交互式 Trie（前缀树）') }}</div>
 
-    <svg :viewBox="`0 0 ${svgW} ${svgH}`" class="trie-svg">
+    <svg :viewBox="`0 0 ${svgW} ${svgH}`" class="trie-svg" role="img" :aria-label="t('Trie tree visualization', 'Trie 树可视化')">
       <!-- Edges -->
       <line
         v-for="(e, i) in edges"
@@ -346,7 +346,7 @@ const edges = computed(() => edgesFromLayout(treeLayout.value));
       <button class="viz-btn" @click="presetDenseTree">{{ t('Dense Tree', '密集树') }}</button>
     </div>
 
-    <div class="viz-status">{{ message }}</div>
+    <div class="viz-status" aria-live="polite">{{ message }}</div>
     <VizLog :entries="logEntries" @clear="clearLog" />
   </div>
 </template>

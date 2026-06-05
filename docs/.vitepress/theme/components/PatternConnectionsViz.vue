@@ -155,7 +155,7 @@ function patternLink(link: string) {
       </button>
     </div>
 
-    <div class="viz-status">{{ t(
+    <div class="viz-status" aria-live="polite">{{ t(
       'Click a tab to explore how each system composes patterns',
       '点击标签查看每个系统如何组合模式'
     ) }}</div>

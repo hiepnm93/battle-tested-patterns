@@ -242,7 +242,7 @@ const states: { key: State; label: string; x: number; y: number }[] = [
     <div class="viz-title">{{ t('Interactive Circuit Breaker', '交互式 Circuit Breaker') }} · {{ t('threshold', '阈值') }}={{ threshold }}</div>
 
     <!-- State machine diagram -->
-    <svg viewBox="0 0 300 200" class="cb-svg">
+    <svg viewBox="0 0 300 200" class="cb-svg" role="img" :aria-label="t('Circuit breaker state diagram', '断路器状态图')">
       <defs>
         <marker id="arrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
           <path d="M0,0 L8,3 L0,6" fill="var(--viz-muted)" />
@@ -318,7 +318,7 @@ const states: { key: State; label: string; x: number; y: number }[] = [
       <button class="viz-btn" @click="presetHealthy">{{ t('Healthy Service', '健康服务') }}</button>
     </div>
 
-    <div class="viz-status" :style="{ borderLeft: `3px solid ${stateColor}` }">
+    <div class="viz-status" aria-live="polite" :style="{ borderLeft: `3px solid ${stateColor}` }">
       {{ message }}
     </div>
     <VizLog :entries="logEntries" @clear="clearLog" />

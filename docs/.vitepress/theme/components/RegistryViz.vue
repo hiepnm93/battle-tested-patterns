@@ -394,7 +394,7 @@ async function presetMissAndFallback() {
       <button class="viz-btn" @click="presetMissAndFallback">{{ t('Key Miss', '键未命中') }}</button>
     </div>
 
-    <div class="viz-status">{{ message }}</div>
+    <div class="viz-status" aria-live="polite">{{ message }}</div>
     <VizLog :entries="logEntries" @clear="clearLog" />
   </div>
 </template>

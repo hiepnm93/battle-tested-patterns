@@ -394,7 +394,7 @@ applyText();
       <button class="viz-btn" @click="presetAppendDemo">{{ t('Append Growth', '追加增长') }}</button>
     </div>
 
-    <div class="viz-status">{{ message }}</div>
+    <div class="viz-status" aria-live="polite">{{ message }}</div>
     <VizLog :entries="logEntries" @clear="clearLog" />
   </div>
 </template>

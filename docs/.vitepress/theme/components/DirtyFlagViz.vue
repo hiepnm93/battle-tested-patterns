@@ -190,7 +190,7 @@ async function presetCascadingDirty() {
   <div class="viz-container">
     <div class="viz-title">{{ t('Interactive Dirty Flag', '交互式 Dirty Flag') }}</div>
 
-    <svg viewBox="0 0 380 150" class="df-svg">
+    <svg viewBox="0 0 380 150" class="df-svg" role="img" :aria-label="t('Dirty flag tree visualization', '脏标记树可视化')">
       <g v-for="(e, i) in entities" :key="e.id">
         <circle
           :cx="e.x"
@@ -257,7 +257,7 @@ async function presetCascadingDirty() {
       <button class="viz-btn" @click="presetCascadingDirty">{{ t('Cascading', '级联') }}</button>
     </div>
 
-    <div class="viz-status">{{ message }}</div>
+    <div class="viz-status" aria-live="polite">{{ message }}</div>
     <VizLog :entries="logEntries" @clear="clearLog" />
   </div>
 </template>

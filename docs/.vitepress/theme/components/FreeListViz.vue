@@ -272,12 +272,12 @@ async function presetFragmentation() {
       <template v-if="freeListOrder.length > 0">
         <span class="fl-chain-item fl-chain-head">head</span>
         <template v-for="(id, i) in freeListOrder" :key="'fl-' + id">
-          <svg class="fl-chain-arrow" viewBox="0 0 24 12" width="24" height="12">
+          <svg class="fl-chain-arrow" viewBox="0 0 24 12" width="24" height="12" aria-hidden="true">
             <path d="M2 6 L18 6 M14 2 L18 6 L14 10" stroke="var(--viz-primary)" stroke-width="1.5" fill="none"/>
           </svg>
           <span class="fl-chain-item">{{ id }}</span>
         </template>
-        <svg class="fl-chain-arrow" viewBox="0 0 24 12" width="24" height="12">
+        <svg class="fl-chain-arrow" viewBox="0 0 24 12" width="24" height="12" aria-hidden="true">
           <path d="M2 6 L18 6 M14 2 L18 6 L14 10" stroke="var(--viz-muted)" stroke-width="1.5" fill="none"/>
         </svg>
         <span class="fl-chain-item fl-chain-null">null</span>
@@ -325,7 +325,7 @@ async function presetFragmentation() {
       <button class="viz-btn" @click="presetFragmentation">{{ t('Zero Fragmentation', '零碎片化') }}</button>
     </div>
 
-    <div class="viz-status">{{ message }}</div>
+    <div class="viz-status" aria-live="polite">{{ message }}</div>
     <VizLog :entries="logEntries" @clear="clearLog" />
   </div>
 </template>

@@ -199,7 +199,7 @@ async function presetMaskCheck() {
       <button class="viz-btn" @click="presetMaskCheck">{{ t('Mask Check', '掩码检查') }}</button>
     </div>
 
-    <div class="viz-status">{{ message }}</div>
+    <div class="viz-status" aria-live="polite">{{ message }}</div>
     <VizLog :entries="logEntries" @clear="clearLog" />
   </div>
 </template>

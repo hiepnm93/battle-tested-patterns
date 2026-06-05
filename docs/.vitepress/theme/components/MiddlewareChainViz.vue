@@ -422,7 +422,7 @@ async function presetSkipMiddleware() {
       <button class="viz-btn" @click="presetSkipMiddleware">{{ t('Minimal', '最小管道') }}</button>
     </div>
 
-    <div class="viz-status">{{ message }}</div>
+    <div class="viz-status" aria-live="polite">{{ message }}</div>
     <VizLog :entries="logEntries" @clear="clearLog" />
   </div>
 </template>

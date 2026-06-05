@@ -272,7 +272,7 @@ async function presetBothVisitors() {
     <div class="viz-title">{{ t('Interactive Visitor Pattern', '交互式 Visitor 模式') }}</div>
 
     <!-- AST Tree -->
-    <svg :viewBox="`0 0 ${svgW} ${svgH}`" class="vv-svg">
+    <svg :viewBox="`0 0 ${svgW} ${svgH}`" class="vv-svg" role="img" :aria-label="t('Visitor pattern AST visualization', '访问者模式 AST 可视化')">
       <line
         v-for="(e, i) in edges"
         :key="'e-' + i"
@@ -366,7 +366,7 @@ async function presetBothVisitors() {
       <button class="viz-btn" :disabled="visiting && !presetRunning" @click="presetBothVisitors">{{ t('Compare Visitors', '对比访问者') }}</button>
     </div>
 
-    <div class="viz-status">{{ message }}</div>
+    <div class="viz-status" aria-live="polite">{{ message }}</div>
     <VizLog :entries="logEntries" @clear="clearLog" />
   </div>
 </template>

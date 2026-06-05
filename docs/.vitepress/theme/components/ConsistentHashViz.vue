@@ -218,7 +218,7 @@ async function presetHotSpot() {
   <div class="viz-container">
     <div class="viz-title">{{ t('Interactive Consistent Hashing Ring', '交互式一致性哈希环') }}</div>
 
-    <svg viewBox="0 0 300 300" class="ch-svg">
+    <svg viewBox="0 0 300 300" class="ch-svg" role="img" :aria-label="t('Consistent hash ring visualization', '一致性哈希环可视化')">
       <circle :cx="CX" :cy="CY" :r="R" fill="none" stroke="var(--viz-border)" stroke-width="1.5" />
 
       <!-- Ownership arcs -->
@@ -293,7 +293,7 @@ async function presetHotSpot() {
       <button class="viz-btn" @click="presetHotSpot">{{ t('Hot Spot', '热点') }}</button>
     </div>
 
-    <div class="viz-status">{{ message }}</div>
+    <div class="viz-status" aria-live="polite">{{ message }}</div>
     <VizLog :entries="logEntries" @clear="clearLog" />
   </div>
 </template>
