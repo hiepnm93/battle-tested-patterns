@@ -2,9 +2,12 @@
 import { ref, computed } from 'vue';
 import { useI18n } from '../composables/useI18n';
 import { useVizTimers } from '../composables/useVizTimers';
+import { useVizLog } from '../composables/useVizLog';
+import VizLog from './VizLog.vue';
 
 const { t } = useI18n();
 const { delay, clearAll, speed, isAborted } = useVizTimers();
+const { entries: logEntries, log, clear: clearLog } = useVizLog();
 
 const ORDER = 3; // max keys per node
 
@@ -84,6 +87,7 @@ function insert() {
   const key = Math.floor(Math.random() * 99) + 1;
   if (!doInsert(key)) {
     message.value = t(`${key} already exists — duplicates rejected`, `${key} 已存在 — 拒绝重复值`);
+    log(message.value, 'warning');
     return;
   }
   highlightIds.value = new Set();
@@ -92,6 +96,7 @@ function insert() {
     `Inserted ${key} — tree depth: ${depth}. B+ trees maintain O(log n) height by splitting full nodes. With order ${ORDER}, each node holds 1-${ORDER} keys.`,
     `已插入 ${key} — 树深度：${depth}。B+ 树通过分裂满节点维持 O(log n) 高度。阶为 ${ORDER} 时，每个节点持有 1-${ORDER} 个键。`
   );
+  log(message.value, 'info');
 }
 
 function collectKeys(node: BNode): number[] {
@@ -133,6 +138,7 @@ async function search() {
           `Found ${target} in leaf after ${comparisons} comparisons. Tree depth: ${getDepth(root.value)}. A B+ tree with 1M records needs only ~20 comparisons.`,
           `在 ${comparisons} 次比较后在叶节点找到 ${target}。树深度：${getDepth(root.value)}。100 万条记录的 B+ 树只需约 20 次比较。`
         );
+        log(message.value, 'success');
       }
       break;
     }
@@ -155,6 +161,7 @@ function reset() {
   sorting.value = false;
   presetRunning = false;
   message.value = t('Tree cleared — insert keys to build a new tree', '树已清空 — 插入键构建新树');
+  clearLog();
 }
 
 function loadDemo() {
@@ -230,6 +237,7 @@ async function presetRangeQuery() {
     `Range scan complete: found ${rangeKeys.length} keys (${rangeKeys.join(', ')}). Leaf-level linked list makes this O(log n + k) where k = result count.`,
     `范围扫描完成：找到 ${rangeKeys.length} 个键（${rangeKeys.join(', ')}）。叶级链表使其为 O(log n + k)，其中 k = 结果数量。`
   );
+  log(message.value, 'highlight');
   presetRunning = false;
 }
 
@@ -355,6 +363,7 @@ const edges = computed(() => getEdges(treeLayout.value));
     </div>
 
     <div class="viz-status">{{ message }}</div>
+    <VizLog :entries="logEntries" @clear="clearLog" />
   </div>
 </template>
 

@@ -2,9 +2,12 @@
 import { ref, watch } from 'vue';
 import { useI18n } from '../composables/useI18n';
 import { useVizTimers } from '../composables/useVizTimers';
+import { useVizLog } from '../composables/useVizLog';
+import VizLog from './VizLog.vue';
 
 const { t } = useI18n();
 const { safeInterval, safeTimeout, clearAll, speed } = useVizTimers();
+const { entries: logEntries, log, clear: clearLog } = useVizLog();
 
 const QUEUE_CAP = 12;
 const queue = ref<number[]>([]);
@@ -32,6 +35,7 @@ function producerTick() {
       `BACKPRESSURE! Item #${nextItem} DROPPED — queue full at ${QUEUE_CAP}. In TCP, this triggers window shrinking; in RxJS, this drops or buffers.`,
       `背压！项目 #${nextItem} 被丢弃 — 队列已满（${QUEUE_CAP}）。在 TCP 中，这会触发窗口收缩；在 RxJS 中，会丢弃或缓冲。`
     );
+    log(message.value, 'error');
     nextItem++;
   } else {
     queue.value.push(nextItem);
@@ -42,8 +46,10 @@ function producerTick() {
         `Produced #${nextItem} — queue at ${fill}%! Approaching backpressure threshold.`,
         `已生产 #${nextItem} — 队列 ${fill}%！即将触发背压阈值。`
       );
+      log(message.value, 'warning');
     } else {
       message.value = t(`Produced #${nextItem} — queue at ${fill}%`, `已生产 #${nextItem} — 队列 ${fill}%`);
+      log(message.value, 'info');
     }
     nextItem++;
   }
@@ -55,6 +61,7 @@ function consumerTick() {
     const item = queue.value.shift()!;
     consumed.value++;
     message.value = t(`Consumed #${item}`, `已消费 #${item}`);
+    log(message.value, 'success');
   }
 }
 
@@ -102,6 +109,7 @@ function reset() {
   dropped.value = 0;
   nextItem = 1;
   message.value = t('Reset! Configure rates and start.', '已重置！配置速率并开始。');
+  clearLog();
 }
 
 function presetOverload() {
@@ -116,6 +124,7 @@ function presetOverload() {
     'Overload: producer 5x faster than consumer. Watch the queue fill up and items get dropped — this is why Node.js streams have highWaterMark.',
     '过载：生产者比消费者快 5 倍。观察队列填满和项目被丢弃 — 这就是 Node.js streams 有 highWaterMark 的原因。'
   );
+  log(message.value, 'highlight');
 }
 
 function presetBalanced() {
@@ -130,6 +139,7 @@ function presetBalanced() {
     'Balanced: producer and consumer at same rate. Queue stays stable — this is the ideal steady state.',
     '平衡：生产者和消费者速率相同。队列保持稳定 — 这是理想的稳态。'
   );
+  log(message.value, 'highlight');
 }
 
 function presetBurst() {
@@ -245,6 +255,7 @@ function fillColor() {
     </div>
 
     <div class="viz-status">{{ message }}</div>
+    <VizLog :entries="logEntries" @clear="clearLog" />
   </div>
 </template>
 

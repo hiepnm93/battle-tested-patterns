@@ -2,9 +2,12 @@
 import { ref, computed, reactive } from 'vue';
 import { useI18n } from '../composables/useI18n';
 import { useVizTimers } from '../composables/useVizTimers';
+import { useVizLog } from '../composables/useVizLog';
+import VizLog from './VizLog.vue';
 
 const { t } = useI18n();
 const { delay, clearAll: clearTimers, speed, isAborted } = useVizTimers();
+const { entries: logEntries, log, clear: clearLog } = useVizLog();
 
 interface Allocation {
   id: number;
@@ -110,6 +113,7 @@ function allocate() {
       `Cannot allocate ${size} unit(s) in Arena #${arena.id} — only ${arena.capacity - arena.pointer} free. Add a new arena (chaining) or reset.`,
       `无法在 Arena #${arena.id} 中分配 ${size} 个单元 — 仅剩 ${arena.capacity - arena.pointer} 可用。添加新 Arena（链式）或重置。`
     );
+    log(message.value, 'warning');
     return;
   }
 
@@ -139,6 +143,7 @@ function allocate() {
     `Allocated "${alloc.label}" (${size} unit(s)) at offset ${alloc.offset} — pointer bumped to ${arena.pointer}. O(1) allocation: just increment a pointer, no free-list traversal.`,
     `已分配 "${alloc.label}" (${size} 个单元) 在偏移量 ${alloc.offset} — 指针移至 ${arena.pointer}。O(1) 分配：只需递增指针，无需遍历空闲链表。`
   );
+  log(message.value, 'info');
 }
 
 function resetArena(index: number) {
@@ -156,6 +161,7 @@ function resetArena(index: number) {
     `Arena #${arena.id} reset — all memory freed in O(1). No per-object destructor calls. This is why arena allocation is 10-100x faster than malloc/free.`,
     `Arena #${arena.id} 已重置 — 所有内存 O(1) 释放。没有逐对象析构调用。这就是 arena 分配比 malloc/free 快 10-100 倍的原因。`
   );
+  log(message.value, 'warning');
 }
 
 function resetAll() {
@@ -173,6 +179,7 @@ function resetAll() {
     'All arenas reset — fresh start with a single empty arena',
     '所有 Arena 已重置 — 以单个空 Arena 重新开始'
   );
+  clearLog();
 }
 
 function addArena() {
@@ -195,6 +202,7 @@ function addArena() {
     `New Arena #${newArena.id} created (chained). When one arena fills up, chain a new one — like Go's arena allocator or Rust's bumpalo crate.`,
     `新 Arena #${newArena.id} 已创建（链式）。当一个 arena 满时，链接新的 — 类似 Go 的 arena 分配器或 Rust 的 bumpalo crate。`
   );
+  log(message.value, 'success');
 }
 
 function slotAllocation(arena: Arena, index: number): Allocation | null {
@@ -248,6 +256,7 @@ async function presetFillAndChain() {
     'Chained arena working. When both phases are done, reset both arenas in O(1) each — no per-object cleanup.',
     '链式 arena 正常工作。当两个阶段完成时，每个 arena O(1) 重置 — 无需逐对象清理。'
   );
+  log(message.value, 'success');
   presetRunning = false;
 }
 
@@ -303,6 +312,7 @@ async function presetMixedSizes() {
     `${totalAllocations.value} allocations, ${totalUsed.value}/${totalCapacity.value} used. Zero fragmentation — every byte is utilized. malloc would have metadata overhead per allocation (16-32 bytes each on 64-bit).`,
     `${totalAllocations.value} 次分配，${totalUsed.value}/${totalCapacity.value} 已使用。零碎片 — 每个字节都被利用。malloc 每次分配会有元数据开销（64 位系统每次 16-32 字节）。`
   );
+  log(message.value, 'highlight');
   presetRunning = false;
 }
 </script>
@@ -385,6 +395,7 @@ async function presetMixedSizes() {
     </div>
 
     <div class="viz-status">{{ message }}</div>
+    <VizLog :entries="logEntries" @clear="clearLog" />
 
     <!-- Arena Tabs -->
     <div v-if="arenas.length > 1" class="arena-tabs">

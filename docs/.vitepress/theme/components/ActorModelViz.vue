@@ -2,9 +2,12 @@
 import { ref, computed } from 'vue';
 import { useI18n } from '../composables/useI18n';
 import { useVizTimers } from '../composables/useVizTimers';
+import { useVizLog } from '../composables/useVizLog';
+import VizLog from './VizLog.vue';
 
 const { t } = useI18n();
 const { safeTimeout, clearAll, delay, speed, isAborted } = useVizTimers();
+const { entries: logEntries, log, clear: clearLog } = useVizLog();
 
 interface Message {
   id: number;
@@ -85,6 +88,7 @@ function sendMessage() {
     `${sender.name} → ${receiver.name}: "${content}". Messages are enqueued — the actor processes them one at a time, ensuring no shared mutable state.`,
     `${sender.name} → ${receiver.name}："${content}"。消息被排入队列 — Actor 逐个处理，确保没有共享可变状态。`
   );
+  log(message.value, 'info');
 
   if (!receiver.processing) {
     processNext(selectedTo.value);
@@ -114,6 +118,7 @@ function flood() {
     `Flooded ${receiver.name} with 5 messages — mailbox acts as a backpressure buffer. Erlang/OTP processes handle millions of queued messages this way.`,
     `向 ${receiver.name} 洪泛 5 条消息 — 邮箱充当背压缓冲区。Erlang/OTP 进程以这种方式处理数百万排队消息。`
   );
+  log(message.value, 'warning');
 
   if (!receiver.processing) {
     processNext(target);
@@ -165,12 +170,14 @@ function reset() {
   totalProcessed.value = 0;
   presetRunning = false;
   message.value = t('Reset — actors ready', '已重置 — Actor 就绪');
+  clearLog();
 }
 
 async function presetPingPong() {
   if (presetRunning) return;
   reset();
   presetRunning = true;
+  clearLog();
   message.value = t(
     'Ping-pong: A sends to B, B sends to C, C sends back to A. This circular message flow is how Erlang supervision trees propagate health checks.',
     'Ping-pong：A 发送给 B，B 发送给 C，C 发回给 A。这种循环消息流就是 Erlang 监督树传播健康检查的方式。'
@@ -200,6 +207,7 @@ async function presetPingPong() {
     'All 3 actors processed one message each — no locks needed! Each actor is single-threaded internally. Akka (JVM) and Orleans (.NET) use this exact pattern for distributed systems.',
     '所有 3 个 Actor 各处理了一条消息 — 不需要锁！每个 Actor 内部是单线程的。Akka (JVM) 和 Orleans (.NET) 在分布式系统中使用完全相同的模式。'
   );
+  log(message.value, 'success');
   presetRunning = false;
 }
 
@@ -207,6 +215,7 @@ async function presetMailboxOverflow() {
   if (presetRunning) return;
   reset();
   presetRunning = true;
+  clearLog();
   message.value = t(
     'Flooding Actor B — watch the mailbox queue grow. In production, mailbox overflow causes backpressure. Erlang kills processes with oversized mailboxes by default.',
     '洪泛 Actor B — 观察邮箱队列增长。生产环境中，邮箱溢出导致背压。Erlang 默认会杀死邮箱过大的进程。'
@@ -228,6 +237,7 @@ async function presetMailboxOverflow() {
     '10 messages queued in B\'s mailbox — processed FIFO. Without backpressure, this is how "hot actor" problems cause memory exhaustion in distributed systems.',
     '10 条消息排入 B 的邮箱 — FIFO 处理。没有背压时，这就是"热 Actor"问题在分布式系统中导致内存耗尽的方式。'
   );
+  log(message.value, 'highlight');
   presetRunning = false;
 }
 
@@ -235,6 +245,7 @@ async function presetFanOut() {
   if (presetRunning) return;
   reset();
   presetRunning = true;
+  clearLog();
   message.value = t(
     'Fan-out: A broadcasts to B and C simultaneously. This is the pub/sub pattern — used in event-driven architectures like NATS and Kafka consumer groups.',
     'Fan-out：A 同时广播给 B 和 C。这是发布/订阅模式 — 用于 NATS 和 Kafka 消费者组等事件驱动架构。'
@@ -266,6 +277,7 @@ async function presetFanOut() {
     'Fan-out complete — B and C received identical messages but process independently. Location transparency: the sender doesn\'t care if recipients are local or remote.',
     'Fan-out 完成 — B 和 C 收到相同消息但独立处理。位置透明性：发送者不关心接收者是本地还是远程。'
   );
+  log(message.value, 'success');
   presetRunning = false;
 }
 </script>
@@ -385,6 +397,7 @@ async function presetFanOut() {
     </div>
 
     <div class="viz-status">{{ message }}</div>
+    <VizLog :entries="logEntries" @clear="clearLog" />
   </div>
 </template>
 

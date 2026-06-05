@@ -2,9 +2,12 @@
 import { ref, computed } from 'vue';
 import { useI18n } from '../composables/useI18n';
 import { useVizTimers } from '../composables/useVizTimers';
+import { useVizLog } from '../composables/useVizLog';
+import VizLog from './VizLog.vue';
 
 const { t } = useI18n();
 const { safeTimeout, clearAll, delay, speed, isAborted } = useVizTimers();
+const { entries: logEntries, log, clear: clearLog } = useVizLog();
 
 interface Item {
   id: number;
@@ -52,6 +55,7 @@ function addItem() {
     `Added ${item.label} — buffer ${buffer.value.length}/${BATCH_THRESHOLD}. Each item alone would need a full round-trip; batching reduces N calls to 1.`,
     `已添加 ${item.label} — 缓冲区 ${buffer.value.length}/${BATCH_THRESHOLD}。每个元素单独需要完整的往返；批处理将 N 次调用减少为 1 次。`
   );
+  log(message.value, 'info');
 
   if (!flushing.value && buffer.value.length >= BATCH_THRESHOLD) {
     flushBatch();
@@ -61,6 +65,7 @@ function addItem() {
 function flushBatch() {
   if (buffer.value.length === 0) {
     message.value = t('Buffer empty — nothing to flush', '缓冲区为空 — 无需刷新');
+    log(message.value, 'warning');
     return;
   }
   if (flushing.value) return;
@@ -85,6 +90,7 @@ function flushBatch() {
       `Batch #${batch.id} flushed (${batch.size} items) — buffer cleared. React batches setState calls the same way: multiple updates, one re-render.`,
       `批次 #${batch.id} 已刷新（${batch.size} 个元素）— 缓冲区已清空。React 以相同方式批量处理 setState 调用：多次更新，一次重渲染。`
     );
+    log(message.value, 'success');
     if (buffer.value.length >= BATCH_THRESHOLD) {
       flushBatch();
     }
@@ -104,6 +110,7 @@ function reset() {
     `Reset — add items to fill the buffer (threshold: ${BATCH_THRESHOLD})`,
     `已重置 — 添加元素填满缓冲区（阈值: ${BATCH_THRESHOLD}）`
   );
+  clearLog();
 }
 
 async function presetAutoFill() {
@@ -127,6 +134,7 @@ async function presetAutoFill() {
     'Buffer reached threshold and auto-flushed. In Kafka, linger.ms and batch.size control this tradeoff between latency and throughput.',
     '缓冲区达到阈值并自动刷新。在 Kafka 中，linger.ms 和 batch.size 控制延迟与吞吐量之间的权衡。'
   );
+  log(message.value, 'success');
   presetRunning = false;
 }
 
@@ -176,6 +184,7 @@ async function presetMultiBatch() {
     `${batchCount.value} batches processed, ${buffer.value.length} items remaining in buffer. Total throughput: ${totalItems.value} items. Force flush to clear remaining.`,
     `${batchCount.value} 个批次已处理，缓冲区剩余 ${buffer.value.length} 个元素。总吞吐量：${totalItems.value} 个元素。强制刷新以清除剩余。`
   );
+  log(message.value, 'highlight');
   presetRunning = false;
 }
 </script>
@@ -272,6 +281,7 @@ async function presetMultiBatch() {
     </div>
 
     <div class="viz-status">{{ message }}</div>
+    <VizLog :entries="logEntries" @clear="clearLog" />
   </div>
 </template>
 

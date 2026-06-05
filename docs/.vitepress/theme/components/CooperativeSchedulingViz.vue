@@ -2,9 +2,12 @@
 import { ref, watch } from 'vue';
 import { useI18n } from '../composables/useI18n';
 import { useVizTimers } from '../composables/useVizTimers';
+import { useVizLog } from '../composables/useVizLog';
+import VizLog from './VizLog.vue';
 
 const { t } = useI18n();
 const { safeTimeout, safeInterval, clearAll, speed, delay, isAborted } = useVizTimers();
+const { entries: logEntries, log, clear: clearLog } = useVizLog();
 
 const TOTAL_UNITS = 20;
 const CHUNK_SIZE = 4;
@@ -58,6 +61,7 @@ function runBlocking() {
     'BLOCKING: Main thread is frozen! UI cannot update (ball stops). This is what happens with long synchronous loops in JavaScript.',
     '阻塞中：主线程被冻结！UI 无法更新（球停止）。这就是 JavaScript 中长同步循环会发生的情况。'
   );
+  log(message.value, 'error');
 
   let done = 0;
   function tick() {
@@ -69,6 +73,7 @@ function runBlocking() {
         `Done! All ${TOTAL_UNITS} units processed in one blocking run. UI was frozen the entire time — a 200ms task would cause visible jank in a 60fps app.`,
         `完成！所有 ${TOTAL_UNITS} 个单元在一次阻塞运行中处理完毕。UI 全程冻结 — 200ms 的任务会在 60fps 应用中造成明显卡顿。`
       );
+      log(message.value, 'warning');
       return;
     }
     done++;
@@ -92,6 +97,7 @@ function runCooperative(startUnit: number) {
     `Chunk ${chunkNum + 1}: processing units ${startUnit + 1}-${chunkEnd}. The "yield" gap lets the browser paint, handle events, and run requestAnimationFrame.`,
     `分块 ${chunkNum + 1}：正在处理第 ${startUnit + 1}-${chunkEnd} 个单元。"让出"间隙让浏览器绘制、处理事件和运行 requestAnimationFrame。`
   );
+  log(message.value, 'info');
 
   function tick() {
     if (done >= chunkEnd) {
@@ -102,6 +108,7 @@ function runCooperative(startUnit: number) {
           `Done! ${TOTAL_UNITS} units in ${Math.ceil(TOTAL_UNITS / CHUNK_SIZE)} chunks. UI stayed responsive throughout! React's fiber scheduler uses this exact pattern — work in 5ms chunks, then yield to the browser.`,
           `完成！${TOTAL_UNITS} 个单元分 ${Math.ceil(TOTAL_UNITS / CHUNK_SIZE)} 块处理。UI 全程保持响应！React 的 fiber 调度器使用完全相同的模式 — 每次工作 5ms，然后让出给浏览器。`
         );
+        log(message.value, 'success');
         return;
       }
       yieldGap.value = true;
@@ -135,6 +142,7 @@ function reset() {
   timeline.value = [];
   presetRunning = false;
   message.value = t('Reset. Toggle mode and start again.', '已重置。切换模式并重新开始。');
+  clearLog();
   startBallAnimation();
 }
 
@@ -150,10 +158,12 @@ async function presetSideBySide() {
   if (presetRunning) return;
   reset();
   presetRunning = true;
+  clearLog();
   message.value = t(
     'First: blocking mode — watch the ball freeze. Then: cooperative mode — ball stays smooth. This is the core insight behind React\'s concurrent rendering.',
     '首先：阻塞模式 — 观察球冻结。然后：协作模式 — 球保持流畅。这是 React 并发渲染的核心洞察。'
   );
+  log(message.value, 'highlight');
   await delay(1000);
   if (!presetRunning || isAborted()) return;
   cooperative.value = false;
@@ -187,10 +197,12 @@ async function presetReactFiber() {
   reset();
   presetRunning = true;
   cooperative.value = true;
+  clearLog();
   message.value = t(
     'React Fiber simulation: work is split into "units of work". After each chunk, React calls shouldYield() to check if the browser needs the thread. If yes, it pauses and resumes later.',
     'React Fiber 模拟：工作被分成"工作单元"。每块完成后，React 调用 shouldYield() 检查浏览器是否需要线程。如果是，暂停并稍后恢复。'
   );
+  log(message.value, 'highlight');
   await delay(800);
   if (!presetRunning || isAborted()) return;
   startTask();
@@ -202,10 +214,12 @@ async function presetInputLatency() {
   reset();
   presetRunning = true;
   cooperative.value = false;
+  clearLog();
   message.value = t(
     'Input latency demo: in blocking mode, user clicks and keystrokes are queued until the task finishes. Google\'s INP (Interaction to Next Paint) metric penalizes this — tasks > 50ms hurt your Core Web Vitals score.',
     '输入延迟演示：阻塞模式下，用户的点击和按键被排队直到任务完成。Google 的 INP（下次绘制的交互）指标会对此惩罚 — 超过 50ms 的任务会影响 Core Web Vitals 分数。'
   );
+  log(message.value, 'highlight');
   await delay(800);
   if (!presetRunning || isAborted()) return;
   startTask();
@@ -325,6 +339,7 @@ const chunkColors = [
     </div>
 
     <div class="viz-status">{{ message }}</div>
+    <VizLog :entries="logEntries" @clear="clearLog" />
   </div>
 </template>
 
