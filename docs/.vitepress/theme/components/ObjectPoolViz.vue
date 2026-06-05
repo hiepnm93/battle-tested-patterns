@@ -320,6 +320,8 @@ async function presetDynamicGrowth() {
           'op-card--in-use': obj.state === 'in-use',
         }"
         @click="obj.state === 'in-use' ? returnObject(obj) : undefined"
+        @keydown.enter.prevent="obj.state === 'in-use' ? returnObject(obj) : undefined"
+        @keydown.space.prevent="obj.state === 'in-use' ? returnObject(obj) : undefined"
         :role="obj.state === 'in-use' ? 'button' : undefined"
         :tabindex="obj.state === 'in-use' ? 0 : undefined"
       >

@@ -246,6 +246,8 @@ async function presetFragmentation() {
           'fl-block--free': !block.allocated,
         }"
         @click="block.allocated ? freeBlock(block.id) : undefined"
+        @keydown.enter.prevent="block.allocated ? freeBlock(block.id) : undefined"
+        @keydown.space.prevent="block.allocated ? freeBlock(block.id) : undefined"
         :role="block.allocated ? 'button' : undefined"
         :tabindex="block.allocated ? 0 : undefined"
         :title="block.allocated

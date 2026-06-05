@@ -1,5 +1,5 @@
 <template>
-  <div class="viz-container viz-skeleton">
+  <div class="viz-container viz-skeleton" role="status" aria-label="Loading visualization">
     <div class="viz-skel-title"></div>
     <div class="viz-skel-content"></div>
     <div class="viz-skel-controls">

@@ -160,7 +160,13 @@ async function presetMaskCheck() {
           :key="i"
           class="bm-bit"
           :class="{ 'bm-bit-on': ch === '1' }"
+          role="switch"
+          :aria-checked="ch === '1'"
+          :aria-label="LABELS[7 - i]"
+          tabindex="0"
           @click="toggle(7 - i)"
+          @keydown.enter.prevent="toggle(7 - i)"
+          @keydown.space.prevent="toggle(7 - i)"
         >{{ ch }}</span>
       </div>
       <div class="bm-values">

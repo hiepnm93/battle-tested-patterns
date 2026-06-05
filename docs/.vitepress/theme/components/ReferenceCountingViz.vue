@@ -227,6 +227,10 @@ async function presetDanglingZero() {
           class="rc-ref"
           :style="{ borderColor: r.color }"
           @click="dropRef(i)"
+          @keydown.enter.prevent="dropRef(i)"
+          @keydown.space.prevent="dropRef(i)"
+          role="button"
+          tabindex="0"
         >
           <span class="rc-ref-name" :style="{ color: r.color }">{{ r.from }}</span>
           <span class="rc-ref-arrow">→</span>

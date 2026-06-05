@@ -200,7 +200,12 @@ async function presetCascadingDirty() {
           stroke="#fff"
           stroke-width="2"
           style="cursor: pointer; transition: all 0.3s"
+          role="button"
+          tabindex="0"
+          :aria-label="e.name"
           @click="moveEntity(i)"
+          @keydown.enter.prevent="moveEntity(i)"
+          @keydown.space.prevent="moveEntity(i)"
         />
         <text
           :x="e.x"

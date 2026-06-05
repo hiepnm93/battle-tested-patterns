@@ -380,6 +380,10 @@ async function presetVersionChainGrowth() {
           'mv-txn--selected': selectedTxn === txn.id,
         }"
         @click="txn.status === 'active' ? selectTxn(txn.id) : undefined"
+        @keydown.enter.prevent="txn.status === 'active' ? selectTxn(txn.id) : undefined"
+        @keydown.space.prevent="txn.status === 'active' ? selectTxn(txn.id) : undefined"
+        :role="txn.status === 'active' ? 'button' : undefined"
+        :tabindex="txn.status === 'active' ? 0 : undefined"
       >
         <div class="mv-txn-header">
           <span class="mv-txn-id">T{{ txn.id }}</span>

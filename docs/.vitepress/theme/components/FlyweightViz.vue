@@ -329,7 +329,12 @@ applyText();
               'fw-pool-chip--selected': selectedChar === char,
             }"
             :style="{ borderColor: selectedChar === char ? charColor(char) : undefined }"
+            role="button"
+            :aria-pressed="selectedChar === char"
+            tabindex="0"
             @click="selectChar(char)"
+            @keydown.enter.prevent="selectChar(char)"
+            @keydown.space.prevent="selectChar(char)"
           >
             <span class="fw-chip-char" :style="{ color: charColor(char) }">{{ char === ' ' ? '␣' : char }}</span>
             <span class="fw-chip-count">{{ usageCounts[char] || 0 }}x</span>
@@ -360,7 +365,11 @@ applyText();
               borderColor: selectedChar === inst.char ? charColor(inst.char) : undefined,
             }"
             :title="`#${inst.position} '${inst.char === ' ' ? 'space' : inst.char}' → flyweight@${inst.char.charCodeAt(0)}`"
+            role="button"
+            tabindex="0"
             @click="selectChar(inst.char)"
+            @keydown.enter.prevent="selectChar(inst.char)"
+            @keydown.space.prevent="selectChar(inst.char)"
           >
             {{ inst.char === ' ' ? '␣' : inst.char }}
           </div>
