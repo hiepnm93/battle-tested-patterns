@@ -2,9 +2,12 @@
 import { ref, computed } from 'vue';
 import { useI18n } from '../composables/useI18n';
 import { useVizTimers } from '../composables/useVizTimers';
+import { useVizLog } from '../composables/useVizLog';
+import VizLog from './VizLog.vue';
 
 const { t } = useI18n();
 const { delay, clearAll, speed, isAborted } = useVizTimers();
+const { entries: logEntries, log, clear: clearLog } = useVizLog();
 
 interface Entity {
   id: number;
@@ -62,6 +65,7 @@ function recompute() {
     `Recomputed: ${computed} dirty | Skipped: ${skipped} clean — total saved: ${skipCount.value}. This is how React.memo and shouldComponentUpdate work.`,
     `已重算: ${computed} 个脏 | 跳过: ${skipped} 个干净 - 累计节省: ${skipCount.value}。React.memo 和 shouldComponentUpdate 就是这样工作的。`
   );
+  log(message.value, 'success');
 }
 
 function recomputeAll() {
@@ -74,6 +78,7 @@ function recomputeAll() {
     `Recomputed ALL ${entities.value.length} entities (no dirty flag optimization) — this is the naive approach that dirty flags avoid.`,
     `重算全部 ${entities.value.length} 个实体（无 Dirty Flag 优化）— 这是脏标记要避免的朴素方法。`
   );
+  log(message.value, 'warning');
 }
 
 function reset() {
@@ -88,6 +93,7 @@ function reset() {
   skipCount.value = 0;
   presetRunning = false;
   message.value = t('Reset — move entities and recompute', '已重置 - 移动实体并重新计算');
+  clearLog();
 }
 
 const dirtyCount = computed(() => entities.value.filter(e => e.dirty).length);
@@ -112,6 +118,7 @@ async function presetSelectiveUpdate() {
     'Result: 1 recomputed, 2 skipped. In a scene with 10,000 objects, dirty flags turn O(n) into O(k) where k = changed count.',
     '结果：1 个重算，2 个跳过。在有 10,000 个对象的场景中，脏标记将 O(n) 变为 O(k)，k = 变更数量。'
   );
+  log(message.value, 'highlight');
   presetRunning = false;
 }
 
@@ -243,6 +250,7 @@ async function presetCascadingDirty() {
     </div>
 
     <div class="viz-status">{{ message }}</div>
+    <VizLog :entries="logEntries" @clear="clearLog" />
   </div>
 </template>
 

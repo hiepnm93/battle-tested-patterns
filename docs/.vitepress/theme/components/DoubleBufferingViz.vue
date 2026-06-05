@@ -2,9 +2,12 @@
 import { ref } from 'vue';
 import { useI18n } from '../composables/useI18n';
 import { useVizTimers } from '../composables/useVizTimers';
+import { useVizLog } from '../composables/useVizLog';
+import VizLog from './VizLog.vue';
 
 const { t } = useI18n();
 const { delay, safeInterval, safeTimeout, clearAll, speed, isAborted } = useVizTimers();
+const { entries: logEntries, log, clear: clearLog } = useVizLog();
 
 const COLS = 4;
 const ROWS = 3;
@@ -86,6 +89,7 @@ function drawFrame() {
     `Frame #${frameCount.value} drawn in back buffer — invisible to the user. The front buffer keeps displaying the previous frame with zero tearing.`,
     `帧 #${frameCount.value} 已绘制到后端缓冲区 — 用户不可见。前端缓冲区继续显示上一帧，零撕裂。`
   );
+  log(message.value, 'info');
 }
 
 function swapBuffers() {
@@ -101,6 +105,7 @@ function swapBuffers() {
       `Buffers swapped — O(1) pointer swap, not a copy. This is why OpenGL uses glSwapBuffers() and React swaps fiber trees.`,
       `缓冲区已交换 — O(1) 指针交换，非复制。这就是 OpenGL 使用 glSwapBuffers() 和 React 交换 fiber 树的原因。`
     );
+    log(message.value, 'success');
   }, 300);
 }
 
@@ -131,6 +136,7 @@ function reset() {
   swapping.value = false;
   presetRunning = false;
   message.value = t('Reset! Draw a frame to start.', '已重置！绘制帧以开始。');
+  clearLog();
 }
 
 async function presetTearDemo() {
@@ -165,6 +171,7 @@ async function presetTearDemo() {
     'Two frames rendered with zero tearing. The key: users never see incomplete state. React\'s concurrent mode uses the same principle — render to a hidden tree, then commit.',
     '两帧渲染，零撕裂。关键：用户永远不会看到不完整状态。React 的并发模式使用相同原理 — 渲染到隐藏树，然后提交。'
   );
+  log(message.value, 'highlight');
   presetRunning = false;
 }
 
@@ -190,6 +197,7 @@ async function presetHighFPS() {
     `5 frames rendered at ${frameCount.value} total. Triple buffering adds a third buffer to reduce latency — used by modern game engines like Unreal.`,
     `5 帧渲染完成，共 ${frameCount.value} 帧。三重缓冲添加第三个缓冲区以减少延迟 — 现代游戏引擎如 Unreal 使用此技术。`
   );
+  log(message.value, 'highlight');
   presetRunning = false;
 }
 
@@ -217,6 +225,7 @@ async function presetReactCommit() {
     'Step 2: commitRoot() swaps current ↔ workInProgress — the DOM updates atomically. No intermediate states visible. This is React\'s "double buffering of fiber trees".',
     '步骤 2：commitRoot() 交换 current ↔ workInProgress — DOM 原子更新。没有中间状态可见。这就是 React 的"fiber 树双缓冲"。'
   );
+  log(message.value, 'highlight');
   presetRunning = false;
 }
 </script>
@@ -314,6 +323,7 @@ async function presetReactCommit() {
     </div>
 
     <div class="viz-status">{{ message }}</div>
+    <VizLog :entries="logEntries" @clear="clearLog" />
   </div>
 </template>
 

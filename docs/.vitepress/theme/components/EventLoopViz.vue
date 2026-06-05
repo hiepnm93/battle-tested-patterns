@@ -2,9 +2,12 @@
 import { ref, computed } from 'vue';
 import { useI18n } from '../composables/useI18n';
 import { useVizTimers } from '../composables/useVizTimers';
+import { useVizLog } from '../composables/useVizLog';
+import VizLog from './VizLog.vue';
 
 const { t } = useI18n();
 const { delay, clearAll, speed, isAborted } = useVizTimers();
+const { entries: logEntries, log: vizLog, clear: clearLog } = useVizLog();
 
 interface Task {
   label: string;
@@ -68,6 +71,7 @@ function loadDemo() {
     'Demo loaded — click Step to walk through. Watch: microtasks run BEFORE macrotasks.',
     '示例已加载 — 点击"单步"逐步执行。注意：微任务在宏任务之前运行。'
   );
+  vizLog(message.value, 'highlight');
 }
 
 async function loadPromiseChain() {
@@ -83,6 +87,7 @@ async function loadPromiseChain() {
     'Promise chain vs setTimeout(0): B→C→D run before A. Microtasks always drain first — even with setTimeout(fn, 0).',
     'Promise 链 vs setTimeout(0)：B→C→D 在 A 之前运行。微任务总是先排空 — 即使 setTimeout(fn, 0) 也不例外。'
   );
+  vizLog(message.value, 'highlight');
 }
 
 async function loadStarvation() {
@@ -100,6 +105,7 @@ async function loadStarvation() {
     'Microtask starvation: 5 microtasks block the "UI repaint" macrotask. In real apps, recursive microtasks can freeze the UI.',
     '微任务饥饿：5 个微任务阻塞了"UI repaint"宏任务。在实际应用中，递归微任务可能冻结 UI。'
   );
+  vizLog(message.value, 'warning');
 }
 
 async function step() {
@@ -168,6 +174,7 @@ async function step() {
     'All queues empty — event loop is idle. In Node.js/browsers, it polls for new I/O events here.',
     '所有队列为空 — 事件循环空闲。在 Node.js/浏览器中，它在此轮询新的 I/O 事件。'
   );
+  vizLog(message.value, 'success');
   currentPhase.value = 'idle';
   running.value = false;
 }
@@ -192,6 +199,7 @@ function reset() {
   running.value = false;
   message.value = t('Event loop reset.', 'Event Loop 已重置。');
   nextId = 0;
+  clearLog();
 }
 
 const phaseLabel = computed(() => {
@@ -286,6 +294,7 @@ const phaseColor = computed(() => {
     </div>
 
     <div class="viz-status">{{ message }}</div>
+    <VizLog :entries="logEntries" @clear="clearLog" />
   </div>
 </template>
 

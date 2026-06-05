@@ -2,9 +2,12 @@
 import { ref, computed } from 'vue';
 import { useI18n } from '../composables/useI18n';
 import { useVizTimers } from '../composables/useVizTimers';
+import { useVizLog } from '../composables/useVizLog';
+import VizLog from './VizLog.vue';
 
 const { t } = useI18n();
 const { delay, clearAll: clearTimers, speed, isAborted } = useVizTimers();
+const { entries: logEntries, log: vizLog, clear: clearLog } = useVizLog();
 
 interface DataVersion {
   id: number;
@@ -128,6 +131,7 @@ function doWrite() {
     `Copied v${current.version} -> v${copy.version}, changed [${selectedIndex.value}] to "${val}". Readers still see v${current.version} — zero reader disruption. Click "Swap" for atomic pointer update.`,
     `已复制 v${current.version} -> v${copy.version}，将 [${selectedIndex.value}] 改为 "${val}"。读取者仍然看到 v${current.version} — 零读取中断。点击"交换"进行原子指针更新。`,
   );
+  vizLog(message.value, 'info');
 }
 
 function doSwap() {
@@ -156,6 +160,7 @@ function doSwap() {
     `Swapped! v${draft.version} is now current. Old readers still see v${current.version} safely — this is the RCU (Read-Copy-Update) grace period used in Linux kernel.`,
     `已交换！v${draft.version} 现在是当前版本。旧读取者仍然安全地看到 v${current.version} — 这是 Linux 内核中使用的 RCU（读-复制-更新）宽限期。`,
   );
+  vizLog(message.value, 'success');
 }
 
 function refreshReaders() {
@@ -205,6 +210,7 @@ function refreshReaders() {
     `All readers now see v${current.version}. ${gcCount > 0 ? `${gcCount} old version(s) garbage collected — no readers referenced them.` : ''} In Linux RCU, this is synchronize_rcu() — wait for all readers to exit the critical section.`,
     `所有读取者现在看到 v${current.version}。${gcCount > 0 ? `${gcCount} 个旧版本已垃圾回收 — 没有读取者引用它们。` : ''}在 Linux RCU 中，这是 synchronize_rcu() — 等待所有读取者退出临界区。`,
   );
+  vizLog(message.value, 'success');
 }
 
 function reset() {
@@ -228,6 +234,7 @@ function reset() {
     'Reset. All readers share v1 again.',
     '已重置。所有读取者再次共享 v1。',
   );
+  clearLog();
 }
 
 async function presetFullCycle() {
@@ -259,6 +266,7 @@ async function presetFullCycle() {
     'Complete cycle done. Key insight: readers were never blocked. This is why CoW enables lock-free reads — the foundation of MVCC in databases (PostgreSQL, CockroachDB).',
     '完整周期完成。核心洞察：读取者从未被阻塞。这就是 CoW 实现无锁读取的原因 — 数据库 MVCC 的基础（PostgreSQL、CockroachDB）。'
   );
+  vizLog(message.value, 'success');
   presetRunning = false;
 }
 
@@ -294,6 +302,7 @@ async function presetMultipleWrites() {
     `${versions.value.length} versions exist — readers still on v1 prevent GC. Click "Refresh Readers" to release old versions. This is why long-running queries in PostgreSQL block VACUUM.`,
     `${versions.value.length} 个版本存在 — 读取者仍在 v1 上阻止 GC。点击"刷新读取者"释放旧版本。这就是 PostgreSQL 中长时间查询阻止 VACUUM 的原因。`
   );
+  vizLog(message.value, 'warning');
   presetRunning = false;
 }
 
@@ -494,6 +503,7 @@ async function presetConcurrentRead() {
     </div>
 
     <div class="viz-status">{{ message }}</div>
+    <VizLog :entries="logEntries" @clear="clearLog" />
 
     <!-- Operation history -->
     <div class="cow-history" v-if="history.length > 0">

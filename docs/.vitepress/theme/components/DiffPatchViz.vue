@@ -2,9 +2,12 @@
 import { ref } from 'vue';
 import { useI18n } from '../composables/useI18n';
 import { useVizTimers } from '../composables/useVizTimers';
+import { useVizLog } from '../composables/useVizLog';
+import VizLog from './VizLog.vue';
 
 const { t } = useI18n();
 const { delay, clearAll, speed, isAborted } = useVizTimers();
+const { entries: logEntries, log, clear: clearLog } = useVizLog();
 
 interface DiffLine {
   type: 'keep' | 'add' | 'del';
@@ -118,6 +121,7 @@ function computeDiff() {
     `Diff computed via LCS (Longest Common Subsequence): +${adds} additions, -${dels} deletions, ${keeps} unchanged. Time complexity: O(m×n) where m=${m}, n=${n}.`,
     `通过 LCS（最长公共子序列）计算差异：+${adds} 新增，-${dels} 删除，${keeps} 未变。时间复杂度：O(m×n)，m=${m}，n=${n}。`
   );
+  log(message.value, 'success');
 }
 
 function patch() {
@@ -131,6 +135,7 @@ function patch() {
     'Patch applied — original now matches modified. In production, patches are transmitted instead of full files. Git stores deltas (packfiles) using this principle.',
     'Patch 已应用 — 原始文件已与修改后一致。生产环境中传输 patch 而非完整文件。Git 使用此原理存储增量（packfiles）。'
   );
+  log(message.value, 'success');
 }
 
 function reset() {
@@ -147,6 +152,7 @@ function reset() {
   patched.value = false;
   presetRunning = false;
   message.value = t('Reset to initial state', '已重置为初始状态');
+  clearLog();
 }
 
 async function presetMinimalDiff() {
@@ -199,6 +205,7 @@ async function presetInsertBlock() {
     'Notice: 3 lines added, 0 deleted, 4 kept. The patch would be just 3 lines — much smaller than sending the whole file. This is why git push only transfers deltas.',
     '注意：3 行添加，0 行删除，4 行保留。补丁只有 3 行 — 比发送整个文件小得多。这就是 git push 只传输增量的原因。'
   );
+  log(message.value, 'highlight');
   presetRunning = false;
 }
 
@@ -298,6 +305,7 @@ const diffPrefix = (type: string) => {
     </div>
 
     <div class="viz-status">{{ message }}</div>
+    <VizLog :entries="logEntries" @clear="clearLog" />
   </div>
 </template>
 

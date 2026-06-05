@@ -2,9 +2,12 @@
 import { ref, computed } from 'vue';
 import { useI18n } from '../composables/useI18n';
 import { useVizTimers } from '../composables/useVizTimers';
+import { useVizLog } from '../composables/useVizLog';
+import VizLog from './VizLog.vue';
 
 const { t } = useI18n();
 const { delay, clearAll, speed, isAborted } = useVizTimers();
+const { entries: logEntries, log, clear: clearLog } = useVizLog();
 
 interface GNode {
   id: string;
@@ -95,11 +98,13 @@ async function topoSort() {
       'Cycle detected — not all nodes processed! Circular dependencies are the #1 cause of deadlocks in package managers (npm, pip) and build systems.',
       '检测到环 — 未处理所有节点！循环依赖是包管理器（npm、pip）和构建系统中死锁的首要原因。'
     );
+    log(message.value, 'error');
   } else {
     message.value = t(
       `Topological order: ${sortedOrder.value.join(' → ')}. O(V+E) time. Any DAG has at least one valid ordering — some have many.`,
       `拓扑排序：${sortedOrder.value.join(' → ')}。O(V+E) 时间。任何 DAG 至少有一个有效排序 — 有些有多个。`
     );
+    log(message.value, 'success');
   }
   highlightNode.value = '';
   sorting.value = false;
@@ -160,6 +165,7 @@ function reset() {
   sorting.value = false;
   presetRunning = false;
   message.value = t('Graph reset', '图已重置');
+  clearLog();
 }
 
 async function presetDiamondDep() {
@@ -179,6 +185,7 @@ async function presetDiamondDep() {
     'B and C can run in parallel — they have no mutual dependency. This is how Bazel and Turborepo parallelize builds: find independent tasks in the DAG.',
     'B 和 C 可以并行运行 — 它们没有相互依赖。这就是 Bazel 和 Turborepo 并行构建的方式：在 DAG 中找到独立任务。'
   );
+  log(message.value, 'highlight');
   presetRunning = false;
 }
 
@@ -320,6 +327,7 @@ const sortedIdx = computed(() => {
     </div>
 
     <div class="viz-status">{{ message }}</div>
+    <VizLog :entries="logEntries" @clear="clearLog" />
   </div>
 </template>
 
