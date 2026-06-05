@@ -2,9 +2,12 @@
 import { ref, computed } from 'vue';
 import { useI18n } from '../composables/useI18n';
 import { useVizTimers } from '../composables/useVizTimers';
+import { useVizLog } from '../composables/useVizLog';
+import VizLog from './VizLog.vue';
 
 const { t } = useI18n();
 const { delay, clearAll, speed, isAborted } = useVizTimers();
+const { entries: logEntries, log, clear: clearLog } = useVizLog();
 
 type State = 'CLOSED' | 'OPEN' | 'HALF_OPEN';
 
@@ -39,6 +42,7 @@ function sendSuccess() {
       'REJECTED — circuit is OPEN. In production, this fail-fast saves latency: no waiting for a timeout from a broken service.',
       '已拒绝 — 熔断器已打开。在生产中，快速失败节省了延迟：无需等待故障服务的超时。'
     );
+    log(message.value, 'warning');
     lastResult.value = 'failure';
     cleanLog();
     return;
@@ -57,17 +61,20 @@ function sendSuccess() {
         `${halfOpenMax} consecutive successes in HALF-OPEN → CLOSED! Service is healthy again. Traffic resumes.`,
         `HALF-OPEN 中连续 ${halfOpenMax} 次成功 → 关闭！服务恢复健康，流量恢复。`
       );
+      log(message.value, 'success');
     } else {
       message.value = t(
         `Probe success in HALF-OPEN (${successCount.value}/${halfOpenMax}). Testing if service has truly recovered...`,
         `HALF-OPEN 中探测成功（${successCount.value}/${halfOpenMax}）。验证服务是否真正恢复...`
       );
+      log(message.value, 'info');
     }
   } else {
     message.value = t(
       'Request succeeded — circuit stays CLOSED. Counter stays at ' + failureCount.value + '/' + threshold + '.',
       '请求成功 — 熔断器保持关闭。计数器保持 ' + failureCount.value + '/' + threshold + '。'
     );
+    log(message.value, 'info');
   }
   cleanLog();
 }
@@ -79,6 +86,7 @@ function sendFailure() {
       'REJECTED — circuit is OPEN. Request not even attempted. This prevents cascading failures across microservices.',
       '已拒绝 — 熔断器已打开。请求甚至未尝试发送。这防止了微服务间的级联故障。'
     );
+    log(message.value, 'warning');
     lastResult.value = 'failure';
     cleanLog();
     return;
@@ -94,6 +102,7 @@ function sendFailure() {
       'Failure in HALF-OPEN → back to OPEN! One failure is enough to re-trip — the service is still unstable.',
       'HALF-OPEN 中失败 → 重新打开！一次失败就足以重新触发 — 服务仍不稳定。'
     );
+    log(message.value, 'error');
   } else {
     failureCount.value++;
     if (failureCount.value >= threshold) {
@@ -102,11 +111,13 @@ function sendFailure() {
         `${threshold} failures reached → OPEN! All requests will be rejected instantly. Netflix Hystrix uses this exact pattern.`,
         `已达 ${threshold} 次失败 → 打开！所有请求将被立即拒绝。Netflix Hystrix 使用完全相同的模式。`
       );
+      log(message.value, 'error');
     } else {
       message.value = t(
         `Failure ${failureCount.value}/${threshold} — still CLOSED. ${threshold - failureCount.value} more failures will trip the circuit.`,
         `失败 ${failureCount.value}/${threshold} — 仍然关闭。再 ${threshold - failureCount.value} 次失败将触发熔断。`
       );
+      log(message.value, 'warning');
     }
   }
   cleanLog();
@@ -123,6 +134,7 @@ function tryReset() {
     'Timeout expired → HALF-OPEN. Next request is a probe: one success starts recovery, one failure re-trips.',
     '超时到期 → HALF-OPEN。下一个请求是探测：一次成功开始恢复，一次失败重新触发。'
   );
+  log(message.value, 'highlight');
 }
 
 function reset() {
@@ -134,6 +146,7 @@ function reset() {
   lastResult.value = '';
   presetRunning = false;
   message.value = t('Reset! Circuit is CLOSED.', '已重置！熔断器已关闭。');
+  clearLog();
 }
 
 function cleanLog() {
@@ -296,6 +309,7 @@ const states: { key: State; label: string; x: number; y: number }[] = [
     <div class="viz-status" :style="{ borderLeft: `3px solid ${stateColor}` }">
       {{ message }}
     </div>
+    <VizLog :entries="logEntries" @clear="clearLog" />
   </div>
 </template>
 

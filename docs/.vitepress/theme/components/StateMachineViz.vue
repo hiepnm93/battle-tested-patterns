@@ -2,9 +2,12 @@
 import { ref, computed } from 'vue';
 import { useI18n } from '../composables/useI18n';
 import { useVizTimers } from '../composables/useVizTimers';
+import { useVizLog } from '../composables/useVizLog';
+import VizLog from './VizLog.vue';
 
 const { t } = useI18n();
 const { delay, clearAll, speed, isAborted } = useVizTimers();
+const { entries: logEntries, log, clear: clearLog } = useVizLog();
 
 type State = 'idle' | 'loading' | 'success' | 'error';
 type Event = 'FETCH' | 'RESOLVE' | 'REJECT' | 'RETRY' | 'RESET';
@@ -53,6 +56,7 @@ function triggerEvent(event: Event) {
       `Cannot trigger ${event} from ${currentState.value.toUpperCase()} — invalid transitions are impossible by design, not caught at runtime.`,
       `无法从 ${currentState.value.toUpperCase()} 触发 ${event} — 无效转换在设计上就不可能发生，而非运行时捕获。`
     );
+    log(message.value, 'warning');
     return;
   }
 
@@ -90,6 +94,7 @@ function triggerEvent(event: Event) {
     `${from.toUpperCase()} —[${event}]→ ${nextState.toUpperCase()}`,
     `${from.toUpperCase()} —[${event}]→ ${nextState.toUpperCase()}`
   );
+  log(message.value, 'success');
 
   if (history.value.length > 10) {
     history.value = history.value.slice(-10);
@@ -103,6 +108,7 @@ function reset() {
   lastTransition.value = '';
   presetRunning = false;
   message.value = t('State machine reset to IDLE', '状态机已重置为 IDLE');
+  clearLog();
 }
 
 async function presetHappyPath() {
@@ -127,6 +133,7 @@ async function presetHappyPath() {
     'Happy path complete! The state machine guarantees this exact sequence. Compare with boolean flags: isLoading, isError, isSuccess — 8 possible combinations, most invalid.',
     '正常路径完成！状态机保证了这个精确序列。对比布尔标志：isLoading、isError、isSuccess — 8 种可能组合，大多数无效。'
   );
+  log(message.value, 'highlight');
   presetRunning = false;
 }
 
@@ -156,6 +163,7 @@ async function presetErrorRecovery() {
     'Error recovery complete! XState and Robot use this exact pattern. The ERROR→RETRY→LOADING loop is explicit — no "impossible state" bugs.',
     '错误恢复完成！XState 和 Robot 使用完全相同的模式。ERROR→RETRY→LOADING 循环是显式的 — 没有"不可能状态"的 bug。'
   );
+  log(message.value, 'highlight');
   presetRunning = false;
 }
 
@@ -186,6 +194,7 @@ async function presetImpossibleStates() {
     'State machines make impossible states impossible. With 4 states and 5 events, only 5 transitions are valid out of 20 possible — 75% of bugs eliminated by design.',
     '状态机使不可能的状态变得不可能。4 个状态和 5 个事件，20 种可能中只有 5 种转换有效 — 设计上消除了 75% 的 bug。'
   );
+  log(message.value, 'highlight');
   presetRunning = false;
 }
 
@@ -305,6 +314,7 @@ function edgeLabelPos(from: State, to: State, curve: number): { x: number; y: nu
     </div>
 
     <div class="viz-status">{{ message }}</div>
+    <VizLog :entries="logEntries" @clear="clearLog" />
   </div>
 </template>
 

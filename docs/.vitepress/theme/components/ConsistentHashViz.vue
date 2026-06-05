@@ -2,9 +2,12 @@
 import { ref, computed } from 'vue';
 import { useI18n } from '../composables/useI18n';
 import { useVizTimers } from '../composables/useVizTimers';
+import { useVizLog } from '../composables/useVizLog';
+import VizLog from './VizLog.vue';
 
 const { t } = useI18n();
 const { delay, safeTimeout, clearAll, speed, isAborted } = useVizTimers();
+const { entries: logEntries, log, clear: clearLog } = useVizLog();
 
 const CX = 150, CY = 150, R = 110;
 
@@ -75,6 +78,7 @@ function addKey() {
     `Key "${id}" hashes to ${h.toFixed(2)} → walks clockwise to node ${owner?.id ?? 'none'}. This clockwise walk is O(1) with a sorted node list.`,
     `键 "${id}" 哈希到 ${h.toFixed(2)} → 顺时针走到节点 ${owner?.id ?? '无'}。通过排序节点列表，顺时针查找是 O(1)。`
   );
+  log(message.value, 'info');
   safeTimeout(() => { animHash.value = -1; }, 500);
 }
 
@@ -90,6 +94,7 @@ function addNode() {
     `Added node ${id} at ${h.toFixed(2)}. Only ${moved}/${keys.value.length} keys moved — this is consistent hashing's key property: O(K/N) redistribution.`,
     `已添加节点 ${id}，位置 ${h.toFixed(2)}。仅 ${moved}/${keys.value.length} 个键迁移 — 这是一致性哈希的核心特性：O(K/N) 重分布。`
   );
+  log(message.value, 'success');
 }
 
 function removeNode() {
@@ -101,6 +106,7 @@ function removeNode() {
     `Removed node ${removed.id}. Only ${movedKeys.length} keys redistributed to neighbors — other keys are untouched. Compare with modular hashing where ALL keys would move.`,
     `已删除节点 ${removed.id}。仅 ${movedKeys.length} 个键重分布到邻居节点 — 其他键不受影响。对比取模哈希，所有键都会移动。`
   );
+  log(message.value, 'warning');
 }
 
 function reset() {
@@ -114,6 +120,7 @@ function reset() {
   nextKeyId = 1;
   presetRunning = false;
   message.value = t('Reset! Add keys to see consistent hashing in action.', '已重置！添加键来查看一致性哈希的效果。');
+  clearLog();
 }
 
 async function presetScaleOut() {
@@ -140,6 +147,7 @@ async function presetScaleOut() {
     'Scale-out complete. Amazon DynamoDB and Cassandra use this to add nodes without reshuffling the entire cluster.',
     '扩容完成。Amazon DynamoDB 和 Cassandra 使用此方法添加节点而无需重新分布整个集群。'
   );
+  log(message.value, 'success');
   presetRunning = false;
 }
 
@@ -169,6 +177,7 @@ async function presetNodeFailure() {
     'Node failure handled gracefully. Only the failed node\'s keys moved to its clockwise neighbor — the rest of the cluster is unaffected.',
     '节点故障被优雅处理。只有故障节点的键移动到其顺时针邻居 — 集群其余部分不受影响。'
   );
+  log(message.value, 'success');
   presetRunning = false;
 }
 
@@ -192,6 +201,7 @@ async function presetHotSpot() {
     `Distribution: ${distribution.map(d => `${d.id}=${d.count}`).join(', ')}. Skew: ${max - min}. Virtual nodes (vnodes) solve this — each physical node gets 100+ positions on the ring.`,
     `分布：${distribution.map(d => `${d.id}=${d.count}`).join(', ')}。偏差：${max - min}。虚拟节点 (vnodes) 解决此问题 — 每个物理节点在环上获得 100+ 个位置。`
   );
+  log(message.value, 'highlight');
   presetRunning = false;
 }
 </script>
@@ -276,6 +286,7 @@ async function presetHotSpot() {
     </div>
 
     <div class="viz-status">{{ message }}</div>
+    <VizLog :entries="logEntries" @clear="clearLog" />
   </div>
 </template>
 

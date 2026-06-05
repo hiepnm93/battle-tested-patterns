@@ -2,9 +2,12 @@
 import { ref, computed } from 'vue';
 import { useI18n } from '../composables/useI18n';
 import { useVizTimers } from '../composables/useVizTimers';
+import { useVizLog } from '../composables/useVizLog';
+import VizLog from './VizLog.vue';
 
 const { t } = useI18n();
 const { delay, safeTimeout, clearAll, speed, isAborted } = useVizTimers();
+const { entries: logEntries, log, clear: clearLog } = useVizLog();
 
 const SIZE = 8;
 const buffer = ref<(string | null)[]>(Array(SIZE).fill(null));
@@ -53,6 +56,7 @@ function enqueue() {
       'Buffer full! Must dequeue first. In io_uring, this would trigger backpressure on the producer.',
       '缓冲区已满！必须先出队。在 io_uring 中，这会对生产者触发背压。'
     );
+    log(message.value, 'warning');
     return;
   }
   const val = `${nextValue.value++}`;
@@ -66,12 +70,14 @@ function enqueue() {
     `Enqueued "${val}" at slot ${oldTail}. Tail wraps: ${oldTail} → ${tail.value} (mod ${SIZE}). No allocation needed — slot reuse is the key insight.`,
     `在槽 ${oldTail} 入队 "${val}"。尾指针回绕：${oldTail} → ${tail.value}（mod ${SIZE}）。无需分配 — 槽位复用是核心洞察。`
   );
+  log(message.value, 'info');
   safeTimeout(() => { animatingIndex.value = -1; animationType.value = ''; }, 400);
 }
 
 function dequeue() {
   if (count.value <= 0) {
     message.value = t('Buffer empty! Enqueue first.', '缓冲区为空！请先入队。');
+    log(message.value, 'warning');
     return;
   }
   const val = buffer.value[head.value];
@@ -85,6 +91,7 @@ function dequeue() {
     `Dequeued "${val}" from slot ${oldHead}. Head advances: ${oldHead} → ${head.value}. The slot is now free for reuse — zero-copy, O(1).`,
     `从槽 ${oldHead} 出队 "${val}"。头指针前进：${oldHead} → ${head.value}。该槽位现在可以复用 — 零拷贝，O(1)。`
   );
+  log(message.value, 'info');
   safeTimeout(() => { animatingIndex.value = -1; animationType.value = ''; }, 400);
 }
 
@@ -99,6 +106,7 @@ function reset() {
   animationType.value = '';
   presetRunning = false;
   message.value = t('Reset! Click Enqueue to start.', '已重置！点击"入队"开始。');
+  clearLog();
 }
 
 async function presetFillDrain() {
@@ -115,6 +123,7 @@ async function presetFillDrain() {
     'Buffer full! Now draining — watch the head pointer chase the tail around the ring.',
     '缓冲区已满！现在排空 — 观察头指针绕环追赶尾指针。'
   );
+  log(message.value, 'highlight');
   await delay(800);
   for (let i = 0; i < SIZE; i++) {
     if (!presetRunning || isAborted()) return;
@@ -126,6 +135,7 @@ async function presetFillDrain() {
     'Fill & drain complete. Head caught up with tail — both back at start. The ring structure means memory is always reused.',
     '填充和排空完成。头指针追上尾指针 — 两者回到起点。环形结构意味着内存始终被复用。'
   );
+  log(message.value, 'success');
   presetRunning = false;
 }
 
@@ -144,6 +154,7 @@ async function presetProducerConsumer() {
     'Producer-consumer pattern: producer enqueues faster than consumer dequeues. This is how LMAX Disruptor achieves millions of ops/sec.',
     '生产者-消费者模式：生产者入队速度快于消费者出队。LMAX Disruptor 就是这样实现百万级 ops/sec。'
   );
+  log(message.value, 'success');
   presetRunning = false;
 }
 
@@ -164,6 +175,7 @@ async function presetOverflow() {
     'Overflow rejected! Fixed size = predictable memory. In io_uring, overflow triggers CQ overflow handling. This is the trade-off: bounded memory vs. unbounded queues.',
     '溢出被拒绝！固定大小 = 可预测的内存。在 io_uring 中，溢出会触发 CQ 溢出处理。这就是权衡：有界内存 vs 无界队列。'
   );
+  log(message.value, 'highlight');
   presetRunning = false;
 }
 </script>
@@ -235,6 +247,7 @@ async function presetOverflow() {
           <button class="viz-btn" @click="presetOverflow">{{ t('Overflow', '溢出') }}</button>
         </div>
         <div class="viz-status">{{ message }}</div>
+        <VizLog :entries="logEntries" @clear="clearLog" />
       </div>
     </div>
   </div>

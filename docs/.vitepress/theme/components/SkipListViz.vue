@@ -2,9 +2,12 @@
 import { ref, computed } from 'vue';
 import { useI18n } from '../composables/useI18n';
 import { useVizTimers } from '../composables/useVizTimers';
+import { useVizLog } from '../composables/useVizLog';
+import VizLog from './VizLog.vue';
 
 const { t } = useI18n();
 const { delay, clearAll, speed, isAborted } = useVizTimers();
+const { entries: logEntries, log, clear: clearLog } = useVizLog();
 
 interface SkipNode {
   val: number;
@@ -73,6 +76,7 @@ async function insert(val?: number) {
     `Inserted ${v} with ${levels} level${levels > 1 ? 's' : ''}. Higher levels = express lanes that skip over nodes for O(log n) search.`,
     `已插入 ${v}，${levels} 层。高层 = 快速通道，跳过节点实现 O(log n) 搜索。`
   );
+  log(message.value, 'info');
   await delay(500);
   if (isAborted()) return;
   highlightPath.value = [];
@@ -113,6 +117,7 @@ async function search(target?: number) {
               `Found ${tgt} in ${stepsCount} steps! A sorted array would need O(n) linear scan. Skip list: O(log n) on average.`,
               `在 ${stepsCount} 步中找到 ${tgt}！有序数组需要 O(n) 线性扫描。Skip List：平均 O(log n)。`
             );
+            log(message.value, 'success');
             searchTarget.value = null;
             await delay(800);
             if (isAborted()) return;
@@ -139,6 +144,7 @@ async function search(target?: number) {
     currentLevel--;
   }
   message.value = t(`${tgt} not found after ${stepsCount} steps`, `${stepsCount} 步后未找到 ${tgt}`);
+  log(message.value, 'warning');
   searchTarget.value = null;
   await delay(800);
   if (isAborted()) return;
@@ -152,6 +158,7 @@ function reset() {
   searchTarget.value = null;
   presetRunning = false;
   message.value = t('Skip list cleared!', 'Skip List 已清空！');
+  clearLog();
 }
 
 async function presetBuildAndSearch() {
@@ -180,6 +187,7 @@ async function presetBuildAndSearch() {
     'Redis sorted sets use skip lists instead of balanced BSTs. Why? Simpler implementation, comparable performance, and range queries are natural.',
     'Redis 有序集合使用 Skip List 而非平衡 BST。为什么？实现更简单，性能相当，范围查询天然支持。'
   );
+  log(message.value, 'success');
   presetRunning = false;
 }
 
@@ -198,6 +206,7 @@ async function presetLevelTraversal() {
     'Notice the level distribution: ~50% have 1 level, ~25% have 2, ~12.5% have 3... This geometric distribution creates the O(log n) structure automatically — no rebalancing needed!',
     '注意层级分布：约 50% 有 1 层，约 25% 有 2 层，约 12.5% 有 3 层... 这种几何分布自动创建 O(log n) 结构 — 无需重新平衡！'
   );
+  log(message.value, 'highlight');
   presetRunning = false;
 }
 </script>
@@ -340,6 +349,7 @@ async function presetLevelTraversal() {
     </div>
 
     <div class="viz-status">{{ message }}</div>
+    <VizLog :entries="logEntries" @clear="clearLog" />
   </div>
 </template>
 

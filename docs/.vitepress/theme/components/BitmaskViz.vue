@@ -38,12 +38,14 @@ function setAll() {
 }
 
 function clearAllBits() {
+  clearTimers();
   bits.value = 0;
+  presetRunning = false;
   message.value = t(
     'All flags cleared — mask = 0x00 (0). Assignment is O(1) — no need to iterate over individual flags.',
     '所有标志已清除 — 掩码 = 0x00 (0)。赋值是 O(1) — 不需要遍历各个标志。'
   );
-  log(message.value, 'warning');
+  clearLog();
 }
 
 const binaryStr = computed(() => bits.value.toString(2).padStart(8, '0'));
@@ -66,6 +68,7 @@ async function presetUnixPerms() {
   clearTimers();
   presetRunning = true;
   bits.value = 0;
+  clearLog();
   message.value = t(
     'Unix permissions demo: READ + WRITE + EXEC = rwx for owner. Linux stores this as 3 bits per user/group/other — 9 bits total in one integer.',
     'Unix 权限演示：READ + WRITE + EXEC = 所有者的 rwx。Linux 将其存储为每个用户/组/其他 3 位 — 总共 9 位在一个整数中。'
@@ -97,6 +100,7 @@ async function presetReactFlags() {
   clearTimers();
   presetRunning = true;
   bits.value = 0;
+  clearLog();
   message.value = t(
     'React Fiber flags: React stores work types as bitmask flags in ReactFiberFlags.js. Placement=2, Update=4, Deletion=8 — checked with (flags & Placement) !== 0.',
     'React Fiber 标志：React 在 ReactFiberFlags.js 中将工作类型存储为位掩码标志。Placement=2，Update=4，Deletion=8 — 通过 (flags & Placement) !== 0 检查。'
@@ -125,6 +129,7 @@ async function presetMaskCheck() {
   if (presetRunning) return;
   clearTimers();
   presetRunning = true;
+  clearLog();
   bits.value = 0b10100101;
   message.value = t(
     'Checking if specific flags are set — the core operation. READ=1, EXEC=4, NET=32, IO=128. Testing with AND: (mask & flag) !== 0.',
