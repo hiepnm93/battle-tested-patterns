@@ -4,7 +4,7 @@
 
 When a content milestone is reached and ready for a version tag.
 
-Milestones: `v0.1.0` (10 patterns), `v0.2.0` (15), `v0.3.0` (20), `v1.0.0` (stable).
+Use [semver](https://semver.org/): bump **minor** for new features/patterns, **patch** for fixes-only batches.
 
 ## Pre-Release Checklist
 
