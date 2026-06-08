@@ -6,11 +6,19 @@ on:
     paths:
       - "docs/patterns/**"
       - "docs/zh/patterns/**"
+      - "docs/guide/**"
+      - "docs/zh/guide/**"
+      - "docs/by-project/**"
+      - "docs/zh/by-project/**"
       - "exercises/**"
   pull_request:
     paths:
       - "docs/patterns/**"
       - "docs/zh/patterns/**"
+      - "docs/guide/**"
+      - "docs/zh/guide/**"
+      - "docs/by-project/**"
+      - "docs/zh/by-project/**"
       - "exercises/**"
 
 jobs:
@@ -125,7 +133,6 @@ jobs:
           exit_code=0
           for file in docs/patterns/*/index.md docs/zh/patterns/*/index.md; do
             [ -f "$file" ] || continue
-            # Extract frontmatter
             fm=$(sed -n '/^---$/,/^---$/p' "$file" | sed '1d;$d')
             missing=""
             echo "$fm" | grep -q 'title:'       || missing="$missing title"
@@ -136,8 +143,20 @@ jobs:
               exit_code=1
             fi
           done
+          # Check guide and by-project pages for title + description
+          for file in docs/guide/*.md docs/zh/guide/*.md docs/by-project/*.md docs/zh/by-project/*.md; do
+            [ -f "$file" ] || continue
+            fm=$(sed -n '/^---$/,/^---$/p' "$file" | sed '1d;$d')
+            missing=""
+            echo "$fm" | grep -q 'title:'       || missing="$missing title"
+            echo "$fm" | grep -q 'description:' || missing="$missing description"
+            if [ -n "$missing" ]; then
+              echo "::error file=$file::Missing frontmatter fields:$missing"
+              exit_code=1
+            fi
+          done
           if [ $exit_code -eq 0 ]; then
-            echo "✅ All pattern docs have complete frontmatter"
+            echo "✅ All docs have complete frontmatter"
           fi
           exit $exit_code
 

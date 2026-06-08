@@ -1,4 +1,5 @@
 ---
+title: "Rust 标准库中的模式"
 description: "Rust 标准库模式：迭代器、写时复制（Cow）、引用计数（Arc）、驻留和 Arena 分配。"
 ---
 

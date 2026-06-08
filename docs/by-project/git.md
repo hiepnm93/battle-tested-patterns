@@ -1,4 +1,5 @@
 ---
+title: "Patterns from Git"
 description: "Git's pattern usage: copy-on-write objects, Merkle trees for integrity, and diff/patch for minimal changes."
 ---
 

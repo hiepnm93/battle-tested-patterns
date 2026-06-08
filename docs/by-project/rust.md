@@ -1,4 +1,5 @@
 ---
+title: "Patterns from Rust"
 description: "Rust standard library patterns: iterator, copy-on-write (Cow), reference counting (Arc), interning, and arena allocation."
 ---
 

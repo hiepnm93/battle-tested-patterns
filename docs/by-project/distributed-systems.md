@@ -1,4 +1,5 @@
 ---
+title: "Patterns from Distributed Systems"
 description: "Distributed systems patterns: ring buffer (LMAX Disruptor), consistent hashing, WAL, MVCC, and circuit breaker."
 ---
 

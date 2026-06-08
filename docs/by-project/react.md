@@ -1,4 +1,5 @@
 ---
+title: "Patterns from React"
 description: "How React combines bitmask, double buffering, cooperative scheduling, min heap, and diff/patch patterns in a single render cycle."
 ---
 

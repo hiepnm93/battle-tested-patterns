@@ -1,4 +1,5 @@
 ---
+title: "More Projects"
 description: "Additional patterns from PostgreSQL, Redis, Kafka, LLVM, Chromium, V8, and other open-source projects."
 ---
 

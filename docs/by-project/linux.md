@@ -1,4 +1,5 @@
 ---
+title: "Patterns from Linux Kernel"
 description: "Programming patterns from the Linux kernel: bitmask, semaphore, ring buffer, trie, LRU cache, free list, vtable, and more."
 ---
 

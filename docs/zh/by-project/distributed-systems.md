@@ -1,4 +1,5 @@
 ---
+title: "分布式系统中的模式"
 description: "分布式系统模式：环形缓冲区（LMAX Disruptor）、一致性哈希、WAL、MVCC 和熔断器。"
 ---
 

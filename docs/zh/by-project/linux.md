@@ -1,4 +1,5 @@
 ---
+title: "Linux 内核中的模式"
 description: "Linux 内核中的编程模式：位掩码、信号量、环形缓冲区、Trie、LRU 缓存、空闲链表、虚函数表等。"
 ---
 

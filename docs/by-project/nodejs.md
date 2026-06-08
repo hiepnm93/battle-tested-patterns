@@ -1,4 +1,5 @@
 ---
+title: "Patterns from Node.js Ecosystem"
 description: "Node.js ecosystem patterns: observer (EventEmitter), backpressure (Streams), state machine (XState), and middleware chain (Koa)."
 ---
 

@@ -1,4 +1,5 @@
 ---
+title: "Patterns from Go"
 description: "Go runtime patterns: work stealing, object pool, cooperative scheduling, semaphore, free list, flyweight, and arena allocator."
 ---
 

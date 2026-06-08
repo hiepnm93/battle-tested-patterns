@@ -1,4 +1,5 @@
 ---
+title: "Patterns from Game Engines"
 description: "Game engine patterns from Godot and SDL: object pool, tagged union, double buffering, and dirty flag for 60fps performance."
 ---
 
