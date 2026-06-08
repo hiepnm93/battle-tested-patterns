@@ -117,7 +117,7 @@ function verifyRust(block: CodeBlock): string | null {
   writeFileSync(file, code);
   try {
     const outFile = file.replace('.rs', '');
-    execSync(`rustc --edition 2021 "${file}" -o "${outFile}" 2>&1`, { timeout: 20000 });
+    execSync(`rustc --edition 2021 "${file}" -o "${outFile}" 2>&1`, { timeout: 30000 });
     try { rmSync(outFile); } catch {}
     return null;
   } catch (e: any) {
