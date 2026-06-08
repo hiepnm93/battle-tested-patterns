@@ -215,7 +215,7 @@ cd battle-tested-patterns && pnpm install
 # Run exercises in any language
 pnpm test                         # TypeScript (553 tests, Vitest)
 cd exercises/rust && cargo test   # Rust (173 tests)
-cd exercises/go && go test ./...  # Go (~170 tests)
+cd exercises/go && go test ./...  # Go (173 tests)
 cd exercises/python && pytest     # Python (233 tests)
 
 pnpm dev                          # Local docs site
