@@ -21,6 +21,7 @@ See [commit history](https://github.com/Totoro-jam/battle-tested-patterns/commit
 - Revamp homepage with value-focused tagline, live Viz demo, and PatternTimelineViz
 - Add JSON-LD structured data for search engine rich results (WebSite, BreadcrumbList, TechArticle)
 - Add dedicated skeleton loading for homepage MinHeap and Timeline components
+- Add CJK word segmentation for VitePress local search using `Intl.Segmenter`
 
 ### Fixes
 
@@ -47,6 +48,7 @@ See [commit history](https://github.com/Totoro-jam/battle-tested-patterns/commit
 - Add keyboard support to interactive non-button elements
 - Add missing `isAborted()` checks after delay in preset scenarios
 - Translate hardcoded English strings in VizLog and VizSkeleton
+- Add mobile responsive styles for viz components on small screens
 
 ### Internationalization
 
@@ -57,6 +59,7 @@ See [commit history](https://github.com/Totoro-jam/battle-tested-patterns/commit
 - Replace "Interview Guide" hero button with "Learning Paths" (EN+ZH)
 - Add Chinese translations for VitePress UI elements
 - Add 404 page and footer translations for both locales
+- Add outline level [2,3] to ZH config to show h3 in page navigation
 - Rename 归并迭代器 → 合并迭代器 in merge-iterator pattern page
 - Translate all English pattern names to Chinese in use-cases.md
 
