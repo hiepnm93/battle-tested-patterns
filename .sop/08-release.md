@@ -63,25 +63,7 @@ git tag vX.Y.Z
 git push && git push --tags
 ```
 
-`release.yml` will automatically create a GitHub Release via `changelogen`.
-
-**Known issue:** `changelogen` generates a self-referencing diff range (`vX.Y.Z...vX.Y.Z`) because the tag already exists at generation time. After the release is created, manually update the release body:
-
-```bash
-gh release edit vX.Y.Z --notes "$(cat <<'EOF'
-## vX.Y.Z
-
-**N commits** since vPREV — one-line summary.
-
-### Highlights
-- ...
-
-(paste categorized changes from CHANGELOG.md)
-
-[Full changelog](https://github.com/Totoro-jam/battle-tested-patterns/compare/vPREV...vX.Y.Z)
-EOF
-)"
-```
+`release.yml` will automatically create a GitHub Release by extracting the corresponding version section from `CHANGELOG.md`. Ensure the CHANGELOG entry is complete before tagging.
 
 ### 5. Post-Release
 
