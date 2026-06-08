@@ -14,9 +14,9 @@
 ## Quality Checklist
 
 ### Content Completeness
-- [ ] All required sections present (One Liner / Core Idea / Production Proof / Implementation / Exercises / When to Use / When NOT to Use)
+- [ ] All required sections present (One Liner / Core Idea / Production Proof / Implementation / Exercises / When to Use / When NOT to Use / More Production Uses / Related Patterns / Challenge Questions)
 - [ ] One Liner ≤ 30 English words
-- [ ] Core Idea has visual diagram
+- [ ] Core Idea has visual diagram + property table
 
 ### Production Proof
 - [ ] ≥ 2 different projects with source links
@@ -28,11 +28,20 @@
 - [ ] TypeScript implementation present (required)
 - [ ] ≥ 1 other language (Rust / Go / Python / C)
 - [ ] Each implementation is idiomatic to its language
+- [ ] Code blocks compile (`pnpm verify-code`)
 
 ### Exercises
-- [ ] ≥ 1 runnable test file
-- [ ] Tests pass (`pnpm test` / `cargo test` / `go test`)
-- [ ] Difficulty labels (basic / intermediate / advanced)
+- [ ] Exercise files in all 4 languages (TS, Rust, Go, Python)
+- [ ] Answer files in `exercises/answers/` for all 4 languages
+- [ ] Tests pass (`pnpm test` · `cargo test` · `go test ./...` · `pytest`)
+
+### Related Patterns & Challenge Questions
+- [ ] ≥ 2 related patterns with bidirectional links (EN + ZH)
+- [ ] 3-4 scenario-based challenge questions with verified answers
+
+### i18n
+- [ ] Chinese translation exists with identical code blocks
+- [ ] ZH section titles in Chinese, code-group tab order matches EN
 
 ### Code Quality
 - [ ] No lint errors (`pnpm lint`)
