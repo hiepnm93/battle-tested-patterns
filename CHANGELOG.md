@@ -70,6 +70,9 @@ See [commit history](https://github.com/Totoro-jam/battle-tested-patterns/commit
 
 ### Documentation
 
+- Add 5 pattern comparison pairs: Backpressure vs Rate Limiter, Tombstone vs Dirty Flag, Interning vs Flyweight, Event Loop vs Work Stealing, Visitor vs Middleware Chain (EN+ZH)
+- Add B+ Tree and Registry to more-projects by-project page (EN+ZH)
+- Correct Go test count from ~170 to 173 in README
 - Add SOP 12 (Related Patterns bidirectionality), SOP 13 (content quality audit)
 - Add missing patterns to learning paths (Registry, Visitor, Vtable)
 - Update stale test counts and sync STUDY_PLAN with learning paths
