@@ -177,7 +177,7 @@ exercises/answers/
 # 在项目根目录：
 pnpm test                                  # TypeScript（553 个测试）
 (cd exercises/rust && cargo test)          # Rust（173 个测试）
-(cd exercises/go && go test ./...)         # Go（约 170 个测试）
+(cd exercises/go && go test ./...)         # Go（173 个测试）
 (cd exercises/python && pytest)            # Python（233 个测试）
 ```
 
