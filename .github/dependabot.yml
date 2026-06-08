@@ -8,3 +8,15 @@ updates:
     directory: /
     schedule:
       interval: weekly
+  - package-ecosystem: cargo
+    directory: /exercises/rust
+    schedule:
+      interval: monthly
+  - package-ecosystem: gomod
+    directory: /exercises/go
+    schedule:
+      interval: monthly
+  - package-ecosystem: pip
+    directory: /exercises/python
+    schedule:
+      interval: monthly
