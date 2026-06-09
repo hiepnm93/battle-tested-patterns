@@ -17,6 +17,10 @@ English | [简体中文](README.zh-CN.md)
 
 </div>
 
+<p align="center">
+  <img src=".github/screenshots/lru-cache-en.png" alt="LRU Cache pattern — interactive visualization, property table, and sidebar navigation" width="800" />
+</p>
+
 ## 46 Patterns at a Glance
 
 <table>

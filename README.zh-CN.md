@@ -17,6 +17,10 @@
 
 </div>
 
+<p align="center">
+  <img src=".github/screenshots/lru-cache-zh.png" alt="LRU Cache 模式 — 交互式可视化、属性表格与侧边导航" width="800" />
+</p>
+
 ## 46 个模式速览
 
 <table>
