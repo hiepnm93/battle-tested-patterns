@@ -67,15 +67,16 @@ const skeletonOverrides: Record<string, any> = {
 };
 
 function clientOnly(loader: () => Promise<any>, skeleton?: any) {
+  const loadingComp = skeleton || VizSkeleton;
   const AsyncComp = defineAsyncComponent({
     loader,
-    loadingComponent: skeleton || VizSkeleton,
+    loadingComponent: loadingComp,
     delay: 0,
   });
   return defineComponent({
     setup() {
       return () =>
-        typeof window === 'undefined' ? null : h(AsyncComp);
+        typeof window === 'undefined' ? h(loadingComp) : h(AsyncComp);
     },
   });
 }

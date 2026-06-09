@@ -270,7 +270,7 @@ async function presetMutex() {
     <!-- SVG visualization -->
     <div class="sem-canvas">
       <svg
-        :viewBox="`0 0 400 ${180 + Math.max(0, waitingWorkers.length - 1) * 34}`"
+        :viewBox="`0 0 400 ${204 + Math.max(0, waitingWorkers.length - 1) * 34}`"
         class="sem-svg"
         xmlns="http://www.w3.org/2000/svg"
         role="img"
