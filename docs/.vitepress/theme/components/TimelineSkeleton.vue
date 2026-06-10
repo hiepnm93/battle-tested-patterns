@@ -102,13 +102,13 @@ const { t } = useI18n();
 .tl-skel-stat-value {
   width: 40px;
   height: 24px;
-  border-radius: 4px;
+  border-radius: var(--viz-radius-sm);
 }
 
 .tl-skel-stat-label {
   width: 52px;
   height: 12px;
-  border-radius: 4px;
+  border-radius: var(--viz-radius-sm);
 }
 
 .tl-skel-filters {
@@ -182,7 +182,7 @@ const { t } = useI18n();
 .tl-skel-card {
   padding: 0.5rem 0.75rem;
   border: 1px solid var(--viz-cell-empty);
-  border-radius: 8px;
+  border-radius: var(--viz-radius-sm);
   max-width: calc(50% - 20px);
   box-sizing: border-box;
   display: flex;
@@ -203,19 +203,19 @@ const { t } = useI18n();
 .tl-skel-card-year {
   width: 36px;
   height: 11px;
-  border-radius: 3px;
+  border-radius: var(--viz-radius-sm);
 }
 
 .tl-skel-card-name {
   width: 100px;
   height: 13px;
-  border-radius: 3px;
+  border-radius: var(--viz-radius-sm);
 }
 
 .tl-skel-card-origin {
   width: 140px;
   height: 11px;
-  border-radius: 3px;
+  border-radius: var(--viz-radius-sm);
 }
 
 @media (max-width: 640px) {

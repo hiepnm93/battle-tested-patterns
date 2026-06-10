@@ -367,7 +367,7 @@ function txt(obj: { en: string; zh: string }): string {
   height: calc(0.875rem);
   top: 0;
   border-top-left-radius: 0;
-  border-bottom-left-radius: 4px;
+  border-bottom-left-radius: var(--viz-radius-sm);
   border-top: none;
   border-bottom: 2px solid var(--viz-border);
 }
@@ -379,7 +379,7 @@ function txt(obj: { en: string; zh: string }): string {
   color: var(--viz-muted);
   background: var(--vp-c-bg);
   padding: 0.0625rem 0.375rem;
-  border-radius: 3px;
+  border-radius: var(--viz-radius-sm);
   border: 1px solid var(--viz-border);
   margin-bottom: 0.25rem;
   line-height: 1.4;
@@ -390,11 +390,11 @@ function txt(obj: { en: string; zh: string }): string {
   align-items: baseline;
   gap: 0.375rem;
   padding: 0.25rem 0.625rem;
-  border-radius: 5px;
+  border-radius: var(--viz-radius-sm);
   background: rgba(59, 130, 246, 0.08);
   border: 1px solid var(--viz-primary);
   text-decoration: none;
-  transition: all 0.15s ease;
+  transition: all var(--viz-transition);
   margin-top: 0.125rem;
 }
 

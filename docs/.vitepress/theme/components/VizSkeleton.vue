@@ -50,7 +50,7 @@ const { t } = useI18n();
 .viz-skel-content {
   width: 100%;
   height: 120px;
-  border-radius: 6px;
+  border-radius: var(--viz-radius-sm);
   margin-bottom: 1rem;
 }
 

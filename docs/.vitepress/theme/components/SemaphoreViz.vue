@@ -531,7 +531,7 @@ async function presetMutex() {
 .sem-select {
   padding: 0.25rem 0.5rem;
   border: 1px solid var(--viz-border);
-  border-radius: 6px;
+  border-radius: var(--viz-radius-sm);
   background: var(--vp-c-bg);
   color: var(--viz-text);
   font-size: 0.8125rem;

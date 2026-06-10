@@ -269,9 +269,9 @@ async function presetDuplicates() {
   align-items: center;
   gap: 0.5rem;
   padding: 0.375rem 0.5rem;
-  border-radius: 6px;
+  border-radius: var(--viz-radius-sm);
   border: 2px solid transparent;
-  transition: all 0.3s ease;
+  transition: all var(--viz-transition);
 }
 
 .mi-row--active {
@@ -302,10 +302,10 @@ async function presetDuplicates() {
   font-weight: 600;
   font-family: var(--vp-font-family-mono);
   border: 2px solid var(--viz-border);
-  border-radius: 4px;
+  border-radius: var(--viz-radius-sm);
   background: var(--vp-c-bg);
   color: var(--viz-text);
-  transition: all 0.25s ease;
+  transition: all var(--viz-transition);
 }
 
 .mi-cell--consumed {

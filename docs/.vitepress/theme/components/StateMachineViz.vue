@@ -343,7 +343,7 @@ function edgeLabelPos(from: State, to: State, curve: number): { x: number; y: nu
 .sm-history-item {
   display: inline-block;
   padding: 2px 6px;
-  border-radius: 3px;
+  border-radius: var(--viz-radius-sm);
   font-size: 0.7rem;
   font-family: var(--vp-font-family-mono);
   font-weight: 600;

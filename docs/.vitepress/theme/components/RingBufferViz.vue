@@ -312,7 +312,7 @@ async function presetOverflow() {
 }
 
 .ringbuf-pointer {
-  transition: transform 0.3s ease;
+  transition: transform var(--viz-transition);
 }
 
 @media (max-width: 640px) {

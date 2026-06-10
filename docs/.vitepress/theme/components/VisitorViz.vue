@@ -402,7 +402,7 @@ async function presetBothVisitors() {
 .vv-type-btn {
   padding: 0.3rem 0.7rem;
   border: 2px solid var(--viz-border);
-  border-radius: 6px;
+  border-radius: var(--viz-radius-sm);
   background: var(--vp-c-bg);
   font-size: 0.75rem;
   font-weight: 600;
@@ -428,7 +428,7 @@ async function presetBothVisitors() {
 
 .vv-output {
   border: 1px solid var(--viz-border);
-  border-radius: 8px;
+  border-radius: var(--viz-radius-sm);
   overflow: hidden;
   margin: 0.5rem 0;
 }

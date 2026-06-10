@@ -378,10 +378,10 @@ async function presetFragmentation() {
   min-width: 56px;
   flex: 1;
   border: 2px solid var(--viz-border);
-  border-radius: 6px;
+  border-radius: var(--viz-radius-sm);
   padding: 0.375rem 0.25rem;
   background: var(--vp-c-bg);
-  transition: all 0.25s ease;
+  transition: all var(--viz-transition);
   cursor: default;
   position: relative;
 }
@@ -400,7 +400,7 @@ async function presetFragmentation() {
 .fl-block--allocated:hover {
   opacity: 0.8;
   transform: translateY(-2px);
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--viz-shadow-md);
 }
 
 .fl-block--head {
@@ -452,7 +452,7 @@ async function presetFragmentation() {
   color: #fff;
   background: var(--viz-primary);
   padding: 0 4px;
-  border-radius: 3px;
+  border-radius: var(--viz-radius-sm);
   line-height: 1.4;
 }
 
@@ -481,7 +481,7 @@ async function presetFragmentation() {
   font-family: var(--vp-font-family-mono);
   padding: 0.15rem 0.4rem;
   border: 1px solid var(--viz-primary);
-  border-radius: 4px;
+  border-radius: var(--viz-radius-sm);
   color: var(--viz-primary);
   background: var(--vp-c-bg);
   white-space: nowrap;
@@ -523,12 +523,12 @@ async function presetFragmentation() {
   font-size: 0.8125rem;
   padding: 0.375rem 0.625rem;
   border: 1px solid var(--viz-border);
-  border-radius: 6px;
+  border-radius: var(--viz-radius-sm);
   background: var(--vp-c-bg);
   color: var(--viz-text);
   width: 120px;
   outline: none;
-  transition: border-color 0.2s ease;
+  transition: border-color var(--viz-transition);
 }
 
 .fl-input:focus {

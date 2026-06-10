@@ -580,13 +580,13 @@ async function presetReadThroughTombstone() {
 .ts-usage-bar {
   display: flex;
   height: 8px;
-  border-radius: 4px;
+  border-radius: var(--viz-radius-sm);
   background: color-mix(in srgb, var(--viz-border) 50%, var(--vp-c-bg));
   overflow: hidden;
 }
 
 .ts-usage-fill {
-  transition: width 0.4s ease;
+  transition: width var(--viz-transition);
 }
 
 .ts-usage-fill--active {
@@ -639,12 +639,12 @@ async function presetReadThroughTombstone() {
 
 .ts-cell {
   border: 2px solid var(--viz-border);
-  border-radius: 4px;
+  border-radius: var(--viz-radius-sm);
   padding: 0.375rem;
   min-height: 60px;
   display: flex;
   flex-direction: column;
-  transition: all 0.3s ease;
+  transition: all var(--viz-transition);
   background: var(--vp-c-bg);
 }
 
@@ -699,7 +699,7 @@ async function presetReadThroughTombstone() {
 .ts-delete-btn {
   background: none;
   border: 1px solid var(--viz-border);
-  border-radius: 3px;
+  border-radius: var(--viz-radius-sm);
   width: 18px;
   height: 18px;
   font-size: 0.625rem;
@@ -771,7 +771,7 @@ async function presetReadThroughTombstone() {
 
 .ts-control-panel {
   border: 1px solid var(--viz-border);
-  border-radius: 6px;
+  border-radius: var(--viz-radius-sm);
   padding: 0.5rem;
 }
 
@@ -794,7 +794,7 @@ async function presetReadThroughTombstone() {
   width: 80px;
   padding: 0.3125rem 0.5rem;
   border: 1px solid var(--viz-border);
-  border-radius: 6px;
+  border-radius: var(--viz-radius-sm);
   font-size: 0.75rem;
   font-family: var(--vp-font-family-mono);
   background: var(--vp-c-bg);
@@ -819,7 +819,7 @@ async function presetReadThroughTombstone() {
 .ts-read-result {
   margin-top: 0.375rem;
   padding: 0.25rem 0.5rem;
-  border-radius: 4px;
+  border-radius: var(--viz-radius-sm);
   font-size: 0.6875rem;
   font-weight: 600;
   font-family: var(--vp-font-family-mono);

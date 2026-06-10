@@ -276,7 +276,7 @@ async function presetCascadingDirty() {
   margin: 0 auto;
   min-height: 120px;
   background: var(--viz-cell-empty);
-  border-radius: 8px;
+  border-radius: var(--viz-radius-sm);
 }
 
 .df-stats {

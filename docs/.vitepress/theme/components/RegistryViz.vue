@@ -409,7 +409,7 @@ async function presetMissAndFallback() {
 
 .rg-panel {
   border: 1px solid var(--viz-border);
-  border-radius: 6px;
+  border-radius: var(--viz-radius-sm);
   padding: 0.625rem;
   background: var(--vp-c-bg);
 }
@@ -443,8 +443,8 @@ async function presetMissAndFallback() {
   gap: 0.375rem;
   padding: 0.375rem 0.5rem;
   border: 1px solid var(--viz-border);
-  border-radius: 4px;
-  transition: all 0.2s ease;
+  border-radius: var(--viz-radius-sm);
+  transition: all var(--viz-transition);
 }
 
 .rg-plugin--registered {
@@ -534,7 +534,7 @@ async function presetMissAndFallback() {
 }
 
 .rg-row {
-  transition: all 0.3s ease;
+  transition: all var(--viz-transition);
 }
 
 .rg-row--flash {
@@ -569,7 +569,7 @@ async function presetMissAndFallback() {
   color: var(--viz-muted);
   cursor: pointer;
   padding: 0.125rem 0.25rem;
-  border-radius: 3px;
+  border-radius: var(--viz-radius-sm);
   transition: all 0.15s;
 }
 
@@ -590,7 +590,7 @@ async function presetMissAndFallback() {
   min-width: 0;
   padding: 0.375rem 0.5rem;
   border: 1px solid var(--viz-border);
-  border-radius: 6px;
+  border-radius: var(--viz-radius-sm);
   font-size: 0.75rem;
   font-family: var(--vp-font-family-mono);
   background: var(--vp-c-bg);
@@ -604,7 +604,7 @@ async function presetMissAndFallback() {
 
 .rg-lookup-result {
   padding: 0.5rem;
-  border-radius: 4px;
+  border-radius: var(--viz-radius-sm);
   margin-bottom: 0.5rem;
   animation: rg-fade-in 0.3s ease;
 }
@@ -653,7 +653,7 @@ async function presetMissAndFallback() {
 .rg-quick-btn {
   background: none;
   border: 1px solid var(--viz-border);
-  border-radius: 3px;
+  border-radius: var(--viz-radius-sm);
   padding: 0.1875rem 0.375rem;
   font-size: 0.625rem;
   font-family: var(--vp-font-family-mono);

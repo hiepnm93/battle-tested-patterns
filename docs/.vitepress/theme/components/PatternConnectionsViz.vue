@@ -210,12 +210,12 @@ function patternLink(link: string) {
   gap: 0.25rem;
   padding: 0.375rem 0.75rem;
   border: 1.5px solid var(--viz-border);
-  border-radius: 8px;
+  border-radius: var(--viz-radius-sm);
   background: transparent;
   font-size: 0.75rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all var(--viz-transition);
   color: var(--viz-muted);
   font-family: var(--vp-font-family-base);
 }
@@ -227,7 +227,7 @@ function patternLink(link: string) {
 
 .pc-tab--active {
   background: var(--vp-c-bg);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--viz-shadow-sm);
 }
 
 .pc-tab-icon {
@@ -240,7 +240,7 @@ function patternLink(link: string) {
 
 .pc-system {
   border: 1px solid var(--viz-border);
-  border-radius: 10px;
+  border-radius: var(--viz-radius-md);
   overflow: hidden;
   margin-bottom: 0.75rem;
   animation: pc-fadein 0.25s ease;
@@ -258,7 +258,7 @@ function patternLink(link: string) {
 .pc-system-icon {
   width: 36px;
   height: 36px;
-  border-radius: 8px;
+  border-radius: var(--viz-radius-sm);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -296,7 +296,7 @@ function patternLink(link: string) {
   padding: 0.625rem 1rem;
   border-left: 3px solid transparent;
   border-bottom: 1px solid var(--viz-border);
-  transition: background 0.15s ease;
+  transition: background var(--viz-transition);
   animation: pc-slidein 0.3s ease both;
   animation-delay: var(--delay);
   text-decoration: none;
@@ -329,7 +329,7 @@ function patternLink(link: string) {
   font-size: 0.75rem;
   color: var(--viz-muted);
   opacity: 0;
-  transition: opacity 0.15s ease;
+  transition: opacity var(--viz-transition);
 }
 
 .pc-pattern:hover .pc-pattern-arrow {

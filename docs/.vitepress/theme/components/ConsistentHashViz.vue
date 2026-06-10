@@ -308,11 +308,11 @@ async function presetHotSpot() {
 }
 
 .ch-node {
-  transition: all 0.3s ease;
+  transition: all var(--viz-transition);
 }
 
 .ch-key {
-  transition: all 0.3s ease;
+  transition: all var(--viz-transition);
 }
 
 .ch-key-pop {

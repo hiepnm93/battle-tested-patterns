@@ -334,7 +334,7 @@ async function presetReactCommit() {
   justify-content: center;
   gap: 1rem;
   flex-wrap: wrap;
-  transition: opacity 0.3s ease;
+  transition: opacity var(--viz-transition);
 }
 
 .db-buffer {
@@ -346,7 +346,7 @@ async function presetReactCommit() {
   border: 2px solid var(--viz-border);
   border-radius: var(--viz-radius);
   background: var(--vp-c-bg);
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  transition: border-color var(--viz-transition), box-shadow 0.3s ease;
   position: relative;
 }
 
@@ -389,9 +389,9 @@ async function presetReactCommit() {
 .db-cell {
   width: 36px;
   height: 28px;
-  border-radius: 4px;
+  border-radius: var(--viz-radius-sm);
   background: var(--viz-cell-empty);
-  transition: background-color 0.25s ease, transform 0.2s ease;
+  transition: background-color var(--viz-transition), transform 0.2s ease;
 }
 
 .db-cell--filled {
@@ -403,7 +403,7 @@ async function presetReactCommit() {
   font-weight: 700;
   letter-spacing: 0.08em;
   padding: 0.125rem 0.5rem;
-  border-radius: 4px;
+  border-radius: var(--viz-radius-sm);
   text-transform: uppercase;
 }
 
@@ -423,7 +423,7 @@ async function presetReactCommit() {
   align-items: center;
   justify-content: center;
   opacity: 0.6;
-  transition: opacity 0.2s ease, transform 0.3s ease;
+  transition: opacity var(--viz-transition), transform 0.3s ease;
 }
 
 .db-swap-arrow--animating {

@@ -376,7 +376,7 @@ const edges = computed(() => edgesFromLayout(treeLayout.value));
 .trie-word-tag {
   display: inline-block;
   padding: 2px 8px;
-  border-radius: 10px;
+  border-radius: var(--viz-radius-md);
   font-size: 0.75rem;
   font-family: var(--vp-font-family-mono);
   font-weight: 600;
@@ -387,7 +387,7 @@ const edges = computed(() => edgesFromLayout(treeLayout.value));
 .viz-input {
   padding: 0.35rem 0.6rem;
   border: 1px solid var(--viz-border);
-  border-radius: 6px;
+  border-radius: var(--viz-radius-sm);
   font-size: 0.8rem;
   font-family: var(--vp-font-family-mono);
   background: var(--vp-c-bg);

@@ -446,12 +446,12 @@ async function presetFrequentCheckpoints() {
   align-items: center;
   gap: 0.375rem;
   padding: 3px 6px;
-  border-radius: 4px;
+  border-radius: var(--viz-radius-sm);
   font-size: 0.75rem;
   font-family: var(--vp-font-family-mono);
   background: var(--vp-c-bg);
   border: 1px solid var(--viz-border);
-  transition: all 0.2s ease;
+  transition: all var(--viz-transition);
 }
 
 .cp-log-entry--replaying {
@@ -513,9 +513,9 @@ async function presetFrequentCheckpoints() {
   justify-content: center;
   padding: 1.25rem 0.5rem;
   border: 2px solid var(--viz-border);
-  border-radius: 8px;
+  border-radius: var(--viz-radius-sm);
   background: var(--vp-c-bg);
-  transition: all 0.3s ease;
+  transition: all var(--viz-transition);
 }
 
 .cp-state-box--crashed {
@@ -579,7 +579,7 @@ async function presetFrequentCheckpoints() {
   display: flex;
   flex-direction: column;
   padding: 3px 6px;
-  border-radius: 4px;
+  border-radius: var(--viz-radius-sm);
   background: rgba(16, 185, 129, 0.08);
   border: 1px solid rgba(16, 185, 129, 0.2);
   margin-bottom: 2px;

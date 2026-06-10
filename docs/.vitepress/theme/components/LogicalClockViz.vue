@@ -245,7 +245,7 @@ async function presetClockSkew() {
 .lc-process {
   flex: 1;
   border: 2px solid;
-  border-radius: 8px;
+  border-radius: var(--viz-radius-sm);
   padding: 0.5rem;
   background: var(--vp-c-bg);
 }
@@ -282,7 +282,7 @@ async function presetClockSkew() {
   flex-direction: column;
   align-items: center;
   padding: 2px 5px;
-  border-radius: 4px;
+  border-radius: var(--viz-radius-sm);
   font-size: 0.6rem;
   font-family: var(--vp-font-family-mono);
   animation: viz-slide-in 0.2s ease;
@@ -330,6 +330,6 @@ async function presetClockSkew() {
   text-align: center;
   padding: 0.3rem;
   background: rgba(245, 158, 11, 0.1);
-  border-radius: 4px;
+  border-radius: var(--viz-radius-sm);
 }
 </style>

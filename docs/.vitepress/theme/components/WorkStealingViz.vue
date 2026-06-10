@@ -239,7 +239,7 @@ function presetOneWorker() {
 .ws-worker {
   flex: 1;
   border: 2px solid;
-  border-radius: 8px;
+  border-radius: var(--viz-radius-sm);
   padding: 0.5rem;
   background: var(--vp-c-bg);
   transition: box-shadow 0.3s;
@@ -293,13 +293,13 @@ function presetOneWorker() {
   flex: 1;
   height: 10px;
   background: var(--viz-cell-empty);
-  border-radius: 3px;
+  border-radius: var(--viz-radius-sm);
   overflow: hidden;
 }
 
 .ws-task-fill {
   height: 100%;
-  border-radius: 3px;
+  border-radius: var(--viz-radius-sm);
   transition: width 0.2s;
 }
 

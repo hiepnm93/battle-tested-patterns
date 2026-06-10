@@ -232,7 +232,7 @@ async function presetMaskCheck() {
   font-weight: 700;
   font-family: var(--vp-font-family-mono);
   border: 2px solid var(--viz-border);
-  border-radius: 4px;
+  border-radius: var(--viz-radius-sm);
   background: var(--vp-c-bg);
   color: var(--viz-muted);
   cursor: pointer;
@@ -277,7 +277,7 @@ async function presetMaskCheck() {
   gap: 2px;
   padding: 0.4rem 0.6rem;
   border: 2px solid var(--viz-border);
-  border-radius: 6px;
+  border-radius: var(--viz-radius-sm);
   background: var(--vp-c-bg);
   cursor: pointer;
   transition: all 0.15s;

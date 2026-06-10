@@ -430,7 +430,7 @@ async function presetSkipMiddleware() {
 <style scoped>
 .mw-config-panel {
   border: 1px solid var(--viz-border);
-  border-radius: 6px;
+  border-radius: var(--viz-radius-sm);
   padding: 0.6rem;
   margin-bottom: 0.8rem;
   background: var(--vp-c-bg);
@@ -460,7 +460,7 @@ async function presetSkipMiddleware() {
   align-items: center;
   gap: 0.5rem;
   padding: 0.35rem 0.5rem;
-  border-radius: 4px;
+  border-radius: var(--viz-radius-sm);
   background: var(--viz-bg);
   transition: opacity 0.2s;
 }
@@ -537,7 +537,7 @@ async function presetSkipMiddleware() {
 .mw-behavior-btn {
   flex-shrink: 0;
   padding: 1px 8px;
-  border-radius: 3px;
+  border-radius: var(--viz-radius-sm);
   font-size: 0.6rem;
   font-weight: 700;
   font-family: var(--vp-font-family-mono);
@@ -602,7 +602,7 @@ async function presetSkipMiddleware() {
   flex-direction: column;
   align-items: center;
   padding: 0.4rem 0.6rem;
-  border-radius: 6px;
+  border-radius: var(--viz-radius-sm);
   border: 2px solid var(--viz-border);
   background: var(--vp-c-bg);
   transition: all 0.2s;
@@ -656,7 +656,7 @@ async function presetSkipMiddleware() {
   gap: 2px;
   padding: 0.4rem 0.5rem;
   border: 2px solid;
-  border-radius: 8px;
+  border-radius: var(--viz-radius-sm);
   background: var(--vp-c-bg);
   transition: all 0.2s;
   min-width: 52px;
@@ -706,7 +706,7 @@ async function presetSkipMiddleware() {
 .mw-node-badge-reject {
   color: #fff;
   background: var(--viz-danger);
-  border-radius: 3px;
+  border-radius: var(--viz-radius-sm);
 }
 
 @keyframes mw-shake {

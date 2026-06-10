@@ -560,7 +560,7 @@ async function presetConcurrentRead() {
   font-size: 0.75rem;
   font-family: var(--vp-font-family-mono);
   color: var(--viz-muted);
-  transition: all 0.3s ease;
+  transition: all var(--viz-transition);
 }
 
 .cow-step--active {
@@ -646,9 +646,9 @@ async function presetConcurrentRead() {
   width: 100%;
   padding: 0.5rem 0.75rem;
   border: 2px solid var(--viz-border);
-  border-radius: 8px;
+  border-radius: var(--viz-radius-sm);
   background: var(--vp-c-bg);
-  transition: all 0.3s ease;
+  transition: all var(--viz-transition);
 }
 
 .cow-group--current .cow-version {
@@ -680,7 +680,7 @@ async function presetConcurrentRead() {
   font-weight: 600;
   text-transform: uppercase;
   padding: 0.1rem 0.35rem;
-  border-radius: 3px;
+  border-radius: var(--viz-radius-sm);
 }
 
 .cow-badge--current {
@@ -705,7 +705,7 @@ async function presetConcurrentRead() {
   font-weight: 700;
   font-family: var(--vp-font-family-mono);
   padding: 0.1rem 0.4rem;
-  border-radius: 10px;
+  border-radius: var(--viz-radius-md);
   line-height: 1.4;
 }
 
@@ -738,9 +738,9 @@ async function presetConcurrentRead() {
   min-width: 36px;
   padding: 0.2rem 0.4rem;
   border: 1px solid var(--viz-border);
-  border-radius: 4px;
+  border-radius: var(--viz-radius-sm);
   background: var(--vp-c-bg);
-  transition: all 0.3s ease;
+  transition: all var(--viz-transition);
 }
 
 .cow-item--modified {
@@ -790,9 +790,9 @@ async function presetConcurrentRead() {
   gap: 6px;
   padding: 0.3rem 0.5rem;
   border: 2px solid;
-  border-radius: 6px;
+  border-radius: var(--viz-radius-sm);
   background: var(--vp-c-bg);
-  transition: all 0.3s ease;
+  transition: all var(--viz-transition);
 }
 
 .cow-reader-dot {
@@ -826,7 +826,7 @@ async function presetConcurrentRead() {
 .cow-edit-area {
   padding: 0.5rem 0.75rem;
   border: 1px solid var(--viz-border);
-  border-radius: 6px;
+  border-radius: var(--viz-radius-sm);
   background: var(--vp-c-bg-soft);
   margin-bottom: 0.5rem;
 }
@@ -841,7 +841,7 @@ async function presetConcurrentRead() {
 .cow-select {
   padding: 0.35rem 0.5rem;
   border: 1px solid var(--viz-border);
-  border-radius: 6px;
+  border-radius: var(--viz-radius-sm);
   font-size: 0.8125rem;
   font-family: var(--vp-font-family-mono);
   background: var(--vp-c-bg);
@@ -852,7 +852,7 @@ async function presetConcurrentRead() {
   width: 90px;
   padding: 0.35rem 0.5rem;
   border: 1px solid var(--viz-border);
-  border-radius: 6px;
+  border-radius: var(--viz-radius-sm);
   font-size: 0.8125rem;
   font-family: var(--vp-font-family-mono);
   background: var(--vp-c-bg);
@@ -889,7 +889,7 @@ async function presetConcurrentRead() {
   overflow-y: auto;
   padding: 0.4rem 0.6rem;
   border: 1px solid var(--viz-border);
-  border-radius: 6px;
+  border-radius: var(--viz-radius-sm);
   background: var(--vp-c-bg);
 }
 
@@ -917,7 +917,7 @@ async function presetConcurrentRead() {
 
 .cow-history-type {
   padding: 0 4px;
-  border-radius: 3px;
+  border-radius: var(--viz-radius-sm);
   font-size: 0.6rem;
   font-weight: 700;
   white-space: nowrap;

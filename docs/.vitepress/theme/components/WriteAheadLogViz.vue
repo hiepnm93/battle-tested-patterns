@@ -330,7 +330,7 @@ async function presetBatchFlush() {
 .wal-section {
   flex: 1;
   border: 1px solid var(--viz-border);
-  border-radius: 8px;
+  border-radius: var(--viz-radius-sm);
   padding: 0.5rem;
   background: var(--vp-c-bg);
 }
@@ -355,7 +355,7 @@ async function presetBatchFlush() {
   align-items: center;
   gap: 6px;
   padding: 3px 6px;
-  border-radius: 4px;
+  border-radius: var(--viz-radius-sm);
   font-size: 0.7rem;
   font-family: var(--vp-font-family-mono);
   background: rgba(59, 130, 246, 0.08);
@@ -419,7 +419,7 @@ async function presetBatchFlush() {
   display: flex;
   gap: 8px;
   padding: 3px 6px;
-  border-radius: 4px;
+  border-radius: var(--viz-radius-sm);
   font-size: 0.7rem;
   font-family: var(--vp-font-family-mono);
   background: rgba(16, 185, 129, 0.08);

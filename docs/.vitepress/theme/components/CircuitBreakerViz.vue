@@ -349,7 +349,7 @@ const states: { key: State; label: string; x: number; y: number }[] = [
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  transition: all 0.2s ease;
+  transition: all var(--viz-transition);
 }
 
 .cb-log-dot--success { background: var(--viz-success); }

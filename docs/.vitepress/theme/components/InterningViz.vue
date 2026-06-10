@@ -591,7 +591,7 @@ async function presetComparisonDemo() {
   color: var(--viz-text);
   padding: 0.2rem 0.5rem;
   border: 1px solid var(--viz-border);
-  border-radius: 4px;
+  border-radius: var(--viz-radius-sm);
   background: var(--vp-c-bg);
 }
 
@@ -618,7 +618,7 @@ async function presetComparisonDemo() {
   max-width: 220px;
   padding: 0.375rem 0.75rem;
   border: 1px solid var(--viz-border);
-  border-radius: 6px;
+  border-radius: var(--viz-radius-sm);
   font-size: 0.8125rem;
   font-family: var(--vp-font-family-mono);
   background: var(--vp-c-bg);
@@ -642,13 +642,13 @@ async function presetComparisonDemo() {
 .in-preset-btn {
   padding: 0.125rem 0.5rem;
   border: 1px solid var(--viz-border);
-  border-radius: 4px;
+  border-radius: var(--viz-radius-sm);
   background: transparent;
   color: var(--viz-muted);
   font-size: 0.6875rem;
   font-family: var(--vp-font-family-mono);
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all var(--viz-transition);
 }
 
 .in-preset-btn:hover:not(:disabled) {
@@ -671,7 +671,7 @@ async function presetComparisonDemo() {
 
 .in-section {
   border: 1px solid var(--viz-border);
-  border-radius: 6px;
+  border-radius: var(--viz-radius-sm);
   overflow: hidden;
   background: var(--vp-c-bg);
 }
@@ -698,7 +698,7 @@ async function presetComparisonDemo() {
   align-items: center;
   gap: 0.25rem;
   padding: 0.2rem 0.25rem;
-  border-radius: 4px;
+  border-radius: var(--viz-radius-sm);
   transition: background 0.3s;
 }
 
@@ -719,7 +719,7 @@ async function presetComparisonDemo() {
 .in-var--compare-selected {
   outline: 2px solid var(--viz-warning);
   outline-offset: 1px;
-  border-radius: 4px;
+  border-radius: var(--viz-radius-sm);
 }
 
 .in-var-name {
@@ -753,12 +753,12 @@ async function presetComparisonDemo() {
   align-items: center;
   justify-content: center;
   border: 1px solid var(--viz-border);
-  border-radius: 3px;
+  border-radius: var(--viz-radius-sm);
   background: transparent;
   font-size: 0.6875rem;
   font-family: var(--vp-font-family-mono);
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all var(--viz-transition);
   padding: 0;
   line-height: 1;
 }
@@ -803,7 +803,7 @@ async function presetComparisonDemo() {
   padding: 0.3rem 0.4rem;
   margin-bottom: 2px;
   border: 1px solid var(--viz-border);
-  border-radius: 4px;
+  border-radius: var(--viz-radius-sm);
   transition: all 0.3s;
 }
 
@@ -851,7 +851,7 @@ async function presetComparisonDemo() {
 /* ── Memory savings ──────────────────────── */
 .in-savings {
   border: 1px solid var(--viz-border);
-  border-radius: 6px;
+  border-radius: var(--viz-radius-sm);
   padding: 0.5rem 0.75rem;
   margin-bottom: 0.75rem;
   background: var(--vp-c-bg);
@@ -892,7 +892,7 @@ async function presetComparisonDemo() {
 /* ── Comparison demo ─────────────────────── */
 .in-compare {
   border: 1px solid var(--viz-border);
-  border-radius: 6px;
+  border-radius: var(--viz-radius-sm);
   padding: 0.5rem 0.75rem;
   margin-bottom: 0.75rem;
   background: var(--vp-c-bg);
@@ -916,7 +916,7 @@ async function presetComparisonDemo() {
 .in-compare-clear {
   padding: 0.1rem 0.4rem;
   border: 1px solid var(--viz-border);
-  border-radius: 3px;
+  border-radius: var(--viz-radius-sm);
   background: transparent;
   color: var(--viz-muted);
   font-size: 0.625rem;
@@ -942,7 +942,7 @@ async function presetComparisonDemo() {
   min-width: 100px;
   padding: 0.25rem 0.5rem;
   border: 1px dashed var(--viz-border);
-  border-radius: 4px;
+  border-radius: var(--viz-radius-sm);
   font-size: 0.75rem;
   font-family: var(--vp-font-family-mono);
   color: var(--viz-muted);
@@ -996,7 +996,7 @@ async function presetComparisonDemo() {
 .in-compare-result {
   margin-top: 0.375rem;
   padding: 0.3rem 0.5rem;
-  border-radius: 4px;
+  border-radius: var(--viz-radius-sm);
   font-size: 0.75rem;
   font-family: var(--vp-font-family-mono);
   font-weight: 600;

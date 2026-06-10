@@ -330,7 +330,7 @@ async function presetMultiBatch() {
 .bp-section {
   flex: 1;
   border: 1px solid var(--viz-border);
-  border-radius: 8px;
+  border-radius: var(--viz-radius-sm);
   padding: 0.5rem;
   background: var(--vp-c-bg);
 }
@@ -353,11 +353,11 @@ async function presetMultiBatch() {
   width: 52px;
   height: 36px;
   border: 1px dashed var(--viz-border);
-  border-radius: 4px;
+  border-radius: var(--viz-radius-sm);
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s ease;
+  transition: all var(--viz-transition);
   background: var(--viz-cell-empty);
 }
 
@@ -398,7 +398,7 @@ async function presetMultiBatch() {
   height: 100%;
   border-radius: 2px;
   background: var(--viz-primary);
-  transition: width 0.3s ease;
+  transition: width var(--viz-transition);
 }
 
 .bp-progress--full {
@@ -412,7 +412,7 @@ async function presetMultiBatch() {
   color: var(--viz-muted);
   padding-top: 1.5rem;
   white-space: nowrap;
-  transition: color 0.3s ease;
+  transition: color var(--viz-transition);
 }
 
 .bp-arrow--active {
@@ -432,7 +432,7 @@ async function presetMultiBatch() {
   justify-content: space-between;
   align-items: center;
   padding: 4px 8px;
-  border-radius: 4px;
+  border-radius: var(--viz-radius-sm);
   background: rgba(16, 185, 129, 0.08);
   font-size: 0.7rem;
   font-family: var(--vp-font-family-mono);

@@ -305,7 +305,7 @@ const phaseColor = computed(() => {
   gap: 6px;
   padding: 0.35rem 0.75rem;
   border: 2px solid var(--viz-muted);
-  border-radius: 6px;
+  border-radius: var(--viz-radius-sm);
   font-size: 0.7rem;
   font-weight: 700;
   font-family: var(--vp-font-family-mono);
@@ -336,7 +336,7 @@ const phaseColor = computed(() => {
 
 .el-column {
   border: 1px solid var(--viz-border);
-  border-radius: 6px;
+  border-radius: var(--viz-radius-sm);
   background: var(--vp-c-bg);
   overflow: hidden;
 }
@@ -370,7 +370,7 @@ const phaseColor = computed(() => {
 
 .el-item {
   padding: 0.3rem 0.5rem;
-  border-radius: 4px;
+  border-radius: var(--viz-radius-sm);
   font-size: 0.75rem;
   font-family: var(--vp-font-family-mono);
   font-weight: 600;
@@ -393,7 +393,7 @@ const phaseColor = computed(() => {
 .el-log-entry {
   display: inline-block;
   padding: 2px 6px;
-  border-radius: 3px;
+  border-radius: var(--viz-radius-sm);
   font-size: 0.7rem;
   font-family: var(--vp-font-family-mono);
   background: var(--viz-bg);

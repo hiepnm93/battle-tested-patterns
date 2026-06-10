@@ -371,13 +371,13 @@ async function presetMergeSorted() {
   width: 30px;
   height: 26px;
   border: 1px solid var(--viz-border);
-  border-radius: 3px;
+  border-radius: var(--viz-radius-sm);
   font-size: 0.75rem;
   font-family: var(--vp-font-family-mono);
   font-weight: 600;
   color: var(--viz-text);
   background: var(--vp-c-bg);
-  transition: all 0.2s ease;
+  transition: all var(--viz-transition);
 }
 
 .heap-array-cell--hl {

@@ -403,7 +403,7 @@ async function presetDynamicGrowth() {
 .op-capacity-bar {
   height: 8px;
   background: var(--vp-c-bg-soft);
-  border-radius: 4px;
+  border-radius: var(--viz-radius-sm);
   overflow: hidden;
   border: 1px solid var(--viz-border);
 }
@@ -411,8 +411,8 @@ async function presetDynamicGrowth() {
 .op-capacity-fill {
   height: 100%;
   background: var(--viz-primary);
-  border-radius: 4px;
-  transition: width 0.3s ease;
+  border-radius: var(--viz-radius-sm);
+  transition: width var(--viz-transition);
 }
 
 .op-capacity-fill--danger {
@@ -465,9 +465,9 @@ async function presetDynamicGrowth() {
 .op-card {
   position: relative;
   border: 2px solid var(--viz-border);
-  border-radius: 8px;
+  border-radius: var(--viz-radius-sm);
   overflow: hidden;
-  transition: all 0.3s ease;
+  transition: all var(--viz-transition);
   background: var(--vp-c-bg);
 }
 
@@ -526,7 +526,7 @@ async function presetDynamicGrowth() {
   font-weight: 700;
   color: #fff;
   padding: 1px 6px;
-  border-radius: 3px;
+  border-radius: var(--viz-radius-sm);
   text-transform: uppercase;
   letter-spacing: 0.04em;
   white-space: nowrap;
@@ -573,7 +573,7 @@ async function presetDynamicGrowth() {
   gap: 0.5rem;
   padding: 0.625rem 0.75rem;
   margin: 0.5rem 0;
-  border-radius: 6px;
+  border-radius: var(--viz-radius-sm);
   background: var(--viz-danger);
   color: #fff;
   font-size: 0.8125rem;
@@ -607,13 +607,13 @@ async function presetDynamicGrowth() {
   flex: 1;
   padding: 0.4rem 0.75rem;
   border: 1px solid var(--viz-border);
-  border-radius: 6px;
+  border-radius: var(--viz-radius-sm);
   background: var(--vp-c-bg);
   color: var(--viz-text);
   font-size: 0.8125rem;
   font-family: var(--vp-font-family-base);
   outline: none;
-  transition: border-color 0.2s ease;
+  transition: border-color var(--viz-transition);
 }
 
 .op-input:focus {

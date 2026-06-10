@@ -511,7 +511,7 @@ async function presetSameMethodDifferentImpl() {
   padding: 0.75rem;
   margin-bottom: 0.5rem;
   border: 1px solid var(--viz-border);
-  border-radius: 8px;
+  border-radius: var(--viz-radius-sm);
   background: var(--vp-c-bg-soft);
   flex-wrap: wrap;
 }
@@ -532,7 +532,7 @@ async function presetSameMethodDifferentImpl() {
 .vt-select {
   padding: 0.3rem 0.5rem;
   border: 1px solid var(--viz-border);
-  border-radius: 6px;
+  border-radius: var(--viz-radius-sm);
   background: var(--vp-c-bg);
   font-size: 0.75rem;
   font-family: var(--vp-font-family-mono);
@@ -560,7 +560,7 @@ async function presetSameMethodDifferentImpl() {
 .vt-method-btn {
   padding: 0.25rem 0.5rem;
   border: 1px solid var(--viz-border);
-  border-radius: 6px;
+  border-radius: var(--viz-radius-sm);
   background: var(--vp-c-bg);
   font-size: 0.7rem;
   font-family: var(--vp-font-family-mono);
@@ -622,7 +622,7 @@ async function presetSameMethodDifferentImpl() {
   gap: 2px;
   padding: 0.5rem 0.65rem;
   border: 2px solid var(--viz-border);
-  border-radius: 8px;
+  border-radius: var(--viz-radius-sm);
   background: var(--vp-c-bg);
   transition: border-color 0.25s, box-shadow 0.25s;
   min-width: 110px;
@@ -673,7 +673,7 @@ async function presetSameMethodDifferentImpl() {
   color: var(--viz-primary);
   background: rgba(59, 130, 246, 0.08);
   padding: 1px 6px;
-  border-radius: 4px;
+  border-radius: var(--viz-radius-sm);
 }
 
 /* --- Arrow column --- */
@@ -701,7 +701,7 @@ async function presetSameMethodDifferentImpl() {
 /* --- VTable --- */
 .vt-vtable {
   border: 2px solid var(--viz-border);
-  border-radius: 8px;
+  border-radius: var(--viz-radius-sm);
   overflow: hidden;
   background: var(--vp-c-bg);
   transition: border-color 0.25s, box-shadow 0.25s;
@@ -776,7 +776,7 @@ async function presetSameMethodDifferentImpl() {
   gap: 4px;
   padding: 0.5rem 0.65rem;
   border: 2px dashed var(--viz-border);
-  border-radius: 8px;
+  border-radius: var(--viz-radius-sm);
   background: var(--vp-c-bg);
   transition: border-color 0.25s, box-shadow 0.25s;
   min-width: 110px;
@@ -815,7 +815,7 @@ async function presetSameMethodDifferentImpl() {
   padding: 0.5rem 0.7rem;
   margin: 0.5rem 0;
   border: 2px solid var(--viz-success);
-  border-radius: 8px;
+  border-radius: var(--viz-radius-sm);
   background: var(--vp-c-bg);
   animation: viz-fade 0.4s ease;
   flex-wrap: wrap;
@@ -854,7 +854,7 @@ async function presetSameMethodDifferentImpl() {
 .vt-chain-step {
   padding: 0.25rem 0.5rem;
   border: 2px solid var(--viz-border);
-  border-radius: 6px;
+  border-radius: var(--viz-radius-sm);
   font-size: 0.68rem;
   font-weight: 700;
   font-family: var(--vp-font-family-mono);
@@ -901,7 +901,7 @@ async function presetSameMethodDifferentImpl() {
 
 .vt-compare-table {
   border: 1px solid var(--viz-border);
-  border-radius: 8px;
+  border-radius: var(--viz-radius-sm);
   overflow: hidden;
   min-width: 150px;
   flex-shrink: 0;
@@ -912,7 +912,7 @@ async function presetSameMethodDifferentImpl() {
   margin: 0.5rem 0;
   padding: 0.5rem 0.7rem;
   border: 1px solid var(--viz-border);
-  border-radius: 8px;
+  border-radius: var(--viz-radius-sm);
   background: var(--vp-c-bg-soft);
 }
 

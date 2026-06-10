@@ -101,7 +101,7 @@ function toggle() {
 .viz-log {
   margin-top: 0.5rem;
   border: 1px solid var(--viz-border);
-  border-radius: 6px;
+  border-radius: var(--viz-radius-sm);
   background: var(--vp-c-bg);
   overflow: hidden;
 }
@@ -133,7 +133,7 @@ function toggle() {
   display: inline-block;
   font-size: 0.5625rem;
   margin-right: 0.25rem;
-  transition: transform 0.15s ease;
+  transition: transform var(--viz-transition);
 }
 
 .viz-log-count {
@@ -144,13 +144,13 @@ function toggle() {
 .viz-log-clear {
   padding: 0.125rem 0.5rem;
   border: 1px solid var(--viz-border);
-  border-radius: 4px;
+  border-radius: var(--viz-radius-sm);
   background: transparent;
   color: var(--viz-muted);
   font-size: 0.625rem;
   font-family: var(--vp-font-family-base);
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all var(--viz-transition);
 }
 
 .viz-log-clear:hover {

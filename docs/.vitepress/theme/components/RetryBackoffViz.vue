@@ -411,7 +411,7 @@ async function presetNoBackoff() {
   color: var(--viz-muted);
   background: var(--vp-c-bg);
   border: 1px solid var(--viz-border);
-  border-radius: 6px;
+  border-radius: var(--viz-radius-sm);
   padding: 0.375rem 0.75rem;
   margin-bottom: 1rem;
   text-align: center;
@@ -426,7 +426,7 @@ async function presetNoBackoff() {
 
 .rb-attempt {
   border: 1px solid var(--viz-border);
-  border-radius: 6px;
+  border-radius: var(--viz-radius-sm);
   padding: 0.5rem 0.625rem;
   background: var(--vp-c-bg);
   animation: viz-slide-in 0.3s ease;
@@ -469,22 +469,22 @@ async function presetNoBackoff() {
   font-weight: 700;
   color: #fff;
   padding: 0.125rem 0.5rem;
-  border-radius: 10px;
+  border-radius: var(--viz-radius-md);
   letter-spacing: 0.03em;
 }
 
 .rb-bar-track {
   height: 6px;
   background: var(--viz-cell-empty);
-  border-radius: 3px;
+  border-radius: var(--viz-radius-sm);
   overflow: hidden;
   margin-bottom: 0.25rem;
 }
 
 .rb-bar-fill {
   height: 100%;
-  border-radius: 3px;
-  transition: width 0.4s ease;
+  border-radius: var(--viz-radius-sm);
+  transition: width var(--viz-transition);
 }
 
 .rb-attempt-detail {

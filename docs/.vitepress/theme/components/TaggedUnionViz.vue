@@ -324,14 +324,14 @@ async function presetExhaustiveness() {
 .tu-type-btn {
   padding: 0.375rem 0.75rem;
   border: 2px solid var(--viz-border);
-  border-radius: 6px;
+  border-radius: var(--viz-radius-sm);
   background: var(--vp-c-bg);
   font-size: 0.8125rem;
   font-weight: 600;
   font-family: var(--vp-font-family-mono);
   color: var(--viz-text);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all var(--viz-transition);
 }
 
 .tu-type-btn:hover {
@@ -345,10 +345,10 @@ async function presetExhaustiveness() {
 /* Variable box */
 .tu-variable-box {
   border: 2px solid var(--viz-border);
-  border-radius: 8px;
+  border-radius: var(--viz-radius-sm);
   padding: 0.75rem;
   margin: 0.5rem 0;
-  transition: border-color 0.3s ease;
+  transition: border-color var(--viz-transition);
   background: var(--vp-c-bg);
 }
 
@@ -373,19 +373,19 @@ async function presetExhaustiveness() {
 .tu-tag-badge {
   display: inline-block;
   padding: 0.25rem 0.625rem;
-  border-radius: 4px;
+  border-radius: var(--viz-radius-sm);
   font-size: 0.75rem;
   font-weight: 700;
   font-family: var(--vp-font-family-mono);
   color: #fff;
-  transition: background 0.3s ease;
+  transition: background var(--viz-transition);
 }
 
 .tu-var-value {
   font-size: 1.25rem;
   font-weight: 700;
   font-family: var(--vp-font-family-mono);
-  transition: color 0.3s ease;
+  transition: color var(--viz-transition);
 }
 
 .tu-var-meta {
@@ -420,9 +420,9 @@ async function presetExhaustiveness() {
   align-items: center;
   padding: 0.375rem 0.25rem;
   border: 2px solid var(--viz-border);
-  border-radius: 3px;
+  border-radius: var(--viz-radius-sm);
   background: var(--vp-c-bg);
-  transition: all 0.3s ease;
+  transition: all var(--viz-transition);
   flex: 1;
   min-width: 0;
 }
@@ -488,7 +488,7 @@ async function presetExhaustiveness() {
 .tu-match {
   margin: 0.5rem 0;
   border: 1px solid var(--viz-border);
-  border-radius: 6px;
+  border-radius: var(--viz-radius-sm);
   overflow: hidden;
   font-family: var(--vp-font-family-mono);
   font-size: 0.75rem;
@@ -510,7 +510,7 @@ async function presetExhaustiveness() {
 .tu-match-arm {
   padding: 0.375rem 0.625rem 0.375rem 1.25rem;
   border-left: 3px solid transparent;
-  transition: all 0.3s ease;
+  transition: all var(--viz-transition);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -544,7 +544,7 @@ async function presetExhaustiveness() {
   gap: 0.5rem;
   padding: 0.5rem 0.75rem;
   border: 2px solid var(--viz-success);
-  border-radius: 6px;
+  border-radius: var(--viz-radius-sm);
   background: color-mix(in srgb, var(--viz-success) 8%, var(--vp-c-bg));
   animation: viz-fade 0.3s ease;
 }

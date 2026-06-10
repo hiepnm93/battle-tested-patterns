@@ -284,7 +284,7 @@ function fillColor() {
   align-items: center;
   gap: 2px;
   padding: 0.6rem 1rem;
-  border-radius: 8px;
+  border-radius: var(--viz-radius-sm);
   border: 2px solid var(--viz-border);
   background: var(--vp-c-bg);
   min-width: 70px;
@@ -330,7 +330,7 @@ function fillColor() {
 .bp-slot {
   width: 16px;
   height: 24px;
-  border-radius: 3px;
+  border-radius: var(--viz-radius-sm);
   background: var(--viz-cell-empty);
   transition: background 0.15s;
 }

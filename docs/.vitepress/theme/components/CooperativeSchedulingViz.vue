@@ -363,10 +363,10 @@ const chunkColors = [
   width: 44px;
   height: 24px;
   border: none;
-  border-radius: 12px;
+  border-radius: var(--viz-radius);
   background: var(--viz-border);
   cursor: pointer;
-  transition: background 0.2s ease;
+  transition: background var(--viz-transition);
   padding: 0;
 }
 
@@ -387,7 +387,7 @@ const chunkColors = [
   height: 18px;
   border-radius: 50%;
   background: #fff;
-  transition: transform 0.2s ease;
+  transition: transform var(--viz-transition);
 }
 
 .cs-toggle--on .cs-toggle-knob {
@@ -419,7 +419,7 @@ const chunkColors = [
   width: 28px;
   height: 52px;
   border: 1px solid var(--viz-border);
-  border-radius: 14px;
+  border-radius: var(--viz-radius-lg);
   position: relative;
   background: var(--vp-c-bg);
   overflow: hidden;
@@ -434,7 +434,7 @@ const chunkColors = [
   left: 50%;
   top: 0;
   margin-left: -6px;
-  transition: background 0.2s ease;
+  transition: background var(--viz-transition);
 }
 
 .cs-ball--frozen {
@@ -480,15 +480,15 @@ const chunkColors = [
 
 .cs-progress-track {
   height: 12px;
-  border-radius: 6px;
+  border-radius: var(--viz-radius-sm);
   background: var(--viz-cell-empty);
   overflow: hidden;
 }
 
 .cs-progress-fill {
   height: 100%;
-  border-radius: 6px;
-  transition: width 0.15s ease;
+  border-radius: var(--viz-radius-sm);
+  transition: width var(--viz-transition);
   background: var(--viz-primary);
 }
 
@@ -511,7 +511,7 @@ const chunkColors = [
   min-height: 28px;
   padding: 4px;
   border: 1px solid var(--viz-border);
-  border-radius: 6px;
+  border-radius: var(--viz-radius-sm);
   background: var(--vp-c-bg);
   overflow-x: auto;
   align-items: stretch;

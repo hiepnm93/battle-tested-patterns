@@ -474,7 +474,7 @@ async function presetFanOut() {
 .am-select {
   padding: 0.3rem 0.5rem;
   border: 1px solid var(--viz-border);
-  border-radius: 6px;
+  border-radius: var(--viz-radius-sm);
   font-size: 0.75rem;
   font-family: var(--vp-font-family-mono);
   background: var(--vp-c-bg);
@@ -497,7 +497,7 @@ async function presetFanOut() {
   width: 240px;
   padding: 0.3rem 0.5rem;
   border: 1px solid var(--viz-border);
-  border-radius: 6px;
+  border-radius: var(--viz-radius-sm);
   font-size: 0.75rem;
   font-family: var(--vp-font-family-mono);
   background: var(--vp-c-bg);
@@ -523,10 +523,10 @@ async function presetFanOut() {
   min-width: 150px;
   max-width: 220px;
   border: 1px solid var(--viz-border);
-  border-radius: 8px;
+  border-radius: var(--viz-radius-sm);
   padding: 0.625rem;
   background: var(--vp-c-bg);
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  transition: border-color var(--viz-transition), box-shadow 0.3s ease;
 }
 
 .am-actor--active {
@@ -611,7 +611,7 @@ async function presetFanOut() {
   justify-content: space-between;
   align-items: center;
   padding: 2px 6px;
-  border-radius: 4px;
+  border-radius: var(--viz-radius-sm);
   font-size: 0.625rem;
   font-family: var(--vp-font-family-mono);
   animation: viz-slide-in 0.3s ease;

@@ -321,7 +321,7 @@ async function presetDanglingZero() {
   gap: 4px;
   padding: 4px 8px;
   border: 2px solid;
-  border-radius: 6px;
+  border-radius: var(--viz-radius-sm);
   background: var(--vp-c-bg);
   cursor: pointer;
   font-size: 0.7rem;
@@ -366,7 +366,7 @@ async function presetDanglingZero() {
   gap: 8px;
   padding: 6px 10px;
   border: 1px solid var(--viz-border);
-  border-radius: 6px;
+  border-radius: var(--viz-radius-sm);
   background: var(--vp-c-bg);
   transition: all 0.3s;
 }

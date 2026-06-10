@@ -211,7 +211,7 @@ function linkFor(entry: TimelineEntry) {
   font-size: 0.75rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all var(--viz-transition);
   font-family: var(--vp-font-family-base);
   color: var(--viz-muted);
 }
@@ -299,7 +299,7 @@ function linkFor(entry: TimelineEntry) {
   z-index: 2;
   border: 2px solid var(--vp-c-bg);
   box-shadow: 0 0 0 2px var(--viz-border);
-  transition: transform 0.2s ease;
+  transition: transform var(--viz-transition);
 }
 
 .tl-entry:hover .tl-node {
@@ -310,17 +310,17 @@ function linkFor(entry: TimelineEntry) {
   display: block;
   padding: 0.5rem 0.75rem;
   border: 1px solid var(--viz-border);
-  border-radius: 8px;
+  border-radius: var(--viz-radius-sm);
   background: var(--vp-c-bg);
   text-decoration: none;
-  transition: all 0.2s ease;
+  transition: all var(--viz-transition);
   max-width: calc(50% - 20px);
   box-sizing: border-box;
 }
 
 .tl-card:hover {
   border-color: var(--viz-primary);
-  box-shadow: 0 2px 12px rgba(59, 130, 246, 0.12);
+  box-shadow: var(--viz-shadow-md);
   transform: translateY(-1px);
 }
 

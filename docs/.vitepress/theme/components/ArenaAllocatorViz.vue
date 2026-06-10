@@ -553,7 +553,7 @@ async function presetMixedSizes() {
   margin-bottom: 0.75rem;
   padding: 0.75rem;
   border: 1px solid var(--viz-border);
-  border-radius: 8px;
+  border-radius: var(--viz-radius-sm);
   background: var(--vp-c-bg-soft);
 }
 
@@ -568,7 +568,7 @@ async function presetMixedSizes() {
 .arena-size-btn {
   padding: 0.25rem 0.75rem;
   border: 1px solid var(--viz-border);
-  border-radius: 4px;
+  border-radius: var(--viz-radius-sm);
   background: var(--vp-c-bg);
   color: var(--viz-text);
   font-family: var(--vp-font-family-base);
@@ -594,7 +594,7 @@ async function presetMixedSizes() {
   max-width: 180px;
   padding: 0.25rem 0.5rem;
   border: 1px solid var(--viz-border);
-  border-radius: 4px;
+  border-radius: var(--viz-radius-sm);
   background: var(--vp-c-bg);
   color: var(--viz-text);
   font-family: var(--vp-font-family-mono);
@@ -681,7 +681,7 @@ async function presetMixedSizes() {
 /* --- Arena Block --- */
 .arena-block {
   border: 1px solid var(--viz-border);
-  border-radius: 8px;
+  border-radius: var(--viz-radius-sm);
   padding: 0.75rem;
   margin-bottom: 0.75rem;
   background: var(--vp-c-bg);
@@ -713,7 +713,7 @@ async function presetMixedSizes() {
   padding: 0.0625rem 0.375rem;
   font-size: 0.6rem;
   font-weight: 500;
-  border-radius: 3px;
+  border-radius: var(--viz-radius-sm);
   background: var(--viz-warning);
   color: #fff;
   vertical-align: middle;
@@ -730,7 +730,7 @@ async function presetMixedSizes() {
 .arena-reset-btn {
   padding: 0.125rem 0.5rem;
   border: 1px solid var(--viz-border);
-  border-radius: 4px;
+  border-radius: var(--viz-radius-sm);
   background: transparent;
   color: var(--viz-muted);
   font-size: 0.7rem;
@@ -756,7 +756,7 @@ async function presetMixedSizes() {
   height: 100%;
   background: var(--viz-primary);
   border-radius: 2px;
-  transition: width 0.3s ease;
+  transition: width var(--viz-transition);
 }
 
 .arena-progress--warning {
@@ -776,7 +776,7 @@ async function presetMixedSizes() {
 .arena-bar {
   display: flex;
   border: 1px solid var(--viz-border);
-  border-radius: 6px;
+  border-radius: var(--viz-radius-sm);
   overflow: hidden;
   height: 36px;
 }
@@ -785,7 +785,7 @@ async function presetMixedSizes() {
   flex: 1;
   background: var(--viz-cell-empty);
   border-right: 1px solid var(--viz-border);
-  transition: background 0.3s ease;
+  transition: background var(--viz-transition);
   position: relative;
   display: flex;
   align-items: center;
@@ -830,7 +830,7 @@ async function presetMixedSizes() {
   display: flex;
   flex-direction: column;
   align-items: center;
-  transition: left 0.3s ease;
+  transition: left var(--viz-transition);
 }
 
 .arena-pointer-arrow {
@@ -881,7 +881,7 @@ async function presetMixedSizes() {
 .arena-history {
   margin-top: 0.75rem;
   border: 1px solid var(--viz-border);
-  border-radius: 8px;
+  border-radius: var(--viz-radius-sm);
   overflow: hidden;
 }
 
@@ -933,7 +933,7 @@ async function presetMixedSizes() {
   padding: 0.0625rem 0.375rem;
   font-size: 0.575rem;
   font-weight: 700;
-  border-radius: 3px;
+  border-radius: var(--viz-radius-sm);
   color: #fff;
   letter-spacing: 0.025em;
   flex-shrink: 0;

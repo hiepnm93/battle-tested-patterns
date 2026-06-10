@@ -517,14 +517,14 @@ async function presetUpdateOverwrite() {
   width: 100%;
   padding: 0.5rem 0.625rem;
   border: 2px solid var(--viz-border);
-  border-radius: 8px;
+  border-radius: var(--viz-radius-sm);
   background: var(--vp-c-bg);
-  transition: all 0.3s ease;
+  transition: all var(--viz-transition);
 }
 
 .lsm-layer--sst {
   border-width: 1px;
-  border-radius: 6px;
+  border-radius: var(--viz-radius-sm);
   padding: 0.375rem 0.5rem;
 }
 
@@ -561,7 +561,7 @@ async function presetUpdateOverwrite() {
   font-weight: 700;
   text-transform: uppercase;
   padding: 1px 5px;
-  border-radius: 3px;
+  border-radius: var(--viz-radius-sm);
   letter-spacing: 0.04em;
 }
 
@@ -602,12 +602,12 @@ async function presetUpdateOverwrite() {
   align-items: center;
   gap: 2px;
   padding: 3px 6px;
-  border-radius: 4px;
+  border-radius: var(--viz-radius-sm);
   font-size: 0.75rem;
   font-family: var(--vp-font-family-mono);
   background: rgba(59, 130, 246, 0.06);
   border: 1px solid var(--viz-border);
-  transition: all 0.2s ease;
+  transition: all var(--viz-transition);
   animation: viz-slide-in 0.25s ease;
 }
 
@@ -654,7 +654,7 @@ async function presetUpdateOverwrite() {
   height: 100%;
   border-radius: 2px;
   background: var(--viz-success);
-  transition: width 0.3s ease;
+  transition: width var(--viz-transition);
 }
 
 .lsm-capacity-fill--full {
@@ -667,7 +667,7 @@ async function presetUpdateOverwrite() {
   gap: 0.25rem;
   color: var(--viz-muted);
   padding: 0.125rem 0;
-  transition: color 0.2s ease;
+  transition: color var(--viz-transition);
 }
 
 .lsm-arrow--active {
@@ -725,7 +725,7 @@ async function presetUpdateOverwrite() {
   padding: 0.5rem;
   text-align: center;
   border: 1px dashed var(--viz-border);
-  border-radius: 6px;
+  border-radius: var(--viz-radius-sm);
 }
 
 .lsm-search-result {
@@ -733,7 +733,7 @@ async function presetUpdateOverwrite() {
   flex-direction: column;
   gap: 0.125rem;
   padding: 0.375rem 0.625rem;
-  border-radius: 6px;
+  border-radius: var(--viz-radius-sm);
   margin: 0.5rem 0;
   font-size: 0.8125rem;
   font-family: var(--vp-font-family-mono);
@@ -787,13 +787,13 @@ async function presetUpdateOverwrite() {
 .lsm-input {
   padding: 0.3rem 0.5rem;
   border: 1px solid var(--viz-border);
-  border-radius: 4px;
+  border-radius: var(--viz-radius-sm);
   font-size: 0.8125rem;
   font-family: var(--vp-font-family-mono);
   background: var(--vp-c-bg);
   color: var(--viz-text);
   width: 70px;
-  transition: border-color 0.15s ease;
+  transition: border-color var(--viz-transition);
 }
 
 .lsm-input:focus {

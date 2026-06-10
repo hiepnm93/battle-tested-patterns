@@ -404,10 +404,10 @@ async function presetStepByStep() {
   gap: 0.375rem;
   padding: 0.5rem;
   border: 2px solid var(--viz-border);
-  border-radius: 8px;
+  border-radius: var(--viz-radius-sm);
   background: var(--vp-c-bg);
   min-width: 64px;
-  transition: all 0.25s ease;
+  transition: all var(--viz-transition);
   flex-shrink: 0;
 }
 
@@ -453,12 +453,12 @@ async function presetStepByStep() {
   justify-content: center;
   width: 24px;
   height: 24px;
-  border-radius: 4px;
+  border-radius: var(--viz-radius-sm);
   font-size: 0.6875rem;
   font-weight: 700;
   font-family: var(--vp-font-family-mono);
   border: 1px solid var(--viz-border);
-  transition: all 0.2s ease;
+  transition: all var(--viz-transition);
 }
 
 .it-item--waiting {
@@ -534,7 +534,7 @@ async function presetStepByStep() {
   align-items: center;
   padding: 0 2px;
   color: var(--viz-border);
-  transition: color 0.2s ease;
+  transition: color var(--viz-transition);
   flex-shrink: 0;
   margin-top: 1.5rem;
 }
@@ -549,7 +549,7 @@ async function presetStepByStep() {
   justify-content: center;
   gap: 0.375rem;
   padding: 0.375rem 0.75rem;
-  border-radius: 6px;
+  border-radius: var(--viz-radius-sm);
   background: rgba(59, 130, 246, 0.08);
   border: 1px solid var(--viz-primary);
   margin: 0.5rem auto;

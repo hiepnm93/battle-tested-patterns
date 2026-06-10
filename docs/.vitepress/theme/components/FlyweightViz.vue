@@ -423,7 +423,7 @@ applyText();
   min-width: 140px;
   padding: 0.4rem 0.6rem;
   border: 1px solid var(--viz-border);
-  border-radius: 6px;
+  border-radius: var(--viz-radius-sm);
   background: var(--vp-c-bg);
   color: var(--viz-text);
   font-family: var(--vp-font-family-mono);
@@ -454,7 +454,7 @@ applyText();
   text-align: center;
   padding: 0.5rem 0.4rem;
   border: 1px solid var(--viz-border);
-  border-radius: 6px;
+  border-radius: var(--viz-radius-sm);
   background: var(--vp-c-bg);
 }
 
@@ -507,7 +507,7 @@ applyText();
 .fw-mem-col {
   padding: 0.6rem 0.75rem;
   border: 1px solid var(--viz-border);
-  border-radius: 6px;
+  border-radius: var(--viz-radius-sm);
   background: var(--vp-c-bg);
 }
 
@@ -529,15 +529,15 @@ applyText();
 .fw-mem-bar-track {
   height: 10px;
   background: var(--vp-c-bg-soft);
-  border-radius: 5px;
+  border-radius: var(--viz-radius-sm);
   overflow: hidden;
   margin-bottom: 0.35rem;
 }
 
 .fw-mem-bar {
   height: 100%;
-  border-radius: 5px;
-  transition: width 0.4s ease;
+  border-radius: var(--viz-radius-sm);
+  transition: width var(--viz-transition);
 }
 
 .fw-mem-bar--waste {
@@ -609,10 +609,10 @@ applyText();
   gap: 3px;
   padding: 0.2rem 0.45rem;
   border: 2px solid var(--viz-border);
-  border-radius: 4px;
+  border-radius: var(--viz-radius-sm);
   background: var(--vp-c-bg);
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all var(--viz-transition);
   font-size: 0.75rem;
 }
 
@@ -658,7 +658,7 @@ applyText();
   gap: 3px;
   padding: 0.5rem;
   border: 1px solid var(--viz-border);
-  border-radius: 6px;
+  border-radius: var(--viz-radius-sm);
   background: var(--vp-c-bg);
   min-height: 60px;
   align-content: flex-start;
@@ -674,11 +674,11 @@ applyText();
   font-weight: 600;
   font-size: 0.8rem;
   border: 1.5px solid var(--viz-border);
-  border-radius: 3px;
+  border-radius: var(--viz-radius-sm);
   background: var(--vp-c-bg-soft);
   color: var(--cell-color, var(--viz-text));
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all var(--viz-transition);
   user-select: none;
 }
 
@@ -716,7 +716,7 @@ applyText();
   color: var(--viz-text);
   padding: 0.3rem 0.5rem;
   border: 1px dashed var(--viz-border);
-  border-radius: 4px;
+  border-radius: var(--viz-radius-sm);
   background: var(--vp-c-bg-soft);
 }
 

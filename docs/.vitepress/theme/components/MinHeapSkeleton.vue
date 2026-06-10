@@ -109,7 +109,7 @@ const { t } = useI18n();
 .heap-skel-cell {
   width: 30px;
   height: 26px;
-  border-radius: 3px;
+  border-radius: var(--viz-radius-sm);
 }
 
 .viz-skel-controls {
@@ -130,7 +130,7 @@ const { t } = useI18n();
 .heap-skel-slider {
   width: 100px;
   height: 20px;
-  border-radius: 10px;
+  border-radius: var(--viz-radius-md);
 }
 
 .viz-skel-status {

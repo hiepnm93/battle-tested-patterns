@@ -276,9 +276,9 @@ const presetTests = ['cat', 'rat', 'fox', 'ant'];
   width: 36px;
   height: 44px;
   border: 1.5px solid var(--viz-border);
-  border-radius: 4px;
+  border-radius: var(--viz-radius-sm);
   background: var(--vp-c-bg);
-  transition: all 0.3s ease;
+  transition: all var(--viz-transition);
 }
 
 .bloom-bit--set {
@@ -332,7 +332,7 @@ const presetTests = ['cat', 'rat', 'fox', 'ant'];
 .bloom-fill-bar {
   height: 100%;
   border-radius: 7px;
-  transition: all 0.3s ease;
+  transition: all var(--viz-transition);
 }
 
 .bloom-fill-label {
@@ -380,7 +380,7 @@ const presetTests = ['cat', 'rat', 'fox', 'ant'];
   width: 140px;
   padding: 0.375rem 0.75rem;
   border: 1px solid var(--viz-border);
-  border-radius: 6px;
+  border-radius: var(--viz-radius-sm);
   font-size: 0.8125rem;
   font-family: var(--vp-font-family-mono);
   background: var(--vp-c-bg);
@@ -403,13 +403,13 @@ const presetTests = ['cat', 'rat', 'fox', 'ant'];
 .bloom-preset-btn {
   padding: 0.125rem 0.5rem;
   border: 1px solid var(--viz-border);
-  border-radius: 4px;
+  border-radius: var(--viz-radius-sm);
   background: transparent;
   color: var(--viz-muted);
   font-size: 0.6875rem;
   font-family: var(--vp-font-family-mono);
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all var(--viz-transition);
 }
 
 .bloom-preset-btn:hover {

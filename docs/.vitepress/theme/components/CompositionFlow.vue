@@ -201,7 +201,7 @@ const prefix = computed(() => isZh.value ? '/zh' : '');
   color: var(--viz-text);
   background: var(--vp-c-bg);
   padding: 0.25rem 0.75rem;
-  border-radius: 4px;
+  border-radius: var(--viz-radius-sm);
   border: 1px solid var(--viz-border);
 }
 
@@ -224,8 +224,8 @@ const prefix = computed(() => isZh.value ? '/zh' : '');
   margin: 0;
   background: var(--vp-c-bg);
   border: 1px solid var(--viz-border);
-  border-radius: 6px;
-  transition: border-color 0.15s ease;
+  border-radius: var(--viz-radius-sm);
+  transition: border-color var(--viz-transition);
 }
 
 .comp-flow-step:hover {

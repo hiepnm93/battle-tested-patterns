@@ -249,7 +249,7 @@ async function presetEventStorm() {
   gap: 4px;
   padding: 1rem 1.5rem;
   border: 2px solid var(--viz-primary);
-  border-radius: 8px;
+  border-radius: var(--viz-radius-sm);
   background: var(--vp-c-bg);
   min-width: 90px;
   transition: border-color 0.2s, box-shadow 0.2s;
@@ -269,7 +269,7 @@ async function presetEventStorm() {
 
 .obs-event-badge {
   padding: 2px 8px;
-  border-radius: 10px;
+  border-radius: var(--viz-radius-md);
   background: var(--viz-warning);
   color: #fff;
   font-size: 0.7rem;
@@ -303,7 +303,7 @@ async function presetEventStorm() {
   gap: 8px;
   padding: 0.4rem 0.6rem;
   border: 1px solid var(--viz-border);
-  border-radius: 6px;
+  border-radius: var(--viz-radius-sm);
   background: var(--vp-c-bg);
   transition: border-color 0.2s;
 }
@@ -327,7 +327,7 @@ async function presetEventStorm() {
 
 .obs-msg-tag {
   padding: 1px 5px;
-  border-radius: 3px;
+  border-radius: var(--viz-radius-sm);
   font-size: 0.65rem;
   font-family: var(--vp-font-family-mono);
   background: var(--viz-primary);

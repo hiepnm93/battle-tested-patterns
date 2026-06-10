@@ -326,7 +326,7 @@ const diffPrefix = (type: string) => {
 
 .dp-panel {
   border: 1px solid var(--viz-border);
-  border-radius: 6px;
+  border-radius: var(--viz-radius-sm);
   overflow: hidden;
   background: var(--vp-c-bg);
 }
@@ -380,7 +380,7 @@ const diffPrefix = (type: string) => {
 .dp-diff {
   margin-top: 0.75rem;
   border: 1px solid var(--viz-border);
-  border-radius: 6px;
+  border-radius: var(--viz-radius-sm);
   overflow: hidden;
   background: var(--vp-c-bg);
 }

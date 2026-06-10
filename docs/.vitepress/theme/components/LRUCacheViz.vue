@@ -262,10 +262,10 @@ const emptySlots = computed(() => Math.max(0, CAPACITY - entries.value.length));
   align-items: center;
   min-width: 48px;
   border: 2px solid var(--viz-primary);
-  border-radius: 6px;
+  border-radius: var(--viz-radius-sm);
   padding: 0.375rem 0.5rem;
   background: var(--vp-c-bg);
-  transition: all 0.3s ease;
+  transition: all var(--viz-transition);
 }
 
 .lru-node--empty {
@@ -317,7 +317,7 @@ const emptySlots = computed(() => Math.max(0, CAPACITY - entries.value.length));
   width: 56px;
   padding: 0.375rem 0.5rem;
   border: 1px solid var(--viz-border);
-  border-radius: 6px;
+  border-radius: var(--viz-radius-sm);
   font-size: 0.8125rem;
   font-family: var(--vp-font-family-mono);
   background: var(--vp-c-bg);

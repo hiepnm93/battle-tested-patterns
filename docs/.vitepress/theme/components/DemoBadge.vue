@@ -36,7 +36,7 @@ function scrollToDemo() {
   color: var(--vp-c-brand-1);
   cursor: pointer;
   text-decoration: none !important;
-  transition: all 0.2s ease;
+  transition: all var(--viz-transition);
   margin: 0.25rem 0 0.5rem;
   line-height: 1.5;
 }
@@ -65,6 +65,6 @@ function scrollToDemo() {
 <style>
 .viz-highlight {
   box-shadow: 0 0 0 3px var(--vp-c-brand-soft), 0 0 12px var(--vp-c-brand-soft);
-  transition: box-shadow 0.3s ease;
+  transition: box-shadow var(--viz-transition);
 }
 </style>

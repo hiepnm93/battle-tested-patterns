@@ -493,9 +493,9 @@ async function presetVersionChainGrowth() {
   align-items: center;
   padding: 0.25rem 0.5rem;
   border: 2px solid var(--viz-border);
-  border-radius: 4px;
+  border-radius: var(--viz-radius-sm);
   background: var(--vp-c-bg);
-  transition: all 0.3s ease;
+  transition: all var(--viz-transition);
   min-width: 48px;
 }
 
@@ -545,10 +545,10 @@ async function presetVersionChainGrowth() {
   gap: 0.125rem;
   padding: 0.375rem 0.5rem;
   border: 2px solid var(--viz-border);
-  border-radius: 6px;
+  border-radius: var(--viz-radius-sm);
   margin-bottom: 0.375rem;
   background: var(--vp-c-bg);
-  transition: all 0.2s ease;
+  transition: all var(--viz-transition);
 }
 
 .mv-txn--active {
@@ -617,7 +617,7 @@ async function presetVersionChainGrowth() {
   color: var(--viz-warning);
   background: color-mix(in srgb, var(--viz-warning) 10%, var(--vp-c-bg));
   padding: 0.125rem 0.375rem;
-  border-radius: 3px;
+  border-radius: var(--viz-radius-sm);
 }
 
 .mv-write-row {
@@ -631,7 +631,7 @@ async function presetVersionChainGrowth() {
 .mv-select {
   padding: 0.375rem 0.5rem;
   border: 1px solid var(--viz-border);
-  border-radius: 6px;
+  border-radius: var(--viz-radius-sm);
   font-size: 0.8125rem;
   font-family: var(--vp-font-family-mono);
   background: var(--vp-c-bg);
@@ -642,7 +642,7 @@ async function presetVersionChainGrowth() {
   width: 80px;
   padding: 0.375rem 0.5rem;
   border: 1px solid var(--viz-border);
-  border-radius: 6px;
+  border-radius: var(--viz-radius-sm);
   font-size: 0.8125rem;
   font-family: var(--vp-font-family-mono);
   background: var(--vp-c-bg);
