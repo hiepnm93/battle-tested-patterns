@@ -45,7 +45,7 @@ curl -sI "<new-url>" | head -1
 
 ### 4. Update the Pattern Document
 
-- Edit the Production Proof table in `docs/patterns/<pattern>.md`
+- Edit the Production Proof table in `docs/patterns/<pattern>/index.md`
 - Update both the URL and the usage description if the code changed
 - If the code changed significantly, update the Implementation section too
 

@@ -34,6 +34,8 @@ and stale references. Rate each dimension 1-10.
 
 - [ ] `pnpm test` — all TypeScript tests pass
 - [ ] `cargo test` — all Rust tests pass (in `exercises/rust/`)
+- [ ] `go test ./...` — all Go tests pass (in `exercises/go/`)
+- [ ] `pytest` — all Python tests pass (in `exercises/python/`)
 - [ ] `pnpm lint` — no markdown lint errors
 - [ ] `pnpm build` — docs site builds
 - [ ] `pnpm verify-links` — all production proof links alive

@@ -82,7 +82,7 @@ Key rules (Python-specific):
 Reference implementations live in `exercises/answers/<language>/`:
 - Pure implementation code, no tests
 - Extracted from `docs/patterns/<name>/index.md` Implementation section
-- 46 files per language × 4 languages = 184 files
+- One file per pattern per language (4 languages)
 
 ## Cross-Language Consistency
 

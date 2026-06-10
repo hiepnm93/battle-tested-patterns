@@ -213,30 +213,31 @@ jobs:
           for dir in docs/patterns/*/; do
             pattern=$(basename "$dir")
             snake=$(echo "$pattern" | tr '-' '_')
+            pattern_ok=1
 
             # TypeScript
             ts_dir="exercises/typescript/$pattern"
             if [ ! -d "$ts_dir" ] || [ -z "$(find "$ts_dir" -name '*.test.ts' 2>/dev/null)" ]; then
               echo "::error::Missing TypeScript exercise for '$pattern'"
-              exit_code=1
+              exit_code=1; pattern_ok=0
             fi
 
             # Rust
             if [ ! -f "exercises/rust/src/${snake}/mod.rs" ]; then
               echo "::error::Missing Rust exercise: exercises/rust/src/${snake}/mod.rs"
-              exit_code=1
+              exit_code=1; pattern_ok=0
             fi
 
             # Go
             if [ ! -f "exercises/go/${snake}/${snake}_test.go" ]; then
               echo "::error::Missing Go exercise: exercises/go/${snake}/${snake}_test.go"
-              exit_code=1
+              exit_code=1; pattern_ok=0
             fi
 
             # Python
             if [ ! -f "exercises/python/${snake}/test_${snake}.py" ]; then
               echo "::error::Missing Python exercise: exercises/python/${snake}/test_${snake}.py"
-              exit_code=1
+              exit_code=1; pattern_ok=0
             fi
 
             # Answer files
@@ -252,11 +253,11 @@ jobs:
               fi
               if [ ! -f "$ans" ]; then
                 echo "::error::Missing answer file: $ans"
-                exit_code=1
+                exit_code=1; pattern_ok=0
               fi
             done
 
-            if [ $exit_code -eq 0 ]; then
+            if [ $pattern_ok -eq 1 ]; then
               echo "  ✅ $pattern: all 4 languages + answers"
             fi
           done

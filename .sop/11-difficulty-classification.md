@@ -42,4 +42,4 @@ When adding a new pattern or reviewing difficulty labels.
 
 ## Current Distribution
 
-Target: roughly 1/3 each. Current: 16 beginner, 17 intermediate, 13 advanced.
+Target: roughly 1/3 each across all patterns.
