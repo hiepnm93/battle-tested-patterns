@@ -189,7 +189,7 @@ class LRUCache:
 
 运行练习：`pnpm test`（TypeScript）· `cargo test`（Rust）· `go test ./...`（Go）· `pytest`（Python）
 
-练习文件： Rust `exercises/rust/src/lru_cache.rs` · Go `exercises/go/lru_cache_test.go` · Python `exercises/python/test_lru_cache.py`
+练习文件： Rust `exercises/rust/src/lru_cache/mod.rs` · Go `exercises/go/lru_cache/lru_cache_test.go` · Python `exercises/python/lru_cache/test_lru_cache.py`
 
 ## 何时使用
 

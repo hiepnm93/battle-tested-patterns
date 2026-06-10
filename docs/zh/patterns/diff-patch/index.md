@@ -260,7 +260,7 @@ assert patch(ops) == ["a", "c", "e", "d"]
 
 运行练习：`pnpm test`（TypeScript）· `cargo test`（Rust）· `go test ./...`（Go）· `pytest`（Python）
 
-练习文件： Rust `exercises/rust/src/diff_patch.rs` · Go `exercises/go/diff_patch_test.go` · Python `exercises/python/test_diff_patch.py`
+练习文件： Rust `exercises/rust/src/diff_patch/mod.rs` · Go `exercises/go/diff_patch/diff_patch_test.go` · Python `exercises/python/diff_patch/test_diff_patch.py`
 
 ## 何时使用
 

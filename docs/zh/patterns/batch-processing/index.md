@@ -213,7 +213,7 @@ class BatchProcessor:
 
 运行练习：`pnpm test`（TypeScript）· `cargo test`（Rust）· `go test ./...`（Go）· `pytest`（Python）
 
-练习文件： Rust `exercises/rust/src/batch_processing.rs` · Go `exercises/go/batch_processing_test.go` · Python `exercises/python/test_batch_processing.py`
+练习文件： Rust `exercises/rust/src/batch_processing/mod.rs` · Go `exercises/go/batch_processing/batch_processing_test.go` · Python `exercises/python/batch_processing/test_batch_processing.py`
 
 ## 何时使用
 

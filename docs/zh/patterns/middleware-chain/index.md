@@ -188,7 +188,7 @@ class Pipeline:
 
 运行练习：`pnpm test`（TypeScript）· `cargo test`（Rust）· `go test ./...`（Go）· `pytest`（Python）
 
-练习文件： Rust `exercises/rust/src/middleware_chain.rs` · Go `exercises/go/middleware_chain_test.go` · Python `exercises/python/test_middleware_chain.py`
+练习文件： Rust `exercises/rust/src/middleware_chain/mod.rs` · Go `exercises/go/middleware_chain/middleware_chain_test.go` · Python `exercises/python/middleware_chain/test_middleware_chain.py`
 
 ## 何时使用
 

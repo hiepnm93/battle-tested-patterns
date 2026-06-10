@@ -191,7 +191,7 @@ def try_add(a: TaggedValue, b: TaggedValue) -> TaggedValue | None:
 
 运行练习：`pnpm test`（TypeScript）· `cargo test`（Rust）· `go test ./...`（Go）· `pytest`（Python）
 
-练习文件： Rust `exercises/rust/src/tagged_union.rs` · Go `exercises/go/tagged_union_test.go` · Python `exercises/python/test_tagged_union.py`
+练习文件： Rust `exercises/rust/src/tagged_union/mod.rs` · Go `exercises/go/tagged_union/tagged_union_test.go` · Python `exercises/python/tagged_union/test_tagged_union.py`
 
 ## 何时使用
 

@@ -232,7 +232,7 @@ class HashRing:
 
 运行练习：`pnpm test`（TypeScript）· `cargo test`（Rust）· `go test ./...`（Go）· `pytest`（Python）
 
-练习文件： Rust `exercises/rust/src/consistent_hashing.rs` · Go `exercises/go/consistent_hashing_test.go` · Python `exercises/python/test_consistent_hashing.py`
+练习文件： Rust `exercises/rust/src/consistent_hashing/mod.rs` · Go `exercises/go/consistent_hashing/consistent_hashing_test.go` · Python `exercises/python/consistent_hashing/test_consistent_hashing.py`
 
 ## 何时使用
 

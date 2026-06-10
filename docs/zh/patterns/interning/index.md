@@ -174,7 +174,7 @@ class StringInterner:
 
 运行练习：`pnpm test`（TypeScript）· `cargo test`（Rust）· `go test ./...`（Go）· `pytest`（Python）
 
-练习文件： Rust `exercises/rust/src/interning.rs` · Go `exercises/go/interning_test.go` · Python `exercises/python/test_interning.py`
+练习文件： Rust `exercises/rust/src/interning/mod.rs` · Go `exercises/go/interning/interning_test.go` · Python `exercises/python/interning/test_interning.py`
 
 ## 何时使用
 

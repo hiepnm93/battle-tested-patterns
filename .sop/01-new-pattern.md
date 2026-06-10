@@ -22,13 +22,13 @@ docs/patterns/bloom-filter/index.md                        # English pattern doc
 docs/zh/patterns/bloom-filter/index.md                     # Chinese translation
 exercises/typescript/bloom-filter/01-basic.test.ts          # TS exercise (required)
 exercises/typescript/bloom-filter/02-intermediate.test.ts   # TS exercise (required)
-exercises/rust/src/bloom_filter.rs                          # Rust exercise (required)
-exercises/go/bloom_filter_test.go                           # Go exercise (required)
-exercises/python/test_bloom_filter.py                       # Python exercise (required)
-exercises/answers/typescript/bloom-filter.ts                # TS answer file
-exercises/answers/rust/bloom_filter.rs                      # Rust answer file
-exercises/answers/go/bloom_filter.go                        # Go answer file
-exercises/answers/python/bloom_filter.py                    # Python answer file
+exercises/rust/src/bloom_filter/mod.rs                      # Rust exercise (required)
+exercises/go/bloom_filter/bloom_filter_test.go              # Go exercise (required)
+exercises/python/bloom_filter/test_bloom_filter.py          # Python exercise (required)
+exercises/answers/typescript/bloom-filter/bloom-filter.ts   # TS answer file
+exercises/answers/rust/bloom_filter/bloom_filter.rs         # Rust answer file
+exercises/answers/go/bloom_filter/bloom_filter.go           # Go answer file
+exercises/answers/python/bloom_filter/bloom_filter.py       # Python answer file
 ```
 
 **Modify:**

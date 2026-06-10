@@ -506,7 +506,7 @@ class BPlusTree:
 
 运行练习：`pnpm test`（TypeScript）· `cargo test`（Rust）· `go test ./...`（Go）· `pytest`（Python）
 
-练习文件： Rust `exercises/rust/src/b_plus_tree.rs` · Go `exercises/go/b_plus_tree_test.go` · Python `exercises/python/test_b_plus_tree.py`
+练习文件： Rust `exercises/rust/src/b_plus_tree/mod.rs` · Go `exercises/go/b_plus_tree/b_plus_tree_test.go` · Python `exercises/python/b_plus_tree/test_b_plus_tree.py`
 
 ## 何时使用
 

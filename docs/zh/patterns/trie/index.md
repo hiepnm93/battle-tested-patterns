@@ -236,7 +236,7 @@ class Trie:
 
 运行练习：`pnpm test`（TypeScript）· `cargo test`（Rust）· `go test ./...`（Go）· `pytest`（Python）
 
-练习文件： Rust `exercises/rust/src/trie.rs` · Go `exercises/go/trie_test.go` · Python `exercises/python/test_trie.py`
+练习文件： Rust `exercises/rust/src/trie/mod.rs` · Go `exercises/go/trie/trie_test.go` · Python `exercises/python/trie/test_trie.py`
 
 ## 何时使用
 

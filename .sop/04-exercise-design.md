@@ -18,9 +18,9 @@ exercises/typescript/<pattern-name>/
 ├── 01-basic.test.ts         # Required: core concept
 └── 02-<scenario>.test.ts    # Optional: realistic application
 
-exercises/rust/src/<pattern_name>.rs    # impl + #[cfg(test)] in same file
-exercises/go/<pattern_name>_test.go     # impl + Test functions in same file
-exercises/python/test_<pattern_name>.py # impl + pytest functions in same file
+exercises/rust/src/<pattern_name>/mod.rs            # impl + #[cfg(test)] in same file
+exercises/go/<pattern_name>/<pattern_name>_test.go  # impl + Test functions in same file
+exercises/python/<pattern_name>/test_<pattern_name>.py # impl + pytest functions in same file
 ```
 
 Minimum: **≥ 1 exercise file** per pattern per language.

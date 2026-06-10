@@ -240,7 +240,7 @@ class Registry:
 
 运行练习：`pnpm test`（TypeScript）· `cargo test`（Rust）· `go test ./...`（Go）· `pytest`（Python）
 
-练习文件： Rust `exercises/rust/src/registry.rs` · Go `exercises/go/registry_test.go` · Python `exercises/python/test_registry.py`
+练习文件： Rust `exercises/rust/src/registry/mod.rs` · Go `exercises/go/registry/registry_test.go` · Python `exercises/python/registry/test_registry.py`
 
 ## 何时使用
 

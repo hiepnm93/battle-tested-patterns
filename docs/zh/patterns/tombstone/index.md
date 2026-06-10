@@ -327,7 +327,7 @@ class TombstoneStore:
 
 运行练习：`pnpm test`（TypeScript）· `cargo test`（Rust）· `go test ./...`（Go）· `pytest`（Python）
 
-练习文件： Rust `exercises/rust/src/tombstone.rs` · Go `exercises/go/tombstone_test.go` · Python `exercises/python/test_tombstone.py`
+练习文件： Rust `exercises/rust/src/tombstone/mod.rs` · Go `exercises/go/tombstone/tombstone_test.go` · Python `exercises/python/tombstone/test_tombstone.py`
 
 ## 何时使用
 

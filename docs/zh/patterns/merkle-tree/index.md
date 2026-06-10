@@ -379,7 +379,7 @@ class MerkleTree:
 
 运行练习：`pnpm test`（TypeScript）· `cargo test`（Rust）· `go test ./...`（Go）· `pytest`（Python）
 
-练习文件： Rust `exercises/rust/src/merkle_tree.rs` · Go `exercises/go/merkle_tree_test.go` · Python `exercises/python/test_merkle_tree.py`
+练习文件： Rust `exercises/rust/src/merkle_tree/mod.rs` · Go `exercises/go/merkle_tree/merkle_tree_test.go` · Python `exercises/python/merkle_tree/test_merkle_tree.py`
 
 ## 何时使用
 

@@ -181,7 +181,7 @@ first_10 = [next(evens) for _ in range(10)]
 
 运行练习：`pnpm test`（TypeScript）· `cargo test`（Rust）· `go test ./...`（Go）· `pytest`（Python）
 
-练习文件： Rust `exercises/rust/src/iterator.rs` · Go `exercises/go/iterator_test.go` · Python `exercises/python/test_iterator.py`
+练习文件： Rust `exercises/rust/src/iterator/mod.rs` · Go `exercises/go/iterator/iterator_test.go` · Python `exercises/python/iterator/test_iterator.py`
 
 ## 何时使用
 
