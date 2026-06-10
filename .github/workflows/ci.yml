@@ -70,6 +70,19 @@ jobs:
       - run: pip install -r exercises/python/requirements.txt
       - run: cd exercises/python && pytest -v
 
+  test-components:
+    name: Test (Vue Components)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter docs test
+
   build:
     name: Build Docs
     runs-on: ubuntu-latest
