@@ -10,7 +10,7 @@
 
 | Workflow | Trigger | Purpose |
 |----------|---------|---------|
-| `ci.yml` | push + PR | Lint, typecheck, tests (TS + Rust + Go + Python), docs build |
+| `ci.yml` | push + PR | Lint, typecheck, verify-code, verify-mermaid, tests (TS + Rust + Go + Python), docs build |
 | `deploy.yml` | push to main | Build VitePress → deploy GitHub Pages |
 | `content-quality.yml` | push + PR (patterns/exercises changed) | Template completeness, #L1 link detection, EN-ZH code parity, 4-language exercise verification |
 | `verify-links.yml` | push (patterns changed) + weekly cron | HTTP check all production proof links |
@@ -52,3 +52,4 @@ All workflows declare their own `permissions` block — the repository default s
 | `MD012 Multiple consecutive blank lines` | Extra blank lines in markdown (common in ZH translations) | Remove duplicate blank lines; run `pnpm lint` locally |
 | `MD031 Fenced code blocks should be surrounded by blank lines` | Missing blank line before/after ` ``` ` fence | Add blank lines around all code fences |
 | `verify-code` failures | TypeScript code blocks in markdown that don't compile | Ensure all `ts` code blocks are valid; see [SOP 09](09-vue-build-pitfalls.md) |
+| `verify-mermaid` failures | Invalid Mermaid syntax in ` ```mermaid ` blocks | Fix diagram syntax; run `pnpm verify-mermaid` locally to see details |

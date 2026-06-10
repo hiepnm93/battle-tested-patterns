@@ -29,6 +29,7 @@
 - [ ] ≥ 1 other language (Rust / Go / Python / C)
 - [ ] Each implementation is idiomatic to its language
 - [ ] Code blocks compile (`pnpm verify-code`)
+- [ ] Mermaid diagrams valid (`pnpm verify-mermaid`)
 
 ### Exercises
 - [ ] Exercise files in all 4 languages (TS, Rust, Go, Python)

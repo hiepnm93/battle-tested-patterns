@@ -37,6 +37,8 @@ and stale references. Rate each dimension 1-10.
 - [ ] `go test ./...` — all Go tests pass (in `exercises/go/`)
 - [ ] `pytest` — all Python tests pass (in `exercises/python/`)
 - [ ] `pnpm lint` — no markdown lint errors
+- [ ] `pnpm verify-code` — all code blocks compile
+- [ ] `pnpm verify-mermaid` — all Mermaid diagrams valid
 - [ ] `pnpm build` — docs site builds
 - [ ] `pnpm verify-links` — all production proof links alive
 - [ ] CI green on latest commit

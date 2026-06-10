@@ -115,10 +115,7 @@ All of these must be updated:
 
 Run ALL checks before committing:
 ```bash
-pnpm test          # All exercises pass
-pnpm typecheck     # TypeScript strict mode
-pnpm verify-code   # All code blocks compile (TS/Python/Rust/Go)
-pnpm lint          # Markdown lint clean
+pnpm check         # All checks (lint + typecheck + test + verify-code + verify-mermaid)
 pnpm build         # VitePress builds
 ```
 

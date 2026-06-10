@@ -50,10 +50,12 @@ This is our core differentiator — every claim must be verifiable:
 pnpm install                          # Install dependencies
 pnpm dev                              # Start VitePress dev server
 pnpm test                             # Run TypeScript exercises (Vitest)
+pnpm check                            # Run all checks (lint + typecheck + test + verify)
 pnpm lint                             # Lint markdown
 pnpm typecheck                        # TypeScript type check
 pnpm verify-code                      # Verify all code blocks compile
-pnpm verify-links                     # Verify source URLs
+pnpm verify-mermaid                   # Validate Mermaid diagram syntax
+pnpm verify-links                     # Verify source URLs (requires network)
 cd exercises/rust && cargo test       # Run Rust exercises
 cd exercises/go && go test ./...      # Run Go exercises
 cd exercises/python && pytest         # Run Python exercises

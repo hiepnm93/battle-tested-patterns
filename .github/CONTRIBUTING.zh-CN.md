@@ -50,10 +50,12 @@
 pnpm install                          # 安装依赖
 pnpm dev                              # 启动文档站开发服务器
 pnpm test                             # 运行 TypeScript 练习（Vitest）
+pnpm check                            # 运行所有检查（lint + typecheck + test + verify）
 pnpm lint                             # Lint Markdown
 pnpm typecheck                        # TypeScript 类型检查
 pnpm verify-code                      # 验证所有代码块可编译
-pnpm verify-links                     # 验证源码链接
+pnpm verify-mermaid                   # 验证 Mermaid 图表语法
+pnpm verify-links                     # 验证源码链接（需要网络）
 cd exercises/rust && cargo test       # 运行 Rust 练习
 cd exercises/go && go test ./...      # 运行 Go 练习
 cd exercises/python && pytest         # 运行 Python 练习

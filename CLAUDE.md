@@ -62,10 +62,12 @@ Use [Conventional Commits](https://www.conventionalcommits.org/):
 pnpm dev          # Start VitePress dev server
 pnpm build        # Build docs site
 pnpm test         # Run TypeScript exercises (Vitest)
+pnpm check        # Run all checks (lint + typecheck + test + verify-code + verify-mermaid)
 pnpm lint         # Lint markdown files
 pnpm typecheck    # TypeScript strict type check
 pnpm verify-code  # Verify all code blocks in patterns compile (TS/Rust/Go/Python)
-pnpm verify-links # Verify all source URLs are alive
+pnpm verify-mermaid # Validate Mermaid diagram syntax
+pnpm verify-links # Verify all source URLs are alive (requires network)
 cd exercises/rust && cargo test    # Run Rust exercises
 cd exercises/go && go test ./...   # Run Go exercises
 cd exercises/python && pytest      # Run Python exercises

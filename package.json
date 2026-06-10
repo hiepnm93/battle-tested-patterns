@@ -29,7 +29,7 @@
     "build": "pnpm --filter docs build",
     "preview": "pnpm --filter docs preview",
     "test": "pnpm --filter exercises test",
-    "test:ts": "pnpm --filter exercises test",
+    "check": "pnpm lint && pnpm typecheck && pnpm test && pnpm verify-code && pnpm verify-mermaid",
     "lint": "markdownlint 'docs/**/*.md' --ignore 'docs/node_modules' --config .markdownlint.json",
     "typecheck": "pnpm --filter exercises typecheck",
     "verify-links": "tsx scripts/verify-source-links.ts",
