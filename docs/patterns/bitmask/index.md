@@ -34,7 +34,7 @@ Instead of using an array of booleans or an object with multiple fields, a bitma
                          └────────────────────────── Snapshot   1 << 4
 ```
 
-**Four operations** — all O(1), no branching:
+**Core operations** — all O(1), no branching:
 
 | Want to... | Write | Why it works |
 |------------|-------|-------------|
