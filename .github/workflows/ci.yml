@@ -27,6 +27,7 @@ jobs:
       - run: pnpm lint
       - run: pnpm typecheck
       - run: pnpm verify-code
+      - run: pnpm verify-mermaid
 
   test-ts:
     name: Test (TypeScript)

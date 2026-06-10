@@ -8,6 +8,7 @@ import DemoBadge from './components/DemoBadge.vue';
 import DifficultyBadge from './components/DifficultyBadge.vue';
 import CompositionFlow from './components/CompositionFlow.vue';
 import DecisionTree from './components/DecisionTree.vue';
+import { initMermaidLoader } from './mermaid-loader';
 import './custom.css';
 
 const vizComponents: Record<string, () => Promise<any>> = {
@@ -86,13 +87,29 @@ function clientOnly(loader: () => Promise<any>, skeleton?: any) {
 
 export default {
   extends: DefaultTheme,
-  enhanceApp({ app }) {
+  enhanceApp({ app, router }) {
     app.component('DemoBadge', DemoBadge);
     app.component('DifficultyBadge', DifficultyBadge);
     app.component('CompositionFlow', CompositionFlow);
     app.component('DecisionTree', DecisionTree);
     for (const [name, loader] of Object.entries(vizComponents)) {
       app.component(name, clientOnly(loader, skeletonOverrides[name]));
+    }
+
+    // Mermaid conditional loading: only loads library on pages with diagrams
+    if (typeof window !== 'undefined') {
+      const renderMermaid = initMermaidLoader();
+      // Render on initial page load (after DOM is ready)
+      if (document.readyState === 'complete') {
+        renderMermaid();
+      } else {
+        window.addEventListener('load', () => renderMermaid());
+      }
+      // Re-render on VitePress SPA navigation
+      router.onAfterRouteChanged = () => {
+        // Small delay to ensure DOM is updated after route change
+        setTimeout(() => renderMermaid(), 100);
+      };
     }
   },
 } satisfies Theme;

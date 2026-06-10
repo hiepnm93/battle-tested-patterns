@@ -1,12 +1,12 @@
 import { defineConfig, type HeadConfig } from 'vitepress';
-import { withMermaid } from 'vitepress-plugin-mermaid';
+import { mermaidMarkdownPlugin } from './plugins/mermaid-markdown-it';
 
 const SITE_URL = 'https://totoro-jam.github.io/battle-tested-patterns';
 const DEFAULT_TITLE = 'Battle-Tested Patterns — Code from React, Linux, Go & More';
 const DEFAULT_DESC = '46 production-proven patterns with interactive visualizations, precise source links, multi-language implementations, and exercises.';
 const OG_IMAGE = `${SITE_URL}/og-image.png`;
 
-export default withMermaid(defineConfig({
+export default defineConfig({
   title: 'Battle-Tested Patterns',
   description:
     'Battle-tested programming patterns from production codebases. Interactive visualizations, precise source links, multi-language implementations.',
@@ -484,9 +484,13 @@ export default withMermaid(defineConfig({
 
   vite: {
     build: {
-      chunkSizeWarningLimit: 800,
+      chunkSizeWarningLimit: 500,
     },
   },
 
-  mermaid: {},
-}));
+  markdown: {
+    config: (md) => {
+      md.use(mermaidMarkdownPlugin);
+    },
+  },
+});
