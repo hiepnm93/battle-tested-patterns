@@ -238,6 +238,10 @@ See [CONTRIBUTING.md](.github/CONTRIBUTING.md). The bar is intentionally high:
 5. All tests pass (`pnpm test` · `cargo test` · `go test ./...` · `pytest`), no lint errors
 6. Source links checked weekly by CI — broken links auto-open an Issue
 
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=Totoro-jam/battle-tested-patterns&type=Date)](https://star-history.com/#Totoro-jam/battle-tested-patterns&Date)
+
 ## License
 
 [MIT](LICENSE) © Totoro-jam

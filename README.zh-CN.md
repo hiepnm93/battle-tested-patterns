@@ -238,6 +238,10 @@ pnpm dev                          # 本地文档站
 5. 所有测试通过（`pnpm test` · `cargo test` · `go test ./...` · `pytest`），无 lint 错误
 6. 源码链接每周由 CI 自动检查——失效链接自动开 Issue
 
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=Totoro-jam/battle-tested-patterns&type=Date)](https://star-history.com/#Totoro-jam/battle-tested-patterns&Date)
+
 ## 许可证
 
 [MIT](LICENSE) © Totoro-jam

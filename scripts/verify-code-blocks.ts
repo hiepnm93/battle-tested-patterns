@@ -1,6 +1,6 @@
 import { readFileSync, readdirSync, statSync, writeFileSync, mkdirSync, rmSync } from 'node:fs';
 import { join, basename } from 'node:path';
-import { execSync } from 'node:child_process';
+import { execSync, execFileSync } from 'node:child_process';
 
 const DOCS_DIR = join(import.meta.dirname, '..', 'docs', 'patterns');
 const TMP_DIR = join(import.meta.dirname, '..', '.tmp-code-verify');
@@ -64,7 +64,7 @@ function verifyPython(block: CodeBlock): string | null {
   const file = join(TMP_DIR, `${block.pattern}.py`);
   writeFileSync(file, block.code);
   try {
-    execSync(`python3 -c "import py_compile; py_compile.compile('${file}', doraise=True)" 2>&1`, { timeout: 10000 });
+    execFileSync('python3', ['-m', 'py_compile', file], { timeout: 10000, stdio: 'pipe' });
     return null;
   } catch (e: any) {
     return e.stdout?.toString() || e.message;
@@ -198,7 +198,7 @@ function verifyGo(block: CodeBlock): string | null {
 }
 
 function hasToolchain(cmd: string): boolean {
-  try { execSync(`which ${cmd}`, { stdio: 'ignore' }); return true; } catch { return false; }
+  try { execFileSync('which', [cmd], { stdio: 'ignore' }); return true; } catch { return false; }
 }
 
 async function main() {
