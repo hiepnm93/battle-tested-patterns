@@ -11,9 +11,22 @@ See [commit history](https://github.com/Totoro-jam/battle-tested-patterns/commit
 ### Fixes
 
 - Correct TS test count back to 491 (was incorrectly changed to 492); total 1,073
+- Resolve SSR hydration mismatch causing skeleton/component coexistence bug (`onMounted` flag pattern)
+
+### Refactors
+
+- Restructure Go exercises into package-per-directory layout (46 pattern subdirectories)
+- Restructure Python exercises into pattern subdirectories for pytest discovery
+- Replace 229 hardcoded CSS values with `--viz-*` design tokens across 50 Viz components
+
+### Testing
+
+- Add Viz component test infrastructure: vitest + @vue/test-utils + jsdom + VitePress mock
+- Add unit tests for 3 composables (useVizLog, useI18n, useVizTimers) and 3 components (SemaphoreViz, BitmaskViz, RingBufferViz) — 34 tests total
 
 ### Documentation
 
+- Align Viz design tokens with Apple HIG principles (12px radius, dual shadows, easeOut curves, 44px mobile touch targets)
 - Add LRU Cache screenshots to EN/ZH READMEs for visual first impression
 - Add clickable documentation links to all 46 patterns in STUDY_PLAN.md
 - Add property tables to 4 remaining patterns: Bitmask, Backpressure, Circuit Breaker, Rate Limiter (EN+ZH) — 46/46 coverage
