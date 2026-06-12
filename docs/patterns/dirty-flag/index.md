@@ -1,6 +1,6 @@
 ---
 title: "Pattern: Dirty Flag"
-description: 'Mark objects as "dirty" on mutation, defer expensive recomputation until the value is actually needed, then clear the flag.'
+description: 'Đánh dấu object là "dirty" khi sửa, hoãn tính lại tốn kém cho tới khi giá trị thực sự cần, rồi xoá cờ.'
 difficulty: "beginner"
 ---
 
@@ -8,63 +8,63 @@ difficulty: "beginner"
 
 <DifficultyBadge />
 
-## One Liner
+## Mô tả một câu
 
-Mark objects as "dirty" on mutation, defer expensive recomputation until the value is actually needed, then clear the flag.
+Đánh dấu object là "dirty" khi sửa, hoãn tính lại tốn kém cho tới khi giá trị thực sự cần, rồi xoá cờ.
 
 <DemoBadge />
 
-## Real-World Analogy
+## Tương tự thực tế
 
-A "needs cleaning" sign on a hotel room door. Housekeeping only enters rooms marked dirty. If a guest hasn't been in the room, the sign stays clean, and housekeeping skips it — no wasted effort.
+Biển "cần dọn" treo trên cửa phòng khách sạn. Buồng phòng chỉ vào phòng đánh dấu dirty. Nếu khách chưa vào phòng, biển vẫn sạch, và buồng phòng bỏ qua — không lãng phí công.
 
-## Core Idea
+## Ý tưởng cốt lõi
 
-The dirty flag pattern avoids redundant computation by tracking whether derived state is out of date. When a source value changes, instead of immediately recomputing all dependent values, we simply set a "dirty" flag. The expensive recomputation only happens when the derived value is actually requested. After recomputation, the flag is cleared. This trades a boolean check on every read for potentially expensive computations that may never be needed.
+Pattern dirty flag tránh tính toán dư thừa bằng cách theo dõi state dẫn xuất có cũ chưa. Khi giá trị nguồn đổi, thay vì tính lại ngay mọi giá trị phụ thuộc, ta chỉ set cờ "dirty". Tính lại tốn kém chỉ xảy ra khi giá trị dẫn xuất thực sự được yêu cầu. Sau khi tính lại, cờ được xoá. Điều này đánh đổi một check boolean ở mỗi đọc lấy các tính toán có thể tốn kém mà có thể không bao giờ cần.
 
 ```text
-  Mutation cycle:
+  Chu kỳ mutation:
 
   ┌─────────┐   set()     ┌─────────────┐
   │  Clean  │ ──────────► │    Dirty    │
-  │ (valid  │             │ (stale      │
-  │  cache) │             │  cache)     │
+  │ (cache  │             │ (cache cũ)  │
+  │ hợp lệ) │             │             │
   └─────────┘             └──────┬──────┘
        ▲                         │
        │         get()           │
-       │    (recompute + clear)  │
+       │   (tính lại + clear)    │
        └─────────────────────────┘
 
   Timeline:
-  set(x)  set(y)  set(z)  get()     set(w)  get()
+  set(x)  set(y)  set(z)  get()      set(w)  get()
     │       │       │       │          │       │
     ▼       ▼       ▼       ▼          ▼       ▼
-   dirty  dirty   dirty  recompute  dirty  recompute
-                          (1 time)          (1 time)
-                           ▲                  ▲
-            3 mutations,   │   1 mutation,    │
-            1 computation ─┘   1 computation ─┘
+  dirty  dirty   dirty  tính lại    dirty   tính lại
+                       (1 lần)              (1 lần)
+                          ▲                  ▲
+        3 mutation,       │   1 mutation,    │
+        1 tính toán ──────┘   1 tính toán ───┘
 ```
 
-| Property | Value |
+| Thuộc tính | Giá trị |
 |----------|-------|
-| Mutation cost | O(1) — just set a boolean flag |
-| Read cost (clean) | O(1) — return cached value |
-| Read cost (dirty) | O(recompute) — compute + cache + clear flag |
-| Space | O(1) per tracked value — one boolean flag |
+| Chi phí mutation | O(1) — chỉ set một cờ boolean |
+| Chi phí đọc (clean) | O(1) — trả giá trị cache |
+| Chi phí đọc (dirty) | O(tính lại) — compute + cache + clear cờ |
+| Bộ nhớ | O(1) mỗi giá trị theo dõi — một cờ boolean |
 
-**Try it yourself** — move entities to mark them dirty, then recompute to see optimization savings:
+**Thử ngay** — di chuyển entity để đánh dấu dirty, rồi tính lại để xem tiết kiệm tối ưu:
 
 <DirtyFlagViz />
 
-## Production Proof
+## Bằng chứng production
 
-| Project | Source | Usage |
+| Dự án | Nguồn | Cách dùng |
 |---------|--------|-------|
-| Chromium/Blink | [layout_object.h#L1425-L1430](https://github.com/chromium/chromium/blob/5cffea3f665b7762369a0fa84d2f208875e7225e/third_party/blink/renderer/core/layout/layout_object.h#L1425-L1430) | `NeedsLayout()` returns whether the layout object's geometry is dirty. When CSS properties change, `SetNeedsLayout()` marks the node and ancestors dirty. Layout computation only happens during the next layout pass — not on every style change. This batches hundreds of DOM mutations into a single layout computation. |
-| React | [ReactFiberFlags.js#L18-L22](https://github.com/facebook/react/blob/34b78a2897cc208260a88e6b62ecaf9ca2a9dfe4/packages/react-reconciler/src/ReactFiberFlags.js#L18-L22) | Fiber flags like `Placement`, `Update`, `Deletion` are dirty flags on fiber nodes. When state changes, fibers are marked with flags. The commit phase only processes fibers with non-zero flags, skipping unchanged subtrees entirely. |
+| Chromium/Blink | [layout_object.h#L1425-L1430](https://github.com/chromium/chromium/blob/5cffea3f665b7762369a0fa84d2f208875e7225e/third_party/blink/renderer/core/layout/layout_object.h#L1425-L1430) | `NeedsLayout()` trả về geometry của object layout có dirty không. Khi property CSS đổi, `SetNeedsLayout()` đánh dấu node và ancestor là dirty. Tính layout chỉ xảy ra lúc pass layout tiếp theo — không phải mọi thay đổi style. Điều này gom hàng trăm sửa DOM thành một lần tính layout. |
+| React | [ReactFiberFlags.js#L18-L22](https://github.com/facebook/react/blob/34b78a2897cc208260a88e6b62ecaf9ca2a9dfe4/packages/react-reconciler/src/ReactFiberFlags.js#L18-L22) | Cờ fiber như `Placement`, `Update`, `Deletion` là dirty flag trên node fiber. Khi state đổi, fiber được đánh dấu cờ. Pha commit chỉ xử lý fiber có cờ khác 0, bỏ qua hoàn toàn subtree không đổi. |
 
-## Implementation
+## Triển khai
 
 ::: code-group
 
@@ -75,12 +75,12 @@ class DirtyFlag<T> {
 
   constructor(private compute: () => T) {}
 
-  /** Mark as dirty — next get() will recompute. */
+  /** Đánh dấu dirty — get() tiếp theo sẽ tính lại. */
   markDirty(): void {
     this.dirty = true;
   }
 
-  /** Get the value. Recomputes only if dirty. */
+  /** Lấy giá trị. Tính lại chỉ khi dirty. */
   get(): T {
     if (this.dirty) {
       this.cached = this.compute();
@@ -94,7 +94,7 @@ class DirtyFlag<T> {
   }
 }
 
-/** A transform node with dirty-flag-based world matrix caching. */
+/** Node transform với cache ma trận world dựa trên dirty flag. */
 class TransformNode {
   private localX = 0;
   private localY = 0;
@@ -225,79 +225,79 @@ class DirtyFlag(Generic[T]):
 
 :::
 
-## Exercises
+## Bài tập
 
-| Level | Exercise | File |
+| Cấp độ | Bài tập | File |
 |-------|----------|------|
-| Basic | Implement a dirty-flag-based lazy computation wrapper | `exercises/typescript/dirty-flag/01-basic.test.ts` |
-| Intermediate | Build a transform hierarchy with dirty-flag world position caching | `exercises/typescript/dirty-flag/02-intermediate.test.ts` |
+| Cơ bản | Triển khai wrapper tính toán lười dựa trên dirty flag | `exercises/typescript/dirty-flag/01-basic.test.ts` |
+| Trung bình | Xây phân cấp transform với cache vị trí thế giới qua dirty flag | `exercises/typescript/dirty-flag/02-intermediate.test.ts` |
 
-Run exercises: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
+Chạy bài tập: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
 
-Exercise files: Rust `exercises/rust/src/dirty_flag/mod.rs` · Go `exercises/go/dirty_flag/dirty_flag_test.go` · Python `exercises/python/dirty_flag/test_dirty_flag.py`
+File bài tập: Rust `exercises/rust/src/dirty_flag/mod.rs` · Go `exercises/go/dirty_flag/dirty_flag_test.go` · Python `exercises/python/dirty_flag/test_dirty_flag.py`
 
-## When to Use
+## Khi nào nên dùng
 
-- **UI layout engines** — mark nodes dirty on style change, batch layout computation
-- **Game scene graphs** — dirty world transforms cascade from parent to children; recompute only when rendered
-- **Spreadsheet cells** — mark dependent cells dirty on input change, recompute on display
-- **Build systems** — mark targets dirty when source files change, rebuild only what's needed
-- **Derived state caching** — any computed property that's expensive and read less often than its inputs change
+- **Engine layout UI** — đánh dấu node dirty khi đổi style, gom tính layout
+- **Scene graph game** — transform world dirty lan từ cha xuống con; tính lại chỉ khi render
+- **Cell bảng tính** — đánh dấu cell phụ thuộc dirty khi input đổi, tính lại khi hiển thị
+- **Hệ build** — đánh dấu target dirty khi file nguồn đổi, build lại chỉ cái cần
+- **Cache state dẫn xuất** — bất kỳ property tính được tốn kém và đọc ít hơn input đổi
 
-## When NOT to Use
+## Khi nào KHÔNG nên dùng
 
-- **Recomputation is cheap** — if the computation takes nanoseconds, the flag check adds overhead for no benefit
-- **Every mutation requires the result** — if you always read after every write, you're just adding a flag check to every operation
-- **Concurrency without synchronization** — dirty flags are inherently mutable shared state; concurrent reads and writes need locks or atomics
+- **Tính lại rẻ** — nếu tính toán mất nanosecond, check cờ thêm overhead không lợi ích
+- **Mọi mutation cần kết quả** — nếu luôn đọc sau mỗi ghi, bạn chỉ thêm check cờ vào mọi thao tác
+- **Concurrency không đồng bộ** — dirty flag vốn là state mutable chia sẻ; đọc và ghi đồng thời cần lock hoặc atomic
 
-## More Production Uses
+## Thêm các ứng dụng production
 
-- [Unity Engine](https://github.com/Unity-Technologies/UnityCsReference) — `Transform.hasChanged` flag defers world matrix recomputation
-- [Qt Framework](https://github.com/qt/qtbase/blob/70891a20ed56ac28c8d4c8265266a06700ce5a09/src/widgets/kernel/qwidget.cpp) — `QWidget::update()` marks regions dirty; painting happens in the next event loop iteration
-- [Make](https://www.gnu.org/software/make/) — file modification times as dirty flags; only rebuild targets newer than sources
-- [Excel/Google Sheets](https://support.google.com) — cell dependency graph with dirty propagation; only recalculates changed subgraph
+- [Unity Engine](https://github.com/Unity-Technologies/UnityCsReference) — cờ `Transform.hasChanged` hoãn tính lại ma trận world
+- [Qt Framework](https://github.com/qt/qtbase/blob/70891a20ed56ac28c8d4c8265266a06700ce5a09/src/widgets/kernel/qwidget.cpp) — `QWidget::update()` đánh dấu vùng dirty; vẽ xảy ra ở vòng event loop tiếp
+- [Make](https://www.gnu.org/software/make/) — thời gian sửa file như dirty flag; chỉ build target mới hơn nguồn
+- [Excel/Google Sheets](https://support.google.com) — đồ thị phụ thuộc cell với lan dirty; chỉ tính lại subgraph đổi
 
-## Related Patterns
+## Pattern liên quan
 
-| Pattern | Relationship |
+| Pattern | Quan hệ |
 |---------|-------------|
-| [Observer](/patterns/observer/) | Observer notifies when state changes; dirty flag defers the reaction until needed |
-| [Bitmask](/patterns/bitmask/) | Dirty flags are efficiently stored as bits in a bitmask |
-| [Dependency Graph](/patterns/dependency-graph/) | Dirty propagation follows dependency graph edges to mark downstream nodes |
-| [Double Buffering](/patterns/double-buffering/) | Dirty flags track which buffer has changed and needs to be swapped |
+| [Observer](/patterns/observer/) | Observer thông báo khi state đổi; dirty flag hoãn phản ứng cho tới khi cần |
+| [Bitmask](/patterns/bitmask/) | Dirty flag được lưu hiệu quả dưới dạng bit trong bitmask |
+| [Dependency Graph](/patterns/dependency-graph/) | Lan dirty đi theo cạnh dependency graph để đánh dấu node downstream |
+| [Double Buffering](/patterns/double-buffering/) | Dirty flag theo dõi buffer nào đã đổi và cần hoán đổi |
 
-## Challenge Questions
+## Câu hỏi thử thách
 
-::: details Q1: A scene graph has 1000 nodes. The root moves, making all descendants dirty. But only 3 nodes are actually rendered this frame. How many recomputations happen?
-**Answer:** 3 recomputations (plus ancestors of each rendered node).
+::: details Câu 1: Scene graph có 1000 node. Root di chuyển, làm mọi descendant dirty. Nhưng chỉ 3 node thực sự được render frame này. Bao nhiêu tính lại xảy ra?
+**Trả lời:** 3 tính lại (cộng ancestor của mỗi node được render).
 
-Setting 1000 nodes dirty costs O(1000) — just flipping booleans. But recomputation only happens when `getWorldPosition()` is called on a node. Only the 3 rendered nodes trigger recomputation, and each walks up to the root to compute its chain. If the 3 nodes share ancestors, those ancestors are recomputed once and cached (flag cleared).
+Set 1000 node dirty tốn O(1000) — chỉ lật boolean. Nhưng tính lại chỉ xảy ra khi `getWorldPosition()` được gọi trên node. Chỉ 3 node được render kích hoạt tính lại, và mỗi cái đi lên root để tính chuỗi. Nếu 3 node chia sẻ ancestor, ancestor đó được tính lại một lần và cache (cờ xoá).
 
-This is the key insight: dirty-flag cost is proportional to nodes **read**, not nodes **dirtied**.
+Đây là insight then chốt: chi phí dirty-flag tỉ lệ với node **được đọc**, không phải node **được đánh dấu dirty**.
 :::
 
-::: details Q2: React marks fiber nodes with flags like Placement|Update. Why use bitmask flags instead of a simple boolean dirty flag?
-**Answer:** Multiple orthogonal kinds of "dirty."
+::: details Câu 2: React đánh dấu node fiber bằng cờ như Placement|Update. Tại sao dùng cờ bitmask thay vì cờ dirty boolean đơn giản?
+**Trả lời:** Nhiều loại "dirty" trực giao.
 
-A fiber node can need a placement (new DOM node), an update (changed props), a deletion, a ref update, or a layout effect — all independently. A single boolean can only say "something changed." Bitmask flags encode **what** changed, so the commit phase can process each kind of work separately without re-examining the fiber.
+Một node fiber có thể cần placement (DOM node mới), update (đổi prop), deletion, update ref, hoặc effect layout — tất cả độc lập. Một boolean duy nhất chỉ nói được "có gì đó đổi." Cờ bitmask mã hoá **cái gì** đổi, nên pha commit có thể xử lý mỗi loại công việc riêng mà không cần xem lại fiber.
 
-This is a combination of the Dirty Flag pattern and the Bitmask pattern — each bit is an independent dirty flag for a specific concern.
+Đây là kết hợp pattern Dirty Flag và pattern Bitmask — mỗi bit là dirty flag độc lập cho một quan tâm cụ thể.
 :::
 
-::: details Q3: Your dirty-flag cache has a bug: `get()` returns stale data. The flag is set correctly. What's wrong?
-**Answer:** The compute function captures stale closures or references.
+::: details Câu 3: Cache dirty-flag của bạn có bug: `get()` trả dữ liệu cũ. Cờ được set đúng. Có gì sai?
+**Trả lời:** Hàm compute bắt closure hoặc reference cũ.
 
-Common causes:
+Nguyên nhân phổ biến:
 
-1. The compute function closes over a variable that has since been reassigned (stale closure in React, for example).
-2. The compute function reads from a cached/memoized source that is itself stale.
-3. The dirty flag is cleared before the computation finishes (async compute).
+1. Hàm compute đóng trên biến đã được gán lại (stale closure trong React, ví dụ).
+2. Hàm compute đọc từ nguồn cache/memoize tự nó cũ.
+3. Cờ dirty được clear trước khi tính toán xong (compute bất đồng bộ).
 
-Fix: ensure the compute function reads current values at call time, not captured values from registration time. In React, this is why `useMemo` takes a dependency array — it creates a new compute function when dependencies change.
+Sửa: đảm bảo hàm compute đọc giá trị hiện tại lúc gọi, không phải giá trị bắt lúc đăng ký. Trong React, đây là lý do `useMemo` lấy mảng dependency — nó tạo hàm compute mới khi dependency đổi.
 :::
 
-::: details Q4: Your build system uses file modification timestamps as dirty flags. A developer checks out an old branch, which resets file timestamps to "now." The build system sees all files as "dirty" and triggers a full rebuild. How would you fix this?
-**Answer:** Use content hashes instead of (or in addition to) timestamps as the dirty flag.
+::: details Câu 4: Hệ build của bạn dùng timestamp sửa file làm dirty flag. Một dev checkout branch cũ, reset timestamp file thành "bây giờ". Hệ build thấy mọi file "dirty" và kích hoạt build full. Sửa thế nào?
+**Trả lời:** Dùng content hash thay vì (hoặc thêm) timestamp làm dirty flag.
 
-Timestamps are cheap to check but semantically fragile — they track *when* a file changed, not *whether* it actually changed. Git checkout, file copy, CI artifact extraction, and clock skew all produce misleading timestamps. Content-based dirty flags (e.g., SHA-256 of the file) are immune to these problems: if the hash matches, the file hasn't changed, regardless of its timestamp. This is why Bazel and Buck use content hashing over timestamps. The tradeoff is that computing a hash is more expensive than `stat()`, but for build systems the cost of unnecessary recompilation far exceeds the cost of hashing.
+Timestamp rẻ để kiểm tra nhưng mong manh về ngữ nghĩa — chúng theo dõi *khi* file đổi, không phải *có* thực sự đổi. Git checkout, copy file, trích artifact CI và clock skew đều sinh timestamp gây hiểu lầm. Dirty flag dựa trên content (ví dụ SHA-256 của file) miễn nhiễm với vấn đề này: nếu hash khớp, file không đổi, bất kể timestamp. Đó là lý do Bazel và Buck dùng content hashing thay vì timestamp. Đánh đổi là tính hash đắt hơn `stat()`, nhưng cho hệ build, chi phí biên dịch không cần xa vượt chi phí hashing.
 :::
