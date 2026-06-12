@@ -1,6 +1,6 @@
 ---
 title: "Pattern: Flyweight / Interning"
-description: "Share identical immutable objects instead of creating duplicates, trading a lookup cost for massive memory savings when many instances have the same value."
+description: "Chia sẻ các object bất biến giống nhau thay vì tạo bản sao, đánh đổi chi phí tra cứu lấy tiết kiệm bộ nhớ khổng lồ khi nhiều instance có cùng giá trị."
 difficulty: "beginner"
 ---
 
@@ -8,19 +8,19 @@ difficulty: "beginner"
 
 <DifficultyBadge />
 
-## One Liner
+## Mô tả một câu
 
-Share identical immutable objects instead of creating duplicates, trading a lookup cost for massive memory savings when many instances have the same value.
+Chia sẻ các object bất biến giống nhau thay vì tạo bản sao, đánh đổi chi phí tra cứu lấy tiết kiệm bộ nhớ khổng lồ khi nhiều instance có cùng giá trị.
 
 <DemoBadge />
 
-## Real-World Analogy
+## Tương tự thực tế
 
-A theater company's costume closet. There's only one pirate costume, one royal robe, and one peasant outfit. Every actor playing that role wears the same shared costume rather than having a personal copy made.
+Tủ trang phục của một đoàn kịch. Chỉ có một bộ đồ cướp biển, một bộ áo choàng hoàng gia và một bộ trang phục nông dân. Mỗi diễn viên đóng vai đó đều mặc chung bộ đồ thay vì làm bản riêng.
 
-## Core Idea
+## Ý tưởng cốt lõi
 
-When thousands of objects have the same value (strings, small integers, colors), allocating each separately wastes memory. Flyweight/interning maintains a pool of canonical instances and returns the same reference for equal values.
+Khi hàng nghìn object có cùng giá trị (chuỗi, số nguyên nhỏ, màu), cấp phát từng cái riêng lãng phí bộ nhớ. Flyweight/interning duy trì pool các instance chính tắc và trả về cùng một reference cho các giá trị bằng nhau.
 
 ```mermaid
 flowchart LR
@@ -32,31 +32,31 @@ flowchart LR
     P -->|"new"| W["'world' (1 instance)"]
 ```
 
-Two requests for `"hello"` get the **same object** — not a copy. This is why `"hello" === "hello"` in many languages (string interning).
+Hai yêu cầu cho `"hello"` nhận **cùng object** — không phải bản sao. Đây là vì sao `"hello" === "hello"` trong nhiều ngôn ngữ (string interning).
 
-| Property | Value |
+| Thuộc tính | Giá trị |
 |----------|-------|
-| Lookup/intern | O(1) amortized — hash table lookup |
-| Memory savings | O(unique) instead of O(total) instances |
-| Equality check | O(1) — pointer comparison instead of value comparison |
-| Trade-off | Pool memory + lookup cost vs. per-object allocation cost |
+| Tra cứu/intern | O(1) phân bổ — tra hash table |
+| Tiết kiệm bộ nhớ | O(số duy nhất) thay vì O(tổng instance) |
+| Kiểm tra bằng | O(1) — so con trỏ thay vì so giá trị |
+| Đánh đổi | Bộ nhớ pool + chi phí tra cứu vs chi phí cấp phát mỗi object |
 
-**Try it yourself** — add characters and see how flyweight objects are shared:
+**Thử ngay** — thêm ký tự và xem cách các object flyweight được chia sẻ:
 
 <FlyweightViz />
 
-## Production Proof
+## Bằng chứng production
 
-| Project | Source | Usage |
+| Dự án | Nguồn | Cách dùng |
 |---------|--------|-------|
-| Python (CPython) | [longobject.c#L61-L75](https://github.com/python/cpython/blob/ff64d8de66ab7f8e56b5d410796a7d76c955280c/Objects/longobject.c#L61-L75) | `get_small_int` returns pre-cached integer objects for -5 to 256. `a = 42; b = 42; a is b` is `True` because both reference the same cached object. This avoids millions of integer allocations in typical programs. |
-| Go stdlib | [pool.go#L52-L97](https://github.com/golang/go/blob/f5cdf4745455415c7a43cfc7d925214d4511489b/src/sync/pool.go#L52-L97) | `sync.Pool` is the flyweight pattern applied to temporary objects — `Get()` returns a cached instance instead of allocating, `Put()` returns it for reuse. Used in `fmt.Fprintf`, `encoding/json`, and HTTP handlers to share buffers. |
+| Python (CPython) | [longobject.c#L61-L75](https://github.com/python/cpython/blob/ff64d8de66ab7f8e56b5d410796a7d76c955280c/Objects/longobject.c#L61-L75) | `get_small_int` trả các object integer đã cache trước cho -5 đến 256. `a = 42; b = 42; a is b` là `True` vì cả hai tham chiếu cùng object cache. Tránh hàng triệu cấp phát integer trong chương trình điển hình. |
+| Stdlib Go | [pool.go#L52-L97](https://github.com/golang/go/blob/f5cdf4745455415c7a43cfc7d925214d4511489b/src/sync/pool.go#L52-L97) | `sync.Pool` là flyweight áp dụng cho object tạm — `Get()` trả instance đã cache thay vì cấp phát, `Put()` trả về để tái dùng. Dùng trong `fmt.Fprintf`, `encoding/json` và HTTP handler để chia sẻ buffer. |
 
-::: info Note
-Java's `String.intern()`, JavaScript engine string tables (V8), and Rust's `&'static str` all implement variations of this pattern. The JVM interns all string literals automatically.
+::: info Lưu ý
+`String.intern()` của Java, bảng chuỗi engine JavaScript (V8) và `&'static str` của Rust đều triển khai biến thể của pattern này. JVM tự intern mọi string literal.
 :::
 
-## Implementation
+## Triển khai
 
 ::: code-group
 
@@ -155,79 +155,79 @@ class Interner:
     def size(self) -> int:
         return len(self._pool)
 
-# Python already interns small integers:
+# Python đã intern các integer nhỏ:
 a = 256
 b = 256
-print(a is b)  # True — same object, flyweight!
-print(sys.getrefcount(256))  # many references to the same int
+print(a is b)  # True — cùng object, flyweight!
+print(sys.getrefcount(256))  # nhiều tham chiếu tới cùng một int
 ```
 
 :::
 
-## Exercises
+## Bài tập
 
-| Level | Exercise | File |
+| Cấp độ | Bài tập | File |
 |-------|----------|------|
-| Basic | Implement a string interner with intern/resolve | `exercises/typescript/flyweight/01-basic.test.ts` |
-| Intermediate | Icon registry that deduplicates objects by name | `exercises/typescript/flyweight/02-intermediate.test.ts` |
+| Cơ bản | Triển khai string interner với intern/resolve | `exercises/typescript/flyweight/01-basic.test.ts` |
+| Trung bình | Icon registry khử trùng lặp object theo tên | `exercises/typescript/flyweight/02-intermediate.test.ts` |
 
-Run exercises: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
+Chạy bài tập: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
 
-Exercise files: Rust `exercises/rust/src/flyweight/mod.rs` · Go `exercises/go/flyweight/flyweight_test.go` · Python `exercises/python/flyweight/test_flyweight.py`
+File bài tập: Rust `exercises/rust/src/flyweight/mod.rs` · Go `exercises/go/flyweight/flyweight_test.go` · Python `exercises/python/flyweight/test_flyweight.py`
 
-## When to Use
+## Khi nào nên dùng
 
-- **Repeated identical values** — strings, colors, icons, type tags
-- **Memory-constrained environments** — embedded systems, mobile, browser tabs
-- **Compilers and interpreters** — symbol tables, string interning
-- **Game engines** — shared meshes, textures, materials
-- **Database query results** — deduplicate repeated column values
+- **Giá trị giống nhau lặp lại** — chuỗi, màu, icon, type tag
+- **Môi trường eo hẹp bộ nhớ** — hệ thống nhúng, mobile, tab trình duyệt
+- **Compiler và interpreter** — bảng symbol, interning chuỗi
+- **Game engine** — mesh, texture, material dùng chung
+- **Kết quả truy vấn database** — khử trùng lặp giá trị cột lặp lại
 
-## When NOT to Use
+## Khi nào KHÔNG nên dùng
 
-- **Unique values** — if every instance is different, the pool adds overhead
-- **Mutable objects** — flyweight assumes shared objects are immutable
-- **Short-lived data** — if objects are created and discarded quickly, interning adds lookup cost
-- **Thread safety** — concurrent intern requires synchronization
+- **Giá trị duy nhất** — nếu mọi instance đều khác, pool thêm overhead
+- **Object mutable** — flyweight giả định object chia sẻ là bất biến
+- **Dữ liệu sống ngắn** — nếu object được tạo và bỏ nhanh, interning thêm chi phí tra cứu
+- **Thread safety** — intern đồng thời cần đồng bộ
 
-## More Production Uses
+## Thêm các ứng dụng production
 
-- [Java String.intern()](https://github.com/openjdk/jdk/blob/4b3ec455c85314d051800a8f46dd8f5c93881e3a/src/java.base/share/classes/java/lang/String.java) — JVM string pool deduplicates identical string literals
-- [Python small int cache](https://github.com/python/cpython/blob/ff64d8de66ab7f8e56b5d410796a7d76c955280c/Objects/longobject.c) — CPython pre-allocates integers -5 to 256
-- [Rust string_cache](https://crates.io/crates/string_cache) crate
-- [.NET string interning](https://github.com/dotnet/runtime/blob/bee7953796edc09e516e847e3c9006b486ab0f6d/src/libraries/System.Private.CoreLib/src/System/String.cs) — `String.Intern()` maintains a CLR-wide intern pool
-- [Chromium CSS](https://github.com/chromium/chromium/blob/5cffea3f665b7762369a0fa84d2f208875e7225e/third_party/blink/renderer/core/css/) — CSS value deduplication in the Blink rendering engine
+- [Java String.intern()](https://github.com/openjdk/jdk/blob/4b3ec455c85314d051800a8f46dd8f5c93881e3a/src/java.base/share/classes/java/lang/String.java) — string pool của JVM khử trùng lặp string literal giống nhau
+- [Cache int nhỏ Python](https://github.com/python/cpython/blob/ff64d8de66ab7f8e56b5d410796a7d76c955280c/Objects/longobject.c) — CPython cấp phát trước integer -5 đến 256
+- Crate [Rust string_cache](https://crates.io/crates/string_cache)
+- [Interning chuỗi .NET](https://github.com/dotnet/runtime/blob/bee7953796edc09e516e847e3c9006b486ab0f6d/src/libraries/System.Private.CoreLib/src/System/String.cs) — `String.Intern()` duy trì pool intern toàn CLR
+- [Chromium CSS](https://github.com/chromium/chromium/blob/5cffea3f665b7762369a0fa84d2f208875e7225e/third_party/blink/renderer/core/css/) — khử trùng lặp giá trị CSS trong engine render Blink
 
-## Related Patterns
+## Pattern liên quan
 
-| Pattern | Relationship |
+| Pattern | Quan hệ |
 |---------|-------------|
-| [Interning](/patterns/interning/) | Interning is the mechanism that implements flyweight — deduplicate identical values |
-| [Copy-on-Write (CoW)](/patterns/copy-on-write/) | Both share data — flyweight shares immutable objects, CoW shares until mutation |
-| [LRU Cache](/patterns/lru-cache/) | LRU caches can store flyweight instances, evicting least-used shared objects |
+| [Interning](/patterns/interning/) | Interning là cơ chế triển khai flyweight — khử trùng lặp giá trị giống nhau |
+| [Copy-on-Write (CoW)](/patterns/copy-on-write/) | Cả hai chia sẻ dữ liệu — flyweight chia sẻ object bất biến, CoW chia sẻ cho tới khi sửa |
+| [LRU Cache](/patterns/lru-cache/) | LRU cache có thể lưu instance flyweight, loại bỏ object chia sẻ ít dùng nhất |
 
-## Challenge Questions
+## Câu hỏi thử thách
 
-::: details Q1: Someone interns a mutable object (say, a config map) and later modifies it. What breaks?
-**Answer:** Every consumer sharing that reference sees the mutation, causing unpredictable behavior across unrelated parts of the system.
+::: details Câu 1: Ai đó intern một object mutable (chẳng hạn map config) rồi sau đó sửa nó. Hư hỏng gì?
+**Trả lời:** Mọi consumer chia sẻ tham chiếu đó đều thấy sự sửa đổi, gây hành vi khó đoán ở các phần không liên quan trong hệ thống.
 
-Flyweight's entire premise is that shared instances are identical and interchangeable. If one caller mutates the shared object, all other callers silently get the changed value. This is why interned/flyweight objects must be immutable. If you need mutation, clone-on-write or don't intern.
+Tiền đề toàn bộ của flyweight là instance chia sẻ giống nhau và có thể thay thế cho nhau. Nếu một caller sửa object chia sẻ, mọi caller khác âm thầm nhận giá trị thay đổi. Đó là lý do object intern/flyweight phải bất biến. Nếu cần sửa, clone-on-write hoặc không intern.
 :::
 
-::: details Q2: Python caches integers -5 to 256 as flyweights. Why not cache all integers?
-**Answer:** Because the memory cost of pre-allocating every possible integer far exceeds the savings from sharing. The cache only pays off for values that appear frequently.
+::: details Câu 2: Python cache integer -5 đến 256 làm flyweight. Tại sao không cache tất cả integer?
+**Trả lời:** Vì chi phí bộ nhớ cấp phát trước mọi integer khả dĩ vượt xa tiết kiệm từ chia sẻ. Cache chỉ có lợi cho giá trị xuất hiện thường xuyên.
 
-The range -5 to 256 was chosen empirically — these cover loop counters, array indices, boolean-like values, and common constants. Caching `1_000_000` would waste memory since most large integers appear only once. The flyweight pattern only saves memory when duplicates are common.
+Khoảng -5 đến 256 được chọn theo kinh nghiệm — chúng bao loop counter, index mảng, giá trị giống boolean và hằng phổ biến. Cache `1_000_000` lãng phí bộ nhớ vì hầu hết integer lớn chỉ xuất hiện một lần. Flyweight chỉ tiết kiệm bộ nhớ khi trùng lặp phổ biến.
 :::
 
-::: details Q3: You build a string interner for a compiler. After processing 10,000 source files, the interner holds 2 million strings and uses 500MB. What went wrong?
-**Answer:** The interner never evicts entries, so it accumulates every string ever seen — including one-off identifiers and string literals that are never referenced again.
+::: details Câu 3: Bạn xây string interner cho compiler. Sau khi xử lý 10.000 file nguồn, interner giữ 2 triệu chuỗi và dùng 500MB. Có gì sai?
+**Trả lời:** Interner không bao giờ loại bỏ entry, nên nó tích luỹ mọi chuỗi từng thấy — kể cả identifier dùng một lần và string literal không bao giờ được tham chiếu lại.
 
-A production interner needs a strategy for scope: either clear it per-compilation-unit, use weak references so unreferenced strings get collected, or limit interning to identifiers (which repeat frequently) and skip arbitrary string literals. Unbounded growth is the classic flyweight pitfall.
+Interner production cần chiến lược cho phạm vi: hoặc xoá theo mỗi đơn vị biên dịch, dùng weak reference để chuỗi không tham chiếu được thu, hoặc giới hạn interning vào identifier (vốn lặp thường xuyên) và bỏ qua string literal tuỳ ý. Tăng không giới hạn là cạm bẫy kinh điển của flyweight.
 :::
 
-::: details Q4: Two threads simultaneously call `intern("hello")` and both see it as missing from the pool. What can go wrong?
-**Answer:** Both threads create a new instance and insert it, resulting in two different objects for the same key — breaking the "same reference for same value" guarantee.
+::: details Câu 4: Hai thread đồng thời gọi `intern("hello")` và cả hai thấy nó thiếu trong pool. Có thể sai gì?
+**Trả lời:** Cả hai thread tạo instance mới và chèn vào, kết quả là hai object khác nhau cho cùng key — phá vỡ đảm bảo "cùng reference cho cùng giá trị".
 
-Without synchronization, you get a race: thread A checks the pool, finds nothing, creates the object; thread B does the same before A inserts. Now consumers on different threads hold different references for `"hello"`, defeating identity comparison (`===` / `is`). The fix is a lock around the check-and-insert, or a concurrent map with `putIfAbsent` semantics.
+Không có đồng bộ, bạn gặp race: thread A kiểm tra pool, không thấy, tạo object; thread B làm tương tự trước khi A chèn. Giờ consumer ở các thread khác nhau giữ reference khác nhau cho `"hello"`, phá so sánh identity (`===` / `is`). Cách sửa là khoá quanh check-and-insert, hoặc concurrent map với ngữ nghĩa `putIfAbsent`.
 :::

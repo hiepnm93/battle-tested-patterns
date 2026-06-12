@@ -1,62 +1,62 @@
 ---
-title: "Pattern: Retry with Exponential Backoff"
-description: "When an operation fails, retry it with progressively longer delays plus random jitter to avoid thundering herd."
+title: "Pattern: Retry với Exponential Backoff"
+description: "Khi một thao tác thất bại, retry với delay tăng dần cộng jitter ngẫu nhiên để tránh thundering herd."
 difficulty: "beginner"
 ---
 
-# Pattern: Retry with Exponential Backoff
+# Pattern: Retry với Exponential Backoff
 
 <DifficultyBadge />
 
-## One Liner
+## Mô tả một câu
 
-When an operation fails, retry it with progressively longer delays plus random jitter to avoid thundering herd.
+Khi một thao tác thất bại, retry với delay tăng dần cộng jitter ngẫu nhiên để tránh thundering herd.
 
 <DemoBadge />
 
-## Real-World Analogy
+## Tương tự thực tế
 
-Calling a busy restaurant for a reservation. You try once, get a busy signal, wait a minute, try again. Still busy? Wait two minutes. Then four. You also vary the timing slightly so that everyone who got a busy signal isn't calling back at the exact same moment.
+Gọi một nhà hàng đông khách để đặt chỗ. Bạn gọi lần đầu, máy bận, đợi một phút, gọi lại. Vẫn bận? Đợi hai phút. Rồi bốn. Bạn cũng thay đổi thời gian một chút để mọi người đã gặp máy bận không cùng gọi lại đúng một lúc.
 
-## Core Idea
+## Ý tưởng cốt lõi
 
-Instead of retrying immediately (which overloads the failing service) or giving up (which loses the request), exponential backoff doubles the wait time on each retry. Adding jitter randomizes the delay so thousands of clients don't retry simultaneously.
+Thay vì retry ngay (làm quá tải service đang lỗi) hoặc bỏ cuộc (mất request), exponential backoff nhân đôi thời gian chờ mỗi lần retry. Thêm jitter ngẫu nhiên hoá delay để hàng nghìn client không cùng retry đồng thời.
 
 ```text
-  Time ────────────────────────────────────────────────►
+  Thời gian ────────────────────────────────────────────►
 
-  Attempt 1  ✗ ├─┤ 1s
-  Attempt 2  ✗ ├───┤ 2s
-  Attempt 3  ✗ ├───────┤ 4s
-  Attempt 4  ✗ ├───────────────┤ 8s
-  Attempt 5  ✗ ├───────────────────────────────┤ 16s (cap)
-  Attempt 6  ✓
+  Thử 1  ✗ ├─┤ 1s
+  Thử 2  ✗ ├───┤ 2s
+  Thử 3  ✗ ├───────┤ 4s
+  Thử 4  ✗ ├───────────────┤ 8s
+  Thử 5  ✗ ├───────────────────────────────┤ 16s (cap)
+  Thử 6  ✓
 
-  Each bar = wait before next retry (doubles each time)
-  + jitter: randomize within each bar to avoid thundering herd
+  Mỗi thanh = chờ trước khi retry kế tiếp (gấp đôi mỗi lần)
+  + jitter: ngẫu nhiên trong mỗi thanh để tránh thundering herd
 ```
 
-The formula: `delay = min(base * 2^attempt + random(0, jitter), maxDelay)`
+Công thức: `delay = min(base * 2^attempt + random(0, jitter), maxDelay)`
 
-| Property | Value |
+| Thuộc tính | Giá trị |
 |----------|-------|
-| Delay growth | Exponential — doubles each attempt |
-| Max delay | Capped (typically 30–60 s) to bound worst-case wait |
-| Jitter | Randomized to prevent thundering herd |
-| Total attempts | Bounded (typically 3–10) to avoid infinite loops |
+| Tăng delay | Cấp số nhân — gấp đôi mỗi lần thử |
+| Delay max | Có cap (thường 30–60 giây) để giới hạn chờ tệ nhất |
+| Jitter | Ngẫu nhiên để chặn thundering herd |
+| Số lần thử | Có giới hạn (thường 3–10) để tránh vòng vô tận |
 
-**Try it yourself** — send a request and watch exponential backoff with jitter in action:
+**Thử ngay** — gửi request và xem exponential backoff với jitter hoạt động:
 
 <RetryBackoffViz />
 
-## Production Proof
+## Bằng chứng production
 
-| Project | Source | Usage |
+| Dự án | Nguồn | Cách dùng |
 |---------|--------|-------|
-| Kubernetes | [backoff.go#L30-L50](https://github.com/kubernetes/kubernetes/blob/586cc904093af4fe7492e564908a796f0b107f97/staging/src/k8s.io/apimachinery/pkg/util/wait/backoff.go#L30-L50) | `Backoff` struct defines `Duration`, `Factor`, `Jitter`, `Steps`, `Cap`. `ExponentialBackoff` (line 475) retries with this config. Used for pod restart backoff, API server retries, controller reconciliation. |
-| gRPC-Go | [backoff.go#L56-L75](https://github.com/grpc/grpc-go/blob/f1864955bbb48efa131f6652933fa8b2189d9305/internal/backoff/backoff.go#L56-L75) | `Exponential.Backoff()` — computes exponential delay with jitter. Base delay doubles per retry, capped at `MaxDelay`. `RunF` (L86-L109) is the retry orchestration loop with context cancellation and `ErrResetBackoff` support. |
+| Kubernetes | [backoff.go#L30-L50](https://github.com/kubernetes/kubernetes/blob/586cc904093af4fe7492e564908a796f0b107f97/staging/src/k8s.io/apimachinery/pkg/util/wait/backoff.go#L30-L50) | Struct `Backoff` định nghĩa `Duration`, `Factor`, `Jitter`, `Steps`, `Cap`. `ExponentialBackoff` (dòng 475) retry với config này. Dùng cho backoff khởi động lại pod, retry API server, reconciliation controller. |
+| gRPC-Go | [backoff.go#L56-L75](https://github.com/grpc/grpc-go/blob/f1864955bbb48efa131f6652933fa8b2189d9305/internal/backoff/backoff.go#L56-L75) | `Exponential.Backoff()` — tính delay cấp số nhân với jitter. Delay cơ sở gấp đôi mỗi retry, cap ở `MaxDelay`. `RunF` (L86-L109) là vòng lặp điều phối retry với huỷ context và hỗ trợ `ErrResetBackoff`. |
 
-## Implementation
+## Triển khai
 
 ::: code-group
 
@@ -167,69 +167,69 @@ def retry_with_backoff(fn, max_retries=5, base_delay=1.0, max_delay=30.0, jitter
 
 :::
 
-## Exercises
+## Bài tập
 
-| Level | Exercise | File |
+| Cấp độ | Bài tập | File |
 |-------|----------|------|
-| Basic | Implement retry with configurable backoff | `exercises/typescript/retry-backoff/01-basic.test.ts` |
-| Intermediate | Retry with circuit breaker integration | `exercises/typescript/retry-backoff/02-intermediate.test.ts` |
+| Cơ bản | Triển khai retry với backoff cấu hình được | `exercises/typescript/retry-backoff/01-basic.test.ts` |
+| Trung bình | Retry tích hợp với circuit breaker | `exercises/typescript/retry-backoff/02-intermediate.test.ts` |
 
-Run exercises: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
+Chạy bài tập: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
 
-Exercise files: Rust `exercises/rust/src/retry_backoff/mod.rs` · Go `exercises/go/retry_backoff/retry_backoff_test.go` · Python `exercises/python/retry_backoff/test_retry_backoff.py`
+File bài tập: Rust `exercises/rust/src/retry_backoff/mod.rs` · Go `exercises/go/retry_backoff/retry_backoff_test.go` · Python `exercises/python/retry_backoff/test_retry_backoff.py`
 
-## When to Use
+## Khi nào nên dùng
 
-- **Network requests** — HTTP calls, database connections, RPC
-- **Distributed systems** — service-to-service calls that may transiently fail
-- **Rate-limited APIs** — back off when hitting rate limits (often 429 responses)
-- **Queue consumers** — retry failed message processing
+- **Request mạng** — cuộc gọi HTTP, kết nối database, RPC
+- **Hệ phân tán** — cuộc gọi service-to-service có thể lỗi thoáng qua
+- **API có rate limit** — backoff khi đụng rate limit (thường response 429)
+- **Consumer queue** — retry xử lý thông điệp thất bại
 
-## When NOT to Use
+## Khi nào KHÔNG nên dùng
 
-- **Non-transient errors** — 400 Bad Request won't succeed on retry; validate input instead
-- **Idempotency not guaranteed** — retrying a non-idempotent POST could create duplicates
-- **User-facing latency** — exponential backoff means 30+ second waits; show an error instead
-- **Local operations** — file not found, parse error — these won't fix themselves on retry
+- **Lỗi không thoáng qua** — 400 Bad Request không thành công khi retry; hãy kiểm tra input
+- **Không đảm bảo idempotency** — retry POST không idempotent có thể tạo bản trùng
+- **Độ trễ thấy được với người dùng** — backoff cấp số nhân nghĩa là chờ 30+ giây; hiển thị lỗi
+- **Thao tác cục bộ** — file không tìm thấy, lỗi parse — không tự sửa khi retry
 
-## More Production Uses
+## Thêm các ứng dụng production
 
 - [AWS SDK](https://github.com/aws/aws-sdk-js-v3)
 - [Azure SDK](https://github.com/Azure/azure-sdk-for-js)
 - [Google Cloud](https://github.com/googleapis/google-cloud-node)
 - [Envoy](https://github.com/envoyproxy/envoy) — proxy
-- [Celery](https://github.com/celery/celery) — Python task queue
+- [Celery](https://github.com/celery/celery) — task queue Python
 
-## Related Patterns
+## Pattern liên quan
 
-| Pattern | Relationship |
+| Pattern | Quan hệ |
 |---------|-------------|
-| [Circuit Breaker](/patterns/circuit-breaker/) | Circuit breaker tells you when to stop retrying entirely |
-| [Batch Processing](/patterns/batch-processing/) | Failed batch items can be retried with backoff independently |
-| [Rate Limiter (Token Bucket)](/patterns/rate-limiter/) | Jittered backoff prevents retry storms, similar to rate limiting's goal |
+| [Circuit Breaker](/patterns/circuit-breaker/) | Circuit breaker cho biết khi nào dừng retry hoàn toàn |
+| [Batch Processing](/patterns/batch-processing/) | Item batch thất bại có thể retry với backoff độc lập |
+| [Rate Limiter (Token Bucket)](/patterns/rate-limiter/) | Backoff có jitter ngăn bão retry, tương tự mục tiêu của rate limit |
 
-## Challenge Questions
+## Câu hỏi thử thách
 
-::: details Q1: You remove jitter from your retry logic to make delays "predictable." Under a thundering herd scenario, what happens?
-**Answer:** All clients that failed at the same time retry at exactly the same intervals, repeatedly overloading the recovering service in synchronized waves.
+::: details Câu 1: Bạn loại bỏ jitter trong logic retry để delay "dễ đoán". Trong kịch bản thundering herd, chuyện gì xảy ra?
+**Trả lời:** Mọi client đã thất bại cùng lúc retry chính xác cùng khoảng thời gian, liên tục làm quá tải service đang hồi phục theo các đợt đồng bộ.
 
-Without jitter, 10,000 clients that got a 503 at t=0 all retry at t=1s, then t=2s, then t=4s — creating periodic traffic spikes that prevent recovery. Jitter spreads retries across the delay window so the recovering service sees a smooth trickle instead of synchronized bursts. This is why every production retry library includes jitter.
+Không có jitter, 10.000 client nhận 503 ở t=0 đều retry ở t=1s, rồi t=2s, rồi t=4s — tạo các đỉnh traffic định kỳ ngăn hồi phục. Jitter trải retry qua cửa sổ delay nên service hồi phục thấy luồng nhỏ giọt mượt thay vì burst đồng bộ. Đó là lý do mọi thư viện retry production đều có jitter.
 :::
 
-::: details Q2: Your service retries a POST /create-order endpoint that is NOT idempotent. The first attempt times out but actually succeeded on the server. What happens on retry?
-**Answer:** The retry creates a duplicate order. The customer gets charged twice.
+::: details Câu 2: Service của bạn retry endpoint POST /create-order KHÔNG idempotent. Lần thử đầu time out nhưng thực sự đã thành công trên server. Chuyện gì khi retry?
+**Trả lời:** Retry tạo bản trùng order. Khách bị tính tiền hai lần.
 
-A timeout does not mean the request failed — it means you don't know if it succeeded. Retrying a non-idempotent operation risks duplication. The fix is to make the operation idempotent using an idempotency key: the client generates a unique ID and the server deduplicates. Without idempotency, you should not retry write operations.
+Timeout không có nghĩa request thất bại — nghĩa là bạn không biết nó có thành công không. Retry thao tác không idempotent có nguy cơ trùng. Cách sửa là làm thao tác idempotent bằng idempotency key: client sinh ID duy nhất và server khử trùng. Không có idempotency, không nên retry thao tác ghi.
 :::
 
-::: details Q3: A downstream service returns HTTP 400 Bad Request. Should you retry with exponential backoff?
-**Answer:** No. A 400 is a client error indicating bad input. Retrying the same request will produce the same error every time.
+::: details Câu 3: Service downstream trả HTTP 400 Bad Request. Bạn có nên retry với exponential backoff?
+**Trả lời:** Không. 400 là lỗi client cho thấy input sai. Retry cùng request sẽ ra cùng lỗi mỗi lần.
 
-Retry with backoff is designed for transient failures — 503 Service Unavailable, 429 Too Many Requests, network timeouts, connection resets. A 400 means "your request is malformed," which won't fix itself with time. Retrying it wastes resources and delays the real fix (correcting the input). Always classify errors before deciding to retry.
+Retry với backoff được thiết kế cho lỗi thoáng qua — 503 Service Unavailable, 429 Too Many Requests, timeout mạng, reset kết nối. 400 nghĩa là "request của bạn sai định dạng", không tự sửa theo thời gian. Retry nó lãng phí tài nguyên và trì hoãn việc sửa thật sự (chỉnh input). Luôn phân loại lỗi trước khi quyết định retry.
 :::
 
-::: details Q4: Your retry config uses baseDelay=1s, maxDelay=30s, maxRetries=10. A junior engineer asks: "Why not set maxRetries=1000 so we never lose a request?" What's wrong with that?
-**Answer:** With exponential backoff capped at 30s and 1000 retries, the client would spend up to 8+ hours retrying a single request, holding resources the entire time.
+::: details Câu 4: Config retry của bạn dùng baseDelay=1s, maxDelay=30s, maxRetries=10. Một kỹ sư junior hỏi: "Sao không đặt maxRetries=1000 để không bao giờ mất request?" Sai ở đâu?
+**Trả lời:** Với backoff cấp số nhân cap ở 30s và 1000 retry, client có thể dành tới 8+ giờ retry một request duy nhất, giữ tài nguyên suốt thời gian đó.
 
-High retry counts consume connection pool slots, memory, goroutines/threads, and often hold database transactions or locks open. If the downstream service is truly down, those retries won't help — you need a circuit breaker to fail fast and shed load. In practice, 3-5 retries with backoff is enough to handle transient blips; anything longer should be handled by a persistent queue with dead-letter semantics.
+Số retry cao tiêu tốn slot pool kết nối, bộ nhớ, goroutine/thread và thường giữ transaction hoặc khoá database mở. Nếu service downstream thực sự sập, các retry đó không giúp — bạn cần circuit breaker để fail nhanh và đẩy tải đi. Thực tế, 3-5 retry với backoff đủ xử lý gián đoạn thoáng qua; lâu hơn nên xử lý bởi queue bền vững với ngữ nghĩa dead-letter.
 :::
