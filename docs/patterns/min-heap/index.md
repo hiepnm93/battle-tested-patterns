@@ -1,6 +1,6 @@
 ---
 title: "Pattern: Min Heap / Priority Queue"
-description: "A binary tree stored in an array where the smallest element is always at the root, enabling O(1) peek and O(log n) insert/remove."
+description: "Cây nhị phân lưu trong mảng nơi phần tử nhỏ nhất luôn ở gốc, cho peek O(1) và insert/remove O(log n)."
 difficulty: "intermediate"
 ---
 
@@ -8,19 +8,19 @@ difficulty: "intermediate"
 
 <DifficultyBadge />
 
-## One Liner
+## Mô tả một câu
 
-A binary tree stored in an array where the smallest element is always at the root, enabling O(1) peek and O(log n) insert/remove.
+Cây nhị phân lưu trong mảng nơi phần tử nhỏ nhất luôn ở gốc, cho peek O(1) và insert/remove O(log n).
 
 <DemoBadge />
 
-## Real-World Analogy
+## Tương tự thực tế
 
-An emergency room triage desk. Patients aren't seen in arrival order — the most critical case is always next. New patients are slotted into the queue by severity, and the system always knows who's most urgent without scanning everyone.
+Quầy phân loại cấp cứu trong bệnh viện. Bệnh nhân không được khám theo thứ tự đến — ca nghiêm trọng nhất luôn được khám tiếp theo. Bệnh nhân mới được xếp vào hàng theo mức độ nặng, và hệ thống luôn biết ai gấp nhất mà không cần quét tất cả.
 
-## Core Idea
+## Ý tưởng cốt lõi
 
-A min heap is a complete binary tree where every parent is smaller than its children. By storing it in a flat array (parent at `i`, children at `2i+1` and `2i+2`), you avoid pointer overhead and get cache-friendly access.
+Min heap là cây nhị phân đầy đủ nơi mỗi cha nhỏ hơn các con của nó. Bằng cách lưu phẳng trong mảng (cha ở `i`, con ở `2i+1` và `2i+2`), bạn tránh overhead con trỏ và có truy cập thân thiện với cache.
 
 ```mermaid
 graph TD
@@ -32,32 +32,32 @@ graph TD
     C --> G["6"]
 ```
 
-Two operations maintain the invariant:
+Hai thao tác duy trì invariant:
 
-- **sift up** — after inserting at the end, bubble the element up until the parent is smaller
-- **sift down** — after removing the root (swap with last element), push the new root down until both children are larger
+- **sift up** — sau khi chèn ở cuối, đẩy phần tử lên cho đến khi cha nhỏ hơn
+- **sift down** — sau khi xoá root (đổi với phần tử cuối), đẩy root mới xuống cho tới khi cả hai con đều lớn hơn
 
-Array layout: `[1, 3, 2, 7, 5, 4, 6]` — the tree above stored flat.
+Bố cục mảng: `[1, 3, 2, 7, 5, 4, 6]` — cây trên lưu phẳng.
 
-| Property | Value |
+| Thuộc tính | Giá trị |
 |----------|-------|
-| peek (get min) | O(1) — always at index 0 |
-| push (insert) | O(log n) — sift up from bottom |
-| pop (extract min) | O(log n) — swap root with last, sift down |
-| Space | O(n) — flat array, no pointers |
+| peek (lấy min) | O(1) — luôn ở index 0 |
+| push (chèn) | O(log n) — sift up từ dưới |
+| pop (trích min) | O(log n) — đổi root với cuối, sift down |
+| Bộ nhớ | O(n) — mảng phẳng, không con trỏ |
 
-**Try it yourself** — insert values and extract the minimum to see sift-up and sift-down in action:
+**Thử ngay** — chèn giá trị và trích minimum để xem sift-up và sift-down hoạt động:
 
 <MinHeapViz />
 
-## Production Proof
+## Bằng chứng production
 
-| Project | Source | Usage |
+| Dự án | Nguồn | Cách dùng |
 |---------|--------|-------|
-| React | [SchedulerMinHeap.js#L17-L90](https://github.com/facebook/react/blob/34b78a2897cc208260a88e6b62ecaf9ca2a9dfe4/packages/scheduler/src/SchedulerMinHeap.js#L17-L90) | React's scheduler stores scheduled tasks in a min heap sorted by `sortIndex` (expiration time). `peek()` returns the highest-priority task in O(1). The entire implementation is ~75 lines. |
-| Linux Kernel | [fair.c#L1407-L1460](https://github.com/torvalds/linux/blob/acb7500801e98639f6d8c2d796ed9f64cba83d3a/kernel/sched/fair.c#L1407-L1460) | CFS's `update_curr` updates each task's virtual runtime. `pick_next_task_fair` (line 9234) selects the task with the smallest vruntime from a red-black tree — the same "always access the minimum" principle as a min heap. |
+| React | [SchedulerMinHeap.js#L17-L90](https://github.com/facebook/react/blob/34b78a2897cc208260a88e6b62ecaf9ca2a9dfe4/packages/scheduler/src/SchedulerMinHeap.js#L17-L90) | Scheduler React lưu task đã lên lịch trong min heap sắp xếp theo `sortIndex` (thời gian hết hạn). `peek()` trả task ưu tiên cao nhất O(1). Toàn bộ triển khai ~75 dòng. |
+| Nhân Linux | [fair.c#L1407-L1460](https://github.com/torvalds/linux/blob/acb7500801e98639f6d8c2d796ed9f64cba83d3a/kernel/sched/fair.c#L1407-L1460) | `update_curr` của CFS cập nhật vruntime mỗi task. `pick_next_task_fair` (dòng 9234) chọn task có vruntime nhỏ nhất từ red-black tree — cùng nguyên tắc "luôn truy cập minimum" như min heap. |
 
-## Implementation
+## Triển khai
 
 ::: code-group
 
@@ -235,22 +235,22 @@ func (h *MinHeap) less(i, j int) bool {
 ```python [Python]
 import heapq
 
-# Python's heapq module implements a min heap on a list
+# Module heapq của Python triển khai min heap trên list
 heap = []
 
 heapq.heappush(heap, (10, "low-priority"))
 heapq.heappush(heap, (1, "urgent"))
 heapq.heappush(heap, (5, "medium"))
 
-# peek: heap[0] is always the minimum
+# peek: heap[0] luôn là minimum
 assert heap[0] == (1, "urgent")
 
-# pop in priority order
+# pop theo thứ tự ưu tiên
 assert heapq.heappop(heap) == (1, "urgent")
 assert heapq.heappop(heap) == (5, "medium")
 assert heapq.heappop(heap) == (10, "low-priority")
 
-# Custom: from-scratch implementation
+# Tự viết: triển khai từ đầu
 class MinHeap:
     def __init__(self):
         self._data = []
@@ -297,70 +297,70 @@ class MinHeap:
 
 :::
 
-## Exercises
+## Bài tập
 
-| Level | Exercise | File |
+| Cấp độ | Bài tập | File |
 |-------|----------|------|
-| Basic | Implement push, pop, peek with sift operations | `exercises/typescript/min-heap/01-basic.test.ts` |
-| Intermediate | Build a React-style task scheduler using min heap | `exercises/typescript/min-heap/02-task-scheduler.test.ts` |
+| Cơ bản | Triển khai push, pop, peek với thao tác sift | `exercises/typescript/min-heap/01-basic.test.ts` |
+| Trung bình | Xây task scheduler kiểu React dùng min heap | `exercises/typescript/min-heap/02-task-scheduler.test.ts` |
 
-Run exercises: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
+Chạy bài tập: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
 
-Exercise files: Rust `exercises/rust/src/min_heap/mod.rs` · Go `exercises/go/min_heap/min_heap_test.go` · Python `exercises/python/min_heap/test_min_heap.py`
+File bài tập: Rust `exercises/rust/src/min_heap/mod.rs` · Go `exercises/go/min_heap/min_heap_test.go` · Python `exercises/python/min_heap/test_min_heap.py`
 
-## When to Use
+## Khi nào nên dùng
 
-- **Task scheduling** — always process the highest-priority (lowest deadline) task first
-- **Event-driven systems** — timer heaps for scheduling callbacks at specific times
-- **Graph algorithms** — Dijkstra's shortest path, Prim's MST
-- **Streaming top-K** — maintain the K smallest/largest elements from a stream
-- **OS schedulers** — CFS uses a tree with min-heap properties for fair CPU distribution
+- **Lập lịch task** — luôn xử lý task ưu tiên cao nhất (deadline thấp nhất) trước
+- **Hệ thống hướng sự kiện** — timer heap để lên lịch callback ở thời điểm cụ thể
+- **Thuật toán đồ thị** — Dijkstra đường đi ngắn nhất, Prim MST
+- **Top-K streaming** — duy trì K phần tử nhỏ/lớn nhất từ stream
+- **Scheduler OS** — CFS dùng cây với tính chất min-heap để chia CPU công bằng
 
-## When NOT to Use
+## Khi nào KHÔNG nên dùng
 
-- **Need O(1) arbitrary lookup** — heaps only guarantee O(1) for the minimum; use a hash map for lookups
-- **Sorted iteration** — if you need all elements in order, sort once; repeated pop is O(n log n)
-- **Small fixed sets** — for < 10 elements, a linear scan is simpler and often faster
-- **Need stable ordering** — equal-priority items may change order across operations
+- **Cần tra cứu tuỳ ý O(1)** — heap chỉ đảm bảo O(1) cho minimum; dùng hash map cho tra cứu
+- **Lặp đã sắp xếp** — nếu cần mọi phần tử theo thứ tự, sort một lần; pop lặp lại là O(n log n)
+- **Tập nhỏ cố định** — với < 10 phần tử, quét tuyến tính đơn giản hơn và thường nhanh hơn
+- **Cần thứ tự ổn định** — item cùng ưu tiên có thể đổi thứ tự qua các thao tác
 
-## More Production Uses
+## Thêm các ứng dụng production
 
-- [Node.js libuv](https://github.com/libuv/libuv) — timer queue
-- [Java PriorityQueue](https://github.com/openjdk/jdk/blob/4b3ec455c85314d051800a8f46dd8f5c93881e3a/src/java.base/share/classes/java/util/PriorityQueue.java) — binary heap backed priority queue
+- [Node.js libuv](https://github.com/libuv/libuv) — queue timer
+- [Java PriorityQueue](https://github.com/openjdk/jdk/blob/4b3ec455c85314d051800a8f46dd8f5c93881e3a/src/java.base/share/classes/java/util/PriorityQueue.java) — priority queue nền binary heap
 - [Python heapq](https://github.com/python/cpython/blob/ff64d8de66ab7f8e56b5d410796a7d76c955280c/Lib/heapq.py)
-- [Rust BinaryHeap](https://github.com/rust-lang/rust/blob/d56483a91d6cf5041351a3208b8d08f98f0c8b56/library/alloc/src/collections/binary_heap/mod.rs) — max-heap in std, wrappable as min-heap via `Reverse`
+- [Rust BinaryHeap](https://github.com/rust-lang/rust/blob/d56483a91d6cf5041351a3208b8d08f98f0c8b56/library/alloc/src/collections/binary_heap/mod.rs) — max-heap trong std, có thể bọc làm min-heap qua `Reverse`
 
-## Related Patterns
+## Pattern liên quan
 
-| Pattern | Relationship |
+| Pattern | Quan hệ |
 |---------|-------------|
-| [Merge Iterator (K-Way Merge)](/patterns/merge-iterator/) | K-way merge uses a min-heap to select the smallest element across streams |
-| [Cooperative Scheduling](/patterns/cooperative-scheduling/) | React's scheduler uses a min-heap to pick the highest-priority task |
-| [Event Loop](/patterns/event-loop/) | Timer queues in event loops often use min-heaps for earliest-deadline scheduling |
-| [B+ Tree](/patterns/b-plus-tree/) | Alternative ordered structure — B+ trees optimize for disk, heaps for priority access |
+| [Merge Iterator (K-Way Merge)](/patterns/merge-iterator/) | K-way merge dùng min-heap để chọn phần tử nhỏ nhất qua các stream |
+| [Cooperative Scheduling](/patterns/cooperative-scheduling/) | Scheduler React dùng min-heap để chọn task ưu tiên cao nhất |
+| [Event Loop](/patterns/event-loop/) | Queue timer trong event loop thường dùng min-heap để lập lịch deadline gần nhất |
+| [B+ Tree](/patterns/b-plus-tree/) | Cấu trúc sắp xếp thay thế — B+ tree tối ưu cho đĩa, heap cho truy cập ưu tiên |
 
-## Challenge Questions
+## Câu hỏi thử thách
 
-::: details Q1: How do you convert a min heap into a max heap without changing the data structure?
-**Answer:** Negate the sort keys on insert and negate them back on extract.
+::: details Câu 1: Làm sao chuyển min heap thành max heap mà không đổi cấu trúc dữ liệu?
+**Trả lời:** Đảo dấu key sắp xếp khi chèn và đảo lại khi trích.
 
-Push `-priority` instead of `priority`. The min heap puts the most negative value (highest original priority) at the root. On pop, negate the key again to recover the original value. This works because a min heap over negated values is equivalent to a max heap over the original values. Python's `heapq` community uses this trick since the stdlib only provides a min heap.
+Push `-priority` thay vì `priority`. Min heap đặt giá trị âm nhất (ưu tiên gốc cao nhất) ở root. Khi pop, đảo key lần nữa để khôi phục giá trị gốc. Hoạt động được vì min heap trên giá trị đảo dấu tương đương max heap trên giá trị gốc. Cộng đồng `heapq` Python dùng thủ thuật này vì stdlib chỉ cung cấp min heap.
 :::
 
-::: details Q2: Why does React use a min heap for scheduling instead of a sorted array?
-**Answer:** A sorted array has O(n) insertion (shifting elements), while a min heap has O(log n) insertion and O(1) peek.
+::: details Câu 2: Vì sao React dùng min heap để lập lịch thay vì mảng đã sắp xếp?
+**Trả lời:** Mảng đã sắp xếp có chèn O(n) (dịch phần tử), trong khi min heap có chèn O(log n) và peek O(1).
 
-React's scheduler frequently inserts new tasks with varying expiration times and always needs the earliest-expiring task. A sorted array gives O(1) access to the minimum but costs O(n) to insert (binary search + shift). A min heap gives O(1) peek and O(log n) insert/remove — a better tradeoff for a dynamic queue where tasks are constantly added and removed. For a static, one-time sort, the sorted array wins.
+Scheduler React thường xuyên chèn task mới với thời gian hết hạn khác nhau và luôn cần task hết hạn sớm nhất. Mảng đã sắp xếp cho truy cập O(1) tới minimum nhưng tốn O(n) để chèn (tìm nhị phân + dịch). Min heap cho peek O(1) và insert/remove O(log n) — đánh đổi tốt hơn cho queue động nơi task liên tục thêm và xoá. Cho sort một lần tĩnh, mảng đã sắp xếp thắng.
 :::
 
-::: details Q3: A balanced BST (like a red-black tree) also gives O(log n) insert and O(log n) find-min. Why does Linux CFS use a red-black tree but React uses a min heap?
-**Answer:** CFS needs to remove arbitrary tasks (not just the minimum) when processes exit, which a BST handles in O(log n) but a heap handles in O(n).
+::: details Câu 3: Một BST cân bằng (như red-black tree) cũng cho chèn O(log n) và find-min O(log n). Vì sao Linux CFS dùng red-black tree nhưng React dùng min heap?
+**Trả lời:** CFS cần xoá task tuỳ ý (không chỉ minimum) khi process thoát, mà BST xử lý O(log n) còn heap xử lý O(n).
 
-A min heap only efficiently removes the root. Deleting an arbitrary element requires O(n) search + O(log n) sift. A red-black tree supports O(log n) deletion of any node. CFS frequently removes processes that exit or change priority, so the BST is justified. React's scheduler almost exclusively pops the highest-priority task from the front, making the simpler min heap (with its smaller constant factors and cache-friendly array layout) the better choice.
+Min heap chỉ xoá hiệu quả root. Xoá phần tử tuỳ ý cần tìm O(n) + sift O(log n). Red-black tree hỗ trợ xoá O(log n) node bất kỳ. CFS thường xuyên xoá process thoát hoặc đổi ưu tiên, nên BST hợp lý. Scheduler React gần như chỉ pop task ưu tiên cao nhất từ đầu, làm min heap đơn giản (với hệ số hằng nhỏ hơn và bố cục mảng thân thiện cache) là lựa chọn tốt hơn.
 :::
 
-::: details Q4: You have 1 billion log entries and need the 10 most recent. Should you use a min heap or a max heap, and what size?
-**Answer:** Use a min heap of size 10. For each entry, if it's larger than the heap's minimum, pop the minimum and push the new entry.
+::: details Câu 4: Bạn có 1 tỉ entry log và cần 10 cái gần nhất. Nên dùng min heap hay max heap, và kích thước bao nhiêu?
+**Trả lời:** Dùng min heap kích thước 10. Với mỗi entry, nếu nó lớn hơn minimum của heap, pop minimum và push entry mới.
 
-This is the "top-K" pattern. A min heap of size K keeps the K largest elements seen so far, with the smallest of those K at the root as a gatekeeper. Each new element is compared to the root in O(1) — if it's smaller, skip it; if larger, replace the root in O(log K). Total cost: O(n log K) with O(K) memory, not O(n log n) for a full sort.
+Đây là pattern "top-K". Min heap kích thước K giữ K phần tử lớn nhất đã thấy, với nhỏ nhất của K đó ở root như gác cổng. Mỗi phần tử mới được so với root O(1) — nếu nhỏ hơn, bỏ; nếu lớn hơn, thay root O(log K). Tổng chi phí: O(n log K) với bộ nhớ O(K), không phải O(n log n) cho sort đầy đủ.
 :::
