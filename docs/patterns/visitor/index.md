@@ -1,6 +1,6 @@
 ---
 title: "Pattern: Visitor / Tree Walker"
-description: "Decouple tree traversal from operations by dispatching to type-specific callbacks — enabling new operations without modifying the tree."
+description: "Tách duyệt cây khỏi thao tác bằng cách dispatch tới callback đặc thù kiểu — cho phép thêm thao tác mới không sửa cây."
 difficulty: "advanced"
 ---
 
@@ -8,19 +8,19 @@ difficulty: "advanced"
 
 <DifficultyBadge />
 
-## One Liner
+## Mô tả một câu
 
-Decouple tree traversal from operations by dispatching to type-specific callbacks — enabling new operations without modifying the tree.
+Tách duyệt cây khỏi thao tác bằng cách dispatch tới callback đặc thù kiểu — cho phép thêm thao tác mới không sửa cây.
 
 <DemoBadge />
 
-## Real-World Analogy
+## Tương tự thực tế
 
-A building inspector visiting different types of rooms. The inspector has a specific checklist for each room type — kitchen inspection differs from bathroom inspection. The rooms don't need to know how to inspect themselves; they just open the door and let the inspector do the right thing based on room type.
+Thanh tra xây dựng thăm các loại phòng khác nhau. Thanh tra có checklist cụ thể cho mỗi loại phòng — kiểm tra bếp khác kiểm tra phòng tắm. Các phòng không cần biết tự kiểm tra; chỉ cần mở cửa và để thanh tra làm việc đúng theo loại phòng.
 
-## Core Idea
+## Ý tưởng cốt lõi
 
-The visitor pattern separates "how to walk a tree" from "what to do at each node." The tree defines an `accept(visitor)` method that dispatches to the visitor's type-specific callback (e.g., `visitAdd`, `visitMultiply`). To add a new operation (evaluation, printing, optimization), you create a new visitor — no tree node classes need to change.
+Pattern visitor tách "đi qua cây thế nào" khỏi "làm gì ở mỗi node." Cây định nghĩa method `accept(visitor)` dispatch tới callback đặc thù kiểu của visitor (ví dụ `visitAdd`, `visitMultiply`). Để thêm thao tác mới (đánh giá, in, tối ưu), bạn tạo visitor mới — không class node cây nào cần đổi.
 
 ```text
   AST:         +               Eval Visitor:
@@ -35,30 +35,30 @@ The visitor pattern separates "how to walk a tree" from "what to do at each node
       visitNumber(4)                               → 4
     ) → 10
 
-  Print Visitor (new operation, zero tree changes):
+  Print Visitor (thao tác mới, không đổi cây):
     visitAdd(l, r) → "(" + visit(l) + " + " + visit(r) + ")"
     → "((2 * 3) + 4)"
 ```
 
-| Property | Value |
+| Thuộc tính | Giá trị |
 |----------|-------|
-| Adding operations | Easy — write a new visitor |
-| Adding node types | Hard — must update all visitors (expression problem) |
-| Traversal | Controlled by visitor or by accept() methods |
-| Pattern family | Behavioral — related to Strategy and Iterator |
+| Thêm thao tác | Dễ — viết visitor mới |
+| Thêm kiểu node | Khó — phải update mọi visitor (expression problem) |
+| Duyệt | Kiểm soát bởi visitor hoặc bởi method accept() |
+| Họ pattern | Hành vi — liên quan đến Strategy và Iterator |
 
-**Try it yourself** — select a visitor type and traverse the AST, watching each node get visited:
+**Thử ngay** — chọn loại visitor và duyệt AST, xem mỗi node được visit:
 
 <VisitorViz />
 
-## Production Proof
+## Bằng chứng production
 
-| Project | Source | Usage |
+| Dự án | Nguồn | Cách dùng |
 |---------|--------|-------|
-| LLVM | [InstVisitor.h#L45-L107](https://github.com/llvm/llvm-project/blob/1dc53bacd24fb555dfd2ec030a5ee33f5db3fadf/llvm/include/llvm/IR/InstVisitor.h#L45-L107) | `InstVisitor<SubClass, RetTy>` (L45) is a CRTP visitor over all LLVM IR instruction types. It dispatches via `visit(Instruction &I)` which switches on opcode to call `visitAdd`, `visitBr`, `visitCall`, etc. Used for instruction counting, constant folding, and optimization passes. Default behavior delegates to parent class visitors. |
-| Vue.js | [transforms/vIf.ts#L35-L60](https://github.com/vuejs/core/blob/48ad452dd61926a59e358da3c74c5ef750ae21c4/packages/compiler-core/src/transforms/vIf.ts#L35-L60) | `transformIf` is a `NodeTransform` visitor that walks the template AST. The compiler's `traverseNode` (in transform.ts) dispatches each AST node to registered transform visitors. Each transform (v-if, v-for, v-bind) is a visitor that rewrites nodes without modifying the AST structure code. |
+| LLVM | [InstVisitor.h#L45-L107](https://github.com/llvm/llvm-project/blob/1dc53bacd24fb555dfd2ec030a5ee33f5db3fadf/llvm/include/llvm/IR/InstVisitor.h#L45-L107) | `InstVisitor<SubClass, RetTy>` (L45) là visitor CRTP qua mọi kiểu lệnh LLVM IR. Nó dispatch qua `visit(Instruction &I)` switch theo opcode để gọi `visitAdd`, `visitBr`, `visitCall` v.v. Dùng cho đếm lệnh, gấp hằng và pass tối ưu. Hành vi mặc định uỷ thác visitor class cha. |
+| Vue.js | [transforms/vIf.ts#L35-L60](https://github.com/vuejs/core/blob/48ad452dd61926a59e358da3c74c5ef750ae21c4/packages/compiler-core/src/transforms/vIf.ts#L35-L60) | `transformIf` là visitor `NodeTransform` đi qua AST template. `traverseNode` của compiler (trong transform.ts) dispatch mỗi node AST tới visitor transform đã đăng ký. Mỗi transform (v-if, v-for, v-bind) là visitor viết lại node mà không sửa code cấu trúc AST. |
 
-## Implementation
+## Triển khai
 
 ::: code-group
 
@@ -190,70 +190,70 @@ eval_visitor = {
 
 :::
 
-## Exercises
+## Bài tập
 
-| Level | Exercise | File |
+| Cấp độ | Bài tập | File |
 |-------|----------|------|
-| Basic | AST visitor for math expressions (eval + print) | `exercises/typescript/visitor/01-basic.test.ts` |
-| Intermediate | Transform visitor that rewrites the tree (constant folding) | `exercises/typescript/visitor/02-intermediate.test.ts` |
+| Cơ bản | Visitor AST cho biểu thức toán (eval + print) | `exercises/typescript/visitor/01-basic.test.ts` |
+| Trung bình | Visitor transform viết lại cây (gấp hằng) | `exercises/typescript/visitor/02-intermediate.test.ts` |
 
-Run exercises: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
+Chạy bài tập: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
 
-Exercise files: Rust `exercises/rust/src/visitor/mod.rs` · Go `exercises/go/visitor/visitor_test.go` · Python `exercises/python/visitor/test_visitor.py`
+File bài tập: Rust `exercises/rust/src/visitor/mod.rs` · Go `exercises/go/visitor/visitor_test.go` · Python `exercises/python/visitor/test_visitor.py`
 
-## When to Use
+## Khi nào nên dùng
 
-- **Compilers and interpreters** — evaluation, type checking, optimization passes over ASTs
-- **Linters and formatters** — walk code AST to detect patterns or reformat
-- **Serialization** — traverse an object graph to emit JSON, XML, or binary
-- **UI frameworks** — walk component tree for rendering, diffing, or accessibility checks
-- **Query planners** — walk and optimize SQL query plans
+- **Compiler và interpreter** — đánh giá, type checking, pass tối ưu qua AST
+- **Linter và formatter** — đi qua AST code để phát hiện pattern hoặc format lại
+- **Serialize** — duyệt đồ thị object để phát JSON, XML hoặc binary
+- **Framework UI** — đi qua cây component để render, diff hoặc check accessibility
+- **Query planner** — đi qua và tối ưu kế hoạch truy vấn SQL
 
-## When NOT to Use
+## Khi nào KHÔNG nên dùng
 
-- **Frequently changing node types** — if you add node types often, every visitor must be updated (expression problem)
-- **Simple single-pass logic** — if you only need one operation, a simple recursive function is clearer than a full visitor
-- **Flat data** — visitors shine on tree/graph structures; for flat lists, a simple loop suffices
+- **Kiểu node thay đổi thường xuyên** — nếu bạn thêm kiểu node thường xuyên, mọi visitor phải update (expression problem)
+- **Logic đơn giản một pass** — nếu chỉ cần một thao tác, hàm đệ quy đơn giản rõ hơn visitor đầy đủ
+- **Dữ liệu phẳng** — visitor toả sáng trên cấu trúc cây/đồ thị; cho list phẳng, vòng lặp đơn giản đủ
 
-## More Production Uses
+## Thêm các ứng dụng production
 
-- [Babel](https://github.com/babel/babel) — JavaScript AST transforms use a visitor-based plugin architecture
-- [ESLint](https://github.com/eslint/eslint) — lint rules are visitors that walk the AST and report violations
-- [Roslyn](https://github.com/dotnet/roslyn) — C# compiler's syntax tree visitors for analysis and code generation
-- [rustc](https://github.com/rust-lang/rust) — HIR and MIR visitor traits for borrow checking, optimization, and codegen
+- [Babel](https://github.com/babel/babel) — transform AST JavaScript dùng kiến trúc plugin nền visitor
+- [ESLint](https://github.com/eslint/eslint) — rule lint là visitor đi qua AST và báo cáo vi phạm
+- [Roslyn](https://github.com/dotnet/roslyn) — visitor syntax tree của compiler C# cho phân tích và sinh code
+- [rustc](https://github.com/rust-lang/rust) — trait visitor HIR và MIR cho borrow checking, tối ưu và codegen
 
-## Related Patterns
+## Pattern liên quan
 
-| Pattern | Relationship |
+| Pattern | Quan hệ |
 |---------|-------------|
-| [Iterator](/patterns/iterator/) | Both traverse structures — visitors dispatch callbacks, iterators yield elements |
-| [Vtable](/patterns/vtable/) | Visitor's dispatch table is conceptually a vtable indexed by node type |
-| [Dependency Graph](/patterns/dependency-graph/) | Visitors walk dependency graphs to process nodes in correct order |
-| [Tagged Union](/patterns/tagged-union/) | Visitor dispatch matches on tagged union's type tag |
-| [State Machine](/patterns/state-machine/) | Visitors can traverse state machine nodes; state machines can drive visitor dispatch |
+| [Iterator](/patterns/iterator/) | Cả hai duyệt cấu trúc — visitor dispatch callback, iterator yield phần tử |
+| [Vtable](/patterns/vtable/) | Bảng dispatch visitor về mặt khái niệm là vtable index theo kiểu node |
+| [Dependency Graph](/patterns/dependency-graph/) | Visitor đi qua dependency graph để xử lý node theo thứ tự đúng |
+| [Tagged Union](/patterns/tagged-union/) | Dispatch visitor match tag kiểu của tagged union |
+| [State Machine](/patterns/state-machine/) | Visitor có thể duyệt node state machine; state machine có thể thúc dispatch visitor |
 
-## Challenge Questions
+## Câu hỏi thử thách
 
-::: details Q1: You're building a compiler with 20 AST node types and 15 optimization passes. Should you use visitors or switch statements?
-**Answer:** Visitors. With 15 passes (operations) and 20 node types, you'd need 15 separate switch statements each handling 20 cases. With visitors, each pass is a self-contained visitor class.
+::: details Câu 1: Bạn đang xây compiler với 20 kiểu node AST và 15 pass tối ưu. Nên dùng visitor hay switch statement?
+**Trả lời:** Visitor. Với 15 pass (thao tác) và 20 kiểu node, bạn sẽ cần 15 switch riêng mỗi cái xử lý 20 case. Với visitor, mỗi pass là class visitor tự chứa.
 
-If you add a new pass, you write one visitor. If you use switches, you add one function with 20 cases. The visitor keeps each pass's logic cohesive. However, if you add a new node type, you must update all 15 visitors — this is the classic tradeoff.
+Nếu thêm pass mới, bạn viết một visitor. Nếu dùng switch, bạn thêm một hàm với 20 case. Visitor giữ logic mỗi pass gắn kết. Tuy nhiên, nếu thêm kiểu node mới, bạn phải update cả 15 visitor — đây là đánh đổi kinh điển.
 :::
 
-::: details Q2: Babel plugins are visitors. What happens if two plugins visit the same node type and conflict?
-**Answer:** Plugin order matters. Babel runs visitors in the order plugins are listed in the config. If plugin A transforms a node that plugin B also expects, the first plugin's output becomes the second plugin's input.
+::: details Câu 2: Plugin Babel là visitor. Chuyện gì nếu hai plugin visit cùng kiểu node và xung đột?
+**Trả lời:** Thứ tự plugin quan trọng. Babel chạy visitor theo thứ tự plugin liệt kê trong config. Nếu plugin A biến đổi node mà plugin B cũng mong, output plugin đầu trở thành input plugin sau.
 
-This can cause subtle bugs: plugin A rewrites `import` to `require`, then plugin B (expecting `import`) doesn't match. Solutions: (1) Document plugin ordering requirements, (2) Use visitor priorities, (3) Run conflicting plugins in separate passes. Babel's `pre`/`post` hooks help coordinate.
+Điều này có thể gây bug tinh tế: plugin A viết lại `import` thành `require`, rồi plugin B (mong `import`) không match. Giải pháp: (1) Tài liệu yêu cầu thứ tự plugin, (2) Dùng ưu tiên visitor, (3) Chạy plugin xung đột ở pass riêng. Hook `pre`/`post` của Babel giúp phối hợp.
 :::
 
-::: details Q3: The transform visitor in the exercise creates new nodes instead of mutating. Why is immutability important here?
-**Answer:** Immutable transforms are safer because the original tree is preserved. This enables: (1) running multiple transforms on the same input, (2) comparing before/after for debugging, (3) rolling back if a transform fails, (4) parallel transforms on the same tree.
+::: details Câu 3: Visitor transform trong bài tập tạo node mới thay vì sửa. Sao bất biến quan trọng ở đây?
+**Trả lời:** Transform bất biến an toàn hơn vì cây gốc được bảo toàn. Điều này cho phép: (1) chạy nhiều transform trên cùng input, (2) so trước/sau để debug, (3) rollback nếu transform fail, (4) transform song song trên cùng cây.
 
-Mutable visitors are faster (no allocation) but dangerous — one visitor's mutation can break another visitor that's reading the same tree. LLVM uses mutable visitors for performance, but Vue's compiler uses immutable transforms for safety.
+Visitor mutable nhanh hơn (không cấp phát) nhưng nguy hiểm — mutation của một visitor có thể phá visitor khác đang đọc cùng cây. LLVM dùng visitor mutable cho hiệu năng, nhưng compiler Vue dùng transform bất biến cho an toàn.
 :::
 
-::: details Q4: LLVM's InstVisitor has a default case that calls the parent instruction class's visitor. Why is this useful?
-**Answer:** It implements fallback behavior via the class hierarchy. If you don't override `visitAdd`, it falls back to `visitBinaryOperator`, then to `visitInstruction`, then to a no-op.
+::: details Câu 4: InstVisitor của LLVM có case mặc định gọi visitor class lệnh cha. Sao điều này hữu ích?
+**Trả lời:** Nó triển khai hành vi fallback qua phân cấp class. Nếu bạn không override `visitAdd`, nó fallback về `visitBinaryOperator`, rồi `visitInstruction`, rồi no-op.
 
-This means you only need to override the cases you care about. An instruction counter can override just `visitInstruction` to count all instructions. A binary operation optimizer can override just `visitBinaryOperator` to handle add, sub, mul, div at once, without listing each. This is the "template method" pattern applied to visitors.
+Điều này nghĩa bạn chỉ cần override các case quan tâm. Bộ đếm lệnh có thể override chỉ `visitInstruction` để đếm mọi lệnh. Tối ưu thao tác nhị phân có thể override chỉ `visitBinaryOperator` để xử lý add, sub, mul, div cùng lúc, không cần liệt kê mỗi cái. Đây là pattern "template method" áp dụng cho visitor.
 :::
