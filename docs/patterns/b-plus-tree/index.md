@@ -1,6 +1,6 @@
 ---
 title: "Pattern: B+ Tree"
-description: "Self-balancing tree with high branching factor — internal nodes guide, leaf nodes store, all leaves linked for efficient range scans."
+description: "Cây tự cân bằng với hệ số phân nhánh cao — node nội hướng dẫn, node lá lưu, mọi lá liên kết cho range scan hiệu quả."
 difficulty: "advanced"
 ---
 
@@ -8,59 +8,59 @@ difficulty: "advanced"
 
 <DifficultyBadge />
 
-## One Liner
+## Mô tả một câu
 
-Self-balancing tree with high branching factor — internal nodes guide, leaf nodes store, all leaves linked for efficient range scans.
+Cây tự cân bằng với hệ số phân nhánh cao — node nội hướng dẫn, node lá lưu, mọi lá liên kết cho range scan hiệu quả.
 
 <DemoBadge />
 
-## Real-World Analogy
+## Tương tự thực tế
 
-A library's card catalog with multiple levels. The top drawer says 'A-M' and 'N-Z.' Inside 'A-M,' you find 'A-D', 'E-H', etc. You keep narrowing until you reach the actual cards, which are linked together for easy browsing.
+Catalog thẻ thư viện với nhiều cấp. Ngăn trên cùng ghi 'A-M' và 'N-Z.' Trong 'A-M,' bạn tìm 'A-D', 'E-H', v.v. Bạn cứ thu hẹp tới khi đến thẻ thực, được liên kết để dễ duyệt.
 
-## Core Idea
+## Ý tưởng cốt lõi
 
-A B+ tree separates routing from storage. Internal nodes hold only keys and child pointers to guide searches down the tree. Leaf nodes hold actual key-value pairs and are linked together, enabling efficient sequential scans. The high branching factor (hundreds of keys per node) keeps the tree shallow — typically 3-4 levels for billions of records — minimizing disk I/O.
+B+ tree tách routing khỏi storage. Node nội chỉ giữ key và con trỏ con để hướng dẫn tìm kiếm xuống cây. Node lá giữ cặp key-value thực và được liên kết, cho phép quét tuần tự hiệu quả. Hệ số phân nhánh cao (hàng trăm key mỗi node) giữ cây nông — thường 3-4 tầng cho hàng tỉ record — giảm thiểu I/O đĩa.
 
 ```text
                     ┌──────────────┐
-                    │   [30 | 60]  │          Internal (keys only)
+                    │   [30 | 60]  │          Nội (chỉ key)
                     └──┬─────┬──┬──┘
                        │     │  │
           ┌────────────┘     │  └────────────┐
           ▼                  ▼               ▼
      ┌─────────┐      ┌──────────┐     ┌─────────┐
-     │[10 | 20]│      │[40 | 50] │     │[70 | 80]│   Internal
+     │[10 | 20]│      │[40 | 50] │     │[70 | 80]│   Nội
      └─┬──┬──┬─┘      └──┬──┬──┬─┘     └─┬──┬──┬─┘
        │  │  │           │  │  │         │  │  │
        ▼  ▼  ▼           ▼  ▼  ▼         ▼  ▼  ▼
      ┌───┬───┬───┬───┬───┬───┬───┬───┬───┐
-     │1-9│10-│20-│30-│40-│50-│60-│70-│80-│  Leaf nodes
-     │   │ 19│ 29│ 39│ 49│ 59│ 69│ 79│ 99│  (data here)
+     │1-9│10-│20-│30-│40-│50-│60-│70-│80-│  Node lá
+     │   │ 19│ 29│ 39│ 49│ 59│ 69│ 79│ 99│  (dữ liệu ở đây)
      └─►─┴─►─┴─►─┴─►─┴─►─┴─►─┴─►─┴─►─┴───┘
-       Linked list for range scans ──────►
+       Linked list cho range scan ───────►
 ```
 
-| Property | Value |
+| Thuộc tính | Giá trị |
 |----------|-------|
-| Search | O(log_B n) — B = branching factor |
-| Insert | O(log_B n) — may split nodes |
-| Range scan | O(log_B n + k) — k = result count |
-| Space | O(n) |
-| Fan-out | Typically 100-1000 keys per node |
+| Tìm kiếm | O(log_B n) — B = hệ số phân nhánh |
+| Chèn | O(log_B n) — có thể tách node |
+| Range scan | O(log_B n + k) — k = số kết quả |
+| Bộ nhớ | O(n) |
+| Fan-out | Thường 100-1000 key mỗi node |
 
-**Try it yourself** — insert keys and watch the B+ tree split nodes to stay balanced:
+**Thử ngay** — chèn key và xem B+ tree tách node để giữ cân bằng:
 
 <BPlusTreeViz />
 
-## Production Proof
+## Bằng chứng production
 
-| Project | Source | Usage |
+| Dự án | Nguồn | Cách dùng |
 |---------|--------|-------|
-| PostgreSQL | [nbtinsert.c#L22-L55](https://github.com/postgres/postgres/blob/e18b0cb7344cb4bd28468f6c0aeeb9b9241d30aa/src/backend/access/nbtree/nbtinsert.c#L22-L55) | B-link tree (Lehman-Yao variant of B+ tree). `_bt_doinsert` manages concurrent insertions with right-links between siblings. Internal pages store keys + child pointers; leaf pages store heap TIDs and are chained for index scans via `_bt_readnextpage`. |
-| SQLite | [btreeInt.h#L190-L198](https://github.com/sqlite/sqlite/blob/2cb57d9d4ac7eac3b1d15cfa71511f54817cb3e4/src/btreeInt.h#L190-L198) | All tables and indexes backed by B+ trees on disk pages. Cell format defined in `btreeInt.h`: interior cells hold child page pointers + keys; leaf cells hold complete payloads. `balance_nonroot()` handles page splitting when a node overflows. |
+| PostgreSQL | [nbtinsert.c#L22-L55](https://github.com/postgres/postgres/blob/e18b0cb7344cb4bd28468f6c0aeeb9b9241d30aa/src/backend/access/nbtree/nbtinsert.c#L22-L55) | B-link tree (biến thể Lehman-Yao của B+ tree). `_bt_doinsert` quản lý chèn đồng thời với right-link giữa anh em. Page nội lưu key + con trỏ con; page lá lưu heap TID và được nối cho index scan qua `_bt_readnextpage`. |
+| SQLite | [btreeInt.h#L190-L198](https://github.com/sqlite/sqlite/blob/2cb57d9d4ac7eac3b1d15cfa71511f54817cb3e4/src/btreeInt.h#L190-L198) | Mọi bảng và index nền B+ tree trên page đĩa. Định dạng cell định nghĩa trong `btreeInt.h`: cell nội giữ con trỏ page con + key; cell lá giữ payload đầy đủ. `balance_nonroot()` xử lý tách page khi node tràn. |
 
-## Implementation
+## Triển khai
 
 ::: code-group
 
@@ -497,78 +497,78 @@ class BPlusTree:
 
 :::
 
-## Exercises
+## Bài tập
 
-| Level | Exercise | File |
+| Cấp độ | Bài tập | File |
 |-------|----------|------|
-| Basic | Implement a B+ tree with insert and search | `exercises/typescript/b-plus-tree/01-basic.test.ts` |
-| Intermediate | Add range queries with linked leaf traversal | `exercises/typescript/b-plus-tree/02-intermediate.test.ts` |
+| Cơ bản | Triển khai B+ tree với insert và search | `exercises/typescript/b-plus-tree/01-basic.test.ts` |
+| Trung bình | Thêm range query với duyệt lá liên kết | `exercises/typescript/b-plus-tree/02-intermediate.test.ts` |
 
-Run exercises: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
+Chạy bài tập: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
 
-Exercise files: Rust `exercises/rust/src/b_plus_tree/mod.rs` · Go `exercises/go/b_plus_tree/b_plus_tree_test.go` · Python `exercises/python/b_plus_tree/test_b_plus_tree.py`
+File bài tập: Rust `exercises/rust/src/b_plus_tree/mod.rs` · Go `exercises/go/b_plus_tree/b_plus_tree_test.go` · Python `exercises/python/b_plus_tree/test_b_plus_tree.py`
 
-## When to Use
+## Khi nào nên dùng
 
-- **Database indexes** — every RDBMS uses B+ trees for primary and secondary indexes
-- **File systems** — NTFS, ext4, Btrfs store directory entries and metadata in B+ trees
-- **Range queries needed** — linked leaves enable efficient `WHERE x BETWEEN a AND b`
-- **Disk-backed storage** — high fan-out minimizes disk seeks (3-4 levels for billions of rows)
-- **Ordered iteration** — leaf chain provides sorted traversal without tree walk
+- **Index database** — mọi RDBMS dùng B+ tree cho index chính và phụ
+- **Filesystem** — NTFS, ext4, Btrfs lưu entry thư mục và metadata trong B+ tree
+- **Cần range query** — lá liên kết cho `WHERE x BETWEEN a AND b` hiệu quả
+- **Lưu trữ nền đĩa** — fan-out cao giảm thiểu seek đĩa (3-4 tầng cho hàng tỉ row)
+- **Lặp có thứ tự** — chuỗi lá cung cấp duyệt đã sắp xếp không cần đi cây
 
-## When NOT to Use
+## Khi nào KHÔNG nên dùng
 
-- **In-memory only with small data** — a hash map or balanced BST is simpler and faster
-- **Write-heavy with no reads** — LSM trees (LevelDB, RocksDB) batch writes more efficiently
-- **Point lookups only** — hash indexes are O(1) vs O(log n); skip the tree overhead
-- **Append-only workloads** — random inserts cause page splits; log-structured storage avoids this
+- **Chỉ trong bộ nhớ với dữ liệu nhỏ** — hash map hoặc BST cân bằng đơn giản và nhanh hơn
+- **Nặng ghi không đọc** — LSM tree (LevelDB, RocksDB) batch ghi hiệu quả hơn
+- **Chỉ tra cứu điểm** — hash index O(1) so với O(log n); bỏ qua overhead cây
+- **Tải append-only** — chèn ngẫu nhiên gây tách page; lưu trữ log-structured tránh được
 
-## More Production Uses
+## Thêm các ứng dụng production
 
-- [InnoDB (MySQL)](https://github.com/mysql/mysql-server) — clustered index is a B+ tree; secondary indexes point back to it
-- [MongoDB WiredTiger](https://github.com/mongodb/mongo) — WiredTiger storage engine uses B+ trees for indexes
-- [LMDB](https://github.com/LMDB/lmdb) — copy-on-write B+ tree for crash-safe memory-mapped storage
-- [Btrfs](https://github.com/torvalds/linux) — Linux filesystem built entirely on B-trees / B+ trees
+- [InnoDB (MySQL)](https://github.com/mysql/mysql-server) — clustered index là B+ tree; index phụ trỏ về nó
+- [MongoDB WiredTiger](https://github.com/mongodb/mongo) — engine lưu trữ WiredTiger dùng B+ tree cho index
+- [LMDB](https://github.com/LMDB/lmdb) — B+ tree copy-on-write cho lưu trữ memory-mapped an toàn crash
+- [Btrfs](https://github.com/torvalds/linux) — filesystem Linux xây hoàn toàn trên B-tree / B+ tree
 
-## Related Patterns
+## Pattern liên quan
 
-| Pattern | Relationship |
+| Pattern | Quan hệ |
 |---------|-------------|
-| [Skip List](/patterns/skip-list/) | Simpler probabilistic alternative with comparable O(log n) performance |
-| [LSM Tree (Log-Structured Merge Tree)](/patterns/lsm-tree/) | LSM trees buffer writes for speed; B+ trees optimize reads with balanced structure |
-| [Merkle Tree](/patterns/merkle-tree/) | Both are tree structures — Merkle for integrity verification, B+ for ordered storage |
-| [Merge Iterator (K-Way Merge)](/patterns/merge-iterator/) | B+ tree range scans use iterator patterns similar to merge iterators |
-| [Min-Heap / Priority Queue](/patterns/min-heap/) | Both are tree-based structures — B+ trees optimize range queries, min-heaps optimize priority extraction |
+| [Skip List](/patterns/skip-list/) | Lựa chọn theo xác suất đơn giản hơn với hiệu năng O(log n) tương đương |
+| [LSM Tree (Log-Structured Merge Tree)](/patterns/lsm-tree/) | LSM tree đệm ghi cho tốc độ; B+ tree tối ưu đọc với cấu trúc cân bằng |
+| [Merkle Tree](/patterns/merkle-tree/) | Cả hai là cấu trúc cây — Merkle cho xác minh toàn vẹn, B+ cho lưu trữ có thứ tự |
+| [Merge Iterator (K-Way Merge)](/patterns/merge-iterator/) | Range scan B+ tree dùng pattern iterator tương tự merge iterator |
+| [Min-Heap / Priority Queue](/patterns/min-heap/) | Cả hai là cấu trúc nền cây — B+ tree tối ưu range query, min-heap tối ưu trích ưu tiên |
 
-## Challenge Questions
+## Câu hỏi thử thách
 
-::: details Q1: A B+ tree with order 100 and 1 billion keys. How many levels deep is it? How many disk reads for a point lookup?
-**Answer:** At most 5 levels.
+::: details Câu 1: B+ tree với order 100 và 1 tỉ key. Sâu bao nhiêu tầng? Bao nhiêu lần đọc đĩa cho tra cứu điểm?
+**Trả lời:** Tối đa 5 tầng.
 
-Each internal node holds up to 99 keys and 100 children. Level 0 (root): 1 node. Level 1: 100 nodes. Level 2: 10,000 nodes. Level 3: 1,000,000 nodes. Level 4 (leaves): 100,000,000 nodes.
+Mỗi node nội giữ tối đa 99 key và 100 con. Tầng 0 (root): 1 node. Tầng 1: 100 node. Tầng 2: 10.000 node. Tầng 3: 1.000.000 node. Tầng 4 (lá): 100.000.000 node.
 
-100^4 = 10 billion > 1 billion, so 5 levels suffice. A point lookup reads one node per level = 5 disk reads. In practice the root and top internal levels are cached in RAM, so typically 2-3 disk reads.
+100^4 = 10 tỉ > 1 tỉ, nên 5 tầng đủ. Tra cứu điểm đọc một node mỗi tầng = 5 lần đọc đĩa. Thực tế root và các tầng nội trên cùng được cache trong RAM, nên thường 2-3 lần đọc đĩa.
 :::
 
-::: details Q2: Why do B+ trees store values ONLY in leaves, unlike B-trees which store values in internal nodes too?
-**Answer:** Two reasons:
+::: details Câu 2: Sao B+ tree CHỈ lưu giá trị ở lá, khác B-tree lưu giá trị ở cả node nội?
+**Trả lời:** Hai lý do:
 
-1. **Higher fan-out**: Internal nodes without values are smaller, so more keys fit per page. More keys per node = shallower tree = fewer disk reads.
-2. **Simpler range scans**: All values are at the leaf level linked together. A range query walks the leaf chain linearly. In a B-tree, you'd need an in-order traversal visiting every level.
+1. **Fan-out cao hơn**: Node nội không có giá trị nhỏ hơn, nên nhiều key vừa mỗi page. Nhiều key mỗi node = cây nông hơn = ít đọc đĩa hơn.
+2. **Range scan đơn giản hơn**: Mọi giá trị ở cấp lá liên kết với nhau. Range query đi qua chuỗi lá tuyến tính. Trong B-tree, bạn cần duyệt in-order thăm mọi tầng.
 
-The tradeoff: exact-match lookups always go to leaf level in a B+ tree (never short-circuit at an internal node). But disk-backed systems optimize for fan-out, making B+ trees the universal choice for databases.
+Đánh đổi: tra cứu match chính xác luôn đi tới cấp lá trong B+ tree (không short-circuit ở node nội). Nhưng hệ thống nền đĩa tối ưu cho fan-out, làm B+ tree là lựa chọn phổ quát cho database.
 :::
 
-::: details Q3: PostgreSQL uses a "B-link tree" instead of a standard B+ tree. What problem does the right-link solve?
-**Answer:** Concurrent access without global locks.
+::: details Câu 3: PostgreSQL dùng "B-link tree" thay B+ tree chuẩn. Right-link giải vấn đề gì?
+**Trả lời:** Truy cập đồng thời không cần lock toàn cục.
 
-In a standard B+ tree, a split requires locking the parent to insert the new child pointer. This can cascade up to the root, creating a bottleneck. Lehman and Yao's B-link tree adds a right-link pointer between siblings at every level. A reader that lands on a node mid-split can follow the right-link to find the new sibling. Writers only need to lock the node being split and its right neighbor — no parent lock needed at split time.
+Trong B+ tree chuẩn, một split cần lock parent để chèn con trỏ con mới. Điều này có thể lan lên root, tạo nút thắt. B-link tree của Lehman và Yao thêm con trỏ right-link giữa anh em ở mọi tầng. Reader đáp xuống node giữa lúc split có thể theo right-link tìm anh em mới. Writer chỉ cần lock node đang split và hàng xóm phải — không cần lock parent lúc split.
 
-This is why PostgreSQL can handle concurrent index insertions without locking the entire tree.
+Đây là lý do PostgreSQL có thể xử lý chèn index đồng thời không lock toàn cây.
 :::
 
-::: details Q4: Your B+ tree index works well for `SELECT * FROM orders WHERE price BETWEEN 10 AND 50`, but `SELECT * FROM orders WHERE status = 'pending' AND region = 'US'` is slow despite having a composite index on (status, region). What happened?
-**Answer:** The query likely isn't using the index's leftmost prefix, or the column order in the composite index doesn't match the query pattern.
+::: details Câu 4: Index B+ tree của bạn hoạt động tốt cho `SELECT * FROM orders WHERE price BETWEEN 10 AND 50`, nhưng `SELECT * FROM orders WHERE status = 'pending' AND region = 'US'` chậm dù có index tổng hợp trên (status, region). Chuyện gì xảy ra?
+**Trả lời:** Truy vấn có thể không dùng prefix trái nhất của index, hoặc thứ tự cột trong index tổng hợp không match mẫu truy vấn.
 
-A B+ tree composite index on (status, region) stores entries sorted first by status, then by region within each status. This index handles `WHERE status = 'pending'` and `WHERE status = 'pending' AND region = 'US'` efficiently. But if the query filters on `region` alone without `status`, the B+ tree can't skip to the right leaf — it must scan the entire index. This is the "leftmost prefix" rule: a composite B+ tree index is only useful for queries that filter on a prefix of the indexed columns in order. For multi-column filtering on arbitrary combinations, consider separate indexes or a different indexing strategy.
+Index tổng hợp B+ tree trên (status, region) lưu entry sắp xếp đầu tiên theo status, rồi theo region trong mỗi status. Index này xử lý `WHERE status = 'pending'` và `WHERE status = 'pending' AND region = 'US'` hiệu quả. Nhưng nếu truy vấn lọc trên `region` riêng không có `status`, B+ tree không thể nhảy tới lá đúng — nó phải quét cả index. Đây là quy tắc "leftmost prefix": index tổng hợp B+ tree chỉ hữu ích cho truy vấn lọc trên prefix các cột đã index theo thứ tự. Cho lọc đa cột trên tổ hợp tuỳ ý, cân nhắc index riêng hoặc chiến lược index khác.
 :::
