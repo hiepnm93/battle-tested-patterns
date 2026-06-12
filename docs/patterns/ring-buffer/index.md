@@ -1,26 +1,26 @@
 ---
-title: "Pattern: Ring Buffer (Circular Buffer)"
-description: "A fixed-size buffer that wraps around using modular arithmetic, enabling constant-time enqueue and dequeue without memory allocation."
+title: "Pattern: Ring Buffer (Buffer vòng)"
+description: "Buffer kích thước cố định vòng quanh qua số học modulo, cho enqueue và dequeue thời gian hằng mà không cấp phát bộ nhớ."
 difficulty: "beginner"
 ---
 
-# Pattern: Ring Buffer (Circular Buffer)
+# Pattern: Ring Buffer (Buffer vòng)
 
 <DifficultyBadge />
 
-## One Liner
+## Mô tả một câu
 
-A fixed-size buffer that wraps around using modular arithmetic, enabling constant-time enqueue and dequeue without memory allocation.
+Buffer kích thước cố định vòng quanh qua số học modulo, cho enqueue và dequeue thời gian hằng mà không cấp phát bộ nhớ.
 
 <DemoBadge />
 
-## Real-World Analogy
+## Tương tự thực tế
 
-A sushi conveyor belt in a restaurant. The belt has a fixed number of plates. The chef places new plates at one end, and diners take plates as they pass. When the belt is full, the chef must wait. When it's empty, diners must wait. The belt loops back around endlessly.
+Băng chuyền sushi trong nhà hàng. Băng có số đĩa cố định. Đầu bếp đặt đĩa mới ở một đầu, khách lấy đĩa khi nó đi qua. Khi băng đầy, đầu bếp phải chờ. Khi rỗng, khách phải chờ. Băng cứ vòng vô tận.
 
-## Core Idea
+## Ý tưởng cốt lõi
 
-A ring buffer uses a fixed array with two pointers — `head` (next read position) and `tail` (next write position). When either pointer reaches the end, it wraps to the beginning. No shifting, no resizing, no allocation.
+Ring buffer dùng mảng cố định với hai con trỏ — `head` (vị trí đọc tiếp) và `tail` (vị trí ghi tiếp). Khi một con trỏ đạt cuối, nó vòng về đầu. Không dịch, không resize, không cấp phát.
 
 ```text
   Capacity: 8       head=2, tail=6
@@ -31,31 +31,31 @@ A ring buffer uses a fixed array with two pointers — `head` (next read positio
             │               │
           head            tail
 
-  Write 'E' at tail (index 6), then tail = (6+1) % 8 = 7
-  Read 'A' at head (index 2), then head = (2+1) % 8 = 3
+  Ghi 'E' tại tail (index 6), rồi tail = (6+1) % 8 = 7
+  Đọc 'A' tại head (index 2), rồi head = (2+1) % 8 = 3
 ```
 
-The wrap-around `index % capacity` is what makes it "ring" — it never runs out of space in the array, it just overwrites old data (or blocks, depending on the implementation).
+Wrap-around `index % capacity` là cái làm nó "ring" — không bao giờ hết chỗ trong mảng, chỉ ghi đè dữ liệu cũ (hoặc block, tuỳ triển khai).
 
-| Property | Value |
+| Thuộc tính | Giá trị |
 |----------|-------|
-| enqueue / write | O(1) — write at tail, advance pointer |
-| dequeue / read | O(1) — read at head, advance pointer |
-| Space | O(capacity) — fixed, pre-allocated |
-| Overflow policy | Block (bounded queue) or overwrite oldest (log buffer) |
+| enqueue / write | O(1) — ghi tại tail, tiến con trỏ |
+| dequeue / read | O(1) — đọc tại head, tiến con trỏ |
+| Bộ nhớ | O(capacity) — cố định, cấp phát trước |
+| Chính sách tràn | Block (queue giới hạn) hoặc ghi đè cũ nhất (log buffer) |
 
-**Try it yourself** — enqueue and dequeue items to see how head/tail pointers wrap around:
+**Thử ngay** — enqueue và dequeue item để xem các con trỏ head/tail vòng quanh:
 
 <RingBufferViz />
 
-## Production Proof
+## Bằng chứng production
 
-| Project | Source | Usage |
+| Dự án | Nguồn | Cách dùng |
 |---------|--------|-------|
-| LMAX Disruptor | [RingBuffer.java#L84-L130](https://github.com/LMAX-Exchange/disruptor/blob/c871ca49826a6be7ada6957f6fbafcfecf7b1f87/src/main/java/com/lmax/disruptor/RingBuffer.java#L84-L130) | The Disruptor's `RingBuffer` is the core data structure behind LMAX Exchange — processes 6 million orders per second. Uses power-of-2 sizing for bitwise modulo (`sequence & (bufferSize - 1)`). |
-| Linux Kernel | [ring_buffer.h#L12-L70](https://github.com/torvalds/linux/blob/acb7500801e98639f6d8c2d796ed9f64cba83d3a/include/linux/ring_buffer.h#L12-L70) | `ring_buffer_event` struct with `type_len` packed into 5 bits + 27-bit timestamp delta. Per-CPU ring buffers — `ring_buffer_read`/`ring_buffer_consume` advance a read pointer without locks. Overflow silently overwrites oldest events. |
+| LMAX Disruptor | [RingBuffer.java#L84-L130](https://github.com/LMAX-Exchange/disruptor/blob/c871ca49826a6be7ada6957f6fbafcfecf7b1f87/src/main/java/com/lmax/disruptor/RingBuffer.java#L84-L130) | `RingBuffer` của Disruptor là cấu trúc dữ liệu cốt lõi đằng sau LMAX Exchange — xử lý 6 triệu lệnh mỗi giây. Dùng kích thước luỹ thừa 2 để modulo bằng bitwise (`sequence & (bufferSize - 1)`). |
+| Nhân Linux | [ring_buffer.h#L12-L70](https://github.com/torvalds/linux/blob/acb7500801e98639f6d8c2d796ed9f64cba83d3a/include/linux/ring_buffer.h#L12-L70) | Struct `ring_buffer_event` với `type_len` đóng gói vào 5 bit + delta timestamp 27 bit. Ring buffer mỗi CPU — `ring_buffer_read`/`ring_buffer_consume` tiến con trỏ đọc không lock. Tràn âm thầm ghi đè event cũ nhất. |
 
-## Implementation
+## Triển khai
 
 ::: code-group
 
@@ -200,70 +200,70 @@ class RingBuffer:
 
 :::
 
-## Exercises
+## Bài tập
 
-| Level | Exercise | File |
+| Cấp độ | Bài tập | File |
 |-------|----------|------|
-| Basic | Implement a ring buffer with enqueue/dequeue | `exercises/typescript/ring-buffer/01-basic.test.ts` |
-| Intermediate | Streaming moving average over last N values | `exercises/typescript/ring-buffer/02-intermediate.test.ts` |
+| Cơ bản | Triển khai ring buffer với enqueue/dequeue | `exercises/typescript/ring-buffer/01-basic.test.ts` |
+| Trung bình | Streaming moving average qua N giá trị cuối | `exercises/typescript/ring-buffer/02-intermediate.test.ts` |
 
-Run exercises: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
+Chạy bài tập: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
 
-Exercise files: Rust `exercises/rust/src/ring_buffer/mod.rs` · Go `exercises/go/ring_buffer/ring_buffer_test.go` · Python `exercises/python/ring_buffer/test_ring_buffer.py`
+File bài tập: Rust `exercises/rust/src/ring_buffer/mod.rs` · Go `exercises/go/ring_buffer/ring_buffer_test.go` · Python `exercises/python/ring_buffer/test_ring_buffer.py`
 
-## When to Use
+## Khi nào nên dùng
 
-- **Fixed-size queues** — bounded producer-consumer buffers
-- **Streaming data** — log buffers, audio/video frames, network packets
-- **Lock-free concurrency** — with atomic head/tail, enables wait-free SPSC queues
-- **Overwrite-oldest semantics** — telemetry, recent-N caches
-- **Embedded / real-time** — no heap allocation, deterministic timing
+- **Queue kích thước cố định** — buffer producer-consumer giới hạn
+- **Dữ liệu streaming** — log buffer, frame audio/video, gói mạng
+- **Concurrency lock-free** — với head/tail atomic, cho queue SPSC wait-free
+- **Ngữ nghĩa ghi đè cũ nhất** — telemetry, cache N gần nhất
+- **Nhúng / realtime** — không cấp phát heap, timing xác định
 
-## When NOT to Use
+## Khi nào KHÔNG nên dùng
 
-- **Unbounded growth** — if you can't predict maximum size, use a linked list or `Vec`/`deque`
-- **Random access by key** — ring buffers are sequential; use a hash map
-- **Variable-size elements** — packing different-sized items is complex; use a message queue
+- **Tăng không giới hạn** — nếu không đoán được kích thước max, dùng linked list hoặc `Vec`/`deque`
+- **Truy cập ngẫu nhiên theo key** — ring buffer tuần tự; dùng hash map
+- **Phần tử kích thước thay đổi** — đóng gói item kích thước khác phức tạp; dùng message queue
 
-## More Production Uses
+## Thêm các ứng dụng production
 
 - Linux [io_uring](https://github.com/axboe/liburing)
 - [ZeroMQ](https://github.com/zeromq/libzmq)
-- [Kafka](https://github.com/apache/kafka) — log segments
-- [PortAudio](https://github.com/portaudio/portaudio/blob/b0fe9de7ec86ebe5a26086f1d662ab74d7ebfae4/src/common/pa_ringbuffer.c) — lock-free SPSC ring buffer for real-time audio
+- [Kafka](https://github.com/apache/kafka) — segment log
+- [PortAudio](https://github.com/portaudio/portaudio/blob/b0fe9de7ec86ebe5a26086f1d662ab74d7ebfae4/src/common/pa_ringbuffer.c) — ring buffer SPSC lock-free cho audio realtime
 
-## Related Patterns
+## Pattern liên quan
 
-| Pattern | Relationship |
+| Pattern | Quan hệ |
 |---------|-------------|
-| [Backpressure](/patterns/backpressure/) | Bounded ring buffers naturally create backpressure when full |
-| [Event Loop](/patterns/event-loop/) | Event loops use ring buffers for I/O event queues |
-| [Double Buffering](/patterns/double-buffering/) | Both avoid allocation — ring buffers reuse slots, double buffering swaps pointers |
-| [Batch Processing](/patterns/batch-processing/) | Ring buffers accumulate events for batch consumption |
-| [Free List](/patterns/free-list/) | Both provide O(1) slot management — ring buffers via modular index, free lists via linked chain |
+| [Backpressure](/patterns/backpressure/) | Ring buffer giới hạn tự nhiên tạo backpressure khi đầy |
+| [Event Loop](/patterns/event-loop/) | Event loop dùng ring buffer cho queue event I/O |
+| [Double Buffering](/patterns/double-buffering/) | Cả hai tránh cấp phát — ring buffer tái dùng slot, double buffering hoán đổi con trỏ |
+| [Batch Processing](/patterns/batch-processing/) | Ring buffer gom event cho tiêu thụ theo lô |
+| [Free List](/patterns/free-list/) | Cả hai cung cấp quản lý slot O(1) — ring buffer qua index modulo, free list qua chuỗi liên kết |
 
-## Challenge Questions
+## Câu hỏi thử thách
 
-::: details Q1: You implement a ring buffer with capacity 8, but without a separate `count` field — you only track `head` and `tail`. When `head === tail`, you can't tell if the buffer is completely full or completely empty. How do production systems solve this?
-**Answer:** The most common solution is to either keep a separate count, or allocate capacity + 1 slots and treat `(tail + 1) % capacity === head` as full.
+::: details Câu 1: Bạn triển khai ring buffer capacity 8, nhưng không có trường `count` riêng — chỉ theo `head` và `tail`. Khi `head === tail`, không phân biệt được buffer đầy hay rỗng. Hệ thống production giải thế nào?
+**Trả lời:** Cách phổ biến nhất là hoặc giữ count riêng, hoặc cấp phát capacity + 1 slot và coi `(tail + 1) % capacity === head` là đầy.
 
-With only `head` and `tail`, both the empty and full states look identical (`head === tail`). LMAX Disruptor uses sequence numbers that grow monotonically rather than wrapping pointers, so `tail - head` directly gives the count. The "waste one slot" approach sacrifices one element of capacity but avoids the overhead of maintaining an atomic counter in concurrent scenarios.
+Chỉ với `head` và `tail`, cả state rỗng và đầy trông giống nhau (`head === tail`). LMAX Disruptor dùng sequence number tăng đơn điệu thay vì con trỏ vòng, nên `tail - head` cho count trực tiếp. Cách "lãng phí một slot" hy sinh một phần tử capacity nhưng tránh overhead duy trì bộ đếm atomic trong kịch bản đồng thời.
 :::
 
-::: details Q2: The LMAX Disruptor requires ring buffer capacity to be a power of 2. Your colleague says any size works since you're using `% capacity` anyway. Why does LMAX insist on power-of-2?
-**Answer:** Power-of-2 sizing lets you replace the modulo operation with a bitwise AND (`index & (capacity - 1)`), which is significantly faster.
+::: details Câu 2: LMAX Disruptor yêu cầu capacity ring buffer là luỹ thừa 2. Đồng nghiệp nói kích thước nào cũng được vì bạn đang dùng `% capacity`. Vì sao LMAX khăng khăng luỹ thừa 2?
+**Trả lời:** Kích thước luỹ thừa 2 cho phép thay thao tác modulo bằng bitwise AND (`index & (capacity - 1)`), nhanh hơn đáng kể.
 
-The modulo operator `%` compiles to a division instruction, which takes 20-40 CPU cycles on most architectures. A bitwise AND takes 1 cycle. In a system processing 6 million events per second, this optimization on every enqueue and dequeue adds up. It only works because `n & (2^k - 1)` is mathematically equivalent to `n % 2^k` when the divisor is a power of 2.
+Toán tử modulo `%` compile thành lệnh chia, mất 20-40 chu kỳ CPU trên hầu hết kiến trúc. Bitwise AND mất 1 chu kỳ. Trong hệ thống xử lý 6 triệu event mỗi giây, tối ưu này trên mỗi enqueue và dequeue cộng dồn lại. Chỉ hoạt động vì `n & (2^k - 1)` tương đương toán học với `n % 2^k` khi số chia là luỹ thừa 2.
 :::
 
-::: details Q3: Your logging system uses a ring buffer for recent log entries. During a production incident, you notice the oldest logs you need for debugging have already been overwritten. Increasing the buffer size to "large enough" is not practical. What architectural change would you make?
-**Answer:** Add a drain/consumer that flushes entries to persistent storage before they're overwritten, turning the ring buffer into a staging area rather than the final store.
+::: details Câu 3: Hệ logging của bạn dùng ring buffer cho log entry gần nhất. Trong sự cố production, bạn nhận thấy log cũ nhất cần debug đã bị ghi đè. Tăng buffer "đủ lớn" không thực tế. Bạn thay đổi kiến trúc nào?
+**Trả lời:** Thêm consumer/drain flush entry vào lưu trữ bền vững trước khi bị ghi đè, biến ring buffer thành vùng staging thay vì store cuối.
 
-A ring buffer is inherently bounded — that's its strength (predictable memory) and its limitation (data loss under sustained load). The pattern used by Linux's `io_uring` and kernel trace buffers is to have a consumer that reads entries and persists them. The ring buffer absorbs bursts, and the consumer handles steady-state throughput. This separates the write-fast concern from the store-everything concern.
+Ring buffer vốn dĩ giới hạn — đó là điểm mạnh (bộ nhớ dự đoán được) và giới hạn (mất dữ liệu khi tải lâu dài). Pattern dùng bởi `io_uring` của Linux và trace buffer kernel là có consumer đọc entry và lưu lại. Ring buffer hấp thụ burst, và consumer xử lý throughput ổn định. Việc này tách quan tâm ghi-nhanh khỏi quan tâm lưu-mọi-thứ.
 :::
 
-::: details Q4: You're building a single-producer, single-consumer (SPSC) ring buffer for an audio pipeline. The producer writes 48,000 samples/sec and the consumer reads in 1024-sample blocks. Occasionally the consumer stalls for 50ms (e.g., disk I/O). What capacity do you choose, and what happens if you get it wrong?
-**Answer:** At least 48000 × 0.05 = 2,400 samples to survive a 50ms stall, rounded up to the next power of 2 (4,096). In practice, double or quadruple that (8,192 or 16,384) to handle back-to-back stalls.
+::: details Câu 4: Bạn đang xây ring buffer single-producer, single-consumer (SPSC) cho pipeline audio. Producer ghi 48.000 sample/giây và consumer đọc theo block 1024 sample. Thỉnh thoảng consumer stall 50ms (ví dụ I/O đĩa). Bạn chọn capacity nào, và sai thì sao?
+**Trả lời:** Ít nhất 48000 × 0,05 = 2.400 sample để sống sót stall 50ms, làm tròn lên luỹ thừa 2 tiếp theo (4.096). Thực tế, gấp đôi hoặc gấp bốn (8.192 hoặc 16.384) để xử lý stall liên tiếp.
 
-If the buffer is too small, the producer overwrites unread samples (audio glitches) or blocks (pipeline stall). If too large, you add latency — the consumer is always reading samples that were written further in the past. Audio systems typically size the buffer to 2-3x the maximum expected stall duration as a safety margin. This is the fundamental ring buffer tradeoff: capacity = maximum burst tolerance, and every extra slot adds one sample period of worst-case latency.
+Nếu buffer quá nhỏ, producer ghi đè sample chưa đọc (lỗi âm thanh) hoặc block (pipeline stall). Nếu quá lớn, bạn thêm độ trễ — consumer luôn đọc sample đã ghi từ quá khứ xa hơn. Hệ thống audio thường đặt buffer 2-3x thời lượng stall tối đa kỳ vọng làm biên an toàn. Đây là đánh đổi ring buffer cơ bản: capacity = mức chịu burst tối đa, và mỗi slot thêm cộng một chu kỳ sample vào độ trễ tệ nhất.
 :::
