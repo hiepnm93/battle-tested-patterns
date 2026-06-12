@@ -1,6 +1,6 @@
 ---
 title: "Pattern: Actor Model"
-description: "Each actor has a mailbox and processes messages sequentially — no shared state, no locks, just message passing for safe concurrency."
+description: "Mỗi actor có mailbox và xử lý thông điệp tuần tự — không state chia sẻ, không lock, chỉ truyền thông điệp cho concurrency an toàn."
 difficulty: "advanced"
 ---
 
@@ -8,19 +8,19 @@ difficulty: "advanced"
 
 <DifficultyBadge />
 
-## One Liner
+## Mô tả một câu
 
-Each actor has a mailbox and processes messages sequentially — no shared state, no locks, just message passing for safe concurrency.
+Mỗi actor có mailbox và xử lý thông điệp tuần tự — không state chia sẻ, không lock, chỉ truyền thông điệp cho concurrency an toàn.
 
 <DemoBadge />
 
-## Real-World Analogy
+## Tương tự thực tế
 
-Coworkers communicating only through sealed envelopes in mailboxes. No one walks into another's office — you write a message, drop it in their mailbox, and go back to your own work. Each person processes their mail one message at a time.
+Đồng nghiệp giao tiếp chỉ qua phong bì niêm phong trong hòm thư. Không ai bước vào văn phòng người khác — bạn viết thông điệp, bỏ vào hòm thư của họ và quay về công việc riêng. Mỗi người xử lý thư từng cái một.
 
-## Core Idea
+## Ý tưởng cốt lõi
 
-An actor is a lightweight process with private state and a mailbox (message queue). Actors communicate exclusively by sending asynchronous messages. Each actor processes one message at a time, updating its state and optionally sending messages to other actors. This eliminates shared-state concurrency bugs by design.
+Actor là process nhẹ với state riêng và mailbox (queue thông điệp). Actor giao tiếp duy nhất qua gửi thông điệp bất đồng bộ. Mỗi actor xử lý một thông điệp một lúc, cập nhật state và tuỳ ý gửi thông điệp tới actor khác. Điều này loại bỏ bug concurrency state chia sẻ do thiết kế.
 
 ```text
   Actor A                    Actor B                    Actor C
@@ -31,29 +31,29 @@ An actor is a lightweight process with private state and a mailbox (message queu
   │ ┌──┬──┬──┐       │ send │ ┌──┬──┐          │      │ ┌──┐             │
   │ │m1│m2│m3│       │─────►│ │m4│m5│          │      │ │m6│             │
   │ └──┴──┴──┘       │      │ └──┴──┘          │      │ └──┘             │
-  │ Processing: m1   │      │ Processing: m4   │      │ Idle             │
+  │ Xử lý: m1        │      │ Xử lý: m4        │      │ Idle             │
   └──────────────────┘      └──────────────────┘      └──────────────────┘
 ```
 
-| Property | Value |
+| Thuộc tính | Giá trị |
 |----------|-------|
-| Concurrency | No shared state — message passing only |
-| Processing | Sequential per actor (one message at a time) |
-| Failure isolation | Actor crash doesn't corrupt other actors |
-| Scalability | Millions of lightweight actors (Erlang: 2KB per process) |
+| Concurrency | Không state chia sẻ — chỉ truyền thông điệp |
+| Xử lý | Tuần tự mỗi actor (một thông điệp một lúc) |
+| Cô lập lỗi | Actor crash không hư hỏng actor khác |
+| Khả năng mở rộng | Hàng triệu actor nhẹ (Erlang: 2KB mỗi process) |
 
-**Try it yourself** — send messages between actors and observe mailbox processing and state isolation:
+**Thử ngay** — gửi thông điệp giữa actor và quan sát xử lý mailbox và cô lập state:
 
 <ActorModelViz />
 
-## Production Proof
+## Bằng chứng production
 
-| Project | Source | Usage |
+| Dự án | Nguồn | Cách dùng |
 |---------|--------|-------|
-| Akka (Scala) | [Actor.scala#L476-L547](https://github.com/akka/akka-core/blob/aded7b67a9dafcb32b8a5dc95f6debce3a97c0e9/akka-actor/src/main/scala/akka/actor/Actor.scala#L476-L547) | `trait Actor` — the core actor interface. Defines `context`, `self`, `sender()`, and `def receive: Actor.Receive` (L528) where every Akka actor specifies its message-handling behavior via a partial function. `aroundReceive` (L540-L546) is the dispatch hook. |
-| Erlang/OTP | [erl_process.h#L1043-L1205](https://github.com/erlang/otp/blob/c75602432b4eff922bcaf4a175144dc61adbd6d6/erts/emulator/beam/erl_process.h#L1043-L1205) | `struct process` — the BEAM VM's representation of an Erlang process (actor). Key fields: `sig_qs` (L1107, signal/message queues — the mailbox), `sig_inq` (L1168, concurrent signal input queue), `state` (L1165, atomic process state flags). Each process is a lightweight actor with its own heap and mailbox. |
+| Akka (Scala) | [Actor.scala#L476-L547](https://github.com/akka/akka-core/blob/aded7b67a9dafcb32b8a5dc95f6debce3a97c0e9/akka-actor/src/main/scala/akka/actor/Actor.scala#L476-L547) | `trait Actor` — interface actor cốt lõi. Định nghĩa `context`, `self`, `sender()` và `def receive: Actor.Receive` (L528) nơi mỗi actor Akka chỉ định hành vi xử lý thông điệp qua hàm một phần. `aroundReceive` (L540-L546) là hook dispatch. |
+| Erlang/OTP | [erl_process.h#L1043-L1205](https://github.com/erlang/otp/blob/c75602432b4eff922bcaf4a175144dc61adbd6d6/erts/emulator/beam/erl_process.h#L1043-L1205) | `struct process` — biểu diễn của BEAM VM cho process Erlang (actor). Trường then chốt: `sig_qs` (L1107, queue tín hiệu/thông điệp — mailbox), `sig_inq` (L1168, queue input tín hiệu đồng thời), `state` (L1165, cờ state process atomic). Mỗi process là actor nhẹ với heap và mailbox riêng. |
 
-## Implementation
+## Triển khai
 
 ::: code-group
 
@@ -176,69 +176,69 @@ class Actor:
 
 :::
 
-## Exercises
+## Bài tập
 
-| Level | Exercise | File |
+| Cấp độ | Bài tập | File |
 |-------|----------|------|
-| Basic | Implement an actor with mailbox and message processing | `exercises/typescript/actor-model/01-basic.test.ts` |
-| Intermediate | Actor supervision — parent restarts crashed children | `exercises/typescript/actor-model/02-intermediate.test.ts` |
+| Cơ bản | Triển khai actor với mailbox và xử lý thông điệp | `exercises/typescript/actor-model/01-basic.test.ts` |
+| Trung bình | Giám sát actor — cha khởi động lại con crash | `exercises/typescript/actor-model/02-intermediate.test.ts` |
 
-Run exercises: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
+Chạy bài tập: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
 
-Exercise files: Rust `exercises/rust/src/actor_model/mod.rs` · Go `exercises/go/actor_model/actor_model_test.go` · Python `exercises/python/actor_model/test_actor_model.py`
+File bài tập: Rust `exercises/rust/src/actor_model/mod.rs` · Go `exercises/go/actor_model/actor_model_test.go` · Python `exercises/python/actor_model/test_actor_model.py`
 
-## When to Use
+## Khi nào nên dùng
 
-- **Distributed systems** — actors map naturally to network nodes (Erlang/OTP, Akka Cluster)
-- **Game servers** — each entity (player, NPC, room) as an independent actor
-- **IoT** — each device as an actor processing sensor events
-- **Telecom** — Erlang's origin: millions of concurrent call sessions
-- **Chat systems** — each conversation/room as an actor
+- **Hệ phân tán** — actor map tự nhiên tới node mạng (Erlang/OTP, Akka Cluster)
+- **Game server** — mỗi entity (player, NPC, phòng) như actor độc lập
+- **IoT** — mỗi thiết bị như actor xử lý event sensor
+- **Telecom** — nguồn gốc Erlang: hàng triệu phiên gọi đồng thời
+- **Hệ chat** — mỗi conversation/room như actor
 
-## When NOT to Use
+## Khi nào KHÔNG nên dùng
 
-- **Tight data coupling** — if components need shared mutable state, message passing adds latency
-- **Simple request-response** — a function call is simpler than an actor roundtrip
-- **Computation-heavy, no concurrency** — actor overhead without concurrency benefit
-- **Strong consistency** — actors provide eventual consistency; use transactions for ACID
+- **Ghép dữ liệu chặt** — nếu các thành phần cần state mutable chia sẻ, truyền thông điệp thêm độ trễ
+- **Request-response đơn giản** — gọi hàm đơn giản hơn roundtrip actor
+- **Nặng tính toán, không concurrency** — overhead actor không có lợi ích concurrency
+- **Strong consistency** — actor cung cấp eventual consistency; dùng transaction cho ACID
 
-## More Production Uses
+## Thêm các ứng dụng production
 
-- [Orleans (C#)](https://github.com/dotnet/orleans/blob/bab4fb03e99c978ae483c24d0d759f5b93222a74/src/Orleans.Runtime/Catalog/ActivationData.cs#L31-L55) — virtual actor ("grain") with `RunMessageLoop` dispatch at L980-L1012
-- [Proto.Actor (Go)](https://github.com/asynkron/protoactor-go/blob/288962e52f3f59533c8f463fc31f98b8d5d39e41/actor/message.go#L12-L14) — minimal `Actor` interface with single `Receive(c Context)` method
-- [Actix (Rust)](https://github.com/actix/actix) — actor framework for Rust with typed messages
-- [Microsoft DAPR](https://github.com/dapr/dapr) — virtual actors for microservices
+- [Orleans (C#)](https://github.com/dotnet/orleans/blob/bab4fb03e99c978ae483c24d0d759f5b93222a74/src/Orleans.Runtime/Catalog/ActivationData.cs#L31-L55) — actor ảo ("grain") với dispatch `RunMessageLoop` ở L980-L1012
+- [Proto.Actor (Go)](https://github.com/asynkron/protoactor-go/blob/288962e52f3f59533c8f463fc31f98b8d5d39e41/actor/message.go#L12-L14) — interface `Actor` tối giản với method `Receive(c Context)` đơn
+- [Actix (Rust)](https://github.com/actix/actix) — framework actor cho Rust với thông điệp có kiểu
+- [Microsoft DAPR](https://github.com/dapr/dapr) — actor ảo cho microservice
 
-## Related Patterns
+## Pattern liên quan
 
-| Pattern | Relationship |
+| Pattern | Quan hệ |
 |---------|-------------|
-| [Observer](/patterns/observer/) | Actors communicate via messages, similar to observer's publish/subscribe pattern |
-| [Event Loop](/patterns/event-loop/) | Each actor processes its mailbox sequentially, like a single-threaded event loop |
-| [State Machine](/patterns/state-machine/) | Actor behavior often follows a state machine pattern for its internal logic |
+| [Observer](/patterns/observer/) | Actor giao tiếp qua thông điệp, tương tự pattern publish/subscribe của observer |
+| [Event Loop](/patterns/event-loop/) | Mỗi actor xử lý mailbox tuần tự, như event loop đơn luồng |
+| [State Machine](/patterns/state-machine/) | Hành vi actor thường theo pattern state machine cho logic nội bộ |
 
-## Challenge Questions
+## Câu hỏi thử thách
 
-::: details Q1: Actors communicate only via asynchronous messages, with no shared state or locks. A colleague claims "actors can't deadlock since there are no locks." Is this true?
-**Answer:** Actors can still deadlock through circular message dependencies, even without any locks.
+::: details Câu 1: Actor giao tiếp chỉ qua thông điệp bất đồng bộ, không state chia sẻ hay lock. Đồng nghiệp khẳng định "actor không thể deadlock vì không có lock." Có đúng không?
+**Trả lời:** Actor vẫn có thể deadlock qua phụ thuộc thông điệp vòng, dù không có lock.
 
-If Actor A sends a message to Actor B and waits for a response, while Actor B sends a message to Actor A and waits for a response, neither can process the other's message — both mailboxes contain an unprocessed message that requires the other to proceed. This is logically equivalent to a lock-based deadlock. The mitigation is to avoid synchronous request-reply patterns between actors, use timeouts on all message exchanges, or design message flows as DAGs (directed acyclic graphs) rather than cycles.
+Nếu Actor A gửi thông điệp tới Actor B và chờ response, trong khi Actor B gửi thông điệp tới Actor A và chờ response, không ai có thể xử lý thông điệp của cái kia — cả hai mailbox chứa thông điệp chưa xử lý cần cái kia tiến hành. Logic tương đương deadlock dựa trên lock. Giảm nhẹ là tránh pattern request-reply đồng bộ giữa actor, dùng timeout trên mọi trao đổi thông điệp, hoặc thiết kế luồng thông điệp như DAG (đồ thị có hướng không chu trình) thay vì vòng.
 :::
 
-::: details Q2: Your actor system has a fast producer actor sending 10,000 messages/second to a slow consumer actor that processes 100 messages/second. The consumer's mailbox grows unboundedly. How should an actor system handle this back pressure?
-**Answer:** Bounded mailboxes with explicit back-pressure signals — when the mailbox is full, the sender must either drop messages, block, or receive a rejection signal.
+::: details Câu 2: Hệ actor của bạn có producer nhanh gửi 10.000 thông điệp/giây tới consumer chậm xử lý 100 thông điệp/giây. Mailbox của consumer tăng không giới hạn. Hệ actor nên xử lý back pressure này thế nào?
+**Trả lời:** Mailbox giới hạn với tín hiệu back-pressure tường minh — khi mailbox đầy, sender phải hoặc drop thông điệp, block, hoặc nhận tín hiệu từ chối.
 
-Unbounded mailboxes are a common pitfall in actor systems — they trade memory for liveness, eventually causing OOM crashes. Akka offers `BoundedMailbox` which blocks senders when full, and flow-control via Akka Streams (reactive streams back-pressure). Erlang processes have unbounded mailboxes by design but rely on the OTP supervision tree to restart processes that consume too much memory. The architectural insight is that back-pressure is a system design concern, not just an actor concern — you need to decide at each producer-consumer boundary what happens when the consumer can't keep up.
+Mailbox không giới hạn là cạm bẫy phổ biến trong hệ actor — chúng đánh đổi bộ nhớ lấy liveness, cuối cùng gây crash OOM. Akka cung cấp `BoundedMailbox` block sender khi đầy, và flow-control qua Akka Streams (back-pressure reactive streams). Process Erlang có mailbox không giới hạn theo thiết kế nhưng dựa vào cây giám sát OTP để khởi động lại process tiêu thụ quá nhiều bộ nhớ. Insight kiến trúc là back-pressure là quan tâm thiết kế hệ thống, không chỉ quan tâm actor — bạn cần quyết định ở mỗi ranh giới producer-consumer chuyện gì xảy ra khi consumer không theo kịp.
 :::
 
-::: details Q3: An actor processing a payment message crashes mid-execution due to a bug. The payment was partially processed (funds debited but not credited). How does Erlang/OTP handle actor crashes without corrupting the system?
-**Answer:** OTP's supervision tree restarts the crashed actor with fresh state — the key insight is that actor state is ephemeral and the source of truth lives elsewhere (database, message log).
+::: details Câu 3: Actor xử lý thông điệp thanh toán crash giữa chừng do bug. Thanh toán đã xử lý một phần (tiền bị trừ nhưng chưa cộng). Erlang/OTP xử lý actor crash mà không hư hỏng hệ thống thế nào?
+**Trả lời:** Cây giám sát OTP khởi động lại actor crash với state tươi — insight then chốt là state actor là tạm và nguồn sự thật sống ở nơi khác (database, log thông điệp).
 
-Erlang's "let it crash" philosophy means actors don't try to recover from unexpected errors — they die, and a supervisor process restarts them. But this only works if the actor's side effects are either idempotent or transactional. For the payment case, the debit and credit should be wrapped in a database transaction, or the actor should use an outbox pattern: write the intent to a durable log first, then execute. If it crashes mid-execution, the restarted actor replays the log. The actor model isolates the crash (other actors are unaffected), but durability and consistency still require explicit design.
+Triết lý "cứ để crash" của Erlang nghĩa actor không cố phục hồi từ lỗi bất ngờ — chúng chết, và process supervisor khởi động lại. Nhưng chỉ hoạt động nếu side effect của actor hoặc idempotent hoặc transactional. Cho case thanh toán, debit và credit nên bọc trong transaction database, hoặc actor nên dùng pattern outbox: ghi ý định vào log bền vững trước, rồi thực thi. Nếu crash giữa chừng, actor được khởi động lại replay log. Mô hình actor cô lập crash (actor khác không ảnh hưởng), nhưng bền vững và consistency vẫn cần thiết kế tường minh.
 :::
 
-::: details Q4: Erlang can run millions of actors (processes) on a single machine, each with only ~2KB of memory. The Go implementation in this doc uses goroutines with a channel mailbox. Could you run 1 million Go actors the same way?
-**Answer:** Yes for the goroutine count (Go supports millions of goroutines), but each channel in the implementation allocates a buffer of 100 elements, and the combined channel overhead is significant.
+::: details Câu 4: Erlang có thể chạy hàng triệu actor (process) trên một máy, mỗi cái chỉ ~2KB bộ nhớ. Triển khai Go trong doc này dùng goroutine với mailbox channel. Bạn có thể chạy 1 triệu actor Go cùng cách không?
+**Trả lời:** Có cho số goroutine (Go hỗ trợ hàng triệu goroutine), nhưng mỗi channel trong triển khai cấp phát buffer 100 phần tử, và overhead channel kết hợp đáng kể.
 
-A goroutine starts at 2KB stack (since Go 1.4), so 1 million goroutines cost ~2GB of stack memory alone. Each buffered channel adds its buffer size times the element size. Since Go 1.14, goroutines are asynchronously preempted via signals, so CPU-bound actors won't starve others. The deeper difference is Erlang's per-process garbage collection — each actor's GC pause is independent and microsecond-scale. Go's GC is global but concurrent, with STW pauses typically sub-millisecond (often under 100μs since Go 1.8+). The real tradeoff is that Erlang's per-process GC keeps pause impact localized, while Go's concurrent GC traverses the entire heap — meaningful at extreme actor counts. For truly massive actor counts, Erlang's BEAM VM was purpose-built for this; Go can approximate it but with different GC tradeoffs.
+Goroutine bắt đầu ở stack 2KB (từ Go 1.4), nên 1 triệu goroutine tốn ~2GB bộ nhớ stack riêng. Mỗi buffered channel thêm size buffer nhân size phần tử. Từ Go 1.14, goroutine được preempt bất đồng bộ qua signal, nên actor CPU-bound không bỏ đói actor khác. Khác biệt sâu hơn là garbage collection per-process của Erlang — pause GC mỗi actor độc lập và quy mô microsecond. GC Go toàn cục nhưng đồng thời, với pause STW thường dưới millisecond (thường dưới 100μs từ Go 1.8+). Đánh đổi thực là GC per-process Erlang giữ tác động pause cục bộ, trong khi GC đồng thời Go duyệt cả heap — đáng kể ở số actor cực lớn. Cho số actor thực sự khủng, BEAM VM của Erlang được xây cho mục đích này; Go có thể xấp xỉ nhưng với đánh đổi GC khác.
 :::
