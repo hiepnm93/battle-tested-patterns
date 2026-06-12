@@ -1,6 +1,6 @@
 ---
 title: "Pattern: Merge Iterator (K-Way Merge)"
-description: 'Combine K sorted streams into one sorted output using a min-heap — the universal "unified view" over multiple data sources.'
+description: 'Kết hợp K luồng đã sắp xếp thành một output đã sắp xếp dùng min-heap — "view hợp nhất" tổng quát qua nhiều nguồn dữ liệu.'
 difficulty: "advanced"
 ---
 
@@ -8,59 +8,59 @@ difficulty: "advanced"
 
 <DifficultyBadge />
 
-## One Liner
+## Mô tả một câu
 
-Combine K sorted streams into one sorted output using a min-heap — the universal "unified view" over multiple data sources.
+Kết hợp K luồng đã sắp xếp thành một output đã sắp xếp dùng min-heap — "view hợp nhất" tổng quát qua nhiều nguồn dữ liệu.
 
 <DemoBadge />
 
-## Real-World Analogy
+## Tương tự thực tế
 
-Merging sorted stacks of exam papers from different classrooms. You look at the top paper of each stack, pick the one with the lowest student number, place it in the merged pile, and repeat. You only ever compare the top papers.
+Gộp các xếp bài thi đã sắp xếp từ các lớp khác nhau. Bạn nhìn bài trên cùng của mỗi xếp, lấy cái có số sinh viên thấp nhất, đặt vào xếp gộp, lặp lại. Bạn chỉ so sánh các bài trên cùng.
 
-## Core Idea
+## Ý tưởng cốt lõi
 
-A merge iterator maintains a min-heap of size K, where each entry tracks the current element and which stream it came from. On each `next()` call, it pops the smallest element, advances that stream, and pushes the next element from that stream back into the heap. This produces a globally sorted output in O(n log K) time, where n is the total number of elements.
+Merge iterator duy trì min-heap kích thước K, mỗi entry theo dõi phần tử hiện tại và nó từ luồng nào. Mỗi cuộc gọi `next()`, pop phần tử nhỏ nhất, tiến luồng đó và push phần tử tiếp theo từ luồng đó vào heap. Điều này sinh output sắp xếp toàn cục trong O(n log K) thời gian, n là tổng phần tử.
 
 ```text
-  Stream 0: [1, 5, 9]
-  Stream 1: [2, 6, 7]
-  Stream 2: [3, 4, 8]
+  Luồng 0: [1, 5, 9]
+  Luồng 1: [2, 6, 7]
+  Luồng 2: [3, 4, 8]
 
-  Min-Heap (tracks smallest from each stream):
+  Min-Heap (theo dõi nhỏ nhất từ mỗi luồng):
   ┌─────────────────────────┐
   │  pop min → push next    │
   │  ┌───┐                  │
-  │  │ 1 │ ← Stream 0      │
+  │  │ 1 │ ← Luồng 0        │
   │  ├───┤                  │
-  │  │ 2 │ ← Stream 1      │
+  │  │ 2 │ ← Luồng 1        │
   │  ├───┤                  │
-  │  │ 3 │ ← Stream 2      │
+  │  │ 3 │ ← Luồng 2        │
   │  └───┘                  │
   └─────────────────────────┘
 
   Output: 1, 2, 3, 4, 5, 6, 7, 8, 9
 ```
 
-| Property | Value |
+| Thuộc tính | Giá trị |
 |----------|-------|
-| Time complexity | O(n log K) for n total elements, K streams |
-| Space complexity | O(K) for the heap |
-| Stream requirement | Each input stream must be sorted |
-| Output guarantee | Globally sorted, stable within equal keys |
+| Độ phức tạp thời gian | O(n log K) cho n tổng phần tử, K luồng |
+| Độ phức tạp không gian | O(K) cho heap |
+| Yêu cầu luồng | Mỗi luồng input phải đã sắp xếp |
+| Đảm bảo output | Sắp xếp toàn cục, ổn định cho key bằng |
 
-**Try it yourself** — add sorted streams and merge them into one globally sorted output:
+**Thử ngay** — thêm luồng đã sắp xếp và gộp thành một output sắp xếp toàn cục:
 
 <MergeIteratorViz />
 
-## Production Proof
+## Bằng chứng production
 
-| Project | Source | Usage |
+| Dự án | Nguồn | Cách dùng |
 |---------|--------|-------|
-| LevelDB | [merger.cc#L17-L100](https://github.com/google/leveldb/blob/7ee830d02b623e8ffe0b95d59a74db1e58da04c5/table/merger.cc#L17-L100) | `MergingIterator` merges multiple sorted table iterators (memtable + multiple SSTable levels) into a single sorted view. `FindSmallest()` (L84-L100) scans children to find the iterator with the smallest current key. This is the core read path of LevelDB — every `Get()` and `Seek()` goes through this merger to present a unified view of data spread across multiple files and memory. |
-| RocksDB | [merge_helper.cc#L87-L156](https://github.com/facebook/rocksdb/blob/7affaee1c49ebc80cb213ad86fe7d2a3ad447da2/db/merge_helper.cc#L87-L156) | `TimedFullMerge` implements the merge operator that combines multiple versions of the same key. During compaction, `MergeHelper::MergeUntil` walks through an iterator of sorted entries, merging values for duplicate keys. This is how RocksDB supports user-defined merge operations (e.g., append, increment) efficiently during compaction. |
+| LevelDB | [merger.cc#L17-L100](https://github.com/google/leveldb/blob/7ee830d02b623e8ffe0b95d59a74db1e58da04c5/table/merger.cc#L17-L100) | `MergingIterator` gộp nhiều iterator table đã sắp xếp (memtable + nhiều tầng SSTable) thành một view đã sắp xếp. `FindSmallest()` (L84-L100) quét children để tìm iterator có key hiện tại nhỏ nhất. Đây là đường đọc cốt lõi LevelDB — mọi `Get()` và `Seek()` đi qua merger này để trình bày view hợp nhất của dữ liệu rải qua nhiều file và bộ nhớ. |
+| RocksDB | [merge_helper.cc#L87-L156](https://github.com/facebook/rocksdb/blob/7affaee1c49ebc80cb213ad86fe7d2a3ad447da2/db/merge_helper.cc#L87-L156) | `TimedFullMerge` triển khai toán tử merge kết hợp nhiều phiên bản của cùng key. Khi compaction, `MergeHelper::MergeUntil` đi qua iterator entry đã sắp xếp, gộp giá trị cho key trùng. Đây là cách RocksDB hỗ trợ thao tác merge người dùng định nghĩa (ví dụ append, increment) hiệu quả khi compaction. |
 
-## Implementation
+## Triển khai
 
 ::: code-group
 
@@ -264,71 +264,71 @@ def merge_k_sorted(streams: list[list[int]]) -> list[int]:
 
 :::
 
-## Exercises
+## Bài tập
 
-| Level | Exercise | File |
+| Cấp độ | Bài tập | File |
 |-------|----------|------|
-| Basic | Merge K sorted arrays into one sorted array | `exercises/typescript/merge-iterator/01-basic.test.ts` |
-| Intermediate | Merge with deduplication (latest-wins by key) | `exercises/typescript/merge-iterator/02-intermediate.test.ts` |
+| Cơ bản | Gộp K mảng đã sắp xếp thành một mảng đã sắp xếp | `exercises/typescript/merge-iterator/01-basic.test.ts` |
+| Trung bình | Gộp với khử trùng lặp (mới nhất thắng theo key) | `exercises/typescript/merge-iterator/02-intermediate.test.ts` |
 
-Run exercises: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
+Chạy bài tập: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
 
-Exercise files: Rust `exercises/rust/src/merge_iterator/mod.rs` · Go `exercises/go/merge_iterator/merge_iterator_test.go` · Python `exercises/python/merge_iterator/test_merge_iterator.py`
+File bài tập: Rust `exercises/rust/src/merge_iterator/mod.rs` · Go `exercises/go/merge_iterator/merge_iterator_test.go` · Python `exercises/python/merge_iterator/test_merge_iterator.py`
 
-## When to Use
+## Khi nào nên dùng
 
-- **LSM-tree reads** — merge memtable + multiple SSTable levels into one sorted view (LevelDB, RocksDB)
-- **External sorting** — merge sorted runs that don't fit in memory
-- **Log aggregation** — combine time-sorted logs from multiple services
-- **Database joins** — merge-join of pre-sorted tables
-- **Search engines** — merge posting lists from multiple index segments
+- **Đọc LSM-tree** — gộp memtable + nhiều tầng SSTable thành một view đã sắp xếp (LevelDB, RocksDB)
+- **Sort ngoại vi** — gộp run đã sắp xếp không vừa bộ nhớ
+- **Tổng hợp log** — kết hợp log đã sắp xếp theo thời gian từ nhiều service
+- **Database join** — merge-join các bảng đã sắp xếp trước
+- **Search engine** — gộp posting list từ nhiều segment index
 
-## When NOT to Use
+## Khi nào KHÔNG nên dùng
 
-- **Unsorted inputs** — K-way merge requires pre-sorted streams; sort first or use a different approach
-- **K = 2** — simple two-pointer merge is simpler and avoids heap overhead
-- **Random access patterns** — merge iterators are for sequential scans, not point lookups
-- **Very large K with tiny streams** — heap overhead dominates when streams are very short
+- **Input chưa sắp xếp** — gộp K-way yêu cầu luồng đã sắp xếp; sort trước hoặc dùng cách khác
+- **K = 2** — gộp hai con trỏ đơn giản hơn và tránh overhead heap
+- **Mẫu truy cập ngẫu nhiên** — merge iterator cho quét tuần tự, không phải tra điểm
+- **K rất lớn với luồng nhỏ** — overhead heap lấn át khi luồng rất ngắn
 
-## More Production Uses
+## Thêm các ứng dụng production
 
-- [TiKV](https://github.com/tikv/tikv) — merge iterator over multiple RocksDB column families
-- [Apache Lucene](https://github.com/apache/lucene) — merge segments during index optimization
-- [ClickHouse](https://github.com/ClickHouse/ClickHouse) — MergingSortedTransform for merging sorted data parts
-- [CockroachDB](https://github.com/cockroachdb/cockroach) — merge joins and range scan across multiple ranges
+- [TiKV](https://github.com/tikv/tikv) — merge iterator qua nhiều column family RocksDB
+- [Apache Lucene](https://github.com/apache/lucene) — gộp segment khi tối ưu index
+- [ClickHouse](https://github.com/ClickHouse/ClickHouse) — MergingSortedTransform để gộp data part đã sắp xếp
+- [CockroachDB](https://github.com/cockroachdb/cockroach) — merge join và range scan qua nhiều range
 
-## Related Patterns
+## Pattern liên quan
 
-| Pattern | Relationship |
+| Pattern | Quan hệ |
 |---------|-------------|
-| [Min Heap](/patterns/min-heap/) | The min-heap is the core data structure powering K-way merge |
-| [LSM Tree (Log-Structured Merge Tree)](/patterns/lsm-tree/) | LSM compaction merges multiple sorted SSTables using merge iterators |
-| [Iterator](/patterns/iterator/) | Merge iterator is a composition of the iterator pattern across multiple sources |
-| [Skip List](/patterns/skip-list/) | Skip lists provide the sorted input streams that merge iterators consume |
-| [B+ Tree](/patterns/b-plus-tree/) | Merge iterators combine sorted ranges from multiple B+ tree leaf scans |
+| [Min Heap](/patterns/min-heap/) | Min-heap là cấu trúc dữ liệu cốt lõi chạy gộp K-way |
+| [LSM Tree (Log-Structured Merge Tree)](/patterns/lsm-tree/) | Compaction LSM gộp nhiều SSTable đã sắp xếp dùng merge iterator |
+| [Iterator](/patterns/iterator/) | Merge iterator là kết hợp pattern iterator qua nhiều nguồn |
+| [Skip List](/patterns/skip-list/) | Skip list cung cấp luồng input đã sắp xếp mà merge iterator tiêu thụ |
+| [B+ Tree](/patterns/b-plus-tree/) | Merge iterator kết hợp khoảng đã sắp xếp từ nhiều quét lá B+ tree |
 
-## Challenge Questions
+## Câu hỏi thử thách
 
-::: details Q1: You're merging 100 sorted streams, each with 1 million elements. What's the total number of heap operations, and why is this better than sorting all 100 million elements?
-**Answer:** About 200 million heap operations (each element is pushed and popped once), each costing O(log 100) ~ 7 comparisons. Total: ~1.4 billion comparisons. Sorting 100M elements with merge sort: O(100M × log(100M)) ~ 100M × 27 ~ 2.7 billion comparisons. K-way merge is roughly 2x faster.
+::: details Câu 1: Bạn đang gộp 100 luồng đã sắp xếp, mỗi cái 1 triệu phần tử. Tổng số thao tác heap, và sao tốt hơn sort cả 100 triệu phần tử?
+**Trả lời:** Khoảng 200 triệu thao tác heap (mỗi phần tử được push và pop một lần), mỗi cái tốn O(log 100) ~ 7 so sánh. Tổng: ~1,4 tỉ so sánh. Sort 100M phần tử với merge sort: O(100M × log(100M)) ~ 100M × 27 ~ 2,7 tỉ so sánh. Gộp K-way nhanh khoảng 2x.
 
-The key advantage isn't just fewer comparisons — it's the streaming nature. K-way merge uses O(K) memory regardless of total data size. You can merge terabytes of sorted data from disk using only a few KB of heap space. Full sorting would require loading everything into memory or implementing multi-pass external sort, which is essentially K-way merge anyway.
+Lợi thế then chốt không chỉ ít so sánh — mà là bản chất streaming. Gộp K-way dùng bộ nhớ O(K) bất kể tổng size dữ liệu. Bạn có thể gộp terabyte dữ liệu đã sắp xếp từ đĩa dùng chỉ vài KB space heap. Sort đầy đủ sẽ cần nạp tất cả vào bộ nhớ hoặc triển khai sort ngoại vi nhiều pass, vốn về cơ bản là gộp K-way.
 :::
 
-::: details Q2: LevelDB's MergingIterator uses a linear scan (FindSmallest) instead of a heap to find the minimum. When is this actually faster than a heap?
-**Answer:** When K is small (typically K < 10). Linear scan over K elements costs O(K) comparisons per next() but has better cache locality and no pointer chasing. A heap costs O(log K) but has worse constant factors.
+::: details Câu 2: MergingIterator của LevelDB dùng quét tuyến tính (FindSmallest) thay vì heap để tìm minimum. Khi nào thực sự nhanh hơn heap?
+**Trả lời:** Khi K nhỏ (thường K < 10). Quét tuyến tính qua K phần tử tốn O(K) so sánh mỗi next() nhưng có cache locality tốt hơn và không đuổi con trỏ. Heap tốn O(log K) nhưng có hệ số hằng tệ hơn.
 
-LevelDB typically merges 2-7 levels, so K is very small. At K=4, linear scan does 4 comparisons per next() vs. ~2 for a heap, but avoids heap bookkeeping and has better branch prediction. For large K (hundreds of streams, like in external sort), a heap is clearly better. This is a classic micro-optimization where knowing your typical K matters more than asymptotic complexity.
+LevelDB thường gộp 2-7 tầng, nên K rất nhỏ. Ở K=4, quét tuyến tính làm 4 so sánh mỗi next() so với ~2 cho heap, nhưng tránh bookkeeping heap và có dự đoán nhánh tốt hơn. Cho K lớn (hàng trăm luồng, như trong sort ngoại vi), heap rõ ràng tốt hơn. Đây là tối ưu vi mô kinh điển nơi biết K điển hình quan trọng hơn độ phức tạp tiệm cận.
 :::
 
-::: details Q3: Your merge iterator is combining streams from different database shards. Two shards return the same key "user:123" but with different values and timestamps. How should the merger handle this?
-**Answer:** Use the timestamp as a tiebreaker: when keys are equal, the entry with the latest timestamp wins. Pop all entries with the same key, keep only the newest.
+::: details Câu 3: Merge iterator của bạn đang kết hợp luồng từ các shard database khác nhau. Hai shard trả cùng key "user:123" nhưng với giá trị và timestamp khác nhau. Merger nên xử lý thế nào?
+**Trả lời:** Dùng timestamp làm tiebreaker: khi key bằng, entry với timestamp mới nhất thắng. Pop mọi entry với cùng key, chỉ giữ cái mới nhất.
 
-This is the "latest-wins" deduplication strategy used by LSM trees. During merge, when you encounter duplicate keys, you compare sequence numbers or timestamps and keep only the most recent value. In LevelDB, newer entries (higher sequence numbers) shadow older ones. This must be done during the merge — not after — because you need to know which stream each entry came from to determine recency.
+Đây là chiến lược khử trùng lặp "latest-wins" dùng bởi LSM tree. Khi gộp, khi gặp key trùng, bạn so sequence number hoặc timestamp và giữ chỉ giá trị mới nhất. Trong LevelDB, entry mới hơn (sequence number cao hơn) che cái cũ. Điều này phải làm khi gộp — không phải sau — vì bạn cần biết entry mỗi cái từ luồng nào để xác định độ mới.
 :::
 
-::: details Q4: You're using a merge iterator for real-time log aggregation from 50 microservices. Each service produces ~1000 events/second. The merge output suddenly falls behind. What's happening?
-**Answer:** One slow/stalled stream is blocking the merge. The heap can't emit any element larger than the smallest current element across all streams, so if one stream stops producing, the merge stalls waiting for it.
+::: details Câu 4: Bạn dùng merge iterator cho tổng hợp log realtime từ 50 microservice. Mỗi service sinh ~1000 event/giây. Output gộp đột nhiên rớt lại sau. Chuyện gì đang xảy ra?
+**Trả lời:** Một luồng chậm/dừng đang chặn gộp. Heap không thể phát phần tử nào lớn hơn phần tử nhỏ nhất hiện tại qua mọi luồng, nên nếu một luồng dừng sinh, gộp dừng chờ nó.
 
-This is the "straggler problem" in streaming merges. Solutions: (1) set a timeout per stream — if no data arrives within T ms, skip that stream temporarily; (2) use watermarks — emit all events below a certain timestamp even if some streams haven't reported; (3) buffer and re-sort in windows rather than strict global ordering. Apache Flink and Google Dataflow use watermark-based approaches for exactly this reason.
+Đây là "vấn đề kẻ chậm" trong gộp streaming. Giải pháp: (1) đặt timeout mỗi luồng — nếu không dữ liệu đến trong T ms, bỏ qua luồng đó tạm thời; (2) dùng watermark — phát mọi event dưới timestamp nhất định kể cả nếu vài luồng chưa báo cáo; (3) buffer và re-sort trong cửa sổ thay vì sắp xếp toàn cục nghiêm ngặt. Apache Flink và Google Dataflow dùng cách tiếp cận dựa trên watermark chính xác vì lý do này.
 :::
