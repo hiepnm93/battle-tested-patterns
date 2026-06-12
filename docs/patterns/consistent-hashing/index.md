@@ -1,6 +1,6 @@
 ---
 title: "Pattern: Consistent Hashing"
-description: "Distribute keys across nodes on a virtual ring so that adding or removing a node only remaps ~1/n of the keys."
+description: "Phân tán key qua các node trên vòng ảo sao cho thêm hoặc xoá node chỉ remap ~1/n key."
 difficulty: "advanced"
 ---
 
@@ -8,22 +8,22 @@ difficulty: "advanced"
 
 <DifficultyBadge />
 
-## One Liner
+## Mô tả một câu
 
-Distribute keys across nodes on a virtual ring so that adding or removing a node only remaps ~1/n of the keys.
+Phân tán key qua các node trên vòng ảo sao cho thêm hoặc xoá node chỉ remap ~1/n key.
 
 <DemoBadge />
 
-## Real-World Analogy
+## Tương tự thực tế
 
-Assigning delivery zones in a circular city map. Each courier covers a section of the circle. When a new courier joins, they take over only a small adjacent section — the other couriers barely notice. When one leaves, only the next courier picks up the slack.
+Phân vùng giao hàng trên bản đồ thành phố hình tròn. Mỗi shipper phụ trách một phần của vòng tròn. Khi shipper mới gia nhập, họ tiếp quản chỉ phần kề nhỏ — các shipper khác hầu như không cảm nhận. Khi một người rời, chỉ shipper kế tiếp lấp khoảng trống.
 
-## Core Idea
+## Ý tưởng cốt lõi
 
-Traditional modular hashing (`hash(key) % n`) remaps almost every key when `n` changes. Consistent hashing places both nodes and keys on a circular ring. Each key maps to the first node clockwise from its position. Adding or removing a node only affects keys in the arc between it and its predecessor.
+Hashing modular truyền thống (`hash(key) % n`) remap gần như mọi key khi `n` đổi. Consistent hashing đặt cả node và key trên vòng tròn. Mỗi key map tới node theo chiều kim đồng hồ đầu tiên từ vị trí của nó. Thêm hoặc xoá node chỉ ảnh hưởng key trong cung giữa nó và tiền nhiệm.
 
 ```text
-  Hash ring (0 to 2^32, wraps around):
+  Vòng hash (0 đến 2^32, vòng quanh):
 
   0         Node A    ●k1     Node B          ●k2     Node C    2^32→0
   ├───────────┼─────────┼───────┼───────────────┼───────┼─────────┤
@@ -33,31 +33,31 @@ Traditional modular hashing (`hash(key) % n`) remaps almost every key when `n` c
               │              ↑                       ↑            │
               │         k1→Node B              k2→Node C          │
               └───────────────────────────────────────────────────┘
-                              k3 wraps around → Node A
+                              k3 vòng quanh → Node A
 
-  ●k1 = key "user:42"     → next node clockwise = Node B
-  ●k2 = key "session:99"  → next node clockwise = Node C
-  ●k3 = key "order:7" (between Node C and 2^32) → wraps → Node A
+  ●k1 = key "user:42"     → node kế tiếp theo CW = Node B
+  ●k2 = key "session:99"  → node kế tiếp theo CW = Node C
+  ●k3 = key "order:7" (giữa Node C và 2^32) → vòng quanh → Node A
 ```
 
-| Property | Value |
+| Thuộc tính | Giá trị |
 |----------|-------|
-| Key remapping on add/remove | ~1/n (vs 100% with modular hash) |
-| Virtual nodes (replicas) | Improve balance — each physical node maps to k positions on the ring |
-| Lookup | O(log n) via binary search on sorted ring |
+| Remap key khi add/remove | ~1/n (vs 100% với hash modular) |
+| Virtual node (replica) | Cải thiện cân bằng — mỗi node vật lý map tới k vị trí trên vòng |
+| Lookup | O(log n) qua tìm nhị phân trên vòng đã sắp xếp |
 
-**Try it yourself** — add keys, then add/remove nodes to see minimal key redistribution:
+**Thử ngay** — thêm key, rồi thêm/xoá node để xem phân phối lại key tối thiểu:
 
 <ConsistentHashViz />
 
-## Production Proof
+## Bằng chứng production
 
-| Project | Source | Usage |
+| Dự án | Nguồn | Cách dùng |
 |---------|--------|-------|
-| Go groupcache | [consistenthash.go#L28-L81](https://github.com/golang/groupcache/blob/2c02b8208cf8c02a3e358cb1d9b60950647543fc/consistenthash/consistenthash.go#L28-L81) | `Map` struct (L28-L33) with sorted keys and hashMap. `Add` (L53-L62) inserts virtual nodes. `Get` (L65-L81) uses `sort.Search` binary search to find the closest node clockwise. By Brad Fitzpatrick (creator of memcached). |
-| HAProxy | [lb_chash.c#L415-L491](https://github.com/haproxy/haproxy/blob/fb38e40ad5751090992cde15d919866b1e91b8aa/src/lb_chash.c#L415-L491) | `chash_get_server_hash` — finds the nearest server on the consistent hash ring using elastic binary trees (eb-trees) for O(log n) lookups. Supports bounded-loads balancing and server eligibility checks. |
+| Go groupcache | [consistenthash.go#L28-L81](https://github.com/golang/groupcache/blob/2c02b8208cf8c02a3e358cb1d9b60950647543fc/consistenthash/consistenthash.go#L28-L81) | Struct `Map` (L28-L33) với sorted keys và hashMap. `Add` (L53-L62) chèn virtual node. `Get` (L65-L81) dùng tìm nhị phân `sort.Search` để tìm node gần nhất theo chiều kim đồng hồ. Do Brad Fitzpatrick (cha đẻ memcached). |
+| HAProxy | [lb_chash.c#L415-L491](https://github.com/haproxy/haproxy/blob/fb38e40ad5751090992cde15d919866b1e91b8aa/src/lb_chash.c#L415-L491) | `chash_get_server_hash` — tìm server gần nhất trên vòng consistent hash dùng elastic binary tree (eb-tree) cho tra cứu O(log n). Hỗ trợ cân bằng bounded-loads và check eligibility server. |
 
-## Implementation
+## Triển khai
 
 ::: code-group
 
@@ -223,68 +223,68 @@ class HashRing:
 
 :::
 
-## Exercises
+## Bài tập
 
-| Level | Exercise | File |
+| Cấp độ | Bài tập | File |
 |-------|----------|------|
-| Basic | Implement a hash ring with addNode/getNode | `exercises/typescript/consistent-hashing/01-basic.test.ts` |
-| Intermediate | Consistent hash ring with virtual nodes | `exercises/typescript/consistent-hashing/02-intermediate.test.ts` |
+| Cơ bản | Triển khai hash ring với addNode/getNode | `exercises/typescript/consistent-hashing/01-basic.test.ts` |
+| Trung bình | Vòng consistent hash với virtual node | `exercises/typescript/consistent-hashing/02-intermediate.test.ts` |
 
-Run exercises: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
+Chạy bài tập: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
 
-Exercise files: Rust `exercises/rust/src/consistent_hashing/mod.rs` · Go `exercises/go/consistent_hashing/consistent_hashing_test.go` · Python `exercises/python/consistent_hashing/test_consistent_hashing.py`
+File bài tập: Rust `exercises/rust/src/consistent_hashing/mod.rs` · Go `exercises/go/consistent_hashing/consistent_hashing_test.go` · Python `exercises/python/consistent_hashing/test_consistent_hashing.py`
 
-## When to Use
+## Khi nào nên dùng
 
-- **Distributed caches** — route keys to cache servers, minimize cache invalidation on scale events
-- **Load balancing** — distribute requests with minimal disruption when backends change
-- **Sharded databases** — assign data partitions to nodes
-- **CDNs** — route content to edge servers based on URL hash
+- **Cache phân tán** — định tuyến key tới server cache, giảm invalidation cache khi mở rộng
+- **Cân bằng tải** — phân phối request với gián đoạn tối thiểu khi backend đổi
+- **Database sharded** — gán partition dữ liệu cho node
+- **CDN** — định tuyến content tới edge server dựa trên hash URL
 
-## When NOT to Use
+## Khi nào KHÔNG nên dùng
 
-- **Static topology** — if nodes never change, modular hashing is simpler
-- **Small clusters** — with < 5 nodes, random or round-robin may be good enough
-- **Strict ordering** — consistent hashing doesn't preserve key ordering
-- **Uniform distribution required** — without virtual nodes, distribution can be uneven
+- **Topology tĩnh** — nếu node không bao giờ đổi, hash modular đơn giản hơn
+- **Cluster nhỏ** — với < 5 node, random hoặc round-robin có thể đủ
+- **Thứ tự nghiêm ngặt** — consistent hashing không bảo toàn thứ tự key
+- **Cần phân phối đều** — không có virtual node, phân phối có thể không đều
 
-## More Production Uses
+## Thêm các ứng dụng production
 
-- [serialx/hashring](https://github.com/serialx/hashring/blob/22c0c7ab6b1be4be7b950bae8b117767da7b18b6/hashring.go#L31-L37) — Go hash ring with weighted nodes
-- [Apache Cassandra](https://github.com/apache/cassandra) — partitioner uses consistent hashing for token ring
-- [Amazon DynamoDB](https://www.allthingsdistributed.com/2007/10/amazons_dynamo.html) — original paper on consistent hashing in production
-- [Memcached](https://github.com/memcached/memcached) — client-side consistent hashing (ketama algorithm)
+- [serialx/hashring](https://github.com/serialx/hashring/blob/22c0c7ab6b1be4be7b950bae8b117767da7b18b6/hashring.go#L31-L37) — hash ring Go với node có trọng số
+- [Apache Cassandra](https://github.com/apache/cassandra) — partitioner dùng consistent hashing cho token ring
+- [Amazon DynamoDB](https://www.allthingsdistributed.com/2007/10/amazons_dynamo.html) — bài báo gốc về consistent hashing trong production
+- [Memcached](https://github.com/memcached/memcached) — consistent hashing phía client (thuật toán ketama)
 
-## Related Patterns
+## Pattern liên quan
 
-| Pattern | Relationship |
+| Pattern | Quan hệ |
 |---------|-------------|
-| [Registry](/patterns/registry/) | Registry discovers services; consistent hashing routes to them |
-| [LRU Cache](/patterns/lru-cache/) | Distributed LRU caches use consistent hashing to route keys to the right node |
-| [Rate Limiter (Token Bucket)](/patterns/rate-limiter/) | Per-node rate limiting in consistent hashing clusters |
+| [Registry](/patterns/registry/) | Registry khám phá service; consistent hashing định tuyến tới chúng |
+| [LRU Cache](/patterns/lru-cache/) | LRU cache phân tán dùng consistent hashing để định tuyến key tới node đúng |
+| [Rate Limiter (Token Bucket)](/patterns/rate-limiter/) | Rate limit mỗi node trong cluster consistent hashing |
 
-## Challenge Questions
+## Câu hỏi thử thách
 
-::: details Q1: You have a hash ring with 3 physical nodes, each with 1 virtual node (no replicas). One node owns 60% of the key space while the others own 20% each. How do virtual nodes fix this, and why does groupcache default to a high replica count?
-**Answer:** Virtual nodes spread each physical node across multiple positions on the ring, making the distribution converge toward uniform as the number of virtual nodes increases.
+::: details Câu 1: Bạn có hash ring với 3 node vật lý, mỗi cái 1 virtual node (không replica). Một node sở hữu 60% không gian key trong khi các cái khác mỗi cái 20%. Virtual node sửa thế nào, và sao groupcache mặc định count replica cao?
+**Trả lời:** Virtual node trải mỗi node vật lý qua nhiều vị trí trên ring, làm phân phối hội tụ về đều khi số virtual node tăng.
 
-With only 1 position per node, the arc lengths between nodes are determined by hash values — essentially random, leading to high variance. With 100-200 virtual nodes per physical node, the law of large numbers kicks in and each physical node owns approximately 1/n of the ring. Groupcache defaults to a high replica count because statistical uniformity requires many samples. The tradeoff is memory: more virtual nodes means a larger sorted key array and ring map.
+Với chỉ 1 vị trí mỗi node, độ dài cung giữa node được xác định bởi giá trị hash — về cơ bản ngẫu nhiên, dẫn tới phương sai cao. Với 100-200 virtual node mỗi node vật lý, luật số lớn kích hoạt và mỗi node vật lý sở hữu xấp xỉ 1/n vòng. Groupcache mặc định count replica cao vì đồng đều thống kê cần nhiều mẫu. Đánh đổi là bộ nhớ: nhiều virtual node hơn nghĩa mảng sorted key và map ring lớn hơn.
 :::
 
-::: details Q2: Node B crashes and is removed from a 5-node ring. Which node(s) absorb its traffic? Does every remaining node share the load equally?
-**Answer:** Only the node immediately clockwise from B on the ring absorbs all of B's keys — the other three nodes are completely unaffected.
+::: details Câu 2: Node B crash và bị xoá khỏi ring 5 node. Node nào hấp thụ traffic của nó? Mỗi node còn lại có chia tải đều không?
+**Trả lời:** Chỉ node theo chiều kim đồng hồ ngay từ B trên ring hấp thụ mọi key của B — ba node khác hoàn toàn không bị ảnh hưởng.
 
-This is both the strength and weakness of consistent hashing. When B is removed, keys that mapped to B now "fall through" to the next clockwise node. Without virtual nodes, one node absorbs 100% of the redistributed load, potentially doubling its traffic. With virtual nodes, B's multiple ring positions are distributed, so its keys scatter across multiple successor nodes — closer to an even split. This is a key reason virtual nodes exist: they turn a "one neighbor absorbs all" failure into a "many neighbors share the load" failure.
+Đây vừa là sức mạnh vừa điểm yếu của consistent hashing. Khi B bị xoá, key map tới B giờ "rơi xuống" node CW tiếp theo. Không có virtual node, một node hấp thụ 100% tải tái phân phối, có thể gấp đôi traffic. Với virtual node, nhiều vị trí ring của B được phân tán, nên key của nó rải qua nhiều node kế nhiệm — gần với chia đều. Đây là lý do then chốt virtual node tồn tại: biến lỗi "một hàng xóm hấp thụ tất cả" thành lỗi "nhiều hàng xóm chia tải".
 :::
 
-::: details Q3: Your cache cluster uses consistent hashing. A new product launch causes one specific key ("homepage_banner") to receive 100x the normal request rate. Consistent hashing maps it to Node C, which is now overloaded while other nodes are idle. Does consistent hashing solve hotspot problems?
-**Answer:** No. Consistent hashing distributes keys evenly across nodes, but it cannot distribute load evenly when individual keys have vastly different request rates.
+::: details Câu 3: Cluster cache của bạn dùng consistent hashing. Một ra mắt sản phẩm mới làm một key cụ thể ("homepage_banner") nhận 100x tốc độ request thường. Consistent hashing map nó tới Node C, giờ quá tải trong khi node khác idle. Consistent hashing có giải vấn đề hotspot không?
+**Trả lời:** Không. Consistent hashing phân tán key đều qua node, nhưng không thể phân tán tải đều khi key riêng có tốc độ request khác nhau lớn.
 
-Consistent hashing solves the key *assignment* problem, not the key *popularity* problem. A single hot key always maps to one node. Solutions include: read replicas (cache the hot key on multiple nodes), request-level load balancing (route reads for hot keys randomly), or key splitting (split "homepage_banner" into "homepage_banner:1" through "homepage_banner:10" spread across nodes). The bounded-loads extension to consistent hashing addresses this by redirecting overflow traffic to the next node on the ring.
+Consistent hashing giải vấn đề *gán* key, không phải vấn đề *độ phổ biến* của key. Một hot key đơn luôn map tới một node. Giải pháp gồm: read replica (cache hot key trên nhiều node), cân bằng tải cấp request (định tuyến read cho hot key ngẫu nhiên), hoặc tách key ("homepage_banner" thành "homepage_banner:1" tới "homepage_banner:10" trải qua node). Mở rộng bounded-loads cho consistent hashing giải bằng cách chuyển hướng traffic tràn sang node tiếp theo trên ring.
 :::
 
-::: details Q4: You need to migrate your cache cluster from 3 nodes to 5 nodes with zero downtime. During migration, both old and new nodes coexist. A key that remaps to a new node returns a cache miss even though the data exists on the old node. How do you handle this?
-**Answer:** Use double-read during migration: look up the key on the new ring first, and on miss, fall back to the old ring.
+::: details Câu 4: Bạn cần migrate cluster cache từ 3 node sang 5 node với downtime bằng 0. Khi migrate, cả node cũ và mới cùng tồn tại. Key remap tới node mới trả cache miss dù dữ liệu tồn tại trên node cũ. Xử lý thế nào?
+**Trả lời:** Dùng double-read khi migrate: tra cứu key trên ring mới trước, và khi miss, fallback sang ring cũ.
 
-Consistent hashing guarantees minimal remapping (~1/n keys move), but the keys that do move will miss on the new node until they're populated. The migration strategy is: (1) compute the key's owner on both the old and new rings, (2) read from the new node first, (3) on miss, read from the old node and backfill the new node. Once all keys are migrated (or the TTL expires naturally), remove the old ring. This is the approach used by systems like Memcached (ketama algorithm) and Cassandra during resharding — the consistent hash ring defines the target state, but a transition period handles the gap. (Note: Redis Cluster uses a fixed 16,384-slot hash scheme, not consistent hashing.)
+Consistent hashing đảm bảo remap tối thiểu (~1/n key di chuyển), nhưng key di chuyển sẽ miss trên node mới tới khi được điền. Chiến lược migrate là: (1) tính chủ key trên cả ring cũ và mới, (2) đọc từ node mới trước, (3) khi miss, đọc từ node cũ và backfill node mới. Khi mọi key đã migrate (hoặc TTL hết tự nhiên), xoá ring cũ. Đây là cách hệ thống như Memcached (thuật toán ketama) và Cassandra dùng khi reshard — vòng consistent hash định nghĩa state đích, nhưng giai đoạn chuyển xử lý khoảng trống. (Lưu ý: Redis Cluster dùng scheme hash 16.384 slot cố định, không phải consistent hashing.)
 :::
