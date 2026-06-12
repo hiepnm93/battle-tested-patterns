@@ -1,29 +1,29 @@
 ---
-title: "Pattern: Registry / Self-Registration"
-description: "Components register themselves into a global lookup table by name — consumers discover implementations at runtime without hardcoded dependencies."
+title: "Pattern: Registry / Tự đăng ký"
+description: "Thành phần tự đăng ký vào bảng tra cứu toàn cục theo tên — consumer khám phá triển khai lúc runtime không có phụ thuộc hardcode."
 difficulty: "beginner"
 ---
 
-# Pattern: Registry / Self-Registration
+# Pattern: Registry / Tự đăng ký
 
 <DifficultyBadge />
 
-## One Liner
+## Mô tả một câu
 
-Components register themselves into a global lookup table by name — consumers discover implementations at runtime without hardcoded dependencies.
+Thành phần tự đăng ký vào bảng tra cứu toàn cục theo tên — consumer khám phá triển khai lúc runtime không có phụ thuộc hardcode.
 
 <DemoBadge />
 
-## Real-World Analogy
+## Tương tự thực tế
 
-A hotel front desk. Guests check in with their name, and anyone can ask the desk 'which room is Alice in?' The desk doesn't care what happens in the rooms — it just maps names to locations.
+Quầy lễ tân khách sạn. Khách check in với tên, và ai cũng có thể hỏi quầy 'Alice ở phòng nào?' Quầy không quan tâm chuyện gì xảy ra trong phòng — chỉ ánh xạ tên sang vị trí.
 
-## Core Idea
+## Ý tưởng cốt lõi
 
-A registry is a central map from names (strings) to implementations (functions, classes, factories). Producers register themselves at startup — often via decorators, macros, or init functions. Consumers look up implementations by name at runtime, eliminating compile-time coupling. This enables plugin architectures where new functionality can be added without modifying existing code.
+Registry là map trung tâm từ tên (chuỗi) sang triển khai (hàm, class, factory). Producer tự đăng ký lúc khởi động — thường qua decorator, macro hoặc hàm init. Consumer tra cứu triển khai theo tên lúc runtime, loại bỏ ghép lúc compile. Điều này cho phép kiến trúc plugin nơi chức năng mới có thể thêm mà không sửa code có sẵn.
 
 ```text
-  Registration (startup):
+  Đăng ký (khởi động):
 
   ┌──────────┐    register("json")    ┌────────────────────┐
   │ JsonCodec│─────────────────────►  │     Registry       │
@@ -35,32 +35,32 @@ A registry is a central map from names (strings) to implementations (functions, 
   │ CsvCodec │─────────────────────►  └────────────────────┘
   └──────────┘
                                              │
-  Lookup (runtime):                          │
+  Tra cứu (runtime):                         │
                                              ▼
   ┌──────────┐    get("json")         ┌────────────┐
   │ Consumer │─────────────────────►  │ JsonCodec  │
   └──────────┘                        └────────────┘
 ```
 
-| Property | Value |
+| Thuộc tính | Giá trị |
 |----------|-------|
-| Register | O(1) — hash map insert |
-| Lookup | O(1) — hash map get |
-| Coupling | Zero compile-time dependency between producer and consumer |
-| Extensibility | Add new implementations without modifying existing code |
+| Register | O(1) — chèn hash map |
+| Lookup | O(1) — get hash map |
+| Ghép | Không phụ thuộc lúc compile giữa producer và consumer |
+| Khả năng mở rộng | Thêm triển khai mới không sửa code có sẵn |
 
-**Try it yourself** — register handlers by name and look them up at runtime:
+**Thử ngay** — đăng ký handler theo tên và tra cứu lúc runtime:
 
 <RegistryViz />
 
-## Production Proof
+## Bằng chứng production
 
-| Project | Source | Usage |
+| Dự án | Nguồn | Cách dùng |
 |---------|--------|-------|
-| TensorFlow | [op.h#L258-L290](https://github.com/tensorflow/tensorflow/blob/b4c7e9a660badf8c8c81075fe9f781d23ed6f28a/tensorflow/core/framework/op.h#L258-L290) | `REGISTER_OP` macro registers a new operation into the global `OpRegistry`. Each op defines its name, inputs, outputs, and shape function. The runtime looks up ops by name when building computation graphs, so new ops can be added without touching the graph executor. |
-| gRPC-Go | [server.go#L154-L170](https://github.com/grpc/grpc-go/blob/f1864955bbb48efa131f6652933fa8b2189d9305/server.go#L154-L170) | `RegisterService` adds a service description (methods, handler functions) to the server's service map. When an RPC arrives, the server looks up the method in this registry to dispatch to the correct handler. Services self-register during init. |
+| TensorFlow | [op.h#L258-L290](https://github.com/tensorflow/tensorflow/blob/b4c7e9a660badf8c8c81075fe9f781d23ed6f28a/tensorflow/core/framework/op.h#L258-L290) | Macro `REGISTER_OP` đăng ký operation mới vào `OpRegistry` toàn cục. Mỗi op định nghĩa tên, input, output và hàm shape. Runtime tra cứu op theo tên khi xây computation graph, nên op mới có thể thêm không động vào executor graph. |
+| gRPC-Go | [server.go#L154-L170](https://github.com/grpc/grpc-go/blob/f1864955bbb48efa131f6652933fa8b2189d9305/server.go#L154-L170) | `RegisterService` thêm mô tả service (method, hàm handler) vào map service của server. Khi RPC đến, server tra method trong registry này để dispatch tới handler đúng. Service tự đăng ký khi init. |
 
-## Implementation
+## Triển khai
 
 ::: code-group
 
@@ -222,7 +222,7 @@ class Registry:
         return list(self._entries.keys())
 
     def decorator(self, name: str):
-        """Use as @registry.decorator("name") to auto-register."""
+        """Dùng @registry.decorator("name") để tự đăng ký."""
         def wrapper(cls):
             self.register(name, cls)
             return cls
@@ -231,81 +231,81 @@ class Registry:
 
 :::
 
-## Exercises
+## Bài tập
 
-| Level | Exercise | File |
+| Cấp độ | Bài tập | File |
 |-------|----------|------|
-| Basic | Implement a typed registry with register/get/list | `exercises/typescript/registry/01-basic.test.ts` |
-| Intermediate | Add decorator-based auto-registration and dependency validation | `exercises/typescript/registry/02-intermediate.test.ts` |
+| Cơ bản | Triển khai registry có kiểu với register/get/list | `exercises/typescript/registry/01-basic.test.ts` |
+| Trung bình | Thêm tự đăng ký qua decorator và kiểm tra dependency | `exercises/typescript/registry/02-intermediate.test.ts` |
 
-Run exercises: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
+Chạy bài tập: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
 
-Exercise files: Rust `exercises/rust/src/registry/mod.rs` · Go `exercises/go/registry/registry_test.go` · Python `exercises/python/registry/test_registry.py`
+File bài tập: Rust `exercises/rust/src/registry/mod.rs` · Go `exercises/go/registry/registry_test.go` · Python `exercises/python/registry/test_registry.py`
 
-## When to Use
+## Khi nào nên dùng
 
-- **Plugin systems** — load and discover plugins by name without compile-time coupling
-- **Serialization codecs** — register JSON, XML, Protobuf codecs; look up by content-type
-- **Command/handler dispatch** — CLI commands, RPC methods, event handlers register themselves
-- **Test fixtures** — register test factories by name for parameterized tests
-- **ML framework ops** — TensorFlow, PyTorch register operators that can be composed into graphs
+- **Hệ plugin** — nạp và khám phá plugin theo tên không ghép lúc compile
+- **Codec serialize** — đăng ký codec JSON, XML, Protobuf; tra theo content-type
+- **Dispatch command/handler** — command CLI, method RPC, event handler tự đăng ký
+- **Fixture test** — đăng ký factory test theo tên cho test tham số
+- **Op framework ML** — TensorFlow, PyTorch đăng ký operator có thể ghép vào graph
 
-## When NOT to Use
+## Khi nào KHÔNG nên dùng
 
-- **Few fixed implementations** — if there are only 2-3 known implementations, a switch/match is simpler
-- **Type safety is critical** — string-based lookup loses compile-time type checking; use dependency injection or generics instead
-- **Order matters** — registries are typically unordered; if initialization order is important, use explicit sequencing
+- **Ít triển khai cố định** — nếu chỉ 2-3 triển khai biết trước, switch/match đơn giản hơn
+- **An toàn kiểu then chốt** — tra cứu dựa trên chuỗi mất kiểm tra kiểu lúc compile; dùng dependency injection hoặc generic
+- **Thứ tự quan trọng** — registry thường không có thứ tự; nếu thứ tự init quan trọng, dùng tuần tự rõ ràng
 
-## More Production Uses
+## Thêm các ứng dụng production
 
-- [Terraform](https://github.com/hashicorp/terraform) — provider registry: each cloud provider registers resource types and data sources
-- [Babel](https://github.com/babel/babel) — plugin registry: transforms register themselves by visitor pattern name
-- [pytest](https://github.com/pytest-dev/pytest) — fixture registry: `@pytest.fixture` registers functions discoverable by parameter name
-- [Docker](https://github.com/moby/moby) — driver registry: storage, network, and logging drivers register at daemon startup
+- [Terraform](https://github.com/hashicorp/terraform) — registry provider: mỗi cloud provider đăng ký kiểu resource và nguồn dữ liệu
+- [Babel](https://github.com/babel/babel) — registry plugin: transform tự đăng ký theo tên pattern visitor
+- [pytest](https://github.com/pytest-dev/pytest) — registry fixture: `@pytest.fixture` đăng ký hàm khám phá được theo tên tham số
+- [Docker](https://github.com/moby/moby) — registry driver: driver storage, network và logging đăng ký khi daemon khởi động
 
-## Related Patterns
+## Pattern liên quan
 
-| Pattern | Relationship |
+| Pattern | Quan hệ |
 |---------|-------------|
-| [Middleware](/patterns/middleware-chain/) | Middleware handlers often register themselves into a registry |
-| [Dependency Graph](/patterns/dependency-graph/) | Registries can track dependencies between registered components |
-| [Consistent Hashing](/patterns/consistent-hashing/) | Service registries feed consistent hashing with available node lists |
-| [Trie (Prefix Tree)](/patterns/trie/) | Tries can serve as the underlying lookup structure for prefix-based registry queries |
+| [Middleware](/patterns/middleware-chain/) | Handler middleware thường tự đăng ký vào registry |
+| [Dependency Graph](/patterns/dependency-graph/) | Registry có thể theo dõi dependency giữa các thành phần đã đăng ký |
+| [Consistent Hashing](/patterns/consistent-hashing/) | Service registry cung cấp danh sách node có sẵn cho consistent hashing |
+| [Trie (Prefix Tree)](/patterns/trie/) | Trie có thể làm cấu trúc tra cứu bên dưới cho truy vấn registry dựa trên prefix |
 
-## Challenge Questions
+## Câu hỏi thử thách
 
-::: details Q1: Two plugins both try to register the name "json". What should happen?
-**Answer:** Fail fast with an error at registration time.
+::: details Câu 1: Hai plugin cùng cố đăng ký tên "json". Nên xảy ra gì?
+**Trả lời:** Fail nhanh với lỗi lúc đăng ký.
 
-Silent overwrite hides bugs — the first plugin's handler disappears without warning, causing subtle runtime failures. "Last writer wins" policies work for configuration but are dangerous for code dispatch.
+Ghi đè âm thầm che bug — handler plugin đầu biến mất không cảnh báo, gây lỗi runtime tinh tế. Chính sách "writer cuối thắng" hoạt động cho config nhưng nguy hiểm cho dispatch code.
 
-The correct approach: throw/return an error on duplicate registration. If intentional replacement is needed, provide an explicit `override()` or `replace()` method that signals intent.
+Cách đúng: ném/trả lỗi khi đăng ký trùng. Nếu cần thay thế có chủ ý, cung cấp method tường minh `override()` hoặc `replace()` báo hiệu ý định.
 :::
 
-::: details Q2: Your registry uses string keys. How do you prevent typos like "josn" instead of "json" from causing runtime errors?
-**Answer:** Multiple strategies:
+::: details Câu 2: Registry của bạn dùng key chuỗi. Làm sao chặn typo như "josn" thay "json" gây lỗi runtime?
+**Trả lời:** Nhiều chiến lược:
 
-1. **Constants**: Define keys as exported constants (`const JSON = "json"`) so the compiler catches typos.
-2. **Enums**: Use an enum type instead of raw strings — limits the key space at compile time.
-3. **Registration validation**: At startup, verify all expected keys are registered before accepting traffic.
-4. **Fuzzy matching**: On lookup failure, suggest similar registered names (Levenshtein distance).
+1. **Hằng**: Định nghĩa key là hằng export (`const JSON = "json"`) để compiler bắt typo.
+2. **Enum**: Dùng kiểu enum thay vì chuỗi thô — giới hạn không gian key lúc compile.
+3. **Kiểm tra đăng ký**: Khi khởi động, xác minh mọi key kỳ vọng đã đăng ký trước khi nhận traffic.
+4. **Match mờ**: Khi tra cứu thất bại, gợi ý tên đã đăng ký tương tự (khoảng cách Levenshtein).
 
-The best approach depends on whether the registry is open (plugins add keys) or closed (keys are known at compile time). Closed registries should use enums; open registries should validate at startup.
+Cách tốt nhất tuỳ registry mở (plugin thêm key) hay đóng (key biết lúc compile). Registry đóng nên dùng enum; registry mở nên kiểm tra khi khởi động.
 :::
 
-::: details Q3: TensorFlow's REGISTER_OP uses a C++ macro to register ops at static initialization time. What's the risk?
-**Answer:** The static initialization order fiasco.
+::: details Câu 3: REGISTER_OP của TensorFlow dùng macro C++ để đăng ký op lúc init tĩnh. Rủi ro là gì?
+**Trả lời:** Thảm hoạ thứ tự init tĩnh.
 
-In C++, the order of static initialization across translation units is undefined. If op A's registration depends on op B being registered first, and they're in different .cc files, the program may crash or silently fail.
+Trong C++, thứ tự init tĩnh qua các translation unit không xác định. Nếu đăng ký op A phụ thuộc op B đăng ký trước, và chúng ở các file .cc khác nhau, chương trình có thể crash hoặc fail âm thầm.
 
-TensorFlow mitigates this by making registration order-independent — each op registers itself with no dependencies on other ops. The `OpRegistry` singleton is created on first use (Meyers' singleton), avoiding the "static initialization order fiasco" for the registry itself.
+TensorFlow giảm nhẹ bằng cách làm thứ tự đăng ký độc lập — mỗi op tự đăng ký không phụ thuộc op khác. Singleton `OpRegistry` được tạo khi dùng lần đầu (Meyers' singleton), tránh "thảm hoạ thứ tự init tĩnh" cho chính registry.
 :::
 
-::: details Q4: How does a registry differ from dependency injection (DI)?
-**Answer:** Control flow direction.
+::: details Câu 4: Registry khác dependency injection (DI) thế nào?
+**Trả lời:** Hướng dòng điều khiển.
 
-- **Registry**: The consumer actively pulls an implementation by name. The consumer knows the name and calls `registry.get("json")`.
-- **DI**: The framework pushes dependencies into the consumer. The consumer declares what it needs (via constructor params or annotations), and the DI container wires it up.
+- **Registry**: Consumer chủ động kéo triển khai theo tên. Consumer biết tên và gọi `registry.get("json")`.
+- **DI**: Framework đẩy dependency vào consumer. Consumer khai báo cần gì (qua tham số constructor hoặc annotation), và container DI nối.
 
-Registry is simpler but couples the consumer to the registry API and string names. DI decouples further but adds framework complexity. In practice, DI containers often use an internal registry under the hood.
+Registry đơn giản hơn nhưng ghép consumer với API registry và tên chuỗi. DI tách rời thêm nhưng thêm phức tạp framework. Thực tế, container DI thường dùng registry nội bộ.
 :::
