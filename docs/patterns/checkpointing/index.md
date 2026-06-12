@@ -1,6 +1,6 @@
 ---
 title: "Pattern: Checkpointing"
-description: "Periodically snapshot consistent state so recovery replays only from the checkpoint — not from the beginning of time."
+description: "Định kỳ snapshot state nhất quán để khôi phục chỉ replay từ checkpoint — không phải từ đầu."
 difficulty: "intermediate"
 ---
 
@@ -8,54 +8,54 @@ difficulty: "intermediate"
 
 <DifficultyBadge />
 
-## One Liner
+## Mô tả một câu
 
-Periodically snapshot consistent state so recovery replays only from the checkpoint — not from the beginning of time.
+Định kỳ snapshot state nhất quán để khôi phục chỉ replay từ checkpoint — không phải từ đầu.
 
 <DemoBadge />
 
-## Real-World Analogy
+## Tương tự thực tế
 
-Saving your game. You play for a while, hit 'save,' and if you die, you restart from the last save point instead of the beginning. The more often you save, the less progress you lose — but each save takes time.
+Save game. Bạn chơi một lúc, nhấn 'save', và nếu chết, khởi động lại từ điểm save cuối thay vì đầu. Save càng thường, mất tiến độ càng ít — nhưng mỗi save mất thời gian.
 
-## Core Idea
+## Ý tưởng cốt lõi
 
-Checkpointing captures a consistent snapshot of the current system state at a known point. On crash, recovery loads the last checkpoint and replays only the operations logged after it. Without checkpointing, a WAL-based system must replay its entire history on every restart — which grows unbounded. Checkpointing bounds recovery time to the interval since the last checkpoint.
+Checkpointing bắt snapshot nhất quán của state hệ thống hiện tại ở điểm đã biết. Khi crash, khôi phục nạp checkpoint cuối và chỉ replay các thao tác log sau đó. Không có checkpoint, hệ thống nền WAL phải replay toàn lịch sử mỗi lần khởi động — tăng không giới hạn. Checkpoint giới hạn thời gian khôi phục ở khoảng từ checkpoint cuối.
 
 ```text
-  Time ──────────────────────────────────────────────►
+  Thời gian ────────────────────────────────────────────►
 
   WAL:  [op1] [op2] [op3] [op4] [op5] [op6] [op7] [op8]
                           ▲                    ▲
                      Checkpoint 1         Checkpoint 2
-                     (state snapshot)     (state snapshot)
+                     (snapshot state)     (snapshot state)
 
-  Without checkpointing:
-    Recovery replays: op1, op2, op3, op4, op5, op6, op7, op8
+  Không checkpoint:
+    Khôi phục replay: op1, op2, op3, op4, op5, op6, op7, op8
 
-  With checkpointing:
-    Recovery loads Checkpoint 2, replays: op7, op8 only
+  Có checkpoint:
+    Khôi phục nạp Checkpoint 2, replay: chỉ op7, op8
 ```
 
-| Property | Value |
+| Thuộc tính | Giá trị |
 |----------|-------|
-| Recovery time | Proportional to ops since last checkpoint |
-| Checkpoint cost | O(state_size) to serialize current state |
-| WAL truncation | Safe to discard log entries before checkpoint |
-| Consistency | Checkpoint must capture a consistent snapshot |
+| Thời gian khôi phục | Tỉ lệ với số op từ checkpoint cuối |
+| Chi phí checkpoint | O(kích thước state) để serialize state hiện tại |
+| Cắt WAL | An toàn bỏ entry log trước checkpoint |
+| Consistency | Checkpoint phải bắt snapshot nhất quán |
 
-**Try it yourself** — increment state, take checkpoints, crash, and restore from a checkpoint:
+**Thử ngay** — tăng state, lấy checkpoint, crash, và khôi phục từ checkpoint:
 
 <CheckpointingViz />
 
-## Production Proof
+## Bằng chứng production
 
-| Project | Source | Usage |
+| Dự án | Nguồn | Cách dùng |
 |---------|--------|-------|
-| PostgreSQL | [checkpointer.c#L218-L360](https://github.com/postgres/postgres/blob/e18b0cb7344cb4bd28468f6c0aeeb9b9241d30aa/src/backend/postmaster/checkpointer.c#L218-L360) | `CheckpointerMain` — the checkpoint background process. Runs in a loop waiting for checkpoint requests or `checkpoint_timeout` (default 5 minutes). Calls `CreateCheckPoint` which flushes all dirty buffers to disk, writes a checkpoint WAL record, and updates `pg_control` with the checkpoint location. On crash recovery, PostgreSQL reads `pg_control` to find the last checkpoint and replays WAL only from that point. |
-| Redis | [rdb.c#L1414-L1529](https://github.com/redis/redis/blob/df63a65d4d4ee33ae67e9f101885074febe0bccb/src/rdb.c#L1414-L1529) | `rdbSaveRio` serializes the entire Redis dataset to an RDB file — a point-in-time snapshot. Redis forks a child process (`rdbSaveBackground`) to write the snapshot without blocking the main thread. The RDB file is a complete checkpoint: on restart, Redis loads it to restore state instantly. Combined with AOF (append-only file), Redis can replay only the AOF entries written after the last RDB snapshot. |
+| PostgreSQL | [checkpointer.c#L218-L360](https://github.com/postgres/postgres/blob/e18b0cb7344cb4bd28468f6c0aeeb9b9241d30aa/src/backend/postmaster/checkpointer.c#L218-L360) | `CheckpointerMain` — process nền checkpoint. Chạy trong vòng lặp chờ yêu cầu checkpoint hoặc `checkpoint_timeout` (mặc định 5 phút). Gọi `CreateCheckPoint` flush mọi buffer dirty ra đĩa, ghi record checkpoint WAL, và cập nhật `pg_control` với vị trí checkpoint. Khi khôi phục crash, PostgreSQL đọc `pg_control` để tìm checkpoint cuối và replay WAL chỉ từ điểm đó. |
+| Redis | [rdb.c#L1414-L1529](https://github.com/redis/redis/blob/df63a65d4d4ee33ae67e9f101885074febe0bccb/src/rdb.c#L1414-L1529) | `rdbSaveRio` serialize cả dataset Redis vào file RDB — snapshot tại thời điểm. Redis fork process con (`rdbSaveBackground`) để ghi snapshot không chặn main thread. File RDB là checkpoint đầy đủ: khi restart, Redis nạp nó khôi phục state tức thì. Kết hợp với AOF (append-only file), Redis có thể replay chỉ entry AOF ghi sau snapshot RDB cuối. |
 
-## Implementation
+## Triển khai
 
 ::: code-group
 
@@ -72,7 +72,7 @@ class CheckpointableStore {
   private nextId = 1;
   private checkpoint: { state: Map<string, unknown>; walPosition: number } | null = null;
 
-  /** Apply an operation, logging it to the WAL first. */
+  /** Áp dụng thao tác, log vào WAL trước. */
   apply(operation: string, key: string, value: unknown): void {
     const entry: LogEntry = {
       id: this.nextId++,
@@ -87,7 +87,7 @@ class CheckpointableStore {
     return this.state.get(key);
   }
 
-  /** Take a checkpoint: snapshot current state and record WAL position. */
+  /** Lấy checkpoint: snapshot state hiện tại và ghi vị trí WAL. */
   takeCheckpoint(): void {
     this.checkpoint = {
       state: new Map(this.state),
@@ -95,12 +95,12 @@ class CheckpointableStore {
     };
   }
 
-  /** Simulate crash: wipe in-memory state but keep WAL and checkpoint. */
+  /** Mô phỏng crash: xoá state trong bộ nhớ nhưng giữ WAL và checkpoint. */
   simulateCrash(): void {
     this.state = new Map();
   }
 
-  /** Recover from crash using checkpoint + WAL replay. */
+  /** Khôi phục từ crash dùng checkpoint + replay WAL. */
   recover(): number {
     if (this.checkpoint) {
       this.state = new Map(this.checkpoint.state);
@@ -111,7 +111,7 @@ class CheckpointableStore {
       }
       return replayed;
     }
-    // No checkpoint: replay entire WAL
+    // Không checkpoint: replay cả WAL
     this.state = new Map();
     for (const entry of this.wal) {
       this.executeOp(entry);
@@ -389,70 +389,70 @@ class CheckpointableStore:
 
 :::
 
-## Exercises
+## Bài tập
 
-| Level | Exercise | File |
+| Cấp độ | Bài tập | File |
 |-------|----------|------|
-| Basic | WAL with checkpoint and recovery | `exercises/typescript/checkpointing/01-basic.test.ts` |
-| Intermediate | Incremental checkpoint (only dirty pages) | `exercises/typescript/checkpointing/02-intermediate.test.ts` |
+| Cơ bản | WAL với checkpoint và khôi phục | `exercises/typescript/checkpointing/01-basic.test.ts` |
+| Trung bình | Checkpoint tăng dần (chỉ page dirty) | `exercises/typescript/checkpointing/02-intermediate.test.ts` |
 
-Run exercises: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
+Chạy bài tập: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
 
-Exercise files: Rust `exercises/rust/src/checkpointing/mod.rs` · Go `exercises/go/checkpointing/checkpointing_test.go` · Python `exercises/python/checkpointing/test_checkpointing.py`
+File bài tập: Rust `exercises/rust/src/checkpointing/mod.rs` · Go `exercises/go/checkpointing/checkpointing_test.go` · Python `exercises/python/checkpointing/test_checkpointing.py`
 
-## When to Use
+## Khi nào nên dùng
 
-- **Database crash recovery** — bound WAL replay time (PostgreSQL, MySQL)
-- **In-memory caches** — persist state to survive restarts (Redis RDB)
-- **Stream processing** — save processing position for exactly-once guarantees (Flink, Kafka)
-- **Long-running computations** — save progress to resume after failure (ML training)
-- **Game saves** — snapshot game state at safe points
+- **Khôi phục crash database** — giới hạn thời gian replay WAL (PostgreSQL, MySQL)
+- **Cache trong bộ nhớ** — lưu state để sống sót restart (Redis RDB)
+- **Xử lý stream** — lưu vị trí xử lý cho đảm bảo exactly-once (Flink, Kafka)
+- **Tính toán chạy lâu** — lưu tiến độ để tiếp tục sau lỗi (huấn luyện ML)
+- **Save game** — snapshot state game ở điểm an toàn
 
-## When NOT to Use
+## Khi nào KHÔNG nên dùng
 
-- **Stateless services** — no state to checkpoint
-- **Very small state** — if WAL replay takes < 1 second, checkpointing adds complexity for little benefit
-- **Rapidly changing state** — if the entire state changes between checkpoints, snapshots are as expensive as replaying the WAL
-- **Distributed state** — coordinating consistent checkpoints across nodes requires distributed snapshot protocols (Chandy-Lamport)
+- **Service không có state** — không state để checkpoint
+- **State rất nhỏ** — nếu replay WAL mất < 1 giây, checkpoint thêm phức tạp ít lợi
+- **State đổi nhanh** — nếu cả state đổi giữa các checkpoint, snapshot đắt như replay WAL
+- **State phân tán** — phối hợp checkpoint nhất quán qua node cần protocol snapshot phân tán (Chandy-Lamport)
 
-## More Production Uses
+## Thêm các ứng dụng production
 
-- [Apache Flink](https://github.com/apache/flink) — distributed snapshots for exactly-once stream processing
-- [etcd](https://github.com/etcd-io/etcd) — periodic snapshots to compact the Raft log
-- [SQLite WAL mode](https://www.sqlite.org/wal.html) — WAL checkpointing transfers pages back to the database file
-- [PyTorch](https://github.com/pytorch/pytorch) — model checkpointing to resume training after interruption
+- [Apache Flink](https://github.com/apache/flink) — snapshot phân tán cho xử lý stream exactly-once
+- [etcd](https://github.com/etcd-io/etcd) — snapshot định kỳ để compact log Raft
+- [SQLite WAL mode](https://www.sqlite.org/wal.html) — checkpoint WAL chuyển page về file database
+- [PyTorch](https://github.com/pytorch/pytorch) — checkpoint model để tiếp tục training sau gián đoạn
 
-## Related Patterns
+## Pattern liên quan
 
-| Pattern | Relationship |
+| Pattern | Quan hệ |
 |---------|-------------|
-| [Write-Ahead Log (WAL)](/patterns/write-ahead-log/) | Checkpoints truncate the WAL — recovery replays only from the latest checkpoint |
-| [Copy-on-Write (CoW)](/patterns/copy-on-write/) | Copy-on-write enables consistent snapshots without stopping writes |
-| [Logical Clock](/patterns/logical-clock/) | Checkpoints are associated with logical clock positions for consistency |
-| [Merkle Tree](/patterns/merkle-tree/) | Merkle trees verify checkpoint integrity by detecting which subtrees changed |
+| [Write-Ahead Log (WAL)](/patterns/write-ahead-log/) | Checkpoint cắt WAL — khôi phục chỉ replay từ checkpoint mới nhất |
+| [Copy-on-Write (CoW)](/patterns/copy-on-write/) | Copy-on-write cho phép snapshot nhất quán không dừng ghi |
+| [Logical Clock](/patterns/logical-clock/) | Checkpoint liên kết với vị trí logical clock cho consistency |
+| [Merkle Tree](/patterns/merkle-tree/) | Merkle tree xác minh toàn vẹn checkpoint bằng cách phát hiện subtree nào đổi |
 
-## Challenge Questions
+## Câu hỏi thử thách
 
-::: details Q1: Your PostgreSQL database is configured with checkpoint_timeout = 30 minutes. The server crashes. What's the worst-case recovery time, and how would you reduce it?
-**Answer:** Worst case: replaying up to 30 minutes of WAL entries. Reduce it by lowering checkpoint_timeout (e.g., to 5 minutes) or checkpoint_completion_target.
+::: details Câu 1: Database PostgreSQL của bạn cấu hình checkpoint_timeout = 30 phút. Server crash. Thời gian khôi phục tệ nhất là gì, và bạn giảm thế nào?
+**Trả lời:** Tệ nhất: replay tới 30 phút entry WAL. Giảm bằng cách hạ checkpoint_timeout (ví dụ 5 phút) hoặc checkpoint_completion_target.
 
-The trade-off is clear: more frequent checkpoints mean faster recovery but more I/O overhead during normal operation. Each checkpoint flushes all dirty pages to disk, which can cause a write burst. PostgreSQL's `checkpoint_completion_target` (default 0.9) spreads the I/O over 90% of the checkpoint interval to avoid spikes. In high-throughput systems, you might checkpoint every 1-5 minutes; for low-traffic systems, 30 minutes or more is fine.
+Đánh đổi rõ: checkpoint thường hơn nghĩa khôi phục nhanh hơn nhưng overhead I/O cao hơn khi hoạt động bình thường. Mỗi checkpoint flush mọi page dirty ra đĩa, có thể gây burst ghi. `checkpoint_completion_target` của PostgreSQL (mặc định 0,9) trải I/O qua 90% khoảng checkpoint để tránh đỉnh. Trong hệ throughput cao, bạn có thể checkpoint mỗi 1-5 phút; cho hệ traffic thấp, 30 phút hoặc hơn ok.
 :::
 
-::: details Q2: Redis uses fork() to create a child process for RDB snapshots. The database is 10GB. Does Redis need 20GB of RAM during the snapshot?
-**Answer:** No, thanks to copy-on-write (COW). The forked child shares the parent's memory pages. Only pages modified by the parent after the fork are duplicated. In practice, memory overhead during snapshot is typically 10-30% of the dataset, not 100%.
+::: details Câu 2: Redis dùng fork() để tạo process con cho snapshot RDB. Database 10GB. Redis có cần 20GB RAM khi snapshot không?
+**Trả lời:** Không, nhờ copy-on-write (COW). Child fork chia sẻ page bộ nhớ của parent. Chỉ page parent sửa sau fork mới được nhân đôi. Thực tế, overhead bộ nhớ khi snapshot thường 10-30% dataset, không phải 100%.
 
-The OS kernel uses COW for forked process pages. The child reads the frozen state while the parent continues serving writes. Only pages that the parent modifies get copied (by the kernel's COW mechanism). If write volume is low during the snapshot, memory overhead is minimal. However, under heavy write load, COW page duplication can approach 100% in the worst case. This is why Redis recommends monitoring `rss` during background saves.
+Kernel OS dùng COW cho page process fork. Child đọc state đóng băng trong khi parent tiếp tục phục vụ ghi. Chỉ page parent sửa được copy (bởi cơ chế COW kernel). Nếu khối lượng ghi thấp khi snapshot, overhead bộ nhớ tối thiểu. Tuy nhiên, dưới tải ghi nặng, nhân đôi page COW có thể đạt 100% tệ nhất. Đó là lý do Redis khuyến nghị giám sát `rss` khi save nền.
 :::
 
-::: details Q3: You're implementing checkpointing for a stream processing system. Each checkpoint takes 5 seconds to write, but the system processes 100K events/second. What happens to the 500K events that arrive during checkpoint creation?
-**Answer:** The system must continue processing events during checkpoint creation. The checkpoint captures a consistent snapshot of the state at the moment it starts, not when it finishes. Incoming events are processed normally and logged to the WAL.
+::: details Câu 3: Bạn đang triển khai checkpoint cho hệ xử lý stream. Mỗi checkpoint mất 5 giây ghi, nhưng hệ thống xử lý 100K event/giây. Chuyện gì với 500K event đến khi tạo checkpoint?
+**Trả lời:** Hệ thống phải tiếp tục xử lý event khi tạo checkpoint. Checkpoint bắt snapshot nhất quán của state tại thời điểm bắt đầu, không phải khi xong. Event đến được xử lý bình thường và log vào WAL.
 
-This is the "consistent snapshot" problem. Solutions: (1) use a copy-on-write snapshot (like Redis fork) — the checkpoint captures state at fork time while new writes go to COW pages; (2) use a fuzzy checkpoint with a "redo log" — start the snapshot, track which pages changed during the snapshot, and include those changes in the checkpoint metadata; (3) use barriers — pause processing briefly to take a consistent cut, then resume. Apache Flink uses asynchronous barrier snapshots inspired by the Chandy-Lamport algorithm.
+Đây là vấn đề "snapshot nhất quán". Giải pháp: (1) dùng snapshot copy-on-write (như Redis fork) — checkpoint bắt state lúc fork trong khi ghi mới đi vào page COW; (2) dùng checkpoint mờ với "redo log" — bắt đầu snapshot, theo dõi page nào đổi khi snapshot, và bao gồm thay đổi đó trong metadata checkpoint; (3) dùng barrier — tạm dừng xử lý ngắn để lấy cut nhất quán, rồi tiếp. Apache Flink dùng snapshot barrier bất đồng bộ lấy cảm hứng từ thuật toán Chandy-Lamport.
 :::
 
-::: details Q4: Your system takes a checkpoint every hour, but the checkpoint file is 50GB. The disk write speed is 200MB/s, so writing takes ~4 minutes. During those 4 minutes, can you safely truncate the WAL?
-**Answer:** No. You can only truncate WAL entries before the checkpoint AFTER the checkpoint is fully written and confirmed durable (fsynced). If the system crashes during checkpoint writing, you need the WAL to recover.
+::: details Câu 4: Hệ thống của bạn lấy checkpoint mỗi giờ, nhưng file checkpoint 50GB. Tốc độ ghi đĩa 200MB/s, nên ghi mất ~4 phút. Trong 4 phút đó, có thể an toàn cắt WAL không?
+**Trả lời:** Không. Bạn chỉ có thể cắt entry WAL trước checkpoint SAU KHI checkpoint được ghi đầy đủ và xác nhận bền vững (đã fsync). Nếu hệ thống crash khi ghi checkpoint, bạn cần WAL để khôi phục.
 
-This is a common mistake: truncating the WAL before the checkpoint is complete. If the checkpoint write fails midway (disk full, crash, power loss), you've lost both the incomplete checkpoint AND the WAL entries you need for recovery. The safe sequence is: (1) write checkpoint to a temporary file, (2) fsync the temp file, (3) atomically rename it to the checkpoint file, (4) THEN truncate the WAL. PostgreSQL follows exactly this protocol, and etcd's snapshot mechanism does the same.
+Đây là lỗi phổ biến: cắt WAL trước khi checkpoint xong. Nếu ghi checkpoint fail giữa chừng (đĩa đầy, crash, mất điện), bạn mất cả checkpoint chưa xong VÀ entry WAL cần để khôi phục. Trình tự an toàn: (1) ghi checkpoint vào file tạm, (2) fsync file tạm, (3) đổi tên nguyên tử thành file checkpoint, (4) RỒI cắt WAL. PostgreSQL theo chính xác protocol này, và cơ chế snapshot etcd cũng vậy.
 :::
