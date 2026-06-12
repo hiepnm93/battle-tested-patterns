@@ -1,6 +1,6 @@
 ---
 title: "Pattern: Work Stealing"
-description: "Idle threads steal tasks from busy threads' queues — balancing load dynamically without central coordination."
+description: "Thread rảnh lấy trộm task từ queue của thread bận — cân bằng tải động không cần phối hợp tập trung."
 difficulty: "advanced"
 ---
 
@@ -8,50 +8,50 @@ difficulty: "advanced"
 
 <DifficultyBadge />
 
-## One Liner
+## Mô tả một câu
 
-Idle threads steal tasks from busy threads' queues — balancing load dynamically without central coordination.
+Thread rảnh lấy trộm task từ queue của thread bận — cân bằng tải động không cần phối hợp tập trung.
 
 <DemoBadge />
 
-## Real-World Analogy
+## Tương tự thực tế
 
-A team of cashiers at a supermarket. When one cashier finishes their line, they walk to the busiest cashier and take customers from the back of that line. Work naturally flows from overloaded lanes to idle ones.
+Đội thu ngân ở siêu thị. Khi một thu ngân xong hàng của họ, họ đi tới thu ngân bận nhất và lấy khách từ cuối hàng đó. Công việc tự nhiên chảy từ lane quá tải sang lane rảnh.
 
-## Core Idea
+## Ý tưởng cốt lõi
 
-Each worker owns a local deque (double-ended queue). Workers push/pop tasks from their own deque's top (LIFO for cache locality). When a worker's deque is empty, it steals from another worker's deque bottom (FIFO for fairness). This achieves automatic load balancing without a central scheduler bottleneck.
+Mỗi worker sở hữu deque cục bộ (double-ended queue). Worker push/pop task từ đỉnh deque của riêng (LIFO cho cache locality). Khi deque worker rỗng, nó lấy trộm từ đáy deque worker khác (FIFO cho công bằng). Điều này đạt cân bằng tải tự động không có nút thắt scheduler tập trung.
 
 ```text
-  Worker 0 (busy)         Worker 1 (idle)        Worker 2 (busy)
+  Worker 0 (bận)          Worker 1 (rảnh)        Worker 2 (bận)
   ┌──────────────┐        ┌──────────────┐       ┌──────────────┐
-  │ Task D ← pop │        │   (empty)    │       │ Task G ← pop │
+  │ Task D ← pop │        │   (rỗng)     │       │ Task G ← pop │
   │ Task C       │        │              │       │ Task F       │
   │ Task B       │◄───────│  STEAL ────► │       │              │
   │ Task A       │  steal │              │       │              │
   └──────────────┘  from  └──────────────┘       └──────────────┘
-        ↑ bottom                                        ↑ bottom
+        ↑ đáy                                          ↑ đáy
 ```
 
-| Property | Value |
+| Thuộc tính | Giá trị |
 |----------|-------|
-| Push/pop own | O(1) — no synchronization needed |
-| Steal | O(1) — CAS on victim's deque bottom |
-| Load balance | Automatic, decentralized |
-| Cache locality | High — LIFO on own work, FIFO on stolen |
+| Push/pop riêng | O(1) — không cần đồng bộ |
+| Steal | O(1) — CAS trên đáy deque nạn nhân |
+| Cân bằng tải | Tự động, phi tập trung |
+| Cache locality | Cao — LIFO cho việc riêng, FIFO cho việc lấy trộm |
 
-**Try it yourself** — add tasks to one worker and start processing to see idle workers steal tasks:
+**Thử ngay** — thêm task vào một worker và bắt đầu xử lý để xem worker rảnh lấy trộm task:
 
 <WorkStealingViz />
 
-## Production Proof
+## Bằng chứng production
 
-| Project | Source | Usage |
+| Dự án | Nguồn | Cách dùng |
 |---------|--------|-------|
-| Go runtime | [proc.go#L3836-L3903](https://github.com/golang/go/blob/f5cdf4745455415c7a43cfc7d925214d4511489b/src/runtime/proc.go#L3836-L3903) | `stealWork` — the goroutine scheduler's steal loop. Iterates 4× over all P's in random order, calling `runqsteal` (L7774-L7791) to CAS-grab half the runnable goroutines from a victim P's local run queue. Low-level `runqgrab` (L7706-L7769) uses atomic CAS on `runqhead`. |
-| Tokio (Rust) | [worker.rs#L1136-L1175](https://github.com/tokio-rs/tokio/blob/bde89678532a8091d958268c0d36eac9362317d8/tokio/src/runtime/scheduler/multi_thread/worker.rs#L1136-L1175) | `Core::steal_work` — iterates over remote workers from a random index, calls `steal_into` on each worker's steal queue. Only attempts stealing if fewer than half the workers are already searching. Falls back to the global inject queue. |
+| Go runtime | [proc.go#L3836-L3903](https://github.com/golang/go/blob/f5cdf4745455415c7a43cfc7d925214d4511489b/src/runtime/proc.go#L3836-L3903) | `stealWork` — vòng steal của scheduler goroutine. Lặp 4× qua mọi P theo thứ tự ngẫu nhiên, gọi `runqsteal` (L7774-L7791) để CAS-grab nửa số goroutine có thể chạy từ queue chạy local của P nạn nhân. `runqgrab` cấp thấp (L7706-L7769) dùng CAS atomic trên `runqhead`. |
+| Tokio (Rust) | [worker.rs#L1136-L1175](https://github.com/tokio-rs/tokio/blob/bde89678532a8091d958268c0d36eac9362317d8/tokio/src/runtime/scheduler/multi_thread/worker.rs#L1136-L1175) | `Core::steal_work` — lặp qua worker remote từ index ngẫu nhiên, gọi `steal_into` trên queue steal của mỗi worker. Chỉ cố steal nếu ít hơn nửa worker đang search. Fallback về queue inject toàn cục. |
 
-## Implementation
+## Triển khai
 
 ::: code-group
 
@@ -221,68 +221,68 @@ class WorkStealingScheduler:
 
 :::
 
-## Exercises
+## Bài tập
 
-| Level | Exercise | File |
+| Cấp độ | Bài tập | File |
 |-------|----------|------|
-| Basic | Implement a work-stealing scheduler with local deques | `exercises/typescript/work-stealing/01-basic.test.ts` |
-| Intermediate | Priority work stealing — high-priority tasks first | `exercises/typescript/work-stealing/02-intermediate.test.ts` |
+| Cơ bản | Triển khai scheduler work-stealing với deque local | `exercises/typescript/work-stealing/01-basic.test.ts` |
+| Trung bình | Work stealing có ưu tiên — task ưu tiên cao trước | `exercises/typescript/work-stealing/02-intermediate.test.ts` |
 
-Run exercises: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
+Chạy bài tập: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
 
-Exercise files: Rust `exercises/rust/src/work_stealing/mod.rs` · Go `exercises/go/work_stealing/work_stealing_test.go` · Python `exercises/python/work_stealing/test_work_stealing.py`
+File bài tập: Rust `exercises/rust/src/work_stealing/mod.rs` · Go `exercises/go/work_stealing/work_stealing_test.go` · Python `exercises/python/work_stealing/test_work_stealing.py`
 
-## When to Use
+## Khi nào nên dùng
 
-- **Parallel runtimes** — goroutine scheduler (Go), task scheduler (Tokio, Java ForkJoinPool)
-- **Divide-and-conquer** — recursive task decomposition where subtasks vary in size
-- **Irregular workloads** — when task durations are unpredictable
-- **NUMA-aware scheduling** — steal from far only when local work is depleted
+- **Runtime song song** — scheduler goroutine (Go), scheduler task (Tokio, Java ForkJoinPool)
+- **Chia-để-trị** — phân rã task đệ quy nơi subtask thay đổi kích thước
+- **Tải không đều** — khi thời lượng task khó đoán
+- **Lập lịch nhận biết NUMA** — chỉ steal từ xa khi việc local cạn
 
-## When NOT to Use
+## Khi nào KHÔNG nên dùng
 
-- **Single-threaded** — no other workers to steal from
-- **Uniform tasks** — static partitioning is simpler and equally effective
-- **Very short tasks** — steal overhead dominates task execution time
-- **Strict ordering** — work stealing disrupts FIFO order by design
+- **Đơn luồng** — không có worker khác để steal
+- **Task đồng nhất** — phân vùng tĩnh đơn giản hơn và hiệu quả tương đương
+- **Task rất ngắn** — overhead steal lấn át thời gian thực thi task
+- **Thứ tự nghiêm ngặt** — work stealing phá vỡ thứ tự FIFO theo thiết kế
 
-## More Production Uses
+## Thêm các ứng dụng production
 
-- [Java ForkJoinPool](https://github.com/openjdk/jdk/blob/4b3ec455c85314d051800a8f46dd8f5c93881e3a/src/java.base/share/classes/java/util/concurrent/ForkJoinPool.java) — `scan` method with randomized work stealing
-- [Rayon (Rust)](https://github.com/rayon-rs/rayon) — data-parallelism library with work-stealing thread pool
-- [Intel TBB](https://github.com/oneapi-src/oneTBB) — `task_arena` with work-stealing scheduler
-- [Cilk](https://github.com/OpenCilk/opencilk-project) — pioneered work stealing for fork-join parallelism
+- [Java ForkJoinPool](https://github.com/openjdk/jdk/blob/4b3ec455c85314d051800a8f46dd8f5c93881e3a/src/java.base/share/classes/java/util/concurrent/ForkJoinPool.java) — method `scan` với work stealing ngẫu nhiên
+- [Rayon (Rust)](https://github.com/rayon-rs/rayon) — thư viện song song dữ liệu với thread pool work-stealing
+- [Intel TBB](https://github.com/oneapi-src/oneTBB) — `task_arena` với scheduler work-stealing
+- [Cilk](https://github.com/OpenCilk/opencilk-project) — tiên phong work stealing cho song song fork-join
 
-## Related Patterns
+## Pattern liên quan
 
-| Pattern | Relationship |
+| Pattern | Quan hệ |
 |---------|-------------|
-| [Cooperative Scheduling](/patterns/cooperative-scheduling/) | Work stealing distributes tasks across threads; cooperative scheduling yields within a thread |
-| [Object Pool](/patterns/object-pool/) | Worker threads use per-thread object pools to avoid contention |
-| [Free List](/patterns/free-list/) | Per-thread free lists complement work stealing by providing lock-free allocation |
+| [Cooperative Scheduling](/patterns/cooperative-scheduling/) | Work stealing phân tán task qua thread; cooperative scheduling yield trong một thread |
+| [Object Pool](/patterns/object-pool/) | Thread worker dùng object pool mỗi thread để tránh tranh chấp |
+| [Free List](/patterns/free-list/) | Free list mỗi thread bổ sung work stealing bằng cách cung cấp cấp phát lock-free |
 
-## Challenge Questions
+## Câu hỏi thử thách
 
-::: details Q1: Workers pop from their own deque using LIFO (top), but steal from others using FIFO (bottom). Why not use FIFO for both?
-**Answer:** LIFO on your own deque gives cache locality — the most recently pushed task is likely still in CPU cache. FIFO stealing takes the oldest (largest) task from the victim, giving the thief more work to do before needing to steal again.
+::: details Câu 1: Worker pop từ deque riêng dùng LIFO (đỉnh), nhưng steal từ cái khác dùng FIFO (đáy). Sao không dùng FIFO cho cả hai?
+**Trả lời:** LIFO trên deque riêng cho cache locality — task push gần nhất có khả năng vẫn trong cache CPU. Steal FIFO lấy task cũ nhất (lớn nhất) từ nạn nhân, cho thief nhiều việc trước khi cần steal lại.
 
-In divide-and-conquer workloads, the bottom of the deque holds the earliest-spawned (coarsest-grained) tasks. Stealing one large task is better than stealing many small ones because it amortizes the steal overhead and gives the thief a chunk of work it can subdivide locally. LIFO for local pops also naturally implements depth-first execution, which uses less stack space.
+Trong tải chia-để-trị, đáy deque giữ task spawn sớm nhất (mức to nhất). Steal một task lớn tốt hơn steal nhiều task nhỏ vì phân bổ overhead steal và cho thief một khối việc nó có thể chia nhỏ cục bộ. LIFO cho pop local cũng tự nhiên triển khai thực thi theo chiều sâu, dùng ít space stack hơn.
 :::
 
-::: details Q2: Go's runtime steals half the victim's run queue instead of just one task. Why is "steal half" better than "steal one"?
-**Answer:** Stealing one task means the thief may finish quickly and immediately need to steal again, causing repeated contention on the victim's deque. Stealing half amortizes the synchronization cost.
+::: details Câu 2: Runtime Go steal nửa run queue của nạn nhân thay vì chỉ một task. Sao "steal nửa" tốt hơn "steal một"?
+**Trả lời:** Steal một task nghĩa thief có thể xong nhanh và lập tức cần steal lại, gây tranh chấp lặp lại trên deque nạn nhân. Steal nửa phân bổ chi phí đồng bộ.
 
-Each steal operation requires atomic CAS on the victim's deque, which is expensive. If you steal only one task, a worker with an empty queue may steal dozens of times per millisecond. Stealing half the queue in one operation means the thief has enough local work to stay busy, reducing total steal attempts and contention. The Go runtime's `runqgrab` does exactly this with a single atomic operation.
+Mỗi thao tác steal cần CAS atomic trên deque nạn nhân, đắt. Nếu steal chỉ một task, worker với queue rỗng có thể steal hàng chục lần mỗi millisecond. Steal nửa queue trong một thao tác nghĩa thief có đủ việc local để giữ bận, giảm tổng số lần thử steal và tranh chấp. `runqgrab` của runtime Go làm chính xác điều này với một thao tác atomic.
 :::
 
-::: details Q3: What is the ABA problem in the context of a lock-free work-stealing deque, and why does it matter?
-**Answer:** The ABA problem occurs when a CAS succeeds because the value matches, but the underlying state has changed between the read and the CAS — another thread modified and restored the original value.
+::: details Câu 3: Vấn đề ABA là gì trong bối cảnh deque work-stealing lock-free, và sao quan trọng?
+**Trả lời:** Vấn đề ABA xảy ra khi CAS thành công vì giá trị khớp, nhưng state bên dưới đã đổi giữa lúc đọc và CAS — thread khác đã sửa và khôi phục giá trị gốc.
 
-In a lock-free deque, a thief reads the bottom index as value A, gets preempted, the owner pops and pushes (bottom goes A -> B -> A), and the thief's CAS on the bottom index succeeds even though the deque content is different. This can cause a task to be executed twice or skipped. The fix is to use a tagged pointer or generation counter so CAS detects the intermediate changes. This is why Tokio and Go use epoch/version counters alongside deque indices.
+Trong deque lock-free, thief đọc index đáy là giá trị A, bị preempt, owner pop và push (đáy đi A -> B -> A), và CAS của thief trên index đáy thành công dù nội dung deque khác. Điều này có thể làm task được thực thi hai lần hoặc bị bỏ qua. Sửa là dùng con trỏ có tag hoặc bộ đếm generation để CAS phát hiện thay đổi trung gian. Đó là lý do Tokio và Go dùng bộ đếm epoch/version song song với index deque.
 :::
 
-::: details Q4: You have 8 workers and 8 identical long-running tasks, one per worker. Is work stealing helping here?
-**Answer:** No. If every worker has exactly one task of equal duration, no worker finishes early, so no stealing ever occurs. Work stealing adds zero benefit and a small overhead from the idle-check logic.
+::: details Câu 4: Bạn có 8 worker và 8 task chạy lâu giống nhau, một mỗi worker. Work stealing có giúp ở đây không?
+**Trả lời:** Không. Nếu mỗi worker có chính xác một task thời lượng bằng, không worker nào xong sớm, nên không steal nào xảy ra. Work stealing thêm 0 lợi ích và overhead nhỏ từ logic check idle.
 
-Work stealing shines when workloads are irregular — some tasks finish quickly and the worker can help others. With perfectly balanced, uniform tasks, static partitioning (assign one task per worker) is simpler and equally effective. Work stealing's overhead (deque management, random victim selection, CAS operations) is wasted when there's nothing to steal.
+Work stealing toả sáng khi tải không đều — vài task xong nhanh và worker có thể giúp cái khác. Với task cân bằng hoàn hảo, đồng nhất, phân vùng tĩnh (gán một task mỗi worker) đơn giản hơn và hiệu quả tương đương. Overhead work stealing (quản lý deque, chọn nạn nhân ngẫu nhiên, thao tác CAS) lãng phí khi không có gì để steal.
 :::
