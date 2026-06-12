@@ -1,6 +1,6 @@
 ---
 title: "Pattern: Dependency Graph"
-description: "Model dependencies as a directed acyclic graph and topologically sort to determine a valid execution order — detecting cycles before they deadlock."
+description: "Mô hình dependency thành đồ thị có hướng không chu trình và sắp xếp topo để xác định thứ tự thực thi hợp lệ — phát hiện chu trình trước khi gây deadlock."
 difficulty: "intermediate"
 ---
 
@@ -8,19 +8,19 @@ difficulty: "intermediate"
 
 <DifficultyBadge />
 
-## One Liner
+## Mô tả một câu
 
-Model dependencies as a directed acyclic graph and topologically sort to determine a valid execution order — detecting cycles before they deadlock.
+Mô hình dependency thành đồ thị có hướng không chu trình và sắp xếp topo để xác định thứ tự thực thi hợp lệ — phát hiện chu trình trước khi gây deadlock.
 
 <DemoBadge />
 
-## Real-World Analogy
+## Tương tự thực tế
 
-A course prerequisite chart in a university catalog. You can't take Advanced Physics without Intro to Physics first. You follow the chart from prerequisites to advanced courses, ensuring you never skip a required step.
+Sơ đồ tiên quyết môn học trong catalog đại học. Bạn không thể học Vật lý nâng cao không qua Vật lý nhập môn trước. Bạn theo sơ đồ từ tiên quyết đến môn nâng cao, đảm bảo không bỏ qua bước cần.
 
-## Core Idea
+## Ý tưởng cốt lõi
 
-A dependency graph represents items as nodes and ordering constraints as directed edges. `addEdge(A, B)` means "A must come before B" — A is a prerequisite of B. Topological sort (Kahn's algorithm) repeatedly removes zero-in-degree nodes, producing an ordering where every prerequisite appears before its dependents.
+Dependency graph biểu diễn item là node và ràng buộc thứ tự là cạnh có hướng. `addEdge(A, B)` nghĩa "A phải đến trước B" — A là tiên quyết của B. Sắp xếp topo (thuật toán Kahn) lặp lại xoá node có in-degree 0, sinh thứ tự nơi mọi tiên quyết xuất hiện trước phụ thuộc.
 
 ```text
   addEdge(wash, dry)     wash ──► dry ──► fold
@@ -30,30 +30,30 @@ A dependency graph represents items as nodes and ordering constraints as directe
 
   In-degree:  wash=0   dry=1   fold=2
   Output:     wash  →  dry  →  fold
-  (zero in-degree first, then dependents)
+  (in-degree 0 trước, rồi phụ thuộc)
 
-  Cycle:  a → b → c → a  ← ERROR: no valid order
+  Chu trình:  a → b → c → a  ← LỖI: không thứ tự hợp lệ
 ```
 
-| Property | Value |
+| Thuộc tính | Giá trị |
 |----------|-------|
-| Add node/edge | O(1) |
-| Topological sort | O(V + E) — visit each node and edge once |
-| Cycle detection | Built into topological sort (remaining nodes = cycle) |
-| Space | O(V + E) — adjacency list |
+| Thêm node/cạnh | O(1) |
+| Sắp xếp topo | O(V + E) — thăm mỗi node và cạnh một lần |
+| Phát hiện chu trình | Tích hợp vào sắp xếp topo (node còn lại = chu trình) |
+| Bộ nhớ | O(V + E) — danh sách kề |
 
-**Try it yourself** — add nodes and edges, then run topological sort to watch Kahn's algorithm step through:
+**Thử ngay** — thêm node và cạnh, rồi chạy sắp xếp topo để xem thuật toán Kahn đi qua:
 
 <DependencyGraphViz />
 
-## Production Proof
+## Bằng chứng production
 
-| Project | Source | Usage |
+| Dự án | Nguồn | Cách dùng |
 |---------|--------|-------|
-| Cargo (Rust) | [dep_cache.rs#L143-L175](https://github.com/rust-lang/cargo/blob/b50aa179d3d1099b53548bc8693dd17ddd019ab4/src/cargo/core/resolver/dep_cache.rs#L143-L175) | `RegistryQueryer` manages the dependency resolution graph for Rust packages. Dependencies form a DAG resolved via backtracking, with `build_deps` (L207) producing the set of dependencies activated by each candidate. |
-| pnpm | [graph-sequencer#L22-L125](https://github.com/pnpm/pnpm/blob/46fd26afc9926b4391636a851ae32493f9b2c9ff/deps/graph-sequencer/src/index.ts#L22-L125) | `graphSequencer` — topologically sorts workspace packages by their inter-dependencies with cycle detection. Used by `pnpm -r` recursive commands to respect dependency ordering across a monorepo. |
+| Cargo (Rust) | [dep_cache.rs#L143-L175](https://github.com/rust-lang/cargo/blob/b50aa179d3d1099b53548bc8693dd17ddd019ab4/src/cargo/core/resolver/dep_cache.rs#L143-L175) | `RegistryQueryer` quản lý graph phân giải dependency cho package Rust. Dependency tạo DAG phân giải qua backtracking, với `build_deps` (L207) sinh tập dependency kích hoạt bởi mỗi candidate. |
+| pnpm | [graph-sequencer#L22-L125](https://github.com/pnpm/pnpm/blob/46fd26afc9926b4391636a851ae32493f9b2c9ff/deps/graph-sequencer/src/index.ts#L22-L125) | `graphSequencer` — sắp xếp topo package workspace theo dependency liên gói với phát hiện chu trình. Dùng bởi command đệ quy `pnpm -r` để tôn trọng thứ tự dependency qua monorepo. |
 
-## Implementation
+## Triển khai
 
 ::: code-group
 
@@ -267,70 +267,70 @@ class DependencyGraph:
 
 :::
 
-## Exercises
+## Bài tập
 
-| Level | Exercise | File |
+| Cấp độ | Bài tập | File |
 |-------|----------|------|
-| Basic | Implement topological sort with cycle detection | `exercises/typescript/dependency-graph/01-basic.test.ts` |
-| Intermediate | Parallel execution planner — compute execution waves | `exercises/typescript/dependency-graph/02-intermediate.test.ts` |
+| Cơ bản | Triển khai sắp xếp topo với phát hiện chu trình | `exercises/typescript/dependency-graph/01-basic.test.ts` |
+| Trung bình | Planner thực thi song song — tính các đợt thực thi | `exercises/typescript/dependency-graph/02-intermediate.test.ts` |
 
-Run exercises: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
+Chạy bài tập: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
 
-Exercise files: Rust `exercises/rust/src/dependency_graph/mod.rs` · Go `exercises/go/dependency_graph/dependency_graph_test.go` · Python `exercises/python/dependency_graph/test_dependency_graph.py`
+File bài tập: Rust `exercises/rust/src/dependency_graph/mod.rs` · Go `exercises/go/dependency_graph/dependency_graph_test.go` · Python `exercises/python/dependency_graph/test_dependency_graph.py`
 
-## When to Use
+## Khi nào nên dùng
 
-- **Build systems** — compile dependencies before dependents (Make, Bazel, Cargo)
-- **Package managers** — install/build order for workspace packages (pnpm, npm, yarn)
-- **Task scheduling** — job orchestration with prerequisites (Airflow, CI/CD pipelines)
-- **Module bundlers** — determine chunk splitting and loading order (webpack, Rollup)
-- **Database migrations** — apply schema changes in dependency order
+- **Hệ build** — biên dịch dependency trước phụ thuộc (Make, Bazel, Cargo)
+- **Trình quản lý package** — thứ tự cài/build cho package workspace (pnpm, npm, yarn)
+- **Lập lịch task** — điều phối job với tiên quyết (Airflow, pipeline CI/CD)
+- **Bundler module** — xác định tách chunk và thứ tự nạp (webpack, Rollup)
+- **Migration database** — áp thay đổi schema theo thứ tự dependency
 
-## When NOT to Use
+## Khi nào KHÔNG nên dùng
 
-- **Circular dependencies exist by design** — use a different model (e.g., event-driven, lazy evaluation)
-- **No ordering needed** — if tasks are independent, a simple list suffices
-- **Dynamic dependencies** — if edges change at runtime, incremental approaches are better
-- **Very large graphs** — consider parallel algorithms (Kahn's is inherently sequential without modifications)
+- **Dependency vòng tồn tại theo thiết kế** — dùng mô hình khác (ví dụ hướng sự kiện, đánh giá lười)
+- **Không cần thứ tự** — nếu task độc lập, list đơn giản đủ
+- **Dependency động** — nếu cạnh đổi lúc runtime, cách tiếp cận tăng dần tốt hơn
+- **Đồ thị rất lớn** — cân nhắc thuật toán song song (Kahn vốn tuần tự không có sửa đổi)
 
-## More Production Uses
+## Thêm các ứng dụng production
 
-- [Make (GNU)](https://github.com/mirror/make) — prerequisite DAG determines target rebuild order
-- [Bazel](https://github.com/bazelbuild/bazel) — action graph with topological execution phases
-- [webpack](https://github.com/webpack/webpack) — `ModuleGraph` for chunk splitting and tree shaking
-- [Terraform](https://github.com/hashicorp/terraform) — resource dependency graph for parallel apply
+- [Make (GNU)](https://github.com/mirror/make) — DAG tiên quyết xác định thứ tự rebuild target
+- [Bazel](https://github.com/bazelbuild/bazel) — action graph với pha thực thi topo
+- [webpack](https://github.com/webpack/webpack) — `ModuleGraph` cho tách chunk và tree shaking
+- [Terraform](https://github.com/hashicorp/terraform) — graph dependency resource cho apply song song
 
-## Related Patterns
+## Pattern liên quan
 
-| Pattern | Relationship |
+| Pattern | Quan hệ |
 |---------|-------------|
-| [Visitor](/patterns/visitor/) | Tree traversal over dependency graphs dispatches to type-specific handlers |
-| [Iterator](/patterns/iterator/) | Topological iteration produces a lazy sequence of nodes in dependency order |
-| [Dirty Flag](/patterns/dirty-flag/) | Dirty propagation follows dependency edges to mark downstream nodes for recomputation |
-| [Registry](/patterns/registry/) | Registries track component metadata; dependency graphs track their relationships |
+| [Visitor](/patterns/visitor/) | Duyệt cây trên dependency graph dispatch tới handler đặc thù kiểu |
+| [Iterator](/patterns/iterator/) | Lặp topo sinh chuỗi lười các node theo thứ tự dependency |
+| [Dirty Flag](/patterns/dirty-flag/) | Lan dirty đi theo cạnh dependency để đánh dấu node downstream cho tính lại |
+| [Registry](/patterns/registry/) | Registry theo dõi metadata component; dependency graph theo dõi quan hệ chúng |
 
-## Challenge Questions
+## Câu hỏi thử thách
 
-::: details Q1: Given a dependency graph where A->C, B->C, and A and B have no dependencies, how many tasks can run in parallel? How does topological sort reveal this?
-**Answer:** A and B can run in parallel (both have in-degree 0). C must wait for both. Maximum parallelism is 2.
+::: details Câu 1: Cho dependency graph nơi A->C, B->C, và A và B không có dependency, bao nhiêu task có thể chạy song song? Sắp xếp topo tiết lộ điều này thế nào?
+**Trả lời:** A và B có thể chạy song song (cả hai in-degree 0). C phải chờ cả hai. Song song tối đa là 2.
 
-Topological sort using Kahn's algorithm naturally exposes parallelism: all nodes with in-degree 0 at any given step can execute simultaneously. In this example, the first "wave" is {A, B} (both in-degree 0), and the second wave is {C} (in-degree drops to 0 after both A and B complete). Build systems like Bazel and Make exploit this by processing each wave in parallel.
+Sắp xếp topo dùng Kahn tự nhiên lộ song song: mọi node với in-degree 0 ở bước nào cũng có thể thực thi đồng thời. Ở ví dụ này, "đợt" đầu là {A, B} (cả hai in-degree 0), và đợt hai là {C} (in-degree giảm về 0 sau khi cả A và B xong). Hệ build như Bazel và Make khai thác bằng cách xử lý mỗi đợt song song.
 :::
 
-::: details Q2: Package D depends on both B and C. B depends on A. C also depends on A. This is a "diamond dependency." Does topological sort handle it correctly?
-**Answer:** Yes. Topological sort handles diamonds correctly because it tracks in-degree, not paths. A runs first, then B and C (in parallel), then D.
+::: details Câu 2: Package D phụ thuộc cả B và C. B phụ thuộc A. C cũng phụ thuộc A. Đây là "diamond dependency." Sắp xếp topo có xử lý đúng không?
+**Trả lời:** Có. Sắp xếp topo xử lý diamond đúng vì nó theo dõi in-degree, không phải đường đi. A chạy trước, rồi B và C (song song), rồi D.
 
-A diamond is not a cycle — it's just two paths converging on the same node. Kahn's algorithm processes A (in-degree 0), decrements B and C's in-degrees to 0, processes both, then decrements D's in-degree to 0 and processes it. The potential problem is not in ordering but in version conflicts: if B needs A v1 and C needs A v2, you have a compatibility issue that the graph structure alone doesn't solve.
+Diamond không phải chu trình — chỉ là hai đường hội tụ tại cùng node. Thuật toán Kahn xử lý A (in-degree 0), giảm in-degree của B và C về 0, xử lý cả hai, rồi giảm in-degree D về 0 và xử lý. Vấn đề tiềm năng không phải ở thứ tự mà ở xung đột phiên bản: nếu B cần A v1 và C cần A v2, bạn có vấn đề tương thích mà cấu trúc graph riêng không giải.
 :::
 
-::: details Q3: You change file `utils.ts` in a large project. An incremental build system only recompiles files that depend on `utils.ts`. How does the dependency graph enable this?
-**Answer:** The build system walks the dependency graph forward from `utils.ts`, collecting all transitive dependents. Only those files (plus `utils.ts` itself) need recompilation.
+::: details Câu 3: Bạn đổi file `utils.ts` trong dự án lớn. Hệ build tăng dần chỉ biên dịch lại file phụ thuộc `utils.ts`. Dependency graph cho phép điều này thế nào?
+**Trả lời:** Hệ build đi qua dependency graph tới từ `utils.ts`, thu thập mọi phụ thuộc bắc cầu. Chỉ những file đó (cộng `utils.ts` chính) cần biên dịch lại.
 
-This is the key advantage of maintaining a dependency graph over a flat file list. Without the graph, you'd have to recompile everything or maintain manual lists of dependencies. With the graph, you compute the affected subgraph in O(V+E) time. Tools like webpack's `ModuleGraph` and Bazel's action graph do exactly this — they track which outputs depend on which inputs and invalidate only the affected subtree.
+Đây là lợi thế then chốt duy trì dependency graph thay vì list file phẳng. Không có graph, bạn phải biên dịch lại tất cả hoặc duy trì list dependency thủ công. Với graph, bạn tính subgraph bị ảnh hưởng trong O(V+E). Công cụ như `ModuleGraph` của webpack và action graph của Bazel làm chính xác điều này — chúng theo dõi output nào phụ thuộc input nào và vô hiệu chỉ subtree bị ảnh hưởng.
 :::
 
-::: details Q4: A developer adds a dependency from module A to module B, but B already transitively depends on A (B -> C -> A). What should the build system do?
-**Answer:** Reject the change. Adding A -> B creates a cycle (A -> B -> C -> A), which means there is no valid build order.
+::: details Câu 4: Dev thêm dependency từ module A tới module B, nhưng B đã bắc cầu phụ thuộc A (B -> C -> A). Hệ build nên làm gì?
+**Trả lời:** Từ chối thay đổi. Thêm A -> B tạo chu trình (A -> B -> C -> A), nghĩa không có thứ tự build hợp lệ.
 
-Kahn's algorithm detects this: after processing all zero-in-degree nodes, some nodes remain with non-zero in-degree — those nodes form the cycle. The build system should report the exact cycle path so the developer can redesign the dependency (e.g., extract shared code into a new module, use dependency inversion, or use lazy/dynamic imports to break the compile-time cycle).
+Thuật toán Kahn phát hiện điều này: sau khi xử lý mọi node in-degree 0, một số node còn in-degree khác 0 — các node đó tạo chu trình. Hệ build nên báo cáo đường chu trình chính xác để dev có thể thiết kế lại dependency (ví dụ tách code dùng chung vào module mới, dùng đảo ngược dependency, hoặc dùng import lười/động để phá chu trình lúc compile).
 :::
