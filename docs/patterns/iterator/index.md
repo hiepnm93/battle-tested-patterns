@@ -1,53 +1,53 @@
 ---
-title: "Pattern: Iterator / Lazy Evaluation"
-description: "Process sequences one element at a time without materializing the entire collection, enabling composable transformations with zero intermediate allocations."
+title: "Pattern: Iterator / Đánh giá lười"
+description: "Xử lý chuỗi từng phần tử mà không vật chất hoá toàn bộ collection, cho phép biến đổi có thể ghép với không cấp phát trung gian."
 difficulty: "beginner"
 ---
 
-# Pattern: Iterator / Lazy Evaluation
+# Pattern: Iterator / Đánh giá lười
 
 <DifficultyBadge />
 
-## One Liner
+## Mô tả một câu
 
-Process sequences one element at a time without materializing the entire collection, enabling composable transformations with zero intermediate allocations.
+Xử lý chuỗi từng phần tử mà không vật chất hoá toàn bộ collection, cho phép biến đổi có thể ghép với không cấp phát trung gian.
 
 <DemoBadge />
 
-## Real-World Analogy
+## Tương tự thực tế
 
-A deck of cards held face-down. You draw one card at a time without knowing what's underneath. You don't need to spread out the entire deck — you just keep drawing until you're done or decide to stop.
+Một bộ bài úp mặt. Bạn rút từng lá một mà không biết bên dưới có gì. Bạn không cần xoè cả bộ — chỉ rút tới khi xong hoặc quyết định dừng.
 
-## Core Idea
+## Ý tưởng cốt lõi
 
-An iterator is an object that produces values one at a time via a `next()` method. Transformations (map, filter, fold) are chained lazily — nothing executes until a terminal operation (collect, for-each) drives the chain.
+Iterator là object sinh giá trị từng cái qua method `next()`. Các biến đổi (map, filter, fold) được ghép lười — không gì chạy cho tới khi một thao tác đầu cuối (collect, for-each) thúc chain.
 
 ```mermaid
 flowchart LR
     S["Source\n[1,2,...,10]"] --> F["filter\n(isOdd)"] --> M["map\n(×10)"] --> T["take(3)"] --> C["collect\n[10,30,50]"]
 ```
 
-No intermediate arrays are created. Each element flows through the entire chain before the next one starts. `take(3)` stops after 3 results — elements 6-10 are never touched.
+Không có mảng trung gian được tạo. Mỗi phần tử chảy qua toàn chain trước khi cái tiếp theo bắt đầu. `take(3)` dừng sau 3 kết quả — phần tử 6-10 không bao giờ bị chạm.
 
-| Property | Value |
+| Thuộc tính | Giá trị |
 |----------|-------|
-| next() | O(1) per element — one step through the pipeline |
-| Memory | O(1) — no intermediate collections, one element at a time |
-| Short-circuit | `take(k)` stops early — only k elements are processed |
-| Composability | Chain map/filter/fold without allocating intermediate arrays |
+| next() | O(1) mỗi phần tử — một bước qua pipeline |
+| Bộ nhớ | O(1) — không collection trung gian, mỗi phần tử một lúc |
+| Short-circuit | `take(k)` dừng sớm — chỉ k phần tử được xử lý |
+| Khả năng ghép | Chain map/filter/fold không cấp phát mảng trung gian |
 
-**Try it yourself** — step through array and tree iterators, watching elements get visited one at a time:
+**Thử ngay** — đi qua iterator mảng và cây, xem các phần tử được thăm từng cái:
 
 <IteratorViz />
 
-## Production Proof
+## Bằng chứng production
 
-| Project | Source | Usage |
+| Dự án | Nguồn | Cách dùng |
 |---------|--------|-------|
-| Rust stdlib | [iterator.rs#L68-L112](https://github.com/rust-lang/rust/blob/d56483a91d6cf5041351a3208b8d08f98f0c8b56/library/core/src/iter/traits/iterator.rs#L68-L112) | The `Iterator` trait — `next()` (line 78) is the single required method. `map` (line 831), `filter` (line 952), `fold`, `collect` are all built on top. This is the foundation of Rust's zero-cost abstraction for sequences. |
-| Python | [genobject.c#L259-L374](https://github.com/python/cpython/blob/ff64d8de66ab7f8e56b5d410796a7d76c955280c/Objects/genobject.c#L259-L374) | `gen_send_ex2` (L259-L324) — core generator send: pushes arg onto frame stack, calls `_PyEval_EvalFrame`, distinguishes yield vs return. `gen_send_ex` (L329-L374) validates generator state (CREATED/EXECUTING/FINISHED) before delegating. |
+| Stdlib Rust | [iterator.rs#L68-L112](https://github.com/rust-lang/rust/blob/d56483a91d6cf5041351a3208b8d08f98f0c8b56/library/core/src/iter/traits/iterator.rs#L68-L112) | Trait `Iterator` — `next()` (dòng 78) là method bắt buộc duy nhất. `map` (dòng 831), `filter` (dòng 952), `fold`, `collect` đều xây trên đó. Nền tảng của zero-cost abstraction cho chuỗi của Rust. |
+| Python | [genobject.c#L259-L374](https://github.com/python/cpython/blob/ff64d8de66ab7f8e56b5d410796a7d76c955280c/Objects/genobject.c#L259-L374) | `gen_send_ex2` (L259-L324) — send generator cốt lõi: push arg lên stack frame, gọi `_PyEval_EvalFrame`, phân biệt yield với return. `gen_send_ex` (L329-L374) kiểm tra state generator (CREATED/EXECUTING/FINISHED) trước khi uỷ thác. |
 
-## Implementation
+## Triển khai
 
 ::: code-group
 
@@ -97,18 +97,18 @@ class Iter<T> {
 ```
 
 ```rust [Rust]
-// Rust's Iterator trait is built-in. Usage:
+// Trait Iterator của Rust đã có sẵn. Cách dùng:
 fn example() {
     let result: Vec<i32> = (1..=10)
         .filter(|x| x % 2 == 0)
         .map(|x| x * x)
         .collect();
-    // [4, 16, 36, 64, 100] — no intermediate Vec allocated
+    // [4, 16, 36, 64, 100] — không có Vec trung gian được cấp phát
 }
 ```
 
 ```go [Go]
-// Go 1.23+ iter.Seq for lazy iteration
+// Go 1.23+ iter.Seq cho lặp lười
 package iterator
 
 import "iter"
@@ -153,90 +153,90 @@ func Collect[T any](seq iter.Seq[T]) []T {
 	return out
 }
 
-// Usage: lazy pipeline — only processes 5 elements to find 3 odd ones
+// Cách dùng: pipeline lười — chỉ xử lý 5 phần tử để tìm 3 số lẻ
 // source := slices.Values([]int{1,2,3,4,5,6,7,8,9,10})
 // result := Collect(Take(Map(Filter(source, isOdd), times10), 3))
 // → [10, 30, 50]
 ```
 
 ```python [Python]
-# Python generators are native lazy iterators
+# Generator Python là iterator lười tự nhiên
 def fibonacci():
     a, b = 0, 1
     while True:
         yield a
         a, b = b, a + b
 
-# Take first 10 even Fibonacci numbers — lazy, infinite-safe
+# Lấy 10 số Fibonacci chẵn đầu — lười, an toàn với vô hạn
 evens = (x for x in fibonacci() if x % 2 == 0)
 first_10 = [next(evens) for _ in range(10)]
 ```
 
 :::
 
-## Exercises
+## Bài tập
 
-| Level | Exercise | File |
+| Cấp độ | Bài tập | File |
 |-------|----------|------|
-| Basic | Implement a lazy iterator with map, filter, collect | `exercises/typescript/iterator/01-basic.test.ts` |
-| Intermediate | Lazy pipeline with flatMap, take, and reduce | `exercises/typescript/iterator/02-intermediate.test.ts` |
+| Cơ bản | Triển khai iterator lười với map, filter, collect | `exercises/typescript/iterator/01-basic.test.ts` |
+| Trung bình | Pipeline lười với flatMap, take và reduce | `exercises/typescript/iterator/02-intermediate.test.ts` |
 
-Run exercises: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
+Chạy bài tập: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
 
-Exercise files: Rust `exercises/rust/src/iterator/mod.rs` · Go `exercises/go/iterator/iterator_test.go` · Python `exercises/python/iterator/test_iterator.py`
+File bài tập: Rust `exercises/rust/src/iterator/mod.rs` · Go `exercises/go/iterator/iterator_test.go` · Python `exercises/python/iterator/test_iterator.py`
 
-## When to Use
+## Khi nào nên dùng
 
-- **Large/infinite sequences** — process millions of rows without loading all into memory
-- **Composable pipelines** — chain transformations without intermediate allocations
-- **Early termination** — `take(5)` on a billion-element source only processes 5
-- **Stream processing** — files, network data, event streams
+- **Chuỗi lớn/vô hạn** — xử lý hàng triệu dòng không nạp tất cả vào bộ nhớ
+- **Pipeline có thể ghép** — chain biến đổi không cấp phát trung gian
+- **Kết thúc sớm** — `take(5)` trên nguồn tỉ phần tử chỉ xử lý 5
+- **Xử lý stream** — file, dữ liệu mạng, luồng event
 
-## When NOT to Use
+## Khi nào KHÔNG nên dùng
 
-- **Random access** — iterators are sequential; use arrays/vectors for index-based access
-- **Multiple passes** — most iterators are single-use; use a collection if you need to traverse twice
-- **Simple loops** — a plain `for` loop is clearer than a one-step iterator chain
+- **Truy cập ngẫu nhiên** — iterator tuần tự; dùng mảng/vector cho truy cập theo index
+- **Nhiều pass** — phần lớn iterator dùng một lần; dùng collection nếu cần duyệt hai lần
+- **Vòng lặp đơn giản** — `for` thường rõ hơn chain iterator một bước
 
-## More Production Uses
+## Thêm các ứng dụng production
 
-- [Java Streams](https://github.com/openjdk/jdk/blob/4b3ec455c85314d051800a8f46dd8f5c93881e3a/src/java.base/share/classes/java/util/stream/Stream.java) — lazy pipeline with intermediate/terminal operations
-- [C# LINQ](https://github.com/dotnet/runtime/blob/bee7953796edc09e516e847e3c9006b486ab0f6d/src/libraries/System.Linq/src/System/Linq/Enumerable.cs) — deferred query execution over `IEnumerable<T>`
-- [GHC Haskell](https://github.com/ghc/ghc) — lazy lists are the default; every `[a]` is an iterator
-- [Kotlin Sequences](https://github.com/JetBrains/kotlin/blob/9a0a74253fc6720b322756ca3a20febf2b266a1e/libraries/stdlib/src/kotlin/collections/Sequences.kt) — lazy evaluation analogous to Java Streams
-- [Swift LazySequence](https://github.com/swiftlang/swift/blob/626f109a4614c6482adc3b2326adb49718c3aef0/stdlib/public/core/LazySequence.swift) — `.lazy` adapter for deferred computation
+- [Java Streams](https://github.com/openjdk/jdk/blob/4b3ec455c85314d051800a8f46dd8f5c93881e3a/src/java.base/share/classes/java/util/stream/Stream.java) — pipeline lười với thao tác trung gian/đầu cuối
+- [C# LINQ](https://github.com/dotnet/runtime/blob/bee7953796edc09e516e847e3c9006b486ab0f6d/src/libraries/System.Linq/src/System/Linq/Enumerable.cs) — thực thi truy vấn hoãn trên `IEnumerable<T>`
+- [GHC Haskell](https://github.com/ghc/ghc) — danh sách lười là mặc định; mỗi `[a]` là iterator
+- [Kotlin Sequences](https://github.com/JetBrains/kotlin/blob/9a0a74253fc6720b322756ca3a20febf2b266a1e/libraries/stdlib/src/kotlin/collections/Sequences.kt) — đánh giá lười tương tự Java Stream
+- [Swift LazySequence](https://github.com/swiftlang/swift/blob/626f109a4614c6482adc3b2326adb49718c3aef0/stdlib/public/core/LazySequence.swift) — adapter `.lazy` cho tính toán hoãn
 
-## Related Patterns
+## Pattern liên quan
 
-| Pattern | Relationship |
+| Pattern | Quan hệ |
 |---------|-------------|
-| [Merge Iterator (K-Way Merge)](/patterns/merge-iterator/) | Merge iterator composes multiple iterators into one sorted output |
-| [Visitor](/patterns/visitor/) | Both traverse data structures — iterators yield elements, visitors dispatch callbacks |
-| [Middleware](/patterns/middleware-chain/) | Middleware chains iterate through handler sequences |
-| [Dependency Graph](/patterns/dependency-graph/) | Topological iteration over dependency graphs uses the iterator pattern for traversal |
+| [Merge Iterator (K-Way Merge)](/patterns/merge-iterator/) | Merge iterator ghép nhiều iterator thành một output đã sắp xếp |
+| [Visitor](/patterns/visitor/) | Cả hai duyệt cấu trúc dữ liệu — iterator yield phần tử, visitor dispatch callback |
+| [Middleware](/patterns/middleware-chain/) | Middleware chain lặp qua chuỗi handler |
+| [Dependency Graph](/patterns/dependency-graph/) | Lặp topo trên đồ thị dependency dùng pattern iterator để duyệt |
 
-## Challenge Questions
+## Câu hỏi thử thách
 
-::: details Q1: You create an infinite iterator `fibonacci()` and call `.collect()` on it. What happens?
-**Answer:** The program runs until it exhausts memory and crashes — `collect()` tries to materialize an infinite sequence into a finite array.
+::: details Câu 1: Bạn tạo iterator vô hạn `fibonacci()` và gọi `.collect()` lên nó. Chuyện gì xảy ra?
+**Trả lời:** Chương trình chạy cho tới khi cạn bộ nhớ và crash — `collect()` cố vật chất hoá chuỗi vô hạn thành mảng hữu hạn.
 
-Infinite iterators are only safe with operations that consume a bounded number of elements: `take(n)`, `find()`, `any()`, `first()`. Terminal operations like `collect()`, `count()`, or `fold()` attempt to consume every element and will never terminate on an infinite source. This is why lazy evaluation requires discipline: the chain must include a bounding combinator before any materializing terminal. Rust's type system does not prevent this — it's a runtime issue.
+Iterator vô hạn chỉ an toàn với thao tác tiêu thụ số phần tử có giới hạn: `take(n)`, `find()`, `any()`, `first()`. Thao tác đầu cuối như `collect()`, `count()` hoặc `fold()` cố tiêu mọi phần tử và sẽ không bao giờ kết thúc trên nguồn vô hạn. Đó là lý do đánh giá lười cần kỷ luật: chain phải có combinator giới hạn trước thao tác đầu cuối vật chất hoá. Hệ kiểu Rust không ngăn điều này — đây là vấn đề runtime.
 :::
 
-::: details Q2: You have `iter.filter(expensiveCheck).take(5).collect()`. Does `expensiveCheck` run on all elements or only until 5 pass?
-**Answer:** `expensiveCheck` runs only until 5 elements pass the filter — then `take` stops pulling from the source.
+::: details Câu 2: Bạn có `iter.filter(expensiveCheck).take(5).collect()`. `expensiveCheck` chạy trên mọi phần tử hay chỉ tới khi 5 cái pass?
+**Trả lời:** `expensiveCheck` chạy chỉ tới khi 5 phần tử pass filter — rồi `take` dừng pull từ nguồn.
 
-This is the power of lazy evaluation: `take(5)` pulls from `filter`, which pulls from the source, one element at a time. Once `take` has accumulated 5 passing elements, it stops requesting more. If only 1 in 10 elements passes the filter, `expensiveCheck` runs on roughly 50 elements (to find 5 that pass), not 1 million. This demand-driven execution is why lazy iterators excel at early termination — no wasted work.
+Đây là sức mạnh của đánh giá lười: `take(5)` pull từ `filter`, mà pull từ nguồn, từng phần tử. Khi `take` đã tích luỹ 5 phần tử pass, nó dừng yêu cầu thêm. Nếu chỉ 1 trên 10 phần tử pass filter, `expensiveCheck` chạy trên khoảng 50 phần tử (để tìm 5 pass), không phải 1 triệu. Thực thi hướng cầu này là lý do iterator lười xuất sắc trong kết thúc sớm — không lãng phí công.
 :::
 
-::: details Q3: You try to iterate over the same iterator twice. The second loop produces no elements. Why, and how do you fix it?
-**Answer:** Most iterators are single-use — once consumed, their internal cursor is at the end and `next()` returns `None`/`done` forever.
+::: details Câu 3: Bạn cố lặp cùng iterator hai lần. Vòng lặp thứ hai không sinh phần tử nào. Vì sao và sửa thế nào?
+**Trả lời:** Phần lớn iterator dùng một lần — khi tiêu xong, con trỏ nội bộ ở cuối và `next()` trả `None`/`done` mãi.
 
-An iterator is a stateful cursor, not a collection. After the first loop exhausts it, the state is permanently "finished." To iterate twice, you need either: (1) create a new iterator from the original source (`source.iter()` called twice), (2) collect into a collection first and iterate the collection, or (3) use a "replayable" abstraction like Kotlin's `Sequence` or Rust's `IntoIterator` on a collection (which creates a fresh iterator each time). Python generators have the same single-use constraint.
+Iterator là con trỏ có state, không phải collection. Sau vòng đầu cạn nó, state vĩnh viễn "đã xong". Để lặp hai lần, bạn cần: (1) tạo iterator mới từ nguồn gốc (`source.iter()` gọi hai lần), (2) collect vào collection trước rồi lặp collection, hoặc (3) dùng trừu tượng "có thể replay" như `Sequence` của Kotlin hoặc `IntoIterator` của Rust trên collection (tạo iterator tươi mỗi lần). Generator Python có cùng ràng buộc dùng một lần.
 :::
 
-::: details Q4: Two consumers need to process the same stream of events — one filters for errors, the other counts totals. Can they share a single iterator?
-**Answer:** No, a single iterator has one cursor. You need either `tee` (clone the iterator) or a broadcast pattern (observer) to feed multiple consumers.
+::: details Câu 4: Hai consumer cần xử lý cùng stream event — một filter lỗi, cái khác đếm tổng. Họ có thể chia sẻ một iterator không?
+**Trả lời:** Không, một iterator có một con trỏ. Bạn cần hoặc `tee` (clone iterator) hoặc pattern broadcast (observer) để cấp cho nhiều consumer.
 
-Python's `itertools.tee` creates N independent iterators from one source by buffering elements that one consumer has read but others haven't. The catch: if one consumer is much faster than the other, the buffer grows unboundedly. For truly independent consumption of a live stream, the observer/pub-sub pattern is more appropriate — the source pushes to all subscribers rather than subscribers pulling from a shared cursor. Iterators are fundamentally single-consumer; multiple consumers need a fan-out mechanism.
+`itertools.tee` của Python tạo N iterator độc lập từ một nguồn bằng cách buffer phần tử mà một consumer đã đọc nhưng cái khác chưa. Vấn đề: nếu một consumer nhanh hơn nhiều cái khác, buffer tăng không giới hạn. Cho tiêu thụ thực sự độc lập một stream sống, pattern observer/pub-sub phù hợp hơn — nguồn push tới mọi subscriber thay vì subscriber pull từ con trỏ chung. Iterator về cơ bản là một-consumer; nhiều consumer cần cơ chế fan-out.
 :::
