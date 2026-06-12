@@ -1,6 +1,6 @@
 ---
 title: "Pattern: Observer / Pub-Sub"
-description: "Decouple producers from consumers by letting objects subscribe to events and get notified when something happens, without the source knowing who's listening."
+description: "Tách producer khỏi consumer bằng cách cho object đăng ký event và được thông báo khi có gì xảy ra, mà nguồn không biết ai đang nghe."
 difficulty: "beginner"
 ---
 
@@ -8,19 +8,19 @@ difficulty: "beginner"
 
 <DifficultyBadge />
 
-## One Liner
+## Mô tả một câu
 
-Decouple producers from consumers by letting objects subscribe to events and get notified when something happens, without the source knowing who's listening.
+Tách producer khỏi consumer bằng cách cho object đăng ký event và được thông báo khi có gì xảy ra, mà nguồn không biết ai đang nghe.
 
 <DemoBadge />
 
-## Real-World Analogy
+## Tương tự thực tế
 
-A newspaper subscription. You sign up once, and every morning the paper arrives at your door. You don't have to check the newsstand — the publisher pushes updates to all subscribers. Cancel anytime.
+Đăng ký báo giấy. Bạn đăng ký một lần, và mỗi sáng tờ báo đến cửa nhà bạn. Bạn không phải kiểm tra sạp báo — nhà xuất bản đẩy cập nhật tới mọi subscriber. Huỷ bất cứ lúc nào.
 
-## Core Idea
+## Ý tưởng cốt lõi
 
-The Observer pattern creates a one-to-many dependency: when the subject changes state, all registered observers are notified. The subject doesn't know what the observers do — it just calls them.
+Pattern Observer tạo phụ thuộc một-tới-nhiều: khi subject đổi state, mọi observer đăng ký được thông báo. Subject không biết observer làm gì — chỉ gọi chúng.
 
 ```mermaid
 flowchart LR
@@ -32,27 +32,27 @@ flowchart LR
     O3 -.->|"subscribe"| S
 ```
 
-This decoupling is why the pattern is everywhere: from DOM `addEventListener` to Redux `store.subscribe` to Node.js `EventEmitter` to React's `useEffect` cleanup pattern.
+Sự tách rời này là lý do pattern có mặt khắp nơi: từ DOM `addEventListener` tới `store.subscribe` của Redux tới `EventEmitter` của Node.js tới pattern cleanup `useEffect` của React.
 
-| Property | Value |
+| Thuộc tính | Giá trị |
 |----------|-------|
-| subscribe | O(1) — add to listener set |
-| unsubscribe | O(1) — remove from listener set |
-| emit / notify | O(n) — call each of n listeners |
-| Space | O(listeners) per event type |
+| subscribe | O(1) — thêm vào tập listener |
+| unsubscribe | O(1) — xoá khỏi tập listener |
+| emit / notify | O(n) — gọi từng cái trong n listener |
+| Bộ nhớ | O(số listener) mỗi loại event |
 
-**Try it yourself** — emit events and watch them fan out to all subscribers:
+**Thử ngay** — bắn event và xem chúng fan ra mọi subscriber:
 
 <ObserverViz />
 
-## Production Proof
+## Bằng chứng production
 
-| Project | Source | Usage |
+| Dự án | Nguồn | Cách dùng |
 |---------|--------|-------|
-| Node.js | [events.js#L456-L520](https://github.com/nodejs/node/blob/19c46abbefdb8711b913d7237b3c1299367f87d7/lib/events.js#L456-L520) | `EventEmitter.prototype.emit` — the core method that iterates over registered listeners and calls each one. Line 209 defines the `EventEmitter` constructor. This is the foundation of Node's event-driven architecture. |
-| Redux | [createStore.ts#L211-L280](https://github.com/reduxjs/redux/blob/1d761f471cf58faabe88c50ea16645212d986cd0/src/createStore.ts#L211-L280) | `subscribe()` adds a listener, `dispatch()` (line 280) calls all listeners after running the reducer. Redux snapshots the listener array before dispatch to handle subscribe/unsubscribe during notification safely. |
+| Node.js | [events.js#L456-L520](https://github.com/nodejs/node/blob/19c46abbefdb8711b913d7237b3c1299367f87d7/lib/events.js#L456-L520) | `EventEmitter.prototype.emit` — method cốt lõi lặp qua listener đã đăng ký và gọi từng cái. Dòng 209 định nghĩa constructor `EventEmitter`. Đây là nền tảng kiến trúc hướng sự kiện của Node. |
+| Redux | [createStore.ts#L211-L280](https://github.com/reduxjs/redux/blob/1d761f471cf58faabe88c50ea16645212d986cd0/src/createStore.ts#L211-L280) | `subscribe()` thêm listener, `dispatch()` (dòng 280) gọi mọi listener sau khi chạy reducer. Redux snapshot mảng listener trước dispatch để xử lý subscribe/unsubscribe trong notification an toàn. |
 
-## Implementation
+## Triển khai
 
 ::: code-group
 
@@ -155,7 +155,7 @@ class EventEmitter:
     def listener_count(self, event: str) -> int:
         return len(self._listeners[event])
 
-# Usage
+# Cách dùng
 emitter = EventEmitter()
 
 messages = []
@@ -165,78 +165,78 @@ emitter.emit("message", "hello")
 emitter.emit("message", "world")
 print(messages)  # ["hello", "world"]
 
-unsub()  # unsubscribe
+unsub()  # huỷ đăng ký
 emitter.emit("message", "ignored")
-print(messages)  # ["hello", "world"] — unchanged
+print(messages)  # ["hello", "world"] — không đổi
 ```
 
 :::
 
-## Exercises
+## Bài tập
 
-| Level | Exercise | File |
+| Cấp độ | Bài tập | File |
 |-------|----------|------|
-| Basic | Implement an EventEmitter with on/off/emit | `exercises/typescript/observer/01-basic.test.ts` |
-| Intermediate | Typed event bus with on/once/off/emit | `exercises/typescript/observer/02-intermediate.test.ts` |
+| Cơ bản | Triển khai EventEmitter với on/off/emit | `exercises/typescript/observer/01-basic.test.ts` |
+| Trung bình | Bus event có kiểu với on/once/off/emit | `exercises/typescript/observer/02-intermediate.test.ts` |
 
-Run exercises: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
+Chạy bài tập: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
 
-Exercise files: Rust `exercises/rust/src/observer/mod.rs` · Go `exercises/go/observer/observer_test.go` · Python `exercises/python/observer/test_observer.py`
+File bài tập: Rust `exercises/rust/src/observer/mod.rs` · Go `exercises/go/observer/observer_test.go` · Python `exercises/python/observer/test_observer.py`
 
-## When to Use
+## Khi nào nên dùng
 
-- **Event-driven systems** — UI events, network events, message queues
-- **Decoupling modules** — plugins, middleware, extension points
-- **State management** — Redux store, MobX observables, Vue reactivity
-- **Logging / metrics** — emit events without knowing who collects them
-- **Real-time updates** — WebSocket message distribution, live feeds
+- **Hệ thống hướng sự kiện** — event UI, event mạng, message queue
+- **Tách module** — plugin, middleware, điểm mở rộng
+- **Quản lý state** — store Redux, observable MobX, reactivity Vue
+- **Logging / metric** — bắn event mà không biết ai thu thập
+- **Cập nhật thời gian thực** — phân phối thông điệp WebSocket, feed sống
 
-## When NOT to Use
+## Khi nào KHÔNG nên dùng
 
-- **Synchronous pipelines** — if the order and completion of processing matters, use direct function calls
-- **Too many events** — event storms can be hard to debug; consider batching
-- **Circular dependencies** — A observes B, B observes A → infinite loop
-- **Strong ordering guarantees** — observer notification order may not be deterministic across implementations
+- **Pipeline đồng bộ** — nếu thứ tự và hoàn thành xử lý quan trọng, dùng gọi hàm trực tiếp
+- **Quá nhiều event** — bão event khó debug; cân nhắc batch
+- **Phụ thuộc vòng** — A observe B, B observe A → vòng vô tận
+- **Đảm bảo thứ tự mạnh** — thứ tự thông báo observer có thể không xác định giữa các triển khai
 
-## More Production Uses
+## Thêm các ứng dụng production
 
-- [RxJS](https://github.com/ReactiveX/rxjs) — reactive streams
-- [Vue 3](https://github.com/vuejs/core) — reactivity system
+- [RxJS](https://github.com/ReactiveX/rxjs) — reactive stream
+- [Vue 3](https://github.com/vuejs/core) — hệ reactivity
 - [MobX](https://github.com/mobxjs/mobx)
-- [Chromium EventTarget](https://github.com/chromium/chromium/blob/5cffea3f665b7762369a0fa84d2f208875e7225e/third_party/blink/renderer/core/dom/events/event_target.cc) — DOM `addEventListener` implementation in Blink
-- [.NET events](https://github.com/dotnet/runtime/blob/bee7953796edc09e516e847e3c9006b486ab0f6d/src/libraries/System.Private.CoreLib/src/System/EventHandler.cs) — C# `event` keyword delegates
+- [Chromium EventTarget](https://github.com/chromium/chromium/blob/5cffea3f665b7762369a0fa84d2f208875e7225e/third_party/blink/renderer/core/dom/events/event_target.cc) — triển khai DOM `addEventListener` trong Blink
+- [.NET events](https://github.com/dotnet/runtime/blob/bee7953796edc09e516e847e3c9006b486ab0f6d/src/libraries/System.Private.CoreLib/src/System/EventHandler.cs) — delegate keyword `event` của C#
 
-## Related Patterns
+## Pattern liên quan
 
-| Pattern | Relationship |
+| Pattern | Quan hệ |
 |---------|-------------|
-| [Event Loop](/patterns/event-loop/) | Event loops dispatch events to observers registered for specific event types |
-| [Dirty Flag](/patterns/dirty-flag/) | Observer triggers notification; dirty flag defers the expensive reaction |
-| [Middleware](/patterns/middleware-chain/) | Middleware observes and transforms data flowing through a pipeline |
-| [Actor Model](/patterns/actor-model/) | Both decouple producers from consumers — observer via callbacks, actors via message passing |
+| [Event Loop](/patterns/event-loop/) | Event loop dispatch event tới observer đã đăng ký cho loại event cụ thể |
+| [Dirty Flag](/patterns/dirty-flag/) | Observer kích hoạt notification; dirty flag hoãn phản ứng tốn kém |
+| [Middleware](/patterns/middleware-chain/) | Middleware quan sát và biến đổi dữ liệu chảy qua pipeline |
+| [Actor Model](/patterns/actor-model/) | Cả hai tách producer khỏi consumer — observer qua callback, actor qua truyền thông điệp |
 
-## Challenge Questions
+## Câu hỏi thử thách
 
-::: details Q1: A React component subscribes to a store in `useEffect` but forgets to return a cleanup function. What happens when the component unmounts?
-**Answer:** The listener remains registered, causing a memory leak and phantom updates to an unmounted component.
+::: details Câu 1: Component React subscribe vào store trong `useEffect` nhưng quên trả cleanup. Chuyện gì khi component unmount?
+**Trả lời:** Listener vẫn đăng ký, gây rò bộ nhớ và update ảo lên component đã unmount.
 
-The store holds a reference to the listener callback, which closes over the component's state. The component is unmounted but never garbage collected because the store still references it. Worse, when the store emits, the stale listener runs and may call `setState` on an unmounted component. This is the classic observer memory leak — every `subscribe` must have a corresponding `unsubscribe`, and `useEffect`'s cleanup function is the mechanism React provides for this.
+Store giữ tham chiếu tới callback listener, đóng trên state của component. Component đã unmount nhưng không bao giờ bị GC vì store vẫn tham chiếu. Tệ hơn, khi store bắn, listener cũ chạy và có thể gọi `setState` trên component đã unmount. Đây là rò bộ nhớ observer kinh điển — mỗi `subscribe` phải có `unsubscribe` tương ứng, và cleanup của `useEffect` là cơ chế React cung cấp cho điều này.
 :::
 
-::: details Q2: You have 3 observers: A logs to a file, B updates the UI, C sends a network request. Does the order they are notified matter?
-**Answer:** In most implementations, observers are called in registration order, but you should not rely on this — the pattern makes no ordering guarantees.
+::: details Câu 2: Bạn có 3 observer: A log vào file, B update UI, C gửi request mạng. Thứ tự chúng được thông báo có quan trọng không?
+**Trả lời:** Trong hầu hết triển khai, observer được gọi theo thứ tự đăng ký, nhưng bạn không nên dựa vào — pattern không đảm bảo thứ tự.
 
-If B's UI update depends on A's log completing first, you have an implicit coupling that the observer pattern is supposed to eliminate. Each observer should be independent. If ordering matters, you need a different pattern: a middleware chain, a pipeline, or explicit dependency declaration. Node.js's `EventEmitter` calls listeners in registration order, but Redux explicitly snapshots the listener array to avoid order-dependent bugs during subscribe/unsubscribe within a dispatch.
+Nếu update UI của B phụ thuộc log của A xong trước, bạn có ghép ngầm mà pattern observer lẽ ra phải loại bỏ. Mỗi observer nên độc lập. Nếu thứ tự quan trọng, bạn cần pattern khác: chain middleware, pipeline, hoặc khai báo phụ thuộc rõ ràng. `EventEmitter` Node.js gọi listener theo thứ tự đăng ký, nhưng Redux tường minh snapshot mảng listener để tránh bug phụ thuộc thứ tự khi subscribe/unsubscribe trong dispatch.
 :::
 
-::: details Q3: An `emit('data', payload)` call triggers 50 synchronous observers, one of which throws an exception. What happens to observers 2-50?
-**Answer:** In a naive implementation, observers 2-50 never execute — the exception propagates up and aborts the `emit` loop.
+::: details Câu 3: Một `emit('data', payload)` kích hoạt 50 observer đồng bộ, một trong số đó ném exception. Chuyện gì với observer 2-50?
+**Trả lời:** Trong triển khai ngây thơ, observer 2-50 không bao giờ thực thi — exception lan lên và huỷ vòng `emit`.
 
-This is why production implementations wrap each listener call in a try-catch. Node.js `EventEmitter` does NOT do this by default — one throwing listener kills the rest. You must handle errors yourself. RxJS uses an error boundary per subscriber. The design choice is: fail-fast (one bad observer stops everything) vs. fault-tolerant (isolate failures, continue notifying). For critical systems, always isolate observer failures.
+Đó là lý do triển khai production bọc mỗi gọi listener trong try-catch. `EventEmitter` Node.js KHÔNG làm điều này mặc định — một listener ném giết phần còn lại. Bạn phải tự xử lý lỗi. RxJS dùng biên lỗi mỗi subscriber. Lựa chọn thiết kế: fail-fast (một observer xấu dừng mọi thứ) vs chịu lỗi (cô lập lỗi, tiếp tục thông báo). Cho hệ thống then chốt, luôn cô lập lỗi observer.
 :::
 
-::: details Q4: Should observer notifications be synchronous or asynchronous? What breaks if you switch from sync to async?
-**Answer:** Synchronous notifications guarantee that all observers have processed the event before `emit()` returns; switching to async breaks any code that assumes state is updated immediately after emitting.
+::: details Câu 4: Thông báo observer nên đồng bộ hay bất đồng bộ? Chuyển từ sync sang async phá vỡ gì?
+**Trả lời:** Thông báo đồng bộ đảm bảo mọi observer đã xử lý event trước khi `emit()` trả; chuyển sang async phá vỡ code nào giả định state đã cập nhật ngay sau emit.
 
-With sync: `emit('change'); readState()` sees the updated state because observers ran inline. With async: `emit('change'); readState()` sees the OLD state because observers are queued. This breaks patterns like Redux where `dispatch()` is expected to have fully completed by the time it returns. Async notification is better for performance (non-blocking) but requires the system to handle the "eventually consistent" gap between emit and observer execution.
+Với sync: `emit('change'); readState()` thấy state cập nhật vì observer chạy inline. Với async: `emit('change'); readState()` thấy state CŨ vì observer được xếp hàng. Điều này phá pattern như Redux nơi `dispatch()` được kỳ vọng hoàn tất khi trả. Thông báo async tốt hơn cho hiệu năng (không chặn) nhưng yêu cầu hệ thống xử lý khoảng "nhất quán cuối" giữa emit và thực thi observer.
 :::
