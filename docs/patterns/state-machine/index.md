@@ -1,6 +1,6 @@
 ---
 title: "Pattern: State Machine"
-description: "Model an entity's lifecycle as a set of states with explicit transitions, making impossible states unrepresentable and every state change auditable."
+description: "Mô hình vòng đời entity thành tập trạng thái với chuyển tiếp rõ ràng, làm state bất hợp lệ không biểu diễn được và mọi thay đổi state có thể audit."
 difficulty: "beginner"
 ---
 
@@ -8,19 +8,19 @@ difficulty: "beginner"
 
 <DifficultyBadge />
 
-## One Liner
+## Mô tả một câu
 
-Model an entity's lifecycle as a set of states with explicit transitions, making impossible states unrepresentable and every state change auditable.
+Mô hình vòng đời entity thành tập trạng thái với chuyển tiếp rõ ràng, làm state bất hợp lệ không biểu diễn được và mọi thay đổi state có thể audit.
 
 <DemoBadge />
 
-## Real-World Analogy
+## Tương tự thực tế
 
-A vending machine. It has clearly defined states: idle, coin-inserted, dispensing. You can't dispense without inserting a coin, and you can't insert a coin while it's already dispensing. Every button press is only valid in certain states.
+Máy bán hàng tự động. Nó có trạng thái xác định rõ: idle, đã nhận xu, đang nhả hàng. Bạn không thể nhả hàng mà không nhận xu, và không thể nhận xu khi đang nhả. Mỗi cú nhấn nút chỉ hợp lệ ở trạng thái nhất định.
 
-## Core Idea
+## Ý tưởng cốt lõi
 
-A state machine defines a finite set of states an entity can be in, and the transitions between them. At any point, the entity is in exactly one state. Transitions are triggered by events and can have guard conditions.
+State machine định nghĩa tập hữu hạn trạng thái mà entity có thể ở, và các chuyển tiếp giữa chúng. Tại bất kỳ điểm nào, entity ở chính xác một trạng thái. Chuyển tiếp được kích hoạt bởi event và có thể có điều kiện guard.
 
 ```mermaid
 stateDiagram-v2
@@ -32,27 +32,27 @@ stateDiagram-v2
     success --> idle : RESET
 ```
 
-The power: **impossible transitions don't exist**. You can't go from `success` to `error` because no such transition is defined. The compiler (or runtime) enforces this.
+Sức mạnh: **chuyển tiếp bất khả không tồn tại**. Bạn không thể đi từ `success` sang `error` vì không chuyển tiếp nào như vậy được định nghĩa. Compiler (hoặc runtime) thực thi điều này.
 
-| Property | Value |
+| Thuộc tính | Giá trị |
 |----------|-------|
-| Transition | O(1) — lookup in state×event table |
-| Current state | O(1) — single variable |
-| Valid events | Enumerable per state — enables exhaustive checking |
-| Space | O(states × events) for the transition table |
+| Chuyển tiếp | O(1) — tra cứu trong bảng state×event |
+| Trạng thái hiện tại | O(1) — một biến |
+| Event hợp lệ | Liệt kê được theo state — cho phép kiểm tra đầy đủ |
+| Bộ nhớ | O(số trạng thái × số event) cho bảng chuyển tiếp |
 
-**Try it yourself** — click events to trigger transitions and observe which events are valid in each state:
+**Thử ngay** — click event để kích hoạt chuyển tiếp và quan sát event nào hợp lệ ở mỗi state:
 
 <StateMachineViz />
 
-## Production Proof
+## Bằng chứng production
 
-| Project | Source | Usage |
+| Dự án | Nguồn | Cách dùng |
 |---------|--------|-------|
-| XState | [StateMachine.ts#L58-L120](https://github.com/statelyai/xstate/blob/9d9b9f1439b773979c5120a793215f5aa4568d8f/packages/core/src/StateMachine.ts#L58-L120) | `StateMachine` class — `transition()` takes current state + event, evaluates guard conditions, returns next state config. Supports hierarchical states via nested `states` property with parallel regions and history nodes. |
-| Linux Kernel | [tcp_input.c#L4865-L4920](https://github.com/torvalds/linux/blob/acb7500801e98639f6d8c2d796ed9f64cba83d3a/net/ipv4/tcp_input.c#L4865-L4920) | TCP connection state machine — the `switch (sk->sk_state)` block implements the TCP state transitions (LISTEN → SYN_SENT → ESTABLISHED → FIN_WAIT, etc.) that every internet connection uses. |
+| XState | [StateMachine.ts#L58-L120](https://github.com/statelyai/xstate/blob/9d9b9f1439b773979c5120a793215f5aa4568d8f/packages/core/src/StateMachine.ts#L58-L120) | Class `StateMachine` — `transition()` lấy state hiện tại + event, đánh giá điều kiện guard, trả config state tiếp theo. Hỗ trợ state phân cấp qua property `states` lồng với vùng song song và node history. |
+| Nhân Linux | [tcp_input.c#L4865-L4920](https://github.com/torvalds/linux/blob/acb7500801e98639f6d8c2d796ed9f64cba83d3a/net/ipv4/tcp_input.c#L4865-L4920) | State machine kết nối TCP — khối `switch (sk->sk_state)` triển khai chuyển trạng thái TCP (LISTEN → SYN_SENT → ESTABLISHED → FIN_WAIT, v.v.) mà mọi kết nối internet dùng. |
 
-## Implementation
+## Triển khai
 
 ::: code-group
 
@@ -178,7 +178,7 @@ class StateMachine:
     def can(self, event: str) -> bool:
         return event in self._config.get(self._current, {}).get("on", {})
 
-# Usage
+# Cách dùng
 traffic_light = StateMachine({
     "green":  {"on": {"TIMER": "yellow"}},
     "yellow": {"on": {"TIMER": "red"}},
@@ -192,69 +192,69 @@ traffic_light.send("TIMER")  # "green"
 
 :::
 
-## Exercises
+## Bài tập
 
-| Level | Exercise | File |
+| Cấp độ | Bài tập | File |
 |-------|----------|------|
-| Basic | Implement a state machine with send/can | `exercises/typescript/state-machine/01-basic.test.ts` |
-| Intermediate | Traffic light controller with timed transitions | `exercises/typescript/state-machine/02-intermediate.test.ts` |
+| Cơ bản | Triển khai state machine với send/can | `exercises/typescript/state-machine/01-basic.test.ts` |
+| Trung bình | Controller đèn giao thông với chuyển tiếp theo thời gian | `exercises/typescript/state-machine/02-intermediate.test.ts` |
 
-Run exercises: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
+Chạy bài tập: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
 
-Exercise files: Rust `exercises/rust/src/state_machine/mod.rs` · Go `exercises/go/state_machine/state_machine_test.go` · Python `exercises/python/state_machine/test_state_machine.py`
+File bài tập: Rust `exercises/rust/src/state_machine/mod.rs` · Go `exercises/go/state_machine/state_machine_test.go` · Python `exercises/python/state_machine/test_state_machine.py`
 
-## When to Use
+## Khi nào nên dùng
 
-- **Protocol implementation** — TCP, HTTP, WebSocket state transitions
-- **UI flow management** — multi-step forms, authentication flows, modals
-- **Game logic** — character states (idle, walking, attacking, dead)
-- **Workflow engines** — approval chains, deployment pipelines
-- **Parsing** — tokenizers, regex engines, protocol decoders
+- **Triển khai giao thức** — chuyển trạng thái TCP, HTTP, WebSocket
+- **Quản lý luồng UI** — form nhiều bước, luồng xác thực, modal
+- **Logic game** — trạng thái nhân vật (idle, đi, tấn công, chết)
+- **Engine workflow** — chuỗi phê duyệt, pipeline deploy
+- **Phân tích cú pháp** — tokenizer, engine regex, decoder giao thức
 
-## When NOT to Use
+## Khi nào KHÔNG nên dùng
 
-- **Simple boolean toggles** — a `true`/`false` doesn't need a state machine
-- **Unbounded states** — if the state space is continuous (positions, scores), use plain variables
-- **No invalid transitions** — if any state can transition to any other, you don't need constraints
-- **Combinatorial explosion** — 5 independent toggles = 32 states; model orthogonal concerns as parallel machines or use statecharts
+- **Toggle boolean đơn giản** — `true`/`false` không cần state machine
+- **Trạng thái không giới hạn** — nếu không gian state liên tục (vị trí, điểm), dùng biến thường
+- **Không có chuyển tiếp bất hợp lệ** — nếu mọi state có thể chuyển sang state khác bất kỳ, bạn không cần ràng buộc
+- **Bùng nổ tổ hợp** — 5 toggle độc lập = 32 state; mô hình quan tâm trực giao thành máy song song hoặc dùng statechart
 
-## More Production Uses
+## Thêm các ứng dụng production
 
-- [RE2](https://github.com/google/re2/blob/972a15cedd008d846f1a39b2e88ce48d7f166cbd/re2/nfa.cc) — NFA-based regex engine using Thompson's algorithm
-- HTTP/2 stream states ([RFC 7540](https://datatracker.ietf.org/doc/html/rfc7540))
-- [Kubernetes](https://github.com/kubernetes/kubernetes/blob/586cc904093af4fe7492e564908a796f0b107f97/pkg/kubelet/lifecycle/handlers.go) — pod lifecycle state transitions
-- [Godot Engine](https://github.com/godotengine/godot/blob/ec67cbe92628bdaf979b10594359ba6f02cf8838/scene/animation/animation_tree.cpp) — animation state machine for game characters
+- [RE2](https://github.com/google/re2/blob/972a15cedd008d846f1a39b2e88ce48d7f166cbd/re2/nfa.cc) — engine regex nền NFA dùng thuật toán Thompson
+- Trạng thái stream HTTP/2 ([RFC 7540](https://datatracker.ietf.org/doc/html/rfc7540))
+- [Kubernetes](https://github.com/kubernetes/kubernetes/blob/586cc904093af4fe7492e564908a796f0b107f97/pkg/kubelet/lifecycle/handlers.go) — chuyển trạng thái vòng đời pod
+- [Godot Engine](https://github.com/godotengine/godot/blob/ec67cbe92628bdaf979b10594359ba6f02cf8838/scene/animation/animation_tree.cpp) — state machine animation cho nhân vật game
 
-## Related Patterns
+## Pattern liên quan
 
-| Pattern | Relationship |
+| Pattern | Quan hệ |
 |---------|-------------|
-| [Actor Model](/patterns/actor-model/) | Actors often use state machines to manage their internal behavior |
-| [Circuit Breaker](/patterns/circuit-breaker/) | Circuit breaker is a classic state machine: closed -> open -> half-open |
-| [Visitor](/patterns/visitor/) | Visitors can dispatch differently based on state machine's current state |
+| [Actor Model](/patterns/actor-model/) | Actor thường dùng state machine để quản lý hành vi nội bộ |
+| [Circuit Breaker](/patterns/circuit-breaker/) | Circuit breaker là state machine kinh điển: closed -> open -> half-open |
+| [Visitor](/patterns/visitor/) | Visitor có thể dispatch khác nhau dựa trên state hiện tại của state machine |
 
-## Challenge Questions
+## Câu hỏi thử thách
 
-::: details Q1: A form has 4 steps, each with a "valid" and "invalid" sub-state, plus a "submitting" and "submitted" state. That's 4 × 2 + 2 = 10 states. If you add a "dirty/clean" dimension, it doubles to 20. How do you avoid this state explosion?
-**Answer:** Use parallel (orthogonal) state machines — one for the form step, one for validation status, one for dirty tracking — instead of one flat machine with every combination.
+::: details Câu 1: Form có 4 bước, mỗi bước có sub-state "valid" và "invalid", cộng state "submitting" và "submitted". Đó là 4 × 2 + 2 = 10 state. Nếu thêm chiều "dirty/clean", gấp đôi thành 20. Tránh bùng nổ state thế nào?
+**Trả lời:** Dùng state machine song song (trực giao) — một cho bước form, một cho status validation, một cho theo dõi dirty — thay vì một máy phẳng với mọi tổ hợp.
 
-This is exactly what statecharts (Harel's extension of FSMs) solve. Each concern runs as an independent region: the step machine handles `NEXT`/`BACK`, the validation machine handles `VALIDATE`/`INVALIDATE`, the dirty machine handles `CHANGE`/`SAVE`. They compose without multiplying. XState supports this via `type: 'parallel'`. The total states are 4 + 2 + 2 = 8 instead of 4 × 2 × 2 = 16.
+Đây chính xác là điều statechart (mở rộng FSM của Harel) giải quyết. Mỗi quan tâm chạy như vùng độc lập: máy bước xử lý `NEXT`/`BACK`, máy validation xử lý `VALIDATE`/`INVALIDATE`, máy dirty xử lý `CHANGE`/`SAVE`. Chúng kết hợp không nhân lên. XState hỗ trợ điều này qua `type: 'parallel'`. Tổng state là 4 + 2 + 2 = 8 thay vì 4 × 2 × 2 = 16.
 :::
 
-::: details Q2: In the traffic light example, you want the light to stay red for 60s but yellow for only 5s. Where does this timing logic belong — in the state machine or outside it?
-**Answer:** The timing lives outside the machine as the event source; the machine only defines which transitions are valid.
+::: details Câu 2: Trong ví dụ đèn giao thông, bạn muốn đèn đỏ giữ 60 giây nhưng đèn vàng chỉ 5 giây. Logic thời gian này thuộc đâu — trong state machine hay ngoài?
+**Trả lời:** Thời gian sống ngoài máy như nguồn event; máy chỉ định nghĩa chuyển tiếp nào hợp lệ.
 
-A state machine is not a scheduler — it defines *what* can happen, not *when*. An external timer fires a `TIMER` event after the appropriate delay. The machine receives the event and transitions. This separation is important: the same machine definition works whether timers are real (production), instant (tests), or manual (debugging). Putting delays inside transitions couples the machine to time, making it harder to test and reason about.
+State machine không phải scheduler — nó định nghĩa *điều gì* có thể xảy ra, không phải *khi nào*. Timer bên ngoài bắn event `TIMER` sau delay phù hợp. Máy nhận event và chuyển. Sự tách biệt này quan trọng: cùng định nghĩa máy hoạt động dù timer thật (production), tức thì (test), hay thủ công (debug). Đặt delay trong chuyển tiếp ghép máy với thời gian, làm khó test và suy luận.
 :::
 
-::: details Q3: You add a guard condition: "only transition from `loading` to `success` if the response has status 200." What happens if no guard matches — is the event silently dropped?
-**Answer:** Yes, in most implementations the event is silently ignored and the machine stays in its current state.
+::: details Câu 3: Bạn thêm điều kiện guard: "chỉ chuyển từ `loading` sang `success` nếu response có status 200." Chuyện gì nếu không guard nào khớp — event có bị bỏ âm thầm không?
+**Trả lời:** Có, trong hầu hết triển khai event bị bỏ qua âm thầm và máy giữ state hiện tại.
 
-This is by design — an unhandled event is not an error in state machine semantics. If no transition matches (because no guard passes), the machine remains stable. This is safer than throwing an exception, because events often arrive asynchronously and may be irrelevant to the current state. If you need to handle "no transition matched" explicitly, model it as a catch-all transition to an error state, or use an `onEvent` hook to log unhandled events.
+Đây là theo thiết kế — event không xử lý không phải lỗi trong ngữ nghĩa state machine. Nếu không chuyển tiếp nào khớp (vì không guard nào pass), máy giữ ổn định. An toàn hơn ném exception, vì event thường đến bất đồng bộ và có thể không liên quan đến state hiện tại. Nếu cần xử lý "không chuyển tiếp khớp" tường minh, mô hình hoá thành chuyển tiếp catch-all sang state lỗi, hoặc dùng hook `onEvent` để log event chưa xử lý.
 :::
 
-::: details Q4: TCP has 11 states and ~25 transitions. Could you replace the state machine with a series of `if/else` checks on boolean flags like `isConnected`, `isSynSent`, `isFinWait`?
-**Answer:** Technically yes, but you lose the guarantee that impossible states are unrepresentable — boolean flags allow invalid combinations like `isConnected && isFinWait`.
+::: details Câu 4: TCP có 11 state và ~25 chuyển tiếp. Bạn có thể thay state machine bằng chuỗi check `if/else` trên cờ boolean như `isConnected`, `isSynSent`, `isFinWait` không?
+**Trả lời:** Về kỹ thuật có, nhưng bạn mất bảo đảm state bất khả không biểu diễn được — cờ boolean cho phép tổ hợp bất hợp lệ như `isConnected && isFinWait`.
 
-With 11 booleans you have 2^11 = 2048 possible combinations, of which only 11 are valid. Every `if/else` must guard against the 2037 invalid states. A state machine makes this impossible by construction: the entity is always in exactly one state, and only defined transitions can change it. The TCP spec itself is defined as a state diagram, not as boolean logic, because the state machine representation is provably correct while the boolean approach is provably fragile.
+Với 11 boolean bạn có 2^11 = 2048 tổ hợp khả dĩ, trong đó chỉ 11 hợp lệ. Mỗi `if/else` phải bảo vệ chống 2037 state bất hợp lệ. State machine làm điều này không thể do thiết kế: entity luôn ở chính xác một state, và chỉ chuyển tiếp đã định nghĩa mới có thể đổi nó. Spec TCP tự nó được định nghĩa thành sơ đồ trạng thái, không phải logic boolean, vì biểu diễn state machine chứng minh được đúng còn cách boolean chứng minh được mong manh.
 :::
