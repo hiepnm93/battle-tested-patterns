@@ -1,6 +1,6 @@
 ---
 title: "Pattern: Free List"
-description: "Maintain a linked list of freed slots so allocation and deallocation are O(1) — reuse memory without calling the system allocator."
+description: "Duy trì linked list các slot đã giải phóng để cấp/giải phóng O(1) — tái dùng bộ nhớ không gọi allocator hệ thống."
 difficulty: "intermediate"
 ---
 
@@ -8,51 +8,51 @@ difficulty: "intermediate"
 
 <DifficultyBadge />
 
-## One Liner
+## Mô tả một câu
 
-Maintain a linked list of freed slots so allocation and deallocation are O(1) — reuse memory without calling the system allocator.
+Duy trì linked list các slot đã giải phóng để cấp/giải phóng O(1) — tái dùng bộ nhớ không gọi allocator hệ thống.
 
 <DemoBadge />
 
-## Real-World Analogy
+## Tương tự thực tế
 
-A parking lot that keeps a chain of empty spots on a clipboard. When a car arrives, you hand out the first empty spot instantly. When a car leaves, its spot goes back to the top of the list. No scanning needed.
+Bãi đỗ xe giữ chuỗi chỗ trống trên clipboard. Khi xe đến, bạn đưa ra chỗ trống đầu tiên ngay. Khi xe đi, chỗ của nó trở lại đầu danh sách. Không cần quét.
 
-## Core Idea
+## Ý tưởng cốt lõi
 
-A free list tracks available memory slots in a linked list threaded through the free slots themselves (intrusive) or via a separate index array (non-intrusive). `alloc()` pops the head; `free()` pushes onto the head. No fragmentation within the pool, no system calls, predictable O(1) performance.
+Free list theo dõi slot bộ nhớ trống trong linked list xen qua chính các slot trống (intrusive) hoặc qua mảng index riêng (non-intrusive). `alloc()` pop head; `free()` push lên head. Không phân mảnh trong pool, không system call, hiệu năng O(1) dự đoán được.
 
 ```text
-  Free List Head
+  Đầu Free List
        │
        ▼
   ┌────────┐    ┌────────┐    ┌────────┐
   │ slot 3 │───►│ slot 0 │───►│ slot 7 │───► null
   └────────┘    └────────┘    └────────┘
 
-  alloc() → returns slot 3, head moves to slot 0
-  free(5) → slot 5 becomes new head, points to slot 0
+  alloc() → trả slot 3, head dời sang slot 0
+  free(5) → slot 5 thành head mới, trỏ tới slot 0
 ```
 
-| Property | Value |
+| Thuộc tính | Giá trị |
 |----------|-------|
-| alloc | O(1) — pop from head |
-| free | O(1) — push to head |
-| Fragmentation | None within pool (fixed-size slots) |
-| Overhead | One pointer per free slot (intrusive) or index array (non-intrusive) |
+| alloc | O(1) — pop từ head |
+| free | O(1) — push vào head |
+| Phân mảnh | Không trong pool (slot kích thước cố định) |
+| Overhead | Một con trỏ mỗi slot trống (intrusive) hoặc mảng index (non-intrusive) |
 
-**Try it yourself** — allocate and free blocks, observe how the free list links available slots:
+**Thử ngay** — cấp và giải phóng block, xem free list liên kết các slot trống:
 
 <FreeListViz />
 
-## Production Proof
+## Bằng chứng production
 
-| Project | Source | Usage |
+| Dự án | Nguồn | Cách dùng |
 |---------|--------|-------|
-| Go runtime | [mfixalloc.go#L31-L109](https://github.com/golang/go/blob/f5cdf4745455415c7a43cfc7d925214d4511489b/src/runtime/mfixalloc.go#L31-L109) | `fixalloc` — fixed-size free-list allocator. `mlink` struct (L49-L52) is the intrusive list node overlaid on freed blocks. `alloc()` (L74-L87) pops from the free list; `free()` (L106-L108) pushes onto it. Classic LIFO free list powering Go's memory subsystem. |
-| Linux kernel (SLUB) | [slub.c#L530-L551](https://github.com/torvalds/linux/blob/acb7500801e98639f6d8c2d796ed9f64cba83d3a/mm/slub.c#L530-L551) | `get_freepointer` / `set_freepointer` — reads/writes the next-free pointer embedded inside each free slab object at `object + s->offset`. Uses XOR-encoded pointers (L504-L528) under `CONFIG_SLAB_FREELIST_HARDENED` to defend against heap corruption attacks. |
+| Go runtime | [mfixalloc.go#L31-L109](https://github.com/golang/go/blob/f5cdf4745455415c7a43cfc7d925214d4511489b/src/runtime/mfixalloc.go#L31-L109) | `fixalloc` — allocator free-list kích thước cố định. Struct `mlink` (L49-L52) là node list xen đặt lên các block đã giải phóng. `alloc()` (L74-L87) pop từ free list; `free()` (L106-L108) push vào. Free list LIFO kinh điển chạy subsystem bộ nhớ Go. |
+| Nhân Linux (SLUB) | [slub.c#L530-L551](https://github.com/torvalds/linux/blob/acb7500801e98639f6d8c2d796ed9f64cba83d3a/mm/slub.c#L530-L551) | `get_freepointer` / `set_freepointer` — đọc/ghi con trỏ next-free nhúng trong mỗi object slab tự do tại `object + s->offset`. Dùng con trỏ XOR-encode (L504-L528) dưới `CONFIG_SLAB_FREELIST_HARDENED` để chống tấn công hư hỏng heap. |
 
-## Implementation
+## Triển khai
 
 ::: code-group
 
@@ -193,73 +193,73 @@ class FreeList:
 
 :::
 
-## Exercises
+## Bài tập
 
-| Level | Exercise | File |
+| Cấp độ | Bài tập | File |
 |-------|----------|------|
-| Basic | Implement a free list allocator with alloc/free and tracking | `exercises/typescript/free-list/01-basic.test.ts` |
-| Intermediate | Generational pool with stale-handle detection | `exercises/typescript/free-list/02-intermediate.test.ts` |
+| Cơ bản | Triển khai allocator free list với alloc/free và theo dõi | `exercises/typescript/free-list/01-basic.test.ts` |
+| Trung bình | Pool có generation với phát hiện handle cũ | `exercises/typescript/free-list/02-intermediate.test.ts` |
 
-Run exercises: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
+Chạy bài tập: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
 
-Exercise files: Rust `exercises/rust/src/free_list/mod.rs` · Go `exercises/go/free_list/free_list_test.go` · Python `exercises/python/free_list/test_free_list.py`
+File bài tập: Rust `exercises/rust/src/free_list/mod.rs` · Go `exercises/go/free_list/free_list_test.go` · Python `exercises/python/free_list/test_free_list.py`
 
-## When to Use
+## Khi nào nên dùng
 
-- **Game engines** — entity/component pools with rapid alloc/free cycles
-- **OS kernels** — slab allocators for fixed-size kernel objects (inodes, task structs)
-- **Embedded systems** — no heap, deterministic allocation timing
-- **Network stacks** — buffer pools for packet headers
-- **Database engines** — page allocators for B-tree nodes
+- **Game engine** — pool entity/component với chu kỳ cấp/giải phóng nhanh
+- **Kernel OS** — slab allocator cho object kernel kích thước cố định (inode, task struct)
+- **Hệ thống nhúng** — không heap, thời gian cấp phát xác định
+- **Stack mạng** — buffer pool cho header gói
+- **Engine database** — page allocator cho node B-tree
 
-## When NOT to Use
+## Khi nào KHÔNG nên dùng
 
-- **Variable-size objects** — free list requires fixed-size slots (use a general-purpose allocator)
-- **Rarely freed** — if objects live forever, the free list stays empty (use bump/arena allocator)
-- **Small pools** — overhead of managing the list outweighs benefits below ~16 slots
-- **Thread-safe required** — basic free list needs external synchronization (or use lock-free variants)
+- **Object kích thước thay đổi** — free list yêu cầu slot kích thước cố định (dùng allocator tổng quát)
+- **Ít khi giải phóng** — nếu object sống mãi, free list giữ rỗng (dùng bump/arena allocator)
+- **Pool nhỏ** — overhead quản lý list vượt lợi ích dưới ~16 slot
+- **Cần thread-safe** — free list cơ bản cần đồng bộ bên ngoài (hoặc dùng biến thể lock-free)
 
-## More Production Uses
+## Thêm các ứng dụng production
 
-- [Godot Engine](https://github.com/godotengine/godot/blob/ec67cbe92628bdaf979b10594359ba6f02cf8838/core/templates/pooled_list.h#L57-L131) — `PooledList<T>` non-intrusive free list with separate index array
-- [jemalloc](https://github.com/jemalloc/jemalloc) — thread-cache free lists for small allocations
-- [mimalloc](https://github.com/microsoft/mimalloc) — segment-level free lists with sharded design
-- [Vulkan Memory Allocator](https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator) — sub-allocation pools with free lists
+- [Godot Engine](https://github.com/godotengine/godot/blob/ec67cbe92628bdaf979b10594359ba6f02cf8838/core/templates/pooled_list.h#L57-L131) — `PooledList<T>` free list non-intrusive với mảng index riêng
+- [jemalloc](https://github.com/jemalloc/jemalloc) — free list thread-cache cho cấp phát nhỏ
+- [mimalloc](https://github.com/microsoft/mimalloc) — free list cấp segment với thiết kế shard
+- [Vulkan Memory Allocator](https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator) — pool sub-allocation với free list
 
-## Related Patterns
+## Pattern liên quan
 
-| Pattern | Relationship |
+| Pattern | Quan hệ |
 |---------|-------------|
-| [Arena Allocator](/patterns/arena-allocator/) | Arena bulk-frees; free lists recycle individual slots for O(1) reuse |
-| [Object Pool](/patterns/object-pool/) | Object pools use free lists internally to track available objects |
-| [Ring Buffer (Circular Buffer)](/patterns/ring-buffer/) | Both provide O(1) slot management — ring buffers via modular index, free lists via linked chain |
-| [LRU Cache](/patterns/lru-cache/) | LRU caches use free lists to recycle evicted node slots for O(1) reuse |
-| [Skip List](/patterns/skip-list/) | Skip lists can use free lists to recycle deleted node slots |
-| [Tombstone / Soft Delete](/patterns/tombstone/) | Tombstone-based deletion defers slot recycling; free lists reclaim those slots |
-| [Work Stealing](/patterns/work-stealing/) | Work-stealing queues can use free lists to manage task node allocation |
+| [Arena Allocator](/patterns/arena-allocator/) | Arena giải phóng hàng loạt; free list tái chế slot riêng cho tái dùng O(1) |
+| [Object Pool](/patterns/object-pool/) | Object pool dùng free list nội bộ để theo dõi object có sẵn |
+| [Ring Buffer (Buffer vòng)](/patterns/ring-buffer/) | Cả hai cung cấp quản lý slot O(1) — ring buffer qua index modulo, free list qua chuỗi liên kết |
+| [LRU Cache](/patterns/lru-cache/) | LRU cache dùng free list để tái chế slot node đã loại cho tái dùng O(1) |
+| [Skip List](/patterns/skip-list/) | Skip list có thể dùng free list để tái chế slot node đã xoá |
+| [Tombstone / Xoá mềm](/patterns/tombstone/) | Xoá dựa trên tombstone hoãn tái chế slot; free list thu hồi các slot đó |
+| [Work Stealing](/patterns/work-stealing/) | Queue work-stealing có thể dùng free list để quản lý cấp phát node task |
 
-## Challenge Questions
+## Câu hỏi thử thách
 
-::: details Q1: A bug causes `free(slot)` to be called twice on the same slot. What happens with a naive free list, and how do production systems detect this?
-**Answer:** The slot appears twice in the free list. Two subsequent `alloc()` calls return the same slot, and two callers write to overlapping memory, causing data corruption.
+::: details Câu 1: Bug làm `free(slot)` được gọi hai lần trên cùng slot. Chuyện gì với free list ngây thơ, và hệ thống production phát hiện thế nào?
+**Trả lời:** Slot xuất hiện hai lần trong free list. Hai `alloc()` tiếp theo trả cùng slot, và hai caller ghi vào bộ nhớ chồng lên, gây hư dữ liệu.
 
-Double-free is one of the most dangerous memory bugs. Detection techniques include: a bitmap tracking which slots are allocated (check before freeing), poison values written into freed slots (detect if the value is already the poison), and the Linux SLUB allocator's approach of XOR-encoding free list pointers with a per-cache random value so corruption is detected on the next alloc. Some allocators abort immediately on double-free rather than silently corrupting.
+Double-free là một trong những bug bộ nhớ nguy hiểm nhất. Kỹ thuật phát hiện gồm: bitmap theo dõi slot nào đã cấp (check trước khi giải phóng), giá trị poison ghi vào slot đã giải phóng (phát hiện nếu giá trị đã là poison), và cách của Linux SLUB là XOR-encode con trỏ free list với giá trị ngẫu nhiên mỗi cache nên hư hỏng được phát hiện ở alloc tiếp. Một số allocator abort ngay khi double-free thay vì âm thầm hư.
 :::
 
-::: details Q2: An intrusive free list stores the "next" pointer inside the free slot itself. What's the advantage over a separate index array, and what's the risk?
-**Answer:** Intrusive lists use zero extra memory — the next pointer occupies space that's unused anyway (the slot is free). The risk is that a use-after-free bug can overwrite the next pointer, corrupting the entire free list.
+::: details Câu 2: Free list intrusive lưu con trỏ "next" trong chính slot trống. Lợi thế so với mảng index riêng là gì, rủi ro là gì?
+**Trả lời:** List intrusive dùng không thêm bộ nhớ — con trỏ next chiếm chỗ không dùng đến (slot trống). Rủi ro là bug use-after-free có thể ghi đè con trỏ next, làm hư toàn bộ free list.
 
-With a non-intrusive design (separate array of indices), corrupting a freed slot's data doesn't break the free list structure. With intrusive design, if code accidentally writes to a freed slot, it overwrites the next pointer and the free list chain breaks — subsequent allocs may return garbage addresses. This is why Linux's SLUB uses `CONFIG_SLAB_FREELIST_HARDENED` to XOR-encode the pointers.
+Với thiết kế non-intrusive (mảng index riêng), làm hư dữ liệu slot đã giải phóng không phá cấu trúc free list. Với thiết kế intrusive, nếu code vô tình ghi vào slot đã giải phóng, nó ghi đè con trỏ next và chuỗi free list bị phá — alloc tiếp theo có thể trả địa chỉ rác. Đó là lý do SLUB Linux dùng `CONFIG_SLAB_FREELIST_HARDENED` để XOR-encode con trỏ.
 :::
 
-::: details Q3: Free lists return the most recently freed slot (LIFO). Why is this better for performance than returning the oldest freed slot (FIFO)?
-**Answer:** The most recently freed slot is likely still in CPU cache. Reusing it immediately gives better cache hit rates than returning a slot freed long ago.
+::: details Câu 3: Free list trả slot mới giải phóng gần nhất (LIFO). Sao tốt hơn cho hiệu năng so với trả slot giải phóng cũ nhất (FIFO)?
+**Trả lời:** Slot giải phóng gần nhất có khả năng vẫn trong cache CPU. Tái dùng nó ngay cho tỉ lệ cache hit tốt hơn trả slot giải phóng từ lâu.
 
-LIFO reuse is a deliberate cache optimization. When you free slot N and immediately alloc, you get slot N back — which was just accessed and is likely still in L1/L2 cache. FIFO would return a slot freed many operations ago, which has probably been evicted from cache. For hot allocation paths (game engines doing thousands of alloc/free per frame), this cache locality difference is measurable.
+Tái dùng LIFO là tối ưu cache có chủ ý. Khi bạn free slot N và alloc ngay, bạn nhận lại slot N — vừa được truy cập và có khả năng vẫn trong cache L1/L2. FIFO sẽ trả slot giải phóng nhiều thao tác trước, có lẽ đã bị loại khỏi cache. Cho hot path cấp phát (game engine làm hàng nghìn alloc/free mỗi frame), khác biệt cache locality này đo được.
 :::
 
-::: details Q4: You have a free list pool of 1,000 slots. Monitoring shows the pool is 95% allocated at steady state, and alloc() frequently returns null. Should you increase the pool size?
-**Answer:** Not necessarily. First check whether allocated slots are actually in use or are being leaked (allocated but never freed).
+::: details Câu 4: Bạn có pool free list 1.000 slot. Giám sát cho thấy pool 95% allocated ở trạng thái ổn định, và alloc() thường trả null. Có nên tăng kích thước pool?
+**Trả lời:** Không nhất thiết. Đầu tiên kiểm tra slot allocated có thực sự đang dùng hay bị rò (cấp nhưng không bao giờ giải phóng).
 
-A common bug is forgetting to call `free()` on slots that are no longer needed, causing the pool to slowly drain. Adding more slots just delays the inevitable exhaustion. Check the `allocated` count over time — if it monotonically increases, you have a leak. If it fluctuates around 950 with occasional spikes to 1000, then the pool is genuinely too small and should be increased.
+Bug phổ biến là quên gọi `free()` trên slot không còn cần, làm pool cạn từ từ. Thêm slot chỉ trì hoãn cạn kiệt không tránh khỏi. Kiểm tra count `allocated` theo thời gian — nếu tăng đơn điệu, bạn có rò. Nếu dao động quanh 950 với đỉnh đôi khi tới 1000, thì pool thực sự quá nhỏ và nên tăng.
 :::
