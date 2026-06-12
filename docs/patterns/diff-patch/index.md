@@ -1,6 +1,6 @@
 ---
 title: "Pattern: Diff / Patch"
-description: "Compare two sequences to compute the minimal set of operations (insert, delete, move) needed to transform one into the other."
+description: "So sánh hai chuỗi để tính tập thao tác tối thiểu (chèn, xoá, di chuyển) cần để biến cái này thành cái kia."
 difficulty: "intermediate"
 ---
 
@@ -8,56 +8,56 @@ difficulty: "intermediate"
 
 <DifficultyBadge />
 
-## One Liner
+## Mô tả một câu
 
-Compare two sequences to compute the minimal set of operations (insert, delete, move) needed to transform one into the other.
+So sánh hai chuỗi để tính tập thao tác tối thiểu (chèn, xoá, di chuyển) cần để biến cái này thành cái kia.
 
 <DemoBadge />
 
-## Real-World Analogy
+## Tương tự thực tế
 
-A track-changes document in Word. Instead of sending the whole document, you send just the red-lined changes: 'delete paragraph 3, insert this sentence after paragraph 5.' The recipient applies the patch to their copy.
+Tài liệu Word có theo dõi thay đổi. Thay vì gửi cả tài liệu, bạn chỉ gửi các thay đổi đỏ: 'xoá đoạn 3, chèn câu này sau đoạn 5.' Người nhận áp patch lên bản của họ.
 
-## Core Idea
+## Ý tưởng cốt lõi
 
-Given an old list and a new list, the diff algorithm determines which items were added, removed, or moved. The result is a "patch" — a minimal set of mutations to apply.
+Cho danh sách cũ và mới, thuật toán diff xác định item nào được thêm, xoá hoặc di chuyển. Kết quả là một "patch" — tập mutation tối thiểu để áp.
 
 ```mermaid
 flowchart LR
-    subgraph Old["Old List"]
+    subgraph Old["List cũ"]
         A1[A] --> B1[B] --> C1[C] --> D1[D]
     end
-    subgraph New["New List"]
+    subgraph New["List mới"]
         A2[A] --> C2[C] --> E2[E] --> D2[D]
     end
-    Old -->|diff| P["Patch:\n- keep A\n- delete B\n- keep C\n- insert E\n- keep D"]
-    P -->|apply| New
+    Old -->|diff| P["Patch:\n- giữ A\n- xoá B\n- giữ C\n- chèn E\n- giữ D"]
+    P -->|áp| New
 ```
 
-React's reconciler uses this to determine which DOM nodes to create, update, or remove. Git uses it to show what changed between commits.
+Reconciler React dùng để xác định node DOM nào tạo, update hoặc xoá. Git dùng để hiển thị cái gì đổi giữa commit.
 
-| Property | Value |
+| Thuộc tính | Giá trị |
 |----------|-------|
-| Diff (Myers') | O(n·d) where d = edit distance; O(n) when similar |
-| Diff (list with keys) | O(n) — key-based matching avoids quadratic search |
-| Patch apply | O(patch size) — each operation is O(1) |
-| Space | O(n) — for the edit script / patch |
+| Diff (Myers') | O(n·d) trong đó d = khoảng cách chỉnh sửa; O(n) khi tương tự |
+| Diff (list với key) | O(n) — match theo key tránh tìm bậc hai |
+| Áp patch | O(kích thước patch) — mỗi thao tác O(1) |
+| Bộ nhớ | O(n) — cho script chỉnh sửa / patch |
 
-**Try it yourself** — edit old and new text, then compute and apply the diff:
+**Thử ngay** — sửa text cũ và mới, rồi tính và áp diff:
 
 <DiffPatchViz />
 
-## Production Proof
+## Bằng chứng production
 
-| Project | Source | Usage |
+| Dự án | Nguồn | Cách dùng |
 |---------|--------|-------|
-| React | [ReactChildFiber.js#L1169-L1340](https://github.com/facebook/react/blob/34b78a2897cc208260a88e6b62ecaf9ca2a9dfe4/packages/react-reconciler/src/ReactChildFiber.js#L1169-L1340) | `reconcileChildrenArray` diffs old and new children. Line ~1294 calls `mapRemainingChildren` to build a key→fiber map, then iterates new children via `updateFromMap` to detect moves, insertions, and deletions. |
-| Git | [diff.c#L5020-L5060](https://github.com/git/git/blob/1ff279f3404a482a83fb04c7457e41ab26884aea/diff.c#L5020-L5060) | `run_diff` dispatches file-pair comparisons. `builtin_diff` (line 3839) handles the actual diffing, producing the familiar `+`/`-` patch output. Git uses an optimized Myers' algorithm internally (in `xdiff/`). |
+| React | [ReactChildFiber.js#L1169-L1340](https://github.com/facebook/react/blob/34b78a2897cc208260a88e6b62ecaf9ca2a9dfe4/packages/react-reconciler/src/ReactChildFiber.js#L1169-L1340) | `reconcileChildrenArray` diff children cũ và mới. Dòng ~1294 gọi `mapRemainingChildren` để xây map key→fiber, rồi lặp children mới qua `updateFromMap` để phát hiện di chuyển, chèn và xoá. |
+| Git | [diff.c#L5020-L5060](https://github.com/git/git/blob/1ff279f3404a482a83fb04c7457e41ab26884aea/diff.c#L5020-L5060) | `run_diff` dispatch so sánh cặp file. `builtin_diff` (dòng 3839) xử lý diff thực tế, sinh output patch quen thuộc `+`/`-`. Git dùng thuật toán Myers' tối ưu nội bộ (trong `xdiff/`). |
 
-## Implementation
+## Triển khai
 
-::: info Note on algorithm
-The implementation below uses a **greedy forward scan** — simple and clear for learning. Production systems like Git use [Myers' diff algorithm](https://blog.jcoglan.com/2017/02/12/the-myers-diff-algorithm-part-1/) which guarantees a minimum edit sequence. React uses a key-based approach optimized for UI list reconciliation, not general-purpose diffing.
+::: info Lưu ý thuật toán
+Triển khai bên dưới dùng **quét tham lam tới**  — đơn giản và rõ ràng cho việc học. Hệ thống production như Git dùng [thuật toán diff Myers'](https://blog.jcoglan.com/2017/02/12/the-myers-diff-algorithm-part-1/) đảm bảo chuỗi chỉnh sửa tối thiểu. React dùng cách tiếp cận dựa trên key tối ưu cho reconciliation list UI, không phải diff tổng quát.
 :::
 
 ::: code-group
@@ -73,7 +73,7 @@ function diff<T>(oldList: T[], newList: T[], eq: (a: T, b: T) => boolean = (a, b
   let oldIdx = 0;
   let newIdx = 0;
 
-  // Build a map of old items by value for O(1) lookup
+  // Xây map item cũ theo giá trị cho tra cứu O(1)
   const oldMap = new Map<string, number>();
   oldList.forEach((item, i) => oldMap.set(String(item), i));
 
@@ -244,76 +244,76 @@ def diff(old: List[T], new: List[T]) -> List[Op]:
 def patch(ops: List[Op]) -> List[T]:
     return [val for op_type, val in ops if op_type != "delete"]
 
-# Usage
+# Cách dùng
 ops = diff(["a", "b", "c", "d"], ["a", "c", "e", "d"])
 assert patch(ops) == ["a", "c", "e", "d"]
 ```
 
 :::
 
-## Exercises
+## Bài tập
 
-| Level | Exercise | File |
+| Cấp độ | Bài tập | File |
 |-------|----------|------|
-| Basic | Implement a simple list diff that produces keep/insert/delete ops | `exercises/typescript/diff-patch/01-basic.test.ts` |
-| Intermediate | Apply a patch to reconstruct the new list from the old | `exercises/typescript/diff-patch/02-patch-apply.test.ts` |
+| Cơ bản | Triển khai diff list đơn giản sinh ops keep/insert/delete | `exercises/typescript/diff-patch/01-basic.test.ts` |
+| Trung bình | Áp patch để dựng lại list mới từ cũ | `exercises/typescript/diff-patch/02-patch-apply.test.ts` |
 
-Run exercises: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
+Chạy bài tập: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
 
-Exercise files: Rust `exercises/rust/src/diff_patch/mod.rs` · Go `exercises/go/diff_patch/diff_patch_test.go` · Python `exercises/python/diff_patch/test_diff_patch.py`
+File bài tập: Rust `exercises/rust/src/diff_patch/mod.rs` · Go `exercises/go/diff_patch/diff_patch_test.go` · Python `exercises/python/diff_patch/test_diff_patch.py`
 
-## When to Use
+## Khi nào nên dùng
 
-- **UI reconciliation** — minimize DOM mutations by diffing virtual trees
-- **Version control** — compute file changes between commits
-- **Collaborative editing** — merge concurrent edits via operational transform or CRDT diffs
-- **State synchronization** — send only deltas instead of full state over the network
-- **Undo/redo** — store diffs as compact undo entries instead of full snapshots
+- **Reconciliation UI** — giảm tối đa mutation DOM bằng cách diff cây ảo
+- **Quản lý phiên bản** — tính thay đổi file giữa commit
+- **Chỉnh sửa cộng tác** — gộp chỉnh sửa đồng thời qua operational transform hoặc CRDT diff
+- **Đồng bộ state** — gửi chỉ delta thay vì state đầy đủ qua mạng
+- **Undo/redo** — lưu diff như entry undo gọn thay vì snapshot đầy đủ
 
-## When NOT to Use
+## Khi nào KHÔNG nên dùng
 
-- **Completely different lists** — if > 80% of items changed, just replace the whole list
-- **Unordered sets** — diff assumes order matters; for sets, use set intersection/difference
-- **Real-time streaming** — if items arrive one at a time, an incremental approach is better than batch diffing
-- **Large lists without keys** — without stable identifiers, diff degrades to O(n²)
+- **List hoàn toàn khác** — nếu > 80% item đổi, chỉ cần thay cả list
+- **Set không thứ tự** — diff giả định thứ tự quan trọng; cho set, dùng giao/hiệu set
+- **Streaming realtime** — nếu item đến từng cái, cách tăng dần tốt hơn diff batch
+- **List lớn không có key** — không có định danh ổn định, diff thoái hoá thành O(n²)
 
-## More Production Uses
+## Thêm các ứng dụng production
 
-- [VS Code](https://github.com/microsoft/vscode) — text buffer diff
+- [VS Code](https://github.com/microsoft/vscode) — diff buffer text
 - [jsdiff](https://github.com/kpdecker/jsdiff)
-- [Vue 3](https://github.com/vuejs/core) — template diff
-- [Git](https://github.com/git/git/blob/1ff279f3404a482a83fb04c7457e41ab26884aea/diff.c) — core diff engine for commits, merges, and patches
+- [Vue 3](https://github.com/vuejs/core) — diff template
+- [Git](https://github.com/git/git/blob/1ff279f3404a482a83fb04c7457e41ab26884aea/diff.c) — engine diff cốt lõi cho commit, merge và patch
 
-## Related Patterns
+## Pattern liên quan
 
-| Pattern | Relationship |
+| Pattern | Quan hệ |
 |---------|-------------|
-| [Copy-on-Write (CoW)](/patterns/copy-on-write/) | Diff/patch computes what changed; CoW defers the actual copying until needed |
-| [Merkle Tree](/patterns/merkle-tree/) | Merkle trees identify which subtrees changed, narrowing where to diff |
-| [Double Buffering](/patterns/double-buffering/) | React diffs the current tree against the work-in-progress double buffer |
+| [Copy-on-Write (CoW)](/patterns/copy-on-write/) | Diff/patch tính cái gì đổi; CoW hoãn copy thực sự tới khi cần |
+| [Merkle Tree](/patterns/merkle-tree/) | Merkle tree xác định subtree nào đã đổi, thu hẹp nơi cần diff |
+| [Double Buffering](/patterns/double-buffering/) | React diff cây current với cây work-in-progress double-buffer |
 
-## Challenge Questions
+## Câu hỏi thử thách
 
-::: details Q1: React's diff produces insert/delete/update ops but not "move." How does it handle a list that was merely reordered?
-**Answer:** React does not emit explicit "move" operations. Instead, it reuses existing DOM nodes and repositions them via `insertBefore`.
+::: details Câu 1: Diff React sinh ops insert/delete/update nhưng không có "move." Xử lý list chỉ được sắp lại thế nào?
+**Trả lời:** React không phát thao tác "move" tường minh. Thay vào đó, nó tái dùng node DOM hiện có và đặt lại vị trí qua `insertBefore`.
 
-Without keys, React compares children by position — reordering looks like every element changed. With keys, React builds a map of `key -> fiber`, matches old and new children by key, and reuses existing DOM nodes. It tracks a `lastPlacedIndex` and flags fibers that need repositioning — the browser moves the DOM node rather than destroying and recreating it. This is simpler than computing a minimum-edit-distance move sequence but produces near-optimal DOM mutations for typical UI lists.
+Không có key, React so children theo vị trí — sắp lại trông như mọi phần tử đổi. Có key, React xây map `key -> fiber`, match children cũ và mới theo key, và tái dùng node DOM hiện có. Theo dõi `lastPlacedIndex` và đánh dấu fiber cần đặt lại — trình duyệt di chuyển node DOM thay vì huỷ và tạo lại. Đây đơn giản hơn tính chuỗi di chuyển khoảng cách chỉnh sửa tối thiểu nhưng sinh mutation DOM gần tối ưu cho list UI điển hình.
 :::
 
-::: details Q2: The greedy diff algorithm in this pattern is O(n*m) worst case. What causes this, and how does Myers' algorithm improve it?
-**Answer:** The greedy algorithm's `some()` call scans the remaining new list for each old item, creating O(n*m) comparisons. Myers' algorithm runs in O((n+m) * d) where d is the edit distance.
+::: details Câu 2: Thuật toán diff tham lam trong pattern này O(n*m) worst case. Cái gì gây ra, và Myers' cải thiện thế nào?
+**Trả lời:** Cuộc gọi `some()` của thuật toán tham lam quét list mới còn lại cho mỗi item cũ, tạo O(n*m) so sánh. Thuật toán Myers' chạy trong O((n+m) * d) với d là khoảng cách chỉnh sửa.
 
-Myers' key insight is that it searches for the shortest edit script by exploring diagonals in an edit graph. When the two lists are similar (small d), it runs in nearly O(n+m). The greedy approach has no such optimization — it doesn't minimize the edit sequence and degrades badly when the lists have many differences scattered throughout.
+Insight then chốt của Myers' là tìm script chỉnh sửa ngắn nhất bằng cách khám phá đường chéo trong đồ thị chỉnh sửa. Khi hai list tương tự (d nhỏ), chạy gần O(n+m). Cách tham lam không tối ưu vậy — không tối thiểu hoá chuỗi chỉnh sửa và thoái hoá tệ khi list có nhiều khác biệt rải rác.
 :::
 
-::: details Q3: Two developers independently edit the same file. Developer A deletes line 5; Developer B modifies line 5. How does a diff-based merge handle this conflict?
-**Answer:** This is a true conflict that cannot be auto-resolved — the merge tool must flag it for human review.
+::: details Câu 3: Hai dev độc lập sửa cùng file. Dev A xoá dòng 5; Dev B sửa dòng 5. Merge dựa trên diff xử lý xung đột này thế nào?
+**Trả lời:** Đây là xung đột thực không thể auto-resolve — công cụ merge phải đánh dấu cho người xem.
 
-Three-way merge computes two diffs: (base -> A) and (base -> B). If both diffs touch the same region, they conflict. A's diff says "delete line 5," B's diff says "replace line 5." These are mutually exclusive operations on the same hunk. The merge tool inserts conflict markers (`<<<<<<<`, `=======`, `>>>>>>>`) and the developer decides. Non-overlapping changes in different regions merge cleanly.
+Merge ba bên tính hai diff: (base -> A) và (base -> B). Nếu cả hai diff chạm cùng vùng, chúng xung đột. Diff của A nói "xoá dòng 5," diff của B nói "thay dòng 5." Đây là thao tác loại trừ trên cùng hunk. Công cụ merge chèn marker xung đột (`<<<<<<<`, `=======`, `>>>>>>>`) và dev quyết định. Thay đổi không chồng lên ở vùng khác merge sạch.
 :::
 
-::: details Q4: You need to sync state between a server and 10,000 connected clients. Should you diff the full state and send patches, or use a different approach?
-**Answer:** Diffing the full state per client does not scale. Use event sourcing or operational transforms to send individual mutations as they happen.
+::: details Câu 4: Bạn cần đồng bộ state giữa server và 10.000 client kết nối. Nên diff state đầy đủ và gửi patch, hay dùng cách khác?
+**Trả lời:** Diff state đầy đủ mỗi client không scale. Dùng event sourcing hoặc operational transform để gửi mutation riêng khi chúng xảy ra.
 
-Computing a diff requires holding both old and new state, and the diff cost is proportional to state size. With 10,000 clients, you'd compute 10,000 diffs per update. Instead, capture each mutation as a small operation (e.g., "set user.name = X") and broadcast it. Clients apply operations incrementally. Diff-patch is better suited for periodic reconciliation (like React's render cycle) or offline sync, not real-time high-fan-out distribution.
+Tính diff cần giữ cả state cũ và mới, và chi phí diff tỉ lệ với kích thước state. Với 10.000 client, bạn sẽ tính 10.000 diff mỗi update. Thay vào đó, bắt mỗi mutation thành thao tác nhỏ (ví dụ "set user.name = X") và broadcast. Client áp thao tác tăng dần. Diff-patch phù hợp hơn cho reconciliation định kỳ (như chu kỳ render React) hoặc đồng bộ offline, không phải phân tán realtime fan-out cao.
 :::
