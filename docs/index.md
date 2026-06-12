@@ -1,20 +1,20 @@
 ---
 layout: home
-description: "46 battle-tested programming patterns from React, Linux, Go, and Chromium — interactive visualizations, precise source links, multi-language implementations, and runnable exercises."
+description: "46 pattern lập trình đã được kiểm chứng trong thực chiến từ React, Linux, Go và Chromium — trực quan hoá tương tác, liên kết nguồn chính xác, triển khai đa ngôn ngữ và bài tập chạy được."
 
 hero:
   name: Battle-Tested Patterns
-  text: Production-Proven Programming Patterns
-  tagline: From React Scheduler to Linux kernel — 46 patterns you can explore interactively, trace to real source code, and implement in 4 languages.
+  text: Các pattern lập trình đã được chứng minh trong production
+  tagline: Từ React Scheduler đến nhân Linux — 46 pattern bạn có thể khám phá tương tác, truy nguyên về source code thật và triển khai bằng 4 ngôn ngữ.
   actions:
     - theme: brand
-      text: Get Started
+      text: Bắt đầu
       link: /guide/what-is-this
     - theme: alt
-      text: Browse Patterns
+      text: Xem các pattern
       link: /patterns/
     - theme: alt
-      text: Learning Paths
+      text: Lộ trình học
       link: /guide/learning-paths
 
 features:
@@ -22,54 +22,54 @@ features:
       src: /images/interactive_visualizations.png
       width: 100
       height: 100
-    title: Interactive Visualizations
-    details: Every pattern has a hands-on SVG visualization. Click, drag, and experiment to build intuition — not just read about it.
+    title: Trực quan hoá tương tác
+    details: Mỗi pattern đều có trực quan hoá SVG thực hành. Click, kéo và thử nghiệm để xây dựng trực giác — chứ không chỉ đọc về nó.
   - icon:
       src: /images/production_proof.png
       width: 100
       height: 100
-    title: Production Proof
-    details: Every pattern comes with precise GitHub source links (down to line numbers) proving it's used in real-world projects.
+    title: Bằng chứng từ production
+    details: Mỗi pattern đi kèm liên kết GitHub chính xác (tới số dòng) chứng minh nó được dùng trong các dự án thực tế.
   - icon:
       src: /images/multi-language.png
       width: 100
       height: 100
-    title: Multi-Language
-    details: Idiomatic implementations in TypeScript, Rust, Go, and Python — not mechanical translations, but native expressions of each pattern.
+    title: Đa ngôn ngữ
+    details: Triển khai theo idiom bằng TypeScript, Rust, Go và Python — không phải dịch máy móc, mà là cách diễn đạt tự nhiên trong từng ngôn ngữ.
   - icon:
       src: /images/runnable_exercises.png
       width: 100
       height: 100
-    title: Runnable Exercises
-    details: Progressive exercises (basic → intermediate → advanced) with test suites you can run locally.
+    title: Bài tập chạy được
+    details: Bài tập theo cấp độ (cơ bản → trung bình → nâng cao) với bộ test bạn có thể chạy ngay tại máy.
   - icon:
       src: /images/challengequestions.png
       width: 100
       height: 100
-    title: Challenge Questions
-    details: Each pattern includes 3-4 scenario-based "guess what happens" questions to test real understanding, not just reading.
+    title: Câu hỏi thử thách
+    details: Mỗi pattern có 3-4 câu hỏi tình huống kiểu "đoán xem chuyện gì xảy ra" để kiểm tra mức hiểu thật sự, không chỉ là đã đọc.
   - icon:
       src: /images/real_system_case.png
       width: 100
       height: 100
-    title: Real System Case Studies
-    details: See how React, Redis, Go runtime, Linux, PostgreSQL, and Kafka compose multiple patterns in production.
+    title: Case study hệ thống thật
+    details: Xem React, Redis, Go runtime, Linux, PostgreSQL và Kafka phối hợp nhiều pattern trong production như thế nào.
 ---
 
-## Try It — Interactive Min Heap
+## Thử ngay — Min Heap tương tác
 
-Every pattern page has a hands-on visualization like this one. Click **Insert Random** to watch the heap algorithm in action, or try the **React Scheduler** scenario:
+Mỗi trang pattern đều có trực quan hoá thực hành giống như cái này. Click **Insert Random** để xem thuật toán heap chạy, hoặc thử kịch bản **React Scheduler**:
 
 <MinHeapViz />
 
-## All 46 Patterns — Interactive Timeline
+## Tất cả 46 Pattern — Timeline tương tác
 
-> 80+ years of computing history. Click any card to explore the pattern. [Browse by category →](/patterns/) · [Full timeline page →](/guide/timeline)
+> Hơn 80 năm lịch sử ngành điện toán. Click vào card bất kỳ để khám phá pattern. [Xem theo nhóm →](/patterns/) · [Trang timeline đầy đủ →](/guide/timeline)
 
 <PatternTimelineViz />
 
 <p style="text-align: center; margin-top: 2rem;">
 
-[Browse all 46 patterns →](/patterns/)
+[Xem tất cả 46 pattern →](/patterns/)
 
 </p>

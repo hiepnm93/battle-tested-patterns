@@ -1,74 +1,74 @@
-# Study Plan
+# Kế hoạch học tập
 
-> **Fork this repo** and check off patterns as you complete them. Your progress is saved in your fork.
+> **Fork repo này** và đánh dấu các pattern khi bạn hoàn thành. Tiến độ của bạn được lưu trong fork.
 >
-> For each pattern: read the doc → try the visualization → complete the exercise → answer the challenge questions.
+> Với mỗi pattern: đọc tài liệu → thử trực quan hoá → làm bài tập → trả lời câu hỏi thử thách.
 >
-> See the [Learning Paths](https://totoro-jam.github.io/battle-tested-patterns/guide/learning-paths) page for recommended order and study tips.
+> Xem trang [Lộ trình học](https://totoro-jam.github.io/battle-tested-patterns/guide/learning-paths) để biết thứ tự khuyến nghị và mẹo học.
 
-## Track 1: Data Structures Fundamentals
+## Track 1: Nền tảng cấu trúc dữ liệu
 
-- [ ] [Bitmask](https://totoro-jam.github.io/battle-tested-patterns/patterns/bitmask/) — Pack N flags into one integer
-- [ ] [Ring Buffer](https://totoro-jam.github.io/battle-tested-patterns/patterns/ring-buffer/) — Fixed-size FIFO with zero allocation
-- [ ] [Tagged Union](https://totoro-jam.github.io/battle-tested-patterns/patterns/tagged-union/) — Type tag for safe dispatch
-- [ ] [Min Heap](https://totoro-jam.github.io/battle-tested-patterns/patterns/min-heap/) — O(1) access to highest-priority item
-- [ ] [Trie](https://totoro-jam.github.io/battle-tested-patterns/patterns/trie/) — O(k) lookup by key length
-- [ ] [Bloom Filter](https://totoro-jam.github.io/battle-tested-patterns/patterns/bloom-filter/) — Probabilistic membership testing
-- [ ] [LRU Cache](https://totoro-jam.github.io/battle-tested-patterns/patterns/lru-cache/) — Hash map + linked list combo
-- [ ] [Skip List](https://totoro-jam.github.io/battle-tested-patterns/patterns/skip-list/) — Probabilistic sorted structure
-- [ ] [B+ Tree](https://totoro-jam.github.io/battle-tested-patterns/patterns/b-plus-tree/) — Disk-optimized balanced tree
-- [ ] [Merkle Tree](https://totoro-jam.github.io/battle-tested-patterns/patterns/merkle-tree/) — Hash chain for integrity proofs
-- [ ] [Visitor](https://totoro-jam.github.io/battle-tested-patterns/patterns/visitor/) — Decouple traversal from operations
+- [ ] [Bitmask](https://totoro-jam.github.io/battle-tested-patterns/patterns/bitmask/) — Nhồi N flag vào một số nguyên
+- [ ] [Ring Buffer](https://totoro-jam.github.io/battle-tested-patterns/patterns/ring-buffer/) — FIFO kích thước cố định, không cấp phát
+- [ ] [Tagged Union](https://totoro-jam.github.io/battle-tested-patterns/patterns/tagged-union/) — Tag kiểu cho dispatch an toàn
+- [ ] [Min Heap](https://totoro-jam.github.io/battle-tested-patterns/patterns/min-heap/) — Truy cập phần tử ưu tiên cao nhất O(1)
+- [ ] [Trie](https://totoro-jam.github.io/battle-tested-patterns/patterns/trie/) — Tra cứu O(k) theo độ dài key
+- [ ] [Bloom Filter](https://totoro-jam.github.io/battle-tested-patterns/patterns/bloom-filter/) — Kiểm tra thành viên theo xác suất
+- [ ] [LRU Cache](https://totoro-jam.github.io/battle-tested-patterns/patterns/lru-cache/) — Kết hợp hash map + linked list
+- [ ] [Skip List](https://totoro-jam.github.io/battle-tested-patterns/patterns/skip-list/) — Cấu trúc sắp xếp theo xác suất
+- [ ] [B+ Tree](https://totoro-jam.github.io/battle-tested-patterns/patterns/b-plus-tree/) — Cây cân bằng tối ưu cho đĩa
+- [ ] [Merkle Tree](https://totoro-jam.github.io/battle-tested-patterns/patterns/merkle-tree/) — Chuỗi hash cho bằng chứng toàn vẹn
+- [ ] [Visitor](https://totoro-jam.github.io/battle-tested-patterns/patterns/visitor/) — Tách việc duyệt khỏi thao tác
 
-## Track 2: Concurrency & Scheduling
+## Track 2: Concurrency & lập lịch
 
-- [ ] [Semaphore](https://totoro-jam.github.io/battle-tested-patterns/patterns/semaphore/) — Counter-based concurrency limit
-- [ ] [Double Buffering](https://totoro-jam.github.io/battle-tested-patterns/patterns/double-buffering/) — Atomic swap of two buffers
-- [ ] [Observer](https://totoro-jam.github.io/battle-tested-patterns/patterns/observer/) — Subscribe/notify decoupling
-- [ ] [Event Loop](https://totoro-jam.github.io/battle-tested-patterns/patterns/event-loop/) — Single-threaded I/O multiplexing
-- [ ] [Backpressure](https://totoro-jam.github.io/battle-tested-patterns/patterns/backpressure/) — Flow control between producer/consumer
-- [ ] [Copy-on-Write](https://totoro-jam.github.io/battle-tested-patterns/patterns/copy-on-write/) — Share until mutation
-- [ ] [Cooperative Scheduling](https://totoro-jam.github.io/battle-tested-patterns/patterns/cooperative-scheduling/) — Yield points for responsiveness
-- [ ] [MVCC](https://totoro-jam.github.io/battle-tested-patterns/patterns/mvcc/) — Versioned reads never block writers
-- [ ] [Work Stealing](https://totoro-jam.github.io/battle-tested-patterns/patterns/work-stealing/) — Idle threads steal from busy queues
-- [ ] [Actor Model](https://totoro-jam.github.io/battle-tested-patterns/patterns/actor-model/) — Isolated state + message passing
+- [ ] [Semaphore](https://totoro-jam.github.io/battle-tested-patterns/patterns/semaphore/) — Giới hạn concurrency bằng bộ đếm
+- [ ] [Double Buffering](https://totoro-jam.github.io/battle-tested-patterns/patterns/double-buffering/) — Hoán đổi nguyên tử hai buffer
+- [ ] [Observer](https://totoro-jam.github.io/battle-tested-patterns/patterns/observer/) — Tách rời subscribe/notify
+- [ ] [Event Loop](https://totoro-jam.github.io/battle-tested-patterns/patterns/event-loop/) — Ghép kênh I/O đơn luồng
+- [ ] [Backpressure](https://totoro-jam.github.io/battle-tested-patterns/patterns/backpressure/) — Kiểm soát luồng giữa producer/consumer
+- [ ] [Copy-on-Write](https://totoro-jam.github.io/battle-tested-patterns/patterns/copy-on-write/) — Chia sẻ cho đến khi sửa đổi
+- [ ] [Cooperative Scheduling](https://totoro-jam.github.io/battle-tested-patterns/patterns/cooperative-scheduling/) — Điểm yield để giữ phản hồi
+- [ ] [MVCC](https://totoro-jam.github.io/battle-tested-patterns/patterns/mvcc/) — Reader có phiên bản không bao giờ chặn writer
+- [ ] [Work Stealing](https://totoro-jam.github.io/battle-tested-patterns/patterns/work-stealing/) — Thread rảnh lấy việc từ queue bận
+- [ ] [Actor Model](https://totoro-jam.github.io/battle-tested-patterns/patterns/actor-model/) — Trạng thái cô lập + truyền thông điệp
 
-## Track 3: System Reliability
+## Track 3: Độ tin cậy hệ thống
 
-- [ ] [Retry with Backoff](https://totoro-jam.github.io/battle-tested-patterns/patterns/retry-backoff/) — Exponential delay + jitter
-- [ ] [Batch Processing](https://totoro-jam.github.io/battle-tested-patterns/patterns/batch-processing/) — Amortize per-operation overhead
-- [ ] [State Machine](https://totoro-jam.github.io/battle-tested-patterns/patterns/state-machine/) — Explicit states, impossible transitions blocked
-- [ ] [Circuit Breaker](https://totoro-jam.github.io/battle-tested-patterns/patterns/circuit-breaker/) — Fail fast when service is down
-- [ ] [Rate Limiter](https://totoro-jam.github.io/battle-tested-patterns/patterns/rate-limiter/) — Token bucket controls throughput
-- [ ] [Middleware Chain](https://totoro-jam.github.io/battle-tested-patterns/patterns/middleware-chain/) — Composable request handlers
-- [ ] [Dependency Graph](https://totoro-jam.github.io/battle-tested-patterns/patterns/dependency-graph/) — DAG + topological sort
-- [ ] [Registry](https://totoro-jam.github.io/battle-tested-patterns/patterns/registry/) — Self-registration for plugin discovery
-- [ ] [Consistent Hashing](https://totoro-jam.github.io/battle-tested-patterns/patterns/consistent-hashing/) — Minimal remapping on node change
-- [ ] [Logical Clock](https://totoro-jam.github.io/battle-tested-patterns/patterns/logical-clock/) — Causal ordering without wall clocks
+- [ ] [Retry with Backoff](https://totoro-jam.github.io/battle-tested-patterns/patterns/retry-backoff/) — Delay theo cấp số nhân + jitter
+- [ ] [Batch Processing](https://totoro-jam.github.io/battle-tested-patterns/patterns/batch-processing/) — Phân bổ chi phí mỗi thao tác
+- [ ] [State Machine](https://totoro-jam.github.io/battle-tested-patterns/patterns/state-machine/) — Trạng thái rõ ràng, chuyển tiếp bất hợp lệ bị chặn
+- [ ] [Circuit Breaker](https://totoro-jam.github.io/battle-tested-patterns/patterns/circuit-breaker/) — Fail nhanh khi service bị sập
+- [ ] [Rate Limiter](https://totoro-jam.github.io/battle-tested-patterns/patterns/rate-limiter/) — Token bucket điều tiết throughput
+- [ ] [Middleware Chain](https://totoro-jam.github.io/battle-tested-patterns/patterns/middleware-chain/) — Handler request có thể ghép
+- [ ] [Dependency Graph](https://totoro-jam.github.io/battle-tested-patterns/patterns/dependency-graph/) — DAG + sắp xếp topo
+- [ ] [Registry](https://totoro-jam.github.io/battle-tested-patterns/patterns/registry/) — Tự đăng ký để khám phá plugin
+- [ ] [Consistent Hashing](https://totoro-jam.github.io/battle-tested-patterns/patterns/consistent-hashing/) — Remap tối thiểu khi đổi node
+- [ ] [Logical Clock](https://totoro-jam.github.io/battle-tested-patterns/patterns/logical-clock/) — Xếp thứ tự nhân quả không cần wall clock
 
-## Track 4: Storage Engine Internals
+## Track 4: Nội tại storage engine
 
-- [ ] [Tombstone](https://totoro-jam.github.io/battle-tested-patterns/patterns/tombstone/) — Mark deleted, compact later
-- [ ] [Dirty Flag](https://totoro-jam.github.io/battle-tested-patterns/patterns/dirty-flag/) — Skip recomputation if unchanged
-- [ ] [Iterator](https://totoro-jam.github.io/battle-tested-patterns/patterns/iterator/) — Lazy pull-based traversal
-- [ ] [Write-Ahead Log](https://totoro-jam.github.io/battle-tested-patterns/patterns/write-ahead-log/) — Log before apply for crash safety
-- [ ] [Checkpointing](https://totoro-jam.github.io/battle-tested-patterns/patterns/checkpointing/) — Periodic state snapshots
-- [ ] [Diff / Patch](https://totoro-jam.github.io/battle-tested-patterns/patterns/diff-patch/) — Minimal change computation
-- [ ] [LSM Tree](https://totoro-jam.github.io/battle-tested-patterns/patterns/lsm-tree/) — Write-optimized on-disk storage
-- [ ] [Merge Iterator](https://totoro-jam.github.io/battle-tested-patterns/patterns/merge-iterator/) — K-way merge of sorted streams
+- [ ] [Tombstone](https://totoro-jam.github.io/battle-tested-patterns/patterns/tombstone/) — Đánh dấu đã xoá, dồn nén sau
+- [ ] [Dirty Flag](https://totoro-jam.github.io/battle-tested-patterns/patterns/dirty-flag/) — Bỏ qua tính lại nếu không đổi
+- [ ] [Iterator](https://totoro-jam.github.io/battle-tested-patterns/patterns/iterator/) — Duyệt lười kiểu pull
+- [ ] [Write-Ahead Log](https://totoro-jam.github.io/battle-tested-patterns/patterns/write-ahead-log/) — Log trước khi áp dụng để an toàn khi crash
+- [ ] [Checkpointing](https://totoro-jam.github.io/battle-tested-patterns/patterns/checkpointing/) — Snapshot trạng thái định kỳ
+- [ ] [Diff / Patch](https://totoro-jam.github.io/battle-tested-patterns/patterns/diff-patch/) — Tính toán thay đổi tối thiểu
+- [ ] [LSM Tree](https://totoro-jam.github.io/battle-tested-patterns/patterns/lsm-tree/) — Lưu trữ trên đĩa tối ưu cho ghi
+- [ ] [Merge Iterator](https://totoro-jam.github.io/battle-tested-patterns/patterns/merge-iterator/) — Gộp k luồng đã sắp xếp
 
-## Bonus: Memory Management
+## Bonus: Quản lý bộ nhớ
 
-- [ ] [Reference Counting](https://totoro-jam.github.io/battle-tested-patterns/patterns/reference-counting/) — Deterministic cleanup at rc=0
-- [ ] [Object Pool](https://totoro-jam.github.io/battle-tested-patterns/patterns/object-pool/) — Pre-allocate and reuse
-- [ ] [Flyweight](https://totoro-jam.github.io/battle-tested-patterns/patterns/flyweight/) — Share identical instances
-- [ ] [Interning](https://totoro-jam.github.io/battle-tested-patterns/patterns/interning/) — Hash-based deduplication
-- [ ] [Free List](https://totoro-jam.github.io/battle-tested-patterns/patterns/free-list/) — O(1) alloc from freed slots
-- [ ] [Arena Allocator](https://totoro-jam.github.io/battle-tested-patterns/patterns/arena-allocator/) — Bump-allocate, bulk-free
-- [ ] [Vtable](https://totoro-jam.github.io/battle-tested-patterns/patterns/vtable/) — Function pointers for runtime polymorphism
+- [ ] [Reference Counting](https://totoro-jam.github.io/battle-tested-patterns/patterns/reference-counting/) — Dọn dẹp xác định khi rc=0
+- [ ] [Object Pool](https://totoro-jam.github.io/battle-tested-patterns/patterns/object-pool/) — Cấp phát trước và tái sử dụng
+- [ ] [Flyweight](https://totoro-jam.github.io/battle-tested-patterns/patterns/flyweight/) — Chia sẻ các instance giống nhau
+- [ ] [Interning](https://totoro-jam.github.io/battle-tested-patterns/patterns/interning/) — Khử trùng lặp dựa trên hash
+- [ ] [Free List](https://totoro-jam.github.io/battle-tested-patterns/patterns/free-list/) — Cấp phát O(1) từ slot đã giải phóng
+- [ ] [Arena Allocator](https://totoro-jam.github.io/battle-tested-patterns/patterns/arena-allocator/) — Cấp phát bump, giải phóng hàng loạt
+- [ ] [Vtable](https://totoro-jam.github.io/battle-tested-patterns/patterns/vtable/) — Con trỏ hàm cho đa hình lúc runtime
 
 ---
 
-**Progress**: 0 / 46 patterns completed
+**Tiến độ**: 0 / 46 pattern đã hoàn thành
 
-> **Tip**: After completing all exercises in a track, revisit the [Pattern Connections](https://totoro-jam.github.io/battle-tested-patterns/guide/pattern-connections) page to see how the patterns you've learned compose together in production systems.
+> **Mẹo**: Sau khi hoàn thành tất cả bài tập trong một track, ghé lại trang [Liên kết giữa các pattern](https://totoro-jam.github.io/battle-tested-patterns/guide/pattern-connections) để xem các pattern đã học phối hợp với nhau như thế nào trong hệ thống production.
