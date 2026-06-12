@@ -1,62 +1,62 @@
 ---
-title: "Pattern: Backpressure / Flow Control"
-description: "Slow down producers when consumers can't keep up — use bounded buffers and demand signals to prevent resource exhaustion."
+title: "Pattern: Backpressure / Kiểm soát luồng"
+description: "Làm chậm producer khi consumer không theo kịp — dùng buffer giới hạn và tín hiệu demand để tránh cạn kiệt tài nguyên."
 difficulty: "intermediate"
 ---
 
-# Pattern: Backpressure / Flow Control
+# Pattern: Backpressure / Kiểm soát luồng
 
 <DifficultyBadge />
 
-## One Liner
+## Mô tả một câu
 
-Slow down producers when consumers can't keep up — use bounded buffers and demand signals to prevent resource exhaustion.
+Làm chậm producer khi consumer không theo kịp — dùng buffer giới hạn và tín hiệu demand để tránh cạn kiệt tài nguyên.
 
 <DemoBadge />
 
-## Real-World Analogy
+## Tương tự thực tế
 
-A waiter telling the kitchen 'slow down, tables are full.' Instead of piling up plates that go cold, the waiter signals the kitchen to reduce output until diners finish. The consumer controls the producer's pace.
+Bồi bàn nói với bếp 'chậm lại, bàn đầy rồi.' Thay vì xếp chồng đĩa nguội, bồi báo bếp giảm output cho tới khi khách ăn xong. Consumer kiểm soát nhịp của producer.
 
-## Core Idea
+## Ý tưởng cốt lõi
 
-Backpressure is a flow control mechanism where the consumer signals the producer to slow down or stop. Without it, a fast producer overwhelms a slow consumer, causing unbounded memory growth, dropped messages, or system crashes. The key: **bounded buffers** + **blocking/signaling when full**.
+Backpressure là cơ chế kiểm soát luồng nơi consumer báo producer chậm lại hoặc dừng. Không có nó, producer nhanh làm choáng ngợp consumer chậm, gây bộ nhớ tăng không giới hạn, mất thông điệp hoặc crash hệ thống. Then chốt: **buffer giới hạn** + **block/tín hiệu khi đầy**.
 
 ```text
   Producer                     Bounded Buffer                Consumer
   ─────────                   ──────────────                ─────────
   emit(data) ──────────►  ┌──┬──┬──┬──┬──┐  ──────────►  process(data)
                           │ 5│ 4│ 3│ 2│ 1│
-  ◄─ WAIT (buffer full)   └──┴──┴──┴──┴──┘  request(n) ──►
+  ◄─ WAIT (buffer đầy)    └──┴──┴──┴──┴──┘  request(n) ──►
                             capacity = 5
 ```
 
-| Strategy | How it works |
+| Chiến lược | Cách hoạt động |
 |----------|-------------|
-| **Block** | Producer waits until buffer has space (Go channels, Node.js streams) |
-| **Drop** | Discard newest/oldest items when buffer is full (lossy, for metrics) |
-| **Signal** | Consumer sends `request(n)` to pull exactly n items (Reactive Streams) |
-| **Throttle** | Rate-limit the producer (token bucket / leaky bucket) |
+| **Block** | Producer chờ đến khi buffer còn chỗ (channel Go, stream Node.js) |
+| **Drop** | Bỏ item mới/cũ nhất khi buffer đầy (mất dữ liệu, cho metric) |
+| **Signal** | Consumer gửi `request(n)` để pull đúng n item (Reactive Streams) |
+| **Throttle** | Rate-limit producer (token bucket / leaky bucket) |
 
-| Property | Value |
+| Thuộc tính | Giá trị |
 |----------|-------|
-| Signal overhead | O(1) — boolean flag or counter check |
-| Buffer bound | Fixed capacity — prevents unbounded memory growth |
-| Throughput | Adapts dynamically to consumer speed |
-| Latency trade-off | Increases under load — producer waits instead of dropping |
+| Overhead tín hiệu | O(1) — flag boolean hoặc kiểm tra counter |
+| Giới hạn buffer | Capacity cố định — tránh bộ nhớ tăng không giới hạn |
+| Throughput | Tự điều chỉnh theo tốc độ consumer |
+| Đánh đổi độ trễ | Tăng khi tải cao — producer chờ thay vì drop |
 
-**Try it yourself** — start the producer and consumer to see what happens when production outpaces consumption:
+**Thử ngay** — khởi động producer và consumer để xem chuyện gì khi sản xuất vượt tiêu thụ:
 
 <BackpressureViz />
 
-## Production Proof
+## Bằng chứng production
 
-| Project | Source | Usage |
+| Dự án | Nguồn | Cách dùng |
 |---------|--------|-------|
-| Node.js Streams | [writable.js#L548-L585](https://github.com/nodejs/node/blob/19c46abbefdb8711b913d7237b3c1299367f87d7/lib/internal/streams/writable.js#L548-L585) | `writeOrBuffer()` — L576 checks `state.length < state.highWaterMark`; when buffer exceeds the threshold, L579 sets `kNeedDrain` flag and L585 returns `false`, signaling the producer to pause until the `drain` event fires. |
-| Reactive Streams | [Subscription.java#L14-L37](https://github.com/reactive-streams/reactive-streams-jvm/blob/a625d3aba756e9842ad1291a5b73f5db280b6168/api/src/main/java/org/reactivestreams/Subscription.java#L14-L37) | `request(long n)` (L29) — the consumer explicitly requests `n` items from the producer. "No events will be sent by a Publisher until demand is signaled via this method." Foundation of RxJava Flowable, Project Reactor, and Akka Streams. |
+| Node.js Streams | [writable.js#L548-L585](https://github.com/nodejs/node/blob/19c46abbefdb8711b913d7237b3c1299367f87d7/lib/internal/streams/writable.js#L548-L585) | `writeOrBuffer()` — L576 kiểm tra `state.length < state.highWaterMark`; khi buffer vượt ngưỡng, L579 đặt cờ `kNeedDrain` và L585 trả `false`, tín hiệu cho producer tạm dừng cho tới khi event `drain` bắn. |
+| Reactive Streams | [Subscription.java#L14-L37](https://github.com/reactive-streams/reactive-streams-jvm/blob/a625d3aba756e9842ad1291a5b73f5db280b6168/api/src/main/java/org/reactivestreams/Subscription.java#L14-L37) | `request(long n)` (L29) — consumer tường minh yêu cầu `n` item từ producer. "Không event nào được gửi bởi Publisher cho tới khi demand được tín hiệu qua method này." Nền tảng của RxJava Flowable, Project Reactor và Akka Streams. |
 
-## Implementation
+## Triển khai
 
 ::: code-group
 
@@ -132,21 +132,21 @@ impl<T> BoundedQueue<T> {
 ```
 
 ```go [Go]
-// Go: bounded channels provide backpressure natively
+// Go: bounded channel cung cấp backpressure tự nhiên
 func producer(ch chan<- int) {
 	for i := 0; ; i++ {
-		ch <- i // blocks when channel is full
+		ch <- i // block khi channel đầy
 	}
 }
 
 func consumer(ch <-chan int) {
 	for v := range ch {
-		fmt.Println(v) // process at consumer's pace
+		fmt.Println(v) // xử lý theo nhịp consumer
 	}
 }
 
 func Run() {
-	ch := make(chan int, 10) // bounded buffer of 10
+	ch := make(chan int, 10) // buffer giới hạn 10
 	go producer(ch)
 	consumer(ch)
 }
@@ -157,83 +157,83 @@ import asyncio
 
 async def producer(queue: asyncio.Queue[int]):
     for i in range(100):
-        await queue.put(i)  # blocks when queue is full
+        await queue.put(i)  # block khi queue đầy
 
 async def consumer(queue: asyncio.Queue[int]):
     while True:
-        item = await queue.get()  # blocks when queue is empty
-        await asyncio.sleep(0.1)  # simulate slow processing
+        item = await queue.get()  # block khi queue rỗng
+        await asyncio.sleep(0.1)  # giả lập xử lý chậm
 
 async def main():
-    queue: asyncio.Queue[int] = asyncio.Queue(maxsize=5)  # bounded
+    queue: asyncio.Queue[int] = asyncio.Queue(maxsize=5)  # giới hạn
     await asyncio.gather(producer(queue), consumer(queue))
 ```
 
 :::
 
-## Exercises
+## Bài tập
 
-| Level | Exercise | File |
+| Cấp độ | Bài tập | File |
 |-------|----------|------|
-| Basic | Implement a bounded async queue with flow control | `exercises/typescript/backpressure/01-basic.test.ts` |
-| Intermediate | Bounded async channel with blocking send/receive | `exercises/typescript/backpressure/02-intermediate.test.ts` |
+| Cơ bản | Triển khai queue async giới hạn với flow control | `exercises/typescript/backpressure/01-basic.test.ts` |
+| Trung bình | Channel async giới hạn với gửi/nhận block | `exercises/typescript/backpressure/02-intermediate.test.ts` |
 
-Run exercises: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
+Chạy bài tập: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
 
-Exercise files: Rust `exercises/rust/src/backpressure/mod.rs` · Go `exercises/go/backpressure/backpressure_test.go` · Python `exercises/python/backpressure/test_backpressure.py`
+File bài tập: Rust `exercises/rust/src/backpressure/mod.rs` · Go `exercises/go/backpressure/backpressure_test.go` · Python `exercises/python/backpressure/test_backpressure.py`
 
-## When to Use
+## Khi nào nên dùng
 
-- **Stream processing** — prevent fast data sources from overwhelming processors
-- **Microservices** — protect downstream services from overload
-- **I/O pipelines** — disk reads faster than network writes (or vice versa)
-- **Event-driven systems** — producers fire events faster than handlers can process
+- **Xử lý stream** — tránh nguồn dữ liệu nhanh làm choáng ngợp processor
+- **Microservice** — bảo vệ service downstream khỏi quá tải
+- **Pipeline I/O** — đọc đĩa nhanh hơn ghi mạng (hoặc ngược lại)
+- **Hệ thống hướng sự kiện** — producer bắn event nhanh hơn handler xử lý
 
-## When NOT to Use
+## Khi nào KHÔNG nên dùng
 
-- **Lossy is acceptable** — if dropping data is fine (metrics, sampling), just drop without blocking
-- **Single-speed systems** — if producer and consumer run at the same speed, backpressure adds unnecessary complexity
-- **Fire-and-forget** — if the producer doesn't need to wait, use an unbounded queue with monitoring
-- **Real-time constraints** — blocking the producer may violate latency SLAs
+- **Chấp nhận mất dữ liệu** — nếu drop ok (metric, sampling), cứ drop không block
+- **Hệ thống cùng tốc độ** — producer và consumer chạy cùng nhịp, backpressure thêm phức tạp không cần
+- **Fire-and-forget** — nếu producer không cần chờ, dùng queue không giới hạn với giám sát
+- **Ràng buộc realtime** — block producer có thể vi phạm SLA độ trễ
 
-## More Production Uses
+## Thêm các ứng dụng production
 
-- [RxJava Flowable](https://github.com/ReactiveX/RxJava) — backpressure-aware reactive streams
-- [Kafka](https://github.com/apache/kafka) — producer `buffer.memory` and `max.block.ms` for flow control
-- [Linux TCP](https://github.com/torvalds/linux/blob/acb7500801e98639f6d8c2d796ed9f64cba83d3a/net/ipv4/tcp_output.c) — congestion window (`cwnd`) as backpressure
-- [gRPC](https://github.com/grpc/grpc) — flow control windows in HTTP/2
+- [RxJava Flowable](https://github.com/ReactiveX/RxJava) — reactive stream nhận biết backpressure
+- [Kafka](https://github.com/apache/kafka) — `buffer.memory` và `max.block.ms` của producer cho flow control
+- [Linux TCP](https://github.com/torvalds/linux/blob/acb7500801e98639f6d8c2d796ed9f64cba83d3a/net/ipv4/tcp_output.c) — cửa sổ tắc nghẽn (`cwnd`) như backpressure
+- [gRPC](https://github.com/grpc/grpc) — cửa sổ flow control trong HTTP/2
 
-## Related Patterns
+## Pattern liên quan
 
-| Pattern | Relationship |
+| Pattern | Quan hệ |
 |---------|-------------|
-| [Ring Buffer (Circular Buffer)](/patterns/ring-buffer/) | Bounded ring buffers are a common mechanism for implementing backpressure |
-| [Rate Limiter (Token Bucket)](/patterns/rate-limiter/) | Rate limiting controls intake speed; backpressure signals the producer to slow down |
-| [Semaphore](/patterns/semaphore/) | Semaphores can implement backpressure by limiting outstanding work |
-| [Batch Processing](/patterns/batch-processing/) | Batching smooths bursty input, complementing backpressure mechanisms |
+| [Ring Buffer (Buffer vòng)](/patterns/ring-buffer/) | Ring buffer giới hạn là cơ chế phổ biến để triển khai backpressure |
+| [Rate Limiter (Token Bucket)](/patterns/rate-limiter/) | Rate limit kiểm soát tốc độ nạp; backpressure tín hiệu cho producer chậm lại |
+| [Semaphore](/patterns/semaphore/) | Semaphore có thể triển khai backpressure bằng cách giới hạn việc đang xử lý |
+| [Batch Processing](/patterns/batch-processing/) | Batching làm mịn input bursty, bổ sung cho cơ chế backpressure |
 
-## Challenge Questions
+## Câu hỏi thử thách
 
-::: details Q1: Your bounded queue is full. Should you block the producer or drop the newest item? How do you decide?
-**Answer:** It depends on whether data loss is acceptable. Block when every item matters (financial transactions, user actions). Drop when freshness matters more than completeness (metrics, sensor telemetry).
+::: details Câu 1: Queue giới hạn của bạn đầy. Nên block producer hay drop item mới nhất? Quyết định thế nào?
+**Trả lời:** Tuỳ việc mất dữ liệu có chấp nhận được không. Block khi mọi item đều quan trọng (giao dịch tài chính, hành động người dùng). Drop khi tươi quan trọng hơn đầy đủ (metric, telemetry sensor).
 
-Blocking preserves all data but propagates slowness upstream — if the consumer is permanently slow, the producer stalls and the whole pipeline stops. Dropping loses data but keeps the producer responsive. A common hybrid is "drop oldest" for monitoring dashboards (you want the latest readings) and "block" for event sourcing (you can't lose events). The choice is a business decision, not a technical one.
+Block giữ mọi dữ liệu nhưng lan độ chậm lên upstream — nếu consumer chậm vĩnh viễn, producer stall và toàn pipeline dừng. Drop mất dữ liệu nhưng giữ producer phản hồi. Một lai phổ biến là "drop cũ nhất" cho dashboard giám sát (bạn muốn đọc mới nhất) và "block" cho event sourcing (không thể mất event). Lựa chọn là quyết định nghiệp vụ, không phải kỹ thuật.
 :::
 
-::: details Q2: You set Node.js stream highWaterMark to 1MB. Traffic spikes and memory usage jumps to 500MB with 500 concurrent streams. What went wrong?
-**Answer:** Each stream allocates its own highWaterMark-sized buffer, so 500 streams x 1MB = 500MB of buffer memory. The highWaterMark is per-stream, not global.
+::: details Câu 2: Bạn đặt highWaterMark stream Node.js 1MB. Traffic tăng đột biến và bộ nhớ nhảy lên 500MB với 500 stream đồng thời. Có gì sai?
+**Trả lời:** Mỗi stream cấp phát buffer kích thước highWaterMark riêng, nên 500 stream x 1MB = 500MB bộ nhớ buffer. highWaterMark là per-stream, không phải toàn cục.
 
-highWaterMark is not a system-wide limit — it's the threshold per individual stream at which `write()` returns `false`. With many concurrent streams, total memory is `concurrency x highWaterMark`. The fix is either to lower the highWaterMark (16KB-64KB is typical), limit concurrency, or use a global memory budget that dynamically adjusts per-stream thresholds.
+highWaterMark không phải giới hạn toàn hệ thống — đó là ngưỡng mỗi stream tại đó `write()` trả `false`. Với nhiều stream đồng thời, tổng bộ nhớ là `concurrency x highWaterMark`. Cách sửa: hạ highWaterMark (16KB-64KB là điển hình), giới hạn concurrency, hoặc dùng budget bộ nhớ toàn cục động điều chỉnh ngưỡng mỗi stream.
 :::
 
-::: details Q3: How is backpressure different from rate limiting? A teammate says they're the same thing.
-**Answer:** Rate limiting caps throughput at a fixed rate regardless of consumer capacity. Backpressure dynamically adjusts based on the consumer's actual ability to keep up.
+::: details Câu 3: Backpressure khác rate limit thế nào? Đồng đội nói chúng giống nhau.
+**Trả lời:** Rate limit cap throughput ở tốc độ cố định bất kể khả năng consumer. Backpressure điều chỉnh động dựa trên khả năng thực sự của consumer.
 
-Rate limiting says "max 100 requests/second" even if the consumer could handle 200. Backpressure says "send as fast as the consumer can process, whatever that speed is right now." Rate limiting is a policy; backpressure is a feedback mechanism. They can complement each other: rate limiting at the API gateway, backpressure inside the processing pipeline. But they solve different problems — rate limiting protects against abuse, backpressure prevents resource exhaustion.
+Rate limit nói "tối đa 100 request/giây" kể cả nếu consumer xử lý được 200. Backpressure nói "gửi nhanh như consumer xử lý được, bất kể tốc độ đó là gì ngay bây giờ." Rate limit là chính sách; backpressure là cơ chế phản hồi. Chúng có thể bổ sung: rate limit ở API gateway, backpressure trong pipeline xử lý. Nhưng chúng giải các bài toán khác — rate limit chống lạm dụng, backpressure tránh cạn tài nguyên.
 :::
 
-::: details Q4: A Go developer says "I don't need backpressure, I just use buffered channels." Is that correct?
-**Answer:** Buffered channels ARE backpressure. A bounded channel blocks the sender when full, which is exactly the "block" backpressure strategy.
+::: details Câu 4: Một dev Go nói "tôi không cần backpressure, tôi chỉ dùng buffered channel." Có đúng không?
+**Trả lời:** Buffered channel CHÍNH LÀ backpressure. Channel giới hạn block sender khi đầy, đó chính xác là chiến lược backpressure "block".
 
-The developer is already using backpressure — they just don't recognize it by name. `ch := make(chan int, 10)` creates a bounded buffer of 10. When the buffer fills, `ch <- item` blocks the goroutine, slowing the producer to match the consumer. The key question is whether the buffer size is well-chosen: too small and you get unnecessary blocking on small bursts; too large and you delay the feedback signal, allowing memory to grow.
+Dev đó đã dùng backpressure rồi — chỉ không nhận ra bằng tên. `ch := make(chan int, 10)` tạo buffer giới hạn 10. Khi buffer đầy, `ch <- item` block goroutine, làm chậm producer khớp consumer. Câu hỏi then chốt là kích thước buffer có được chọn tốt: quá nhỏ thì block không cần khi burst nhỏ; quá lớn thì trì hoãn tín hiệu phản hồi, cho bộ nhớ tăng.
 :::
