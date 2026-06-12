@@ -1,6 +1,6 @@
 ---
 title: "Pattern: Event Loop / Reactor"
-description: "A single-threaded loop that multiplexes I/O via epoll/kqueue, dispatching ready events to callbacks — thousands of connections without threads."
+description: "Vòng lặp đơn luồng ghép kênh I/O qua epoll/kqueue, dispatch event sẵn sàng tới callback — hàng nghìn kết nối không cần thread."
 difficulty: "intermediate"
 ---
 
@@ -8,60 +8,60 @@ difficulty: "intermediate"
 
 <DifficultyBadge />
 
-## One Liner
+## Mô tả một câu
 
-A single-threaded loop that multiplexes I/O via epoll/kqueue, dispatching ready events to callbacks — thousands of connections without threads.
+Vòng lặp đơn luồng ghép kênh I/O qua epoll/kqueue, dispatch event sẵn sàng tới callback — hàng nghìn kết nối không cần thread.
 
 <DemoBadge />
 
-## Real-World Analogy
+## Tương tự thực tế
 
-A single receptionist handling a busy office. She can't talk to two callers simultaneously, but she puts each on hold, handles quick tasks, and circles back to each caller in turn. Nothing stalls — if a task takes time, she notes it and moves on.
+Một lễ tân xử lý văn phòng bận. Cô ấy không thể nói với hai người gọi cùng lúc, nhưng đặt mỗi người chờ, xử lý task nhanh, và quay lại từng người gọi. Không gì dừng — nếu task tốn thời gian, cô ghi chú và đi tiếp.
 
-## Core Idea
+## Ý tưởng cốt lõi
 
-Instead of dedicating one thread per connection (expensive context switches, high memory), the reactor pattern uses a single thread that blocks on an OS polling mechanism (`epoll`, `kqueue`, `IOCP`). When any registered file descriptor becomes ready, the loop dispatches to the associated callback. This is how Node.js handles 10,000+ concurrent connections on a single thread.
+Thay vì dành một thread cho mỗi kết nối (context switch tốn, bộ nhớ cao), pattern reactor dùng một thread block trên cơ chế polling OS (`epoll`, `kqueue`, `IOCP`). Khi file descriptor đã đăng ký sẵn sàng, vòng lặp dispatch tới callback liên quan. Đây là cách Node.js xử lý 10.000+ kết nối đồng thời trên một thread.
 
 ```text
   ┌─────────────────────────────────────────────────┐
   │                  Event Loop                     │
   │                                                 │
   │  ┌──────────┐    ┌──────────┐    ┌──────────┐   │
-  │  │ Register │    │  Poll    │    │ Dispatch │   │
-  │  │ interest │───►│ (block)  │───►│ ready    │   │
-  │  │ (fds)    │    │          │    │ handlers │   │
+  │  │ Đăng ký  │    │  Poll    │    │ Dispatch │   │
+  │  │ quan tâm │───►│ (block)  │───►│ handler  │   │
+  │  │ (fds)    │    │          │    │ sẵn sàng │   │
   │  └──────────┘    └──────────┘    └────┬─────┘   │
   │       ▲                               │         │
   │       └───────────────────────────────┘         │
-  │                   repeat                        │
+  │                   lặp                           │
   └─────────────────────────────────────────────────┘
 
-  Phase detail (libuv model):
+  Chi tiết pha (mô hình libuv):
   ┌────────┐  ┌──────────┐  ┌──────┐  ┌───────┐  ┌───────┐
-  │ Timers │─►│ Pending  │─►│ Poll │─►│ Check │─►│ Close │──► next iteration
-  │        │  │ callbacks│  │      │  │       │  │       │
+  │ Timer  │─►│ Callback │─►│ Poll │─►│ Check │─►│ Close │──► lần tiếp
+  │        │  │ pending  │  │      │  │       │  │       │
   └────────┘  └──────────┘  └──────┘  └───────┘  └───────┘
 ```
 
-| Property | Value |
+| Thuộc tính | Giá trị |
 |----------|-------|
-| Concurrency model | Single-threaded, non-blocking I/O |
-| Connections | Thousands per thread (limited by file descriptors, not threads) |
-| Latency | Low for I/O-bound work; one slow callback blocks everything |
-| Memory | O(connections) for state, not O(connections * stack_size) |
+| Mô hình concurrency | Đơn luồng, I/O non-blocking |
+| Kết nối | Hàng nghìn mỗi thread (giới hạn bởi file descriptor, không phải thread) |
+| Độ trễ | Thấp cho việc I/O-bound; một callback chậm chặn tất cả |
+| Bộ nhớ | O(kết nối) cho state, không phải O(kết nối * kích thước stack) |
 
-**Try it yourself** — add tasks to the call stack and queues, then step through the event loop execution order:
+**Thử ngay** — thêm task vào call stack và queue, rồi đi qua thứ tự thực thi event loop:
 
 <EventLoopViz />
 
-## Production Proof
+## Bằng chứng production
 
-| Project | Source | Usage |
+| Dự án | Nguồn | Cách dùng |
 |---------|--------|-------|
-| libuv | [core.c#L427-L492](https://github.com/libuv/libuv/blob/f6b713398e464a9f166328765be1703fd860981f/src/unix/core.c#L427-L492) | `uv_run` (L427-L492) is the main event loop function used by Node.js. Processes timers, pending callbacks, polls for I/O (`uv__io_poll`), runs check handles, and closes handles in a single `while` loop. Supports three run modes: `UV_RUN_DEFAULT` (run until no more active handles), `UV_RUN_ONCE`, `UV_RUN_NOWAIT`. |
-| Redis | [ae.c#L360-L468](https://github.com/redis/redis/blob/df63a65d4d4ee33ae67e9f101885074febe0bccb/src/ae.c#L360-L468) | `aeProcessEvents` (L360-L468) is Redis's event loop core. Calculates the nearest timer, calls `aeApiPoll` (epoll/kqueue/select abstraction) with that timeout, then dispatches file events and timer events. Redis achieves 100K+ ops/sec on a single thread because the event loop never blocks on individual operations. |
+| libuv | [core.c#L427-L492](https://github.com/libuv/libuv/blob/f6b713398e464a9f166328765be1703fd860981f/src/unix/core.c#L427-L492) | `uv_run` (L427-L492) là hàm event loop chính dùng bởi Node.js. Xử lý timer, callback pending, poll I/O (`uv__io_poll`), chạy check handle và đóng handle trong một vòng `while`. Hỗ trợ ba mode chạy: `UV_RUN_DEFAULT` (chạy tới khi không còn handle active), `UV_RUN_ONCE`, `UV_RUN_NOWAIT`. |
+| Redis | [ae.c#L360-L468](https://github.com/redis/redis/blob/df63a65d4d4ee33ae67e9f101885074febe0bccb/src/ae.c#L360-L468) | `aeProcessEvents` (L360-L468) là cốt lõi event loop Redis. Tính timer gần nhất, gọi `aeApiPoll` (trừu tượng epoll/kqueue/select) với timeout đó, rồi dispatch event file và event timer. Redis đạt 100K+ ops/giây trên một thread vì event loop không bao giờ block trên thao tác riêng. |
 
-## Implementation
+## Triển khai
 
 ::: code-group
 
@@ -71,17 +71,17 @@ type Handler = () => void;
 class EventLoop {
   private handlers = new Map<number, Handler>();
 
-  /** Register a handler for a file descriptor. */
+  /** Đăng ký handler cho file descriptor. */
   addHandler(fd: number, callback: Handler): void {
     this.handlers.set(fd, callback);
   }
 
-  /** Remove a handler for a file descriptor. */
+  /** Xoá handler cho file descriptor. */
   removeHandler(fd: number): void {
     this.handlers.delete(fd);
   }
 
-  /** Execute one tick: call all registered handlers once. */
+  /** Thực thi một tick: gọi mọi handler đã đăng ký một lần. */
   tick(): number {
     const count = this.handlers.size;
     for (const [, handler] of this.handlers) {
@@ -90,7 +90,7 @@ class EventLoop {
     return count;
   }
 
-  /** Run the event loop for up to maxTicks. Stops early if no handlers. */
+  /** Chạy event loop tới maxTicks. Dừng sớm nếu không có handler. */
   run(maxTicks: number): number {
     let ticksRun = 0;
     for (let i = 0; i < maxTicks; i++) {
@@ -218,73 +218,73 @@ class EventLoop:
 
 :::
 
-## Exercises
+## Bài tập
 
-| Level | Exercise | File |
+| Cấp độ | Bài tập | File |
 |-------|----------|------|
-| Basic | Implement a mini event loop with handler registration and tick/run | `exercises/typescript/event-loop/01-basic.test.ts` |
-| Intermediate | Extend with timer support (one-shot timers interleaved with I/O) | `exercises/typescript/event-loop/02-intermediate.test.ts` |
+| Cơ bản | Triển khai event loop mini với đăng ký handler và tick/run | `exercises/typescript/event-loop/01-basic.test.ts` |
+| Trung bình | Mở rộng với hỗ trợ timer (timer một-lần xen kẽ với I/O) | `exercises/typescript/event-loop/02-intermediate.test.ts` |
 
-Run exercises: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
+Chạy bài tập: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
 
-Exercise files: Rust `exercises/rust/src/event_loop/mod.rs` · Go `exercises/go/event_loop/event_loop_test.go` · Python `exercises/python/event_loop/test_event_loop.py`
+File bài tập: Rust `exercises/rust/src/event_loop/mod.rs` · Go `exercises/go/event_loop/event_loop_test.go` · Python `exercises/python/event_loop/test_event_loop.py`
 
-## When to Use
+## Khi nào nên dùng
 
-- **High-connection servers** — web servers, chat servers, API gateways where thousands of connections are mostly idle (waiting for I/O)
-- **I/O-bound workloads** — network proxies, load balancers, database connection pools where CPU work per request is minimal
-- **Real-time communication** — WebSocket servers, game servers, notification systems where low latency per-message matters more than throughput
-- **Embedded/resource-constrained** — when you can't afford the memory overhead of one thread per connection (each thread = 1-8 MB stack)
+- **Server nhiều kết nối** — web server, chat server, API gateway nơi hàng nghìn kết nối phần lớn rảnh (chờ I/O)
+- **Tải I/O-bound** — network proxy, load balancer, pool kết nối database nơi việc CPU mỗi request là tối thiểu
+- **Giao tiếp realtime** — server WebSocket, server game, hệ thông báo nơi độ trễ thấp mỗi message quan trọng hơn throughput
+- **Nhúng/eo hẹp tài nguyên** — khi không thể chịu overhead bộ nhớ một thread mỗi kết nối (mỗi thread = 1-8 MB stack)
 
-## When NOT to Use
+## Khi nào KHÔNG nên dùng
 
-- **CPU-bound work** — a single-threaded event loop blocks on computation. If you need to hash passwords, resize images, or run ML inference, use thread pools or worker processes alongside the event loop.
-- **Simple request-response** — if you have < 100 concurrent connections and each request is straightforward, threads-per-request is simpler and debuggable. The event loop adds complexity (callback management, state machines) without benefit.
-- **Strict ordering requirements** — when events must be processed in exact arrival order with no interleaving, a simple sequential loop or queue consumer is clearer.
+- **Việc CPU-bound** — event loop đơn luồng block trên tính toán. Nếu cần hash mật khẩu, resize ảnh hoặc chạy ML inference, dùng thread pool hoặc worker process song song với event loop.
+- **Request-response đơn giản** — nếu có < 100 kết nối đồng thời và mỗi request đơn giản, thread-mỗi-request đơn giản hơn và dễ debug. Event loop thêm phức tạp (quản lý callback, state machine) không lợi ích.
+- **Yêu cầu thứ tự nghiêm ngặt** — khi event phải xử lý đúng thứ tự đến không xen kẽ, vòng lặp tuần tự hoặc consumer queue đơn giản rõ hơn.
 
-## More Production Uses
+## Thêm các ứng dụng production
 
-- [Node.js](https://github.com/nodejs/node) — libuv-based event loop powering the entire Node.js runtime
-- [Nginx](https://github.com/nginx/nginx) — worker processes each run an event loop with epoll/kqueue
-- [Tokio](https://github.com/tokio-rs/tokio) — Rust async runtime built on mio (cross-platform reactor)
-- [Netty](https://github.com/netty/netty) — Java NIO event loop for high-performance networking
+- [Node.js](https://github.com/nodejs/node) — event loop dựa trên libuv chạy toàn runtime Node.js
+- [Nginx](https://github.com/nginx/nginx) — worker process mỗi cái chạy event loop với epoll/kqueue
+- [Tokio](https://github.com/tokio-rs/tokio) — runtime async Rust xây trên mio (reactor đa nền tảng)
+- [Netty](https://github.com/netty/netty) — event loop Java NIO cho networking hiệu năng cao
 
-## Related Patterns
+## Pattern liên quan
 
-| Pattern | Relationship |
+| Pattern | Quan hệ |
 |---------|-------------|
-| [Cooperative Scheduling](/patterns/cooperative-scheduling/) | Event loops require cooperative scheduling — handlers must not block |
-| [Observer](/patterns/observer/) | Event loops dispatch events to registered observers/callbacks |
-| [Ring Buffer (Circular Buffer)](/patterns/ring-buffer/) | Event queues are typically implemented as ring buffers |
-| [Actor Model](/patterns/actor-model/) | Each actor is essentially a single-threaded event loop over its mailbox |
-| [Min-Heap / Priority Queue](/patterns/min-heap/) | Event loops use min-heaps to schedule timer callbacks by earliest deadline |
+| [Cooperative Scheduling](/patterns/cooperative-scheduling/) | Event loop yêu cầu cooperative scheduling — handler không được block |
+| [Observer](/patterns/observer/) | Event loop dispatch event tới observer/callback đã đăng ký |
+| [Ring Buffer (Buffer vòng)](/patterns/ring-buffer/) | Queue event thường triển khai như ring buffer |
+| [Actor Model](/patterns/actor-model/) | Mỗi actor về cơ bản là event loop đơn luồng trên mailbox |
+| [Min-Heap / Priority Queue](/patterns/min-heap/) | Event loop dùng min-heap để lập lịch callback timer theo deadline sớm nhất |
 
-## Challenge Questions
+## Câu hỏi thử thách
 
-::: details Q1: Your Node.js server handles 5,000 WebSocket connections fine, but adding a single endpoint that computes a Fibonacci number blocks ALL connections. Why?
-**Answer:** The event loop is single-threaded. While computing Fibonacci (CPU-bound, synchronous), the event loop cannot process any I/O events. All 5,000 WebSocket connections are frozen until the computation completes.
+::: details Câu 1: Server Node.js xử lý 5.000 kết nối WebSocket bình thường, nhưng thêm một endpoint tính số Fibonacci chặn TẤT CẢ kết nối. Tại sao?
+**Trả lời:** Event loop đơn luồng. Khi tính Fibonacci (CPU-bound, đồng bộ), event loop không thể xử lý event I/O nào. Cả 5.000 kết nối WebSocket bị đông cứng tới khi tính toán xong.
 
-Solutions: (1) offload CPU work to a `worker_threads` pool, (2) break computation into chunks with `setImmediate()` to yield back to the event loop between chunks, (3) use a separate microservice for heavy computation. This is the fundamental tradeoff of the event loop model — cooperative multitasking means one bad actor blocks everyone.
+Giải pháp: (1) chuyển việc CPU sang pool `worker_threads`, (2) chia tính toán thành đoạn với `setImmediate()` để yield lại event loop giữa đoạn, (3) dùng microservice riêng cho tính toán nặng. Đây là đánh đổi cơ bản của mô hình event loop — đa nhiệm hợp tác nghĩa một actor xấu chặn mọi người.
 :::
 
-::: details Q2: Redis uses a single-threaded event loop for command execution (with optional I/O threads since Redis 6.0), yet it handles 100K+ operations per second. How?
-**Answer:** Redis operations are extremely fast — most are O(1) hash table lookups or O(log N) sorted set operations that take microseconds. The event loop overhead is negligible compared to network I/O time.
+::: details Câu 2: Redis dùng event loop đơn luồng cho thực thi command (với I/O thread tuỳ chọn từ Redis 6.0), nhưng xử lý 100K+ thao tác mỗi giây. Sao vậy?
+**Trả lời:** Thao tác Redis cực nhanh — hầu hết là tra hash table O(1) hoặc sorted set O(log N) mất microsecond. Overhead event loop không đáng kể so với thời gian I/O mạng.
 
-The bottleneck is not CPU but network: reading/writing to sockets, parsing the protocol, and serializing responses. Since Redis uses non-blocking I/O via `aeProcessEvents`, it processes one command per event (read → parse → execute → write) and immediately moves to the next ready socket. There's no context switching, no lock contention, and the entire dataset fits in memory — pure sequential throughput.
+Nút thắt không phải CPU mà mạng: đọc/ghi socket, parse protocol và serialize response. Vì Redis dùng I/O non-blocking qua `aeProcessEvents`, nó xử lý một command mỗi event (đọc → parse → thực thi → ghi) và lập tức chuyển sang socket sẵn sàng tiếp. Không context switching, không tranh chấp lock, và toàn bộ dataset vừa bộ nhớ — throughput tuần tự thuần.
 :::
 
-::: details Q3: libuv's `uv_run` has three modes: DEFAULT, ONCE, NOWAIT. When would you use each?
-**Answer:**
+::: details Câu 3: `uv_run` của libuv có ba mode: DEFAULT, ONCE, NOWAIT. Khi nào dùng mỗi cái?
+**Trả lời:**
 
-- **DEFAULT**: Normal operation — run until all handles/requests are done. This is what `node app.js` uses. The process stays alive until there are no more timers, servers, or pending callbacks.
-- **ONCE**: Process one round of events, then return. Useful for embedding libuv in another event loop (e.g., a game engine's main loop that also needs to handle Node.js events).
-- **NOWAIT**: Like ONCE but never blocks on I/O poll. Only processes already-ready events. Useful for polling in a tight loop where blocking would cause missed frames or deadlines.
+- **DEFAULT**: Hoạt động bình thường — chạy tới khi mọi handle/request xong. Đây là cái `node app.js` dùng. Process sống tới khi không còn timer, server hoặc callback pending.
+- **ONCE**: Xử lý một vòng event rồi trả. Hữu ích khi nhúng libuv trong event loop khác (ví dụ vòng lặp chính của game engine cũng cần xử lý event Node.js).
+- **NOWAIT**: Như ONCE nhưng không bao giờ block trên I/O poll. Chỉ xử lý event đã sẵn sàng. Hữu ích cho polling trong vòng lặp chặt nơi block sẽ gây mất frame hoặc deadline.
 
-The key difference: DEFAULT blocks indefinitely, ONCE blocks for one iteration, NOWAIT never blocks.
+Khác biệt then chốt: DEFAULT block vô hạn, ONCE block một vòng, NOWAIT không bao giờ block.
 :::
 
-::: details Q4: Why does Nginx use multiple worker processes each with its own event loop, rather than one single event loop?
-**Answer:** One event loop on one CPU core wastes the other cores. Nginx spawns N worker processes (typically one per CPU core), each running its own independent event loop.
+::: details Câu 4: Sao Nginx dùng nhiều worker process mỗi cái có event loop riêng, thay vì một event loop duy nhất?
+**Trả lời:** Một event loop trên một core CPU lãng phí các core khác. Nginx spawn N worker process (thường một mỗi core CPU), mỗi cái chạy event loop độc lập riêng.
 
-This gives you: (1) multi-core utilization without shared-state threading bugs, (2) process isolation — one crashed worker doesn't take down others, (3) zero-downtime reload — new workers start with new config while old workers drain. The `SO_REUSEPORT` socket option lets all workers accept connections on the same port, with the kernel load-balancing across them.
+Điều này cho bạn: (1) tận dụng đa core không có bug threading state chia sẻ, (2) cô lập process — một worker crash không kéo cái khác xuống, (3) reload không downtime — worker mới bắt đầu với config mới khi worker cũ rút. Tuỳ chọn socket `SO_REUSEPORT` cho mọi worker accept kết nối trên cùng port, với kernel cân bằng tải qua chúng.
 :::
