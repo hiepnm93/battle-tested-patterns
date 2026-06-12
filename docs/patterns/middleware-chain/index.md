@@ -1,6 +1,6 @@
 ---
 title: "Pattern: Middleware / Pipeline Chain"
-description: "Compose handlers where each wraps the next — pre-process, call next, post-process — forming a bidirectional pipeline."
+description: "Ghép handler, mỗi cái bọc cái tiếp theo — tiền xử lý, gọi next, hậu xử lý — tạo pipeline hai chiều."
 difficulty: "intermediate"
 ---
 
@@ -8,19 +8,19 @@ difficulty: "intermediate"
 
 <DifficultyBadge />
 
-## One Liner
+## Mô tả một câu
 
-Compose handlers where each wraps the next — pre-process, call next, post-process — forming a bidirectional pipeline.
+Ghép handler, mỗi cái bọc cái tiếp theo — tiền xử lý, gọi next, hậu xử lý — tạo pipeline hai chiều.
 
 <DemoBadge />
 
-## Real-World Analogy
+## Tương tự thực tế
 
-An airport security checkpoint. Your bag goes through X-ray (logging), then a metal detector (auth), then document check (validation). Each station does one thing and passes you to the next. Any station can reject you.
+Trạm kiểm tra an ninh sân bay. Túi của bạn qua X-quang (log), rồi máy dò kim loại (auth), rồi kiểm tra giấy tờ (validation). Mỗi trạm làm một việc và đẩy bạn tới cái tiếp theo. Bất kỳ trạm nào cũng có thể từ chối bạn.
 
-## Core Idea
+## Ý tưởng cốt lõi
 
-Each middleware receives a context and a `next()` function. Calling `next()` passes control to the next middleware in the chain. After `next()` returns, the middleware can run post-processing logic. Not calling `next()` short-circuits the chain. This creates an "onion model" where the request flows inward and the response flows outward.
+Mỗi middleware nhận một context và hàm `next()`. Gọi `next()` chuyển điều khiển tới middleware tiếp trong chain. Sau khi `next()` trả về, middleware có thể chạy logic hậu xử lý. Không gọi `next()` short-circuit chain. Điều này tạo "mô hình hành tây" nơi request chảy vào trong và response chảy ra ngoài.
 
 ```text
   Request ──────────────────────────────────────► Response
@@ -32,37 +32,37 @@ Each middleware receives a context and a `next()` function. Calling `next()` pas
   │  │  ┌─────────────────────────────────┐    │    │
   │  │  │  Middleware C (handler)         │    │    │
   │  │  │                                 │    │    │
-  │  │  │  process request → response     │    │    │
+  │  │  │  xử lý request → response       │    │    │
   │  │  │                                 │    │    │
   │  │  └─────────────────────────────────┘    │    │
-  │  │  post-process (add auth headers)        │    │
+  │  │  hậu xử lý (thêm header auth)           │    │
   │  └─────────────────────────────────────────┘    │
-  │  post-process (log duration)                    │
+  │  hậu xử lý (log thời lượng)                     │
   └─────────────────────────────────────────────────┘
 
-  Execution order:
+  Thứ tự thực thi:
   A.pre → B.pre → C.pre → C.post → B.post → A.post
 ```
 
-| Property | Value |
+| Thuộc tính | Giá trị |
 |----------|-------|
-| Composition | O(n) middleware executed per request |
-| Short-circuit | Any middleware can skip the rest by not calling `next()` |
-| Context sharing | All middleware share the same mutable context object |
-| Direction | Bidirectional — pre-process on the way in, post-process on the way out |
+| Ghép | O(n) middleware thực thi mỗi request |
+| Short-circuit | Middleware nào cũng có thể bỏ qua phần còn lại bằng cách không gọi `next()` |
+| Chia sẻ context | Mọi middleware chia sẻ cùng object context mutable |
+| Hướng | Hai chiều — tiền xử lý khi đi vào, hậu xử lý khi đi ra |
 
-**Try it yourself** — send a request through the middleware chain and watch it flow forward then backward:
+**Thử ngay** — gửi request qua middleware chain và xem nó chảy tới rồi quay ngược:
 
 <MiddlewareChainViz />
 
-## Production Proof
+## Bằng chứng production
 
-| Project | Source | Usage |
+| Dự án | Nguồn | Cách dùng |
 |---------|--------|-------|
-| gRPC-Go | [server.go#L1224-L1260](https://github.com/grpc/grpc-go/blob/f1864955bbb48efa131f6652933fa8b2189d9305/server.go#L1224-L1260) | `chainUnaryServerInterceptors` (L1224) chains interceptors into a single handler. `getChainUnaryHandler` (L1252) recursively builds the chain — each interceptor receives the request and a `handler` function (equivalent to `next`). Used for authentication, logging, tracing, and rate limiting in production gRPC services. |
-| Koa.js | [application.js#L152-L204](https://github.com/koajs/koa/blob/78efdc87df1f8d49a494f313d478814d67c3f00f/lib/application.js#L152-L204) | `use()` (L152-L157) pushes middleware into an array. `callback()` (L168) composes them via `koa-compose` into a single function. `handleRequest` (L198-L205) executes the composed chain. Koa pioneered the async onion model — each `await next()` creates a stack frame, enabling clean try/catch/finally around downstream middleware. |
+| gRPC-Go | [server.go#L1224-L1260](https://github.com/grpc/grpc-go/blob/f1864955bbb48efa131f6652933fa8b2189d9305/server.go#L1224-L1260) | `chainUnaryServerInterceptors` (L1224) chain interceptor thành một handler. `getChainUnaryHandler` (L1252) xây chain đệ quy — mỗi interceptor nhận request và hàm `handler` (tương đương `next`). Dùng cho xác thực, log, tracing và rate limit trong service gRPC production. |
+| Koa.js | [application.js#L152-L204](https://github.com/koajs/koa/blob/78efdc87df1f8d49a494f313d478814d67c3f00f/lib/application.js#L152-L204) | `use()` (L152-L157) push middleware vào mảng. `callback()` (L168) ghép chúng qua `koa-compose` thành một hàm. `handleRequest` (L198-L205) thực thi chain đã ghép. Koa tiên phong mô hình hành tây async — mỗi `await next()` tạo stack frame, cho phép try/catch/finally sạch quanh middleware downstream. |
 
-## Implementation
+## Triển khai
 
 ::: code-group
 
@@ -72,12 +72,12 @@ type Middleware<T> = (ctx: T, next: () => void) => void;
 class Pipeline<T> {
   private middlewares: Middleware<T>[] = [];
 
-  /** Add a middleware to the end of the chain. */
+  /** Thêm middleware vào cuối chain. */
   use(middleware: Middleware<T>): void {
     this.middlewares.push(middleware);
   }
 
-  /** Execute the middleware chain with the given context. */
+  /** Thực thi middleware chain với context cho. */
   execute(ctx: T): void {
     let index = 0;
 
@@ -179,62 +179,62 @@ class Pipeline:
 
 :::
 
-## Exercises
+## Bài tập
 
-| Level | Exercise | File |
+| Cấp độ | Bài tập | File |
 |-------|----------|------|
-| Basic | Build a synchronous middleware pipeline with use/execute and short-circuit | `exercises/typescript/middleware-chain/01-basic.test.ts` |
-| Intermediate | Extend with async middleware, error capture, and onion-model cleanup | `exercises/typescript/middleware-chain/02-intermediate.test.ts` |
+| Cơ bản | Xây pipeline middleware đồng bộ với use/execute và short-circuit | `exercises/typescript/middleware-chain/01-basic.test.ts` |
+| Trung bình | Mở rộng với middleware async, bắt lỗi và cleanup mô hình hành tây | `exercises/typescript/middleware-chain/02-intermediate.test.ts` |
 
-Run exercises: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
+Chạy bài tập: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
 
-Exercise files: Rust `exercises/rust/src/middleware_chain/mod.rs` · Go `exercises/go/middleware_chain/middleware_chain_test.go` · Python `exercises/python/middleware_chain/test_middleware_chain.py`
+File bài tập: Rust `exercises/rust/src/middleware_chain/mod.rs` · Go `exercises/go/middleware_chain/middleware_chain_test.go` · Python `exercises/python/middleware_chain/test_middleware_chain.py`
 
-## When to Use
+## Khi nào nên dùng
 
-- **HTTP request processing** — authentication, logging, CORS, compression, rate limiting as composable layers (Express, Koa, Gin, ASP.NET)
-- **RPC interceptors** — gRPC interceptors for tracing, auth, retry, and metrics that wrap every call without modifying business logic
-- **Build/compile pipelines** — Webpack loaders, Babel transforms, PostCSS plugins each process and pass to the next
-- **CLI command processing** — argument parsing, validation, help generation as middleware before the actual command handler
+- **Xử lý request HTTP** — xác thực, log, CORS, nén, rate limit thành lớp có thể ghép (Express, Koa, Gin, ASP.NET)
+- **Interceptor RPC** — interceptor gRPC cho tracing, auth, retry và metric bọc mọi cuộc gọi không sửa logic nghiệp vụ
+- **Pipeline build/compile** — loader Webpack, transform Babel, plugin PostCSS mỗi cái xử lý và chuyển tới cái tiếp
+- **Xử lý command CLI** — parse argument, validation, sinh help như middleware trước handler command thực
 
-## When NOT to Use
+## Khi nào KHÔNG nên dùng
 
-- **Event fan-out (one-to-many)** — if you need multiple independent handlers for the same event, use the Observer pattern. Middleware is a chain (one path), not a broadcast.
-- **Stateless transformations** — if each step just transforms data without needing to wrap the next step (no pre/post), use a simple `array.map().filter().reduce()` pipeline. Middleware's power is the bidirectional wrapping; without it, you pay complexity for nothing.
-- **Performance-critical hot paths** — each middleware adds a function call and closure allocation. In a tight loop processing millions of items, the overhead matters. Use direct function calls.
+- **Fan-out event (một-tới-nhiều)** — nếu cần nhiều handler độc lập cho cùng event, dùng pattern Observer. Middleware là chain (một đường), không phải broadcast.
+- **Biến đổi không state** — nếu mỗi bước chỉ biến đổi dữ liệu không cần bọc bước kế (không pre/post), dùng pipeline `array.map().filter().reduce()` đơn giản. Sức mạnh middleware là bọc hai chiều; không có nó, bạn trả phức tạp vô ích.
+- **Hot path then chốt hiệu năng** — mỗi middleware thêm cuộc gọi hàm và cấp phát closure. Trong vòng lặp xử lý hàng triệu item, overhead quan trọng. Dùng gọi hàm trực tiếp.
 
-## More Production Uses
+## Thêm các ứng dụng production
 
-- [Express.js](https://github.com/expressjs/express) — `app.use()` chains middleware for HTTP request processing
-- [Redux](https://github.com/reduxjs/redux) — `applyMiddleware` wraps `dispatch` for logging, thunks, sagas
-- [ASP.NET Core](https://github.com/dotnet/aspnetcore) — `IApplicationBuilder.Use()` middleware pipeline
-- [Gin](https://github.com/gin-gonic/gin) — Go HTTP framework with `Use()` middleware and `c.Next()`/`c.Abort()`
+- [Express.js](https://github.com/expressjs/express) — `app.use()` chain middleware xử lý request HTTP
+- [Redux](https://github.com/reduxjs/redux) — `applyMiddleware` bọc `dispatch` cho log, thunk, saga
+- [ASP.NET Core](https://github.com/dotnet/aspnetcore) — pipeline middleware `IApplicationBuilder.Use()`
+- [Gin](https://github.com/gin-gonic/gin) — framework HTTP Go với middleware `Use()` và `c.Next()`/`c.Abort()`
 
-## Related Patterns
+## Pattern liên quan
 
-| Pattern | Relationship |
+| Pattern | Quan hệ |
 |---------|-------------|
-| [Iterator](/patterns/iterator/) | Middleware chain iterates through handlers like an iterator over a sequence |
-| [Observer](/patterns/observer/) | Middleware can observe and modify requests/responses flowing through the pipeline |
-| [Vtable](/patterns/vtable/) | Each middleware is a function pointer implementing a common interface, like a vtable entry |
-| [Registry](/patterns/registry/) | Registries can store and manage middleware components in the chain |
+| [Iterator](/patterns/iterator/) | Middleware chain lặp qua handler như iterator trên chuỗi |
+| [Observer](/patterns/observer/) | Middleware có thể quan sát và sửa đổi request/response chảy qua pipeline |
+| [Vtable](/patterns/vtable/) | Mỗi middleware là con trỏ hàm triển khai interface chung, như entry vtable |
+| [Registry](/patterns/registry/) | Registry có thể lưu và quản lý các thành phần middleware trong chain |
 
-## Challenge Questions
+## Câu hỏi thử thách
 
-::: details Q1: You have middleware A (logging), B (auth), C (handler). A user sends a request with an invalid token. B rejects it by NOT calling next(). What does A's post-processing see?
-**Answer:** A's post-processing still runs. When B doesn't call `next()`, C never executes. But B's function returns normally to A (since A called `next()` which invoked B). A's code after its `next()` call executes as usual.
+::: details Câu 1: Bạn có middleware A (log), B (auth), C (handler). Một user gửi request với token bất hợp lệ. B từ chối bằng cách KHÔNG gọi next(). Hậu xử lý của A thấy gì?
+**Trả lời:** Hậu xử lý của A vẫn chạy. Khi B không gọi `next()`, C không bao giờ thực thi. Nhưng hàm B trả bình thường về A (vì A đã gọi `next()` mà gọi B). Code A sau cuộc gọi `next()` thực thi như thường.
 
-This is the onion model in action: A wraps B wraps C. Even if B short-circuits, A's wrapping is still intact. This is why logging middleware works correctly even for rejected requests — it records the duration and status regardless of whether downstream middleware ran.
+Đây là mô hình hành tây trong hành động: A bọc B bọc C. Ngay cả khi B short-circuit, bọc của A vẫn còn nguyên. Đó là lý do middleware log hoạt động đúng kể cả cho request bị từ chối — nó ghi thời lượng và status bất kể middleware downstream có chạy không.
 :::
 
-::: details Q2: You swap the order of auth middleware and rate-limiter middleware. What security issue can this create?
-**Answer:** If rate-limiting runs before auth, unauthenticated requests consume rate-limit quota. An attacker can exhaust the rate limit for legitimate users by sending a flood of invalid requests, causing a denial of service for authenticated users.
+::: details Câu 2: Bạn đổi thứ tự middleware auth và rate-limiter. Vấn đề bảo mật nào có thể tạo ra?
+**Trả lời:** Nếu rate-limit chạy trước auth, request không xác thực tiêu thụ quota rate-limit. Kẻ tấn công có thể vắt kiệt rate limit cho user hợp pháp bằng cách gửi lũ request bất hợp lệ, gây từ chối dịch vụ cho user đã xác thực.
 
-If auth runs first, invalid requests are rejected immediately (cheap) and never reach the rate limiter. The rate limiter then only counts authenticated requests, which is the correct behavior. **Middleware ordering is a security concern**, not just a correctness one.
+Nếu auth chạy trước, request bất hợp lệ bị từ chối ngay (rẻ) và không bao giờ tới rate limiter. Rate limiter sau đó chỉ đếm request đã xác thực, là hành vi đúng. **Thứ tự middleware là vấn đề bảo mật**, không chỉ tính đúng.
 :::
 
-::: details Q3: Koa uses `async/await` middleware. Express uses callback-style `(req, res, next)`. What practical difference does this make for error handling?
-**Answer:** In Koa, `await next()` means errors from downstream middleware automatically propagate via promise rejection. A single try/catch in outer middleware catches all downstream errors:
+::: details Câu 3: Koa dùng middleware `async/await`. Express dùng kiểu callback `(req, res, next)`. Khác biệt thực tế gì cho xử lý lỗi?
+**Trả lời:** Trong Koa, `await next()` nghĩa lỗi từ middleware downstream tự lan qua promise rejection. Một try/catch trong middleware ngoài bắt mọi lỗi downstream:
 
 ```javascript
 app.use(async (ctx, next) => {
@@ -243,22 +243,22 @@ app.use(async (ctx, next) => {
 });
 ```
 
-In Express, errors must be explicitly passed via `next(err)`, and a special 4-argument error handler `(err, req, res, next)` must be registered. If a middleware throws synchronously or an async callback rejects without calling `next(err)`, the error is lost and the request hangs.
+Trong Express, lỗi phải tường minh chuyển qua `next(err)`, và một error handler đặc biệt 4 tham số `(err, req, res, next)` phải được đăng ký. Nếu middleware ném đồng bộ hoặc callback async reject không gọi `next(err)`, lỗi mất và request treo.
 
-The async/await model makes the onion pattern natural — try/catch/finally maps directly to setup/handle/cleanup.
+Mô hình async/await làm pattern hành tây tự nhiên — try/catch/finally map trực tiếp tới setup/handle/cleanup.
 :::
 
-::: details Q4: Can you implement middleware ordering that runs some middleware only for specific routes (like Express's `app.get('/api', authMiddleware, handler)`)?
-**Answer:** Yes — add a predicate to each middleware that checks the context before executing. The pipeline wraps each middleware in a conditional:
+::: details Câu 4: Bạn có thể triển khai thứ tự middleware chạy chỉ cho route cụ thể (như `app.get('/api', authMiddleware, handler)` của Express) không?
+**Trả lời:** Có — thêm predicate cho mỗi middleware kiểm tra context trước khi thực thi. Pipeline bọc mỗi middleware trong điều kiện:
 
 ```javascript
 function routeMiddleware(path, mw) {
   return (ctx, next) => {
     if (ctx.path.startsWith(path)) { mw(ctx, next); }
-    else { next(); } // skip this middleware
+    else { next(); } // bỏ qua middleware này
   };
 }
 ```
 
-Express implements this by maintaining separate middleware stacks per route. When a request arrives, it finds the matching route and only runs that route's middleware chain. This is essentially a tree of pipelines rather than a single flat chain.
+Express triển khai điều này bằng cách duy trì stack middleware riêng mỗi route. Khi request đến, tìm route khớp và chỉ chạy chain middleware của route đó. Đây cơ bản là cây pipeline thay vì một chain phẳng duy nhất.
 :::
