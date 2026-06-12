@@ -1,6 +1,6 @@
 ---
 title: "Pattern: Batch Processing"
-description: "Accumulate individual operations and execute them together as a group, amortizing per-operation overhead across the batch."
+description: "Tích luỹ thao tác riêng và thực thi chúng cùng nhau theo nhóm, phân bổ overhead mỗi thao tác qua cả lô."
 difficulty: "beginner"
 ---
 
@@ -8,28 +8,28 @@ difficulty: "beginner"
 
 <DifficultyBadge />
 
-## One Liner
+## Mô tả một câu
 
-Accumulate individual operations and execute them together as a group, amortizing per-operation overhead across the batch.
+Tích luỹ thao tác riêng và thực thi chúng cùng nhau theo nhóm, phân bổ overhead mỗi thao tác qua cả lô.
 
 <DemoBadge />
 
-## Real-World Analogy
+## Tương tự thực tế
 
-Loading a dishwasher. You don't run it after every plate — you accumulate dishes throughout the day and run one full cycle. The per-dish cost of water, heat, and time is amortized across the whole load.
+Nạp máy rửa bát. Bạn không chạy nó sau mỗi đĩa — bạn tích luỹ bát đĩa cả ngày và chạy một chu trình đầy. Chi phí mỗi đĩa nước, nhiệt và thời gian được phân bổ qua cả tải.
 
-## Core Idea
+## Ý tưởng cốt lõi
 
-Instead of processing each item individually (N round-trips, N context switches), batch processing collects items and processes them in one go. The trade-off: slightly higher latency for individual items, dramatically higher throughput overall.
+Thay vì xử lý mỗi item riêng (N round-trip, N context switch), batch processing thu item và xử lý cùng một lượt. Đánh đổi: độ trễ nhỉnh hơn cho item riêng, throughput cao hơn đáng kể tổng thể.
 
 ```mermaid
 flowchart LR
-    subgraph "Without batching"
+    subgraph "Không batch"
         A1["op 1"] --> S1["send"]
         A2["op 2"] --> S2["send"]
         A3["op 3"] --> S3["send"]
     end
-    subgraph "With batching"
+    subgraph "Có batch"
         B1["op 1"] --> Q["queue"]
         B2["op 2"] --> Q
         B3["op 3"] --> Q
@@ -37,29 +37,29 @@ flowchart LR
     end
 ```
 
-| Property | Value |
+| Thuộc tính | Giá trị |
 |----------|-------|
-| Throughput | Amortizes per-item overhead — N items at near-1-item cost |
-| Latency | Increased per-item (waits for batch to fill or timer to fire) |
-| Flush triggers | Size threshold, time deadline, or explicit flush |
-| Memory | O(batch size) — bounded buffer for pending items |
+| Throughput | Phân bổ overhead mỗi item — N item với chi phí gần-1-item |
+| Độ trễ | Tăng mỗi item (chờ batch đầy hoặc timer bắn) |
+| Trigger flush | Ngưỡng size, deadline thời gian hoặc flush tường minh |
+| Bộ nhớ | O(kích thước batch) — buffer giới hạn cho item pending |
 
-**Try it yourself** — add items and watch them batch up, then flush together:
+**Thử ngay** — thêm item và xem chúng batch lại, rồi flush cùng nhau:
 
 <BatchProcessingViz />
 
-## Production Proof
+## Bằng chứng production
 
-| Project | Source | Usage |
+| Dự án | Nguồn | Cách dùng |
 |---------|--------|-------|
-| Apache Kafka | [RecordAccumulator.java#L69-L120](https://github.com/apache/kafka/blob/b7b1c0a83d856766390ee0c05e33b63711eee80e/clients/src/main/java/org/apache/kafka/clients/producer/internals/RecordAccumulator.java#L69-L120) | The Kafka producer accumulates records into batches per partition. `append()` (line 280) adds records to the current batch; the sender thread drains ready batches. This is how Kafka achieves millions of messages/sec. |
-| Linux Kernel | [blk-merge.c#L350-L395](https://github.com/torvalds/linux/blob/acb7500801e98639f6d8c2d796ed9f64cba83d3a/block/blk-merge.c#L350-L395) | `blk_attempt_req_merge` — the block layer merges adjacent I/O requests into batched operations, amortizing seek time. Checks if two requests have contiguous sectors and compatible flags before merging. |
+| Apache Kafka | [RecordAccumulator.java#L69-L120](https://github.com/apache/kafka/blob/b7b1c0a83d856766390ee0c05e33b63711eee80e/clients/src/main/java/org/apache/kafka/clients/producer/internals/RecordAccumulator.java#L69-L120) | Kafka producer tích luỹ record thành batch theo partition. `append()` (dòng 280) thêm record vào batch hiện tại; thread sender rút batch sẵn sàng. Đây là cách Kafka đạt hàng triệu message/giây. |
+| Nhân Linux | [blk-merge.c#L350-L395](https://github.com/torvalds/linux/blob/acb7500801e98639f6d8c2d796ed9f64cba83d3a/block/blk-merge.c#L350-L395) | `blk_attempt_req_merge` — lớp block gộp request I/O kề thành thao tác batched, phân bổ thời gian seek. Check hai request có sector liên tục và cờ tương thích trước khi gộp. |
 
-::: info Note
-React's `setState` batching is another well-known example — multiple `setState` calls within the same event handler are batched into a single re-render.
+::: info Lưu ý
+Batching `setState` của React là ví dụ nổi tiếng khác — nhiều cuộc gọi `setState` trong cùng event handler được batch thành một re-render.
 :::
 
-## Implementation
+## Triển khai
 
 ::: code-group
 
@@ -204,69 +204,69 @@ class BatchProcessor:
 
 :::
 
-## Exercises
+## Bài tập
 
-| Level | Exercise | File |
+| Cấp độ | Bài tập | File |
 |-------|----------|------|
-| Basic | Implement a batch processor with size-based flushing | `exercises/typescript/batch-processing/01-basic.test.ts` |
-| Intermediate | Timeout flush — flush on size OR time, whichever comes first | `exercises/typescript/batch-processing/02-intermediate.test.ts` |
+| Cơ bản | Triển khai batch processor với flush theo size | `exercises/typescript/batch-processing/01-basic.test.ts` |
+| Trung bình | Flush timeout — flush theo size HOẶC thời gian, cái nào đến trước | `exercises/typescript/batch-processing/02-intermediate.test.ts` |
 
-Run exercises: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
+Chạy bài tập: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
 
-Exercise files: Rust `exercises/rust/src/batch_processing/mod.rs` · Go `exercises/go/batch_processing/batch_processing_test.go` · Python `exercises/python/batch_processing/test_batch_processing.py`
+File bài tập: Rust `exercises/rust/src/batch_processing/mod.rs` · Go `exercises/go/batch_processing/batch_processing_test.go` · Python `exercises/python/batch_processing/test_batch_processing.py`
 
-## When to Use
+## Khi nào nên dùng
 
-- **Database writes** — batch INSERT instead of N individual INSERTs
-- **API calls** — batch GraphQL/REST requests to reduce round-trips
-- **Message queues** — Kafka, SQS batch send/receive
-- **UI updates** — React batched setState, browser layout batching
-- **Network I/O** — TCP Nagle's algorithm, HTTP/2 multiplexing
+- **Ghi database** — batch INSERT thay vì N INSERT riêng
+- **Cuộc gọi API** — batch request GraphQL/REST để giảm round-trip
+- **Message queue** — batch send/receive Kafka, SQS
+- **Update UI** — setState batch React, batch layout trình duyệt
+- **I/O mạng** — thuật toán Nagle TCP, ghép kênh HTTP/2
 
-## When NOT to Use
+## Khi nào KHÔNG nên dùng
 
-- **Latency-critical** — batching adds delay; if every millisecond matters, process immediately
-- **Small volume** — if you rarely have more than 1 item, batching adds complexity for no gain
-- **Partial failure isolation** — if one item in a batch fails, you need retry/dead-letter logic for the whole batch; individual processing is simpler when failure isolation matters
-- **Unbounded memory** — without size limits, batches can grow during traffic spikes and OOM the process
+- **Độ trễ then chốt** — batching thêm delay; nếu mỗi millisecond quan trọng, xử lý ngay
+- **Khối lượng nhỏ** — nếu hiếm khi có hơn 1 item, batching thêm phức tạp không lợi
+- **Cô lập lỗi một phần** — nếu một item batch fail, bạn cần logic retry/dead-letter cho cả batch; xử lý riêng đơn giản hơn khi cô lập lỗi quan trọng
+- **Bộ nhớ không giới hạn** — không có giới hạn size, batch có thể tăng khi traffic đỉnh và OOM process
 
-## More Production Uses
+## Thêm các ứng dụng production
 
-- [React automatic batching](https://github.com/facebook/react/blob/34b78a2897cc208260a88e6b62ecaf9ca2a9dfe4/packages/react-reconciler/src/ReactFiberWorkLoop.js#L588-L600) — React 18+ batches all state updates by default
+- [React tự động batch](https://github.com/facebook/react/blob/34b78a2897cc208260a88e6b62ecaf9ca2a9dfe4/packages/react-reconciler/src/ReactFiberWorkLoop.js#L588-L600) — React 18+ batch mọi update state mặc định
 - [DataLoader](https://github.com/graphql/dataloader) — GraphQL N+1
 - [Redis](https://github.com/redis/redis) — Pipeline
 - [Elasticsearch](https://github.com/elastic/elasticsearch) — Bulk API
 
-## Related Patterns
+## Pattern liên quan
 
-| Pattern | Relationship |
+| Pattern | Quan hệ |
 |---------|-------------|
-| [Ring Buffer (Circular Buffer)](/patterns/ring-buffer/) | Ring buffers accumulate items for batch consumption |
-| [Backpressure](/patterns/backpressure/) | Batching smooths bursty input and works with backpressure mechanisms |
-| [Retry with Exponential Backoff](/patterns/retry-backoff/) | Individual batch items can be retried with exponential backoff on failure |
+| [Ring Buffer (Buffer vòng)](/patterns/ring-buffer/) | Ring buffer tích luỹ item cho tiêu thụ batch |
+| [Backpressure](/patterns/backpressure/) | Batching làm mịn input bursty và hoạt động với cơ chế backpressure |
+| [Retry với Exponential Backoff](/patterns/retry-backoff/) | Item batch riêng có thể retry với backoff cấp số nhân khi lỗi |
 
-## Challenge Questions
+## Câu hỏi thử thách
 
-::: details Q1: Your batch processor uses maxSize=100 and maxWaitMs=50ms. Traffic drops to 1 request/second. What happens, and how do you fix it?
-**Answer:** Each request waits the full 50ms timeout before flushing a batch of 1, adding unnecessary latency.
+::: details Câu 1: Batch processor của bạn dùng maxSize=100 và maxWaitMs=50ms. Traffic giảm còn 1 request/giây. Chuyện gì, và bạn sửa thế nào?
+**Trả lời:** Mỗi request chờ đủ 50ms timeout trước khi flush batch 1 item, thêm độ trễ không cần.
 
-The timeout triggers with just a single item in the queue because the batch never reaches 100 items. The fix is to make the batch size and/or timeout adaptive — for example, flush immediately when the queue has been idle, or use a shorter timeout when the queue depth is low. Kafka's `linger.ms` works this way: it only delays if there are more records expected.
+Timeout kích hoạt chỉ với một item trong queue vì batch không bao giờ đạt 100 item. Cách sửa là làm size batch và/hoặc timeout thích nghi — ví dụ flush ngay khi queue đã idle, hoặc dùng timeout ngắn hơn khi độ sâu queue thấp. `linger.ms` của Kafka hoạt động vậy: chỉ delay nếu có thêm record được kỳ vọng.
 :::
 
-::: details Q2: A batch of 100 database inserts fails because row 57 violates a unique constraint. What should happen to the other 99 rows?
-**Answer:** It depends on whether you need atomicity. If the batch runs in a single transaction, all 100 rows roll back. If not, you need per-item error handling.
+::: details Câu 2: Batch 100 insert database fail vì row 57 vi phạm ràng buộc unique. Chuyện gì xảy ra với 99 row khác?
+**Trả lời:** Tuỳ bạn có cần atomicity không. Nếu batch chạy trong một transaction, cả 100 row rollback. Nếu không, bạn cần xử lý lỗi mỗi item.
 
-The common production approach is to return a result array with per-item success/failure status (like Elasticsearch's Bulk API does). This lets callers retry only the failed items. If you wrap the entire batch in one transaction for atomicity, a single bad row kills the whole batch — which is simpler but wastes work.
+Cách production phổ biến là trả mảng kết quả với status thành công/lỗi mỗi item (như Bulk API Elasticsearch). Điều này cho caller retry chỉ item lỗi. Nếu bạn bọc cả batch trong một transaction để atomicity, một row xấu giết cả batch — đơn giản hơn nhưng lãng phí công.
 :::
 
-::: details Q3: You have both a size trigger (maxSize=50) and a time trigger (maxWaitMs=100ms). A burst of 200 items arrives in 10ms. How many batches fire, and when?
-**Answer:** Four batches of 50 fire immediately, all within that 10ms burst. The time trigger never activates.
+::: details Câu 3: Bạn có cả trigger size (maxSize=50) và trigger thời gian (maxWaitMs=100ms). Burst 200 item đến trong 10ms. Bao nhiêu batch bắn, và khi nào?
+**Trả lời:** Bốn batch 50 item bắn ngay, tất cả trong burst 10ms. Trigger thời gian không bao giờ kích hoạt.
 
-The size trigger takes priority whenever the queue reaches maxSize. As items pour in, the queue hits 50, flushes, hits 50 again, flushes, and so on. The timer is only relevant when the queue has items but hasn't reached maxSize — it's a "don't wait forever" safety net, not the primary trigger under load.
+Trigger size ưu tiên khi queue đạt maxSize. Khi item ào vào, queue chạm 50, flush, chạm 50 lại, flush, v.v. Timer chỉ liên quan khi queue có item nhưng chưa đạt maxSize — đó là an toàn "đừng chờ mãi", không phải trigger chính dưới tải.
 :::
 
-::: details Q4: Why does Kafka batch per-partition rather than using a single global batch across all partitions?
-**Answer:** Because each partition is an independent append-only log on a specific broker. A single cross-partition batch would need to be split at send time anyway.
+::: details Câu 4: Sao Kafka batch theo partition thay vì dùng một batch toàn cục qua mọi partition?
+**Trả lời:** Vì mỗi partition là log append-only độc lập trên broker cụ thể. Một batch xuyên partition đơn sẽ phải tách lúc gửi.
 
-Batching per-partition means each batch targets a specific broker (the partition leader). The Sender then groups multiple partition batches destined for the same broker into a single `ProduceRequest`, minimizing network round-trips. It also preserves per-partition ordering guarantees. A global batch would lose the natural partition→broker mapping, adding complexity with no throughput benefit.
+Batching theo partition nghĩa mỗi batch nhắm broker cụ thể (leader partition). Sender sau đó gom nhiều batch partition đến cùng broker thành một `ProduceRequest`, giảm round-trip mạng. Cũng bảo toàn đảm bảo thứ tự per-partition. Batch toàn cục sẽ mất ánh xạ partition→broker tự nhiên, thêm phức tạp không lợi throughput.
 :::
