@@ -1,30 +1,30 @@
 ---
-title: "Patterns from Git"
-description: "Git's pattern usage: copy-on-write objects, Merkle trees for integrity, and diff/patch for minimal changes."
+title: "Pattern trong Git"
+description: "Cách Git dùng pattern: object copy-on-write, Merkle tree cho toàn vẹn và diff/patch cho thay đổi tối thiểu."
 ---
 
-# Patterns from Git
+# Pattern trong Git
 
-Git's data model is built on copy-on-write immutable objects and efficient diffing.
+Mô hình dữ liệu của Git được xây dựng trên các object bất biến copy-on-write và diff hiệu quả.
 
-| Pattern | Where | What It Does |
+| Pattern | Ở đâu | Tác dụng |
 |---------|-------|--------------|
-| [Copy-on-Write](/patterns/copy-on-write/) | [`object-file.c`](https://github.com/git/git/blob/1ff279f3404a482a83fb04c7457e41ab26884aea/object-file.c#L719-L730) | Content-addressed immutable objects; branches share data, copy only on change |
-| [Diff / Patch](/patterns/diff-patch/) | [`diff.c`](https://github.com/git/git/blob/1ff279f3404a482a83fb04c7457e41ab26884aea/diff.c#L5020-L5060), `xdiff/` | Myers' diff algorithm for minimal edit distance between file versions |
-| [Bitmask](/patterns/bitmask/) | [`read-cache-ll.h`](https://github.com/git/git/blob/1ff279f3404a482a83fb04c7457e41ab26884aea/read-cache-ll.h) | `CE_*` cache entry flags — staged, valid, intent-to-add |
-| [Bloom Filter](/patterns/bloom-filter/) | [`bloom.c`](https://github.com/git/git/blob/1ff279f3404a482a83fb04c7457e41ab26884aea/bloom.c) | Changed-path bloom filters for faster `git log -- <path>` |
-| [Trie](/patterns/trie/) | [`read-cache.c`](https://github.com/git/git/blob/1ff279f3404a482a83fb04c7457e41ab26884aea/read-cache.c) | Name hash table for fast directory-level path lookup |
-| [LRU Cache](/patterns/lru-cache/) | [`pack-objects.c`](https://github.com/git/git/blob/1ff279f3404a482a83fb04c7457e41ab26884aea/pack-objects.c) | Delta base cache for reusing computed deltas during pack |
-| [Merkle Tree](/patterns/merkle-tree/) | [`tree.c`](https://github.com/git/git/blob/1ff279f3404a482a83fb04c7457e41ab26884aea/tree.c#L136-L171) | Content-addressed Merkle DAG — every commit, tree, blob is hashed; changing one byte changes all hashes up to root |
+| [Copy-on-Write](/patterns/copy-on-write/) | [`object-file.c`](https://github.com/git/git/blob/1ff279f3404a482a83fb04c7457e41ab26884aea/object-file.c#L719-L730) | Object bất biến địa chỉ-theo-nội-dung; các branch chia sẻ dữ liệu, chỉ copy khi đổi |
+| [Diff / Patch](/patterns/diff-patch/) | [`diff.c`](https://github.com/git/git/blob/1ff279f3404a482a83fb04c7457e41ab26884aea/diff.c#L5020-L5060), `xdiff/` | Thuật toán diff Myers cho khoảng cách chỉnh sửa tối thiểu giữa các phiên bản file |
+| [Bitmask](/patterns/bitmask/) | [`read-cache-ll.h`](https://github.com/git/git/blob/1ff279f3404a482a83fb04c7457e41ab26884aea/read-cache-ll.h) | Flag entry cache `CE_*` — staged, valid, intent-to-add |
+| [Bloom Filter](/patterns/bloom-filter/) | [`bloom.c`](https://github.com/git/git/blob/1ff279f3404a482a83fb04c7457e41ab26884aea/bloom.c) | Bloom filter cho đường dẫn đã đổi, giúp `git log -- <path>` nhanh hơn |
+| [Trie](/patterns/trie/) | [`read-cache.c`](https://github.com/git/git/blob/1ff279f3404a482a83fb04c7457e41ab26884aea/read-cache.c) | Bảng hash tên cho tra cứu path cấp thư mục nhanh |
+| [LRU Cache](/patterns/lru-cache/) | [`pack-objects.c`](https://github.com/git/git/blob/1ff279f3404a482a83fb04c7457e41ab26884aea/pack-objects.c) | Cache delta base để tái dùng delta đã tính khi pack |
+| [Merkle Tree](/patterns/merkle-tree/) | [`tree.c`](https://github.com/git/git/blob/1ff279f3404a482a83fb04c7457e41ab26884aea/tree.c#L136-L171) | DAG Merkle địa chỉ-theo-nội-dung — mỗi commit, tree, blob đều được hash; đổi một byte là đổi tất cả hash lên tới root |
 
-## How They Compose: `git commit`
+## Cách chúng kết hợp: `git commit`
 
-When you run `git commit`, multiple patterns work together to create an immutable, verifiable snapshot:
+Khi bạn chạy `git commit`, nhiều pattern phối hợp để tạo một snapshot bất biến và có thể xác minh:
 
 <CompositionFlow variant="git-commit" />
 
-The core insight is that copy-on-write + Merkle hashing gives Git both space efficiency (shared objects) and integrity verification (tamper-evident hashes) with no trade-off between the two.
+Insight cốt lõi là copy-on-write + hash Merkle cho Git vừa hiệu quả không gian (object dùng chung) vừa xác minh được toàn vẹn (hash bất khả giả mạo) mà không phải đánh đổi cái này lấy cái kia.
 
-## Further Reading
+## Đọc thêm
 
-- [Git Source Code (GitHub)](https://github.com/git/git)
+- [Source Git (GitHub)](https://github.com/git/git)

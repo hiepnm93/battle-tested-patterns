@@ -1,35 +1,35 @@
 ---
-title: "Patterns from Game Engines"
-description: "Game engine patterns from Godot and SDL: object pool, tagged union, double buffering, and dirty flag for 60fps performance."
+title: "Pattern trong Game Engine"
+description: "Pattern game engine từ Godot và SDL: object pool, tagged union, double buffering và dirty flag cho hiệu năng 60fps."
 ---
 
-# Patterns from Game Engines
+# Pattern trong Game Engine
 
-Game engines push patterns to their limits — every frame counts at 60fps.
+Game engine đẩy các pattern tới giới hạn — mỗi frame đều quan trọng khi chạy 60fps.
 
-| Pattern | Project | Where | What It Does |
+| Pattern | Dự án | Ở đâu | Tác dụng |
 |---------|---------|-------|--------------|
-| [Object Pool](/patterns/object-pool/) | Godot | [`core/templates/pooled_list.h`](https://github.com/godotengine/godot/blob/ec67cbe92628bdaf979b10594359ba6f02cf8838/core/templates/pooled_list.h#L35-L100) | Freelist-based pool for entities, particles, physics bodies |
-| [Double Buffering](/patterns/double-buffering/) | SDL | [`src/render/SDL_render.c`](https://github.com/libsdl-org/SDL/blob/14b0e9d922da78001223e563efd2f54f473a4115/src/render/SDL_render.c#L5535-L5570) | Front/back buffer swap for tear-free rendering |
-| [Free List](/patterns/free-list/) | Godot | [`core/templates/pooled_list.h`](https://github.com/godotengine/godot/blob/ec67cbe92628bdaf979b10594359ba6f02cf8838/core/templates/pooled_list.h#L35-L100) | Non-intrusive freelist allocator for O(1) entity alloc/free |
-| [Ring Buffer](/patterns/ring-buffer/) | Game audio | Various engines | Lock-free audio streaming buffers between main and audio threads |
-| [State Machine](/patterns/state-machine/) | Godot | [`scene/animation/animation_tree.h`](https://github.com/godotengine/godot/blob/ec67cbe92628bdaf979b10594359ba6f02cf8838/scene/animation/animation_tree.h) | Animation state machines for character animation blending |
-| [Arena Allocator](/patterns/arena-allocator/) | Frame allocators | Common pattern | Per-frame bump allocator — reset every frame, zero free cost |
-| [Flyweight](/patterns/flyweight/) | Godot | [`servers/rendering/`](https://github.com/godotengine/godot/tree/ec67cbe92628bdaf979b10594359ba6f02cf8838/servers/rendering) | Shared mesh/texture resources referenced by multiple instances |
-| [Batch Processing](/patterns/batch-processing/) | Godot / Unity | Render batching | Batch draw calls to minimize GPU state changes |
-| [Tagged Union](/patterns/tagged-union/) | Godot | [`variant.h`](https://github.com/godotengine/godot/blob/ec67cbe92628bdaf979b10594359ba6f02cf8838/core/variant/variant.h#L78-L120) | `Variant::Type` enum + union — every GDScript value is a `Variant` |
-| [Dirty Flag](/patterns/dirty-flag/) | Godot / Unity | Transform hierarchies | Dirty flag on parent transform invalidates child world matrices — recompute only when accessed |
-| [Event Loop](/patterns/event-loop/) | Godot | [`main_loop.h`](https://github.com/godotengine/godot/blob/ec67cbe92628bdaf979b10594359ba6f02cf8838/core/os/main_loop.h) | Main game loop — process input, update, render in fixed-step cycle |
+| [Object Pool](/patterns/object-pool/) | Godot | [`core/templates/pooled_list.h`](https://github.com/godotengine/godot/blob/ec67cbe92628bdaf979b10594359ba6f02cf8838/core/templates/pooled_list.h#L35-L100) | Pool dựa trên freelist cho entity, particle, physics body |
+| [Double Buffering](/patterns/double-buffering/) | SDL | [`src/render/SDL_render.c`](https://github.com/libsdl-org/SDL/blob/14b0e9d922da78001223e563efd2f54f473a4115/src/render/SDL_render.c#L5535-L5570) | Hoán đổi front/back buffer cho render không tearing |
+| [Free List](/patterns/free-list/) | Godot | [`core/templates/pooled_list.h`](https://github.com/godotengine/godot/blob/ec67cbe92628bdaf979b10594359ba6f02cf8838/core/templates/pooled_list.h#L35-L100) | Allocator freelist không xen cho cấp/giải phóng entity O(1) |
+| [Ring Buffer](/patterns/ring-buffer/) | Audio game | Nhiều engine | Buffer streaming audio lock-free giữa main thread và audio thread |
+| [State Machine](/patterns/state-machine/) | Godot | [`scene/animation/animation_tree.h`](https://github.com/godotengine/godot/blob/ec67cbe92628bdaf979b10594359ba6f02cf8838/scene/animation/animation_tree.h) | State machine animation cho blending hoạt cảnh nhân vật |
+| [Arena Allocator](/patterns/arena-allocator/) | Frame allocator | Pattern phổ biến | Bump allocator mỗi frame — reset mỗi frame, chi phí giải phóng bằng 0 |
+| [Flyweight](/patterns/flyweight/) | Godot | [`servers/rendering/`](https://github.com/godotengine/godot/tree/ec67cbe92628bdaf979b10594359ba6f02cf8838/servers/rendering) | Tài nguyên mesh/texture chia sẻ được tham chiếu bởi nhiều instance |
+| [Batch Processing](/patterns/batch-processing/) | Godot / Unity | Render batching | Gom các draw call để giảm tối đa thay đổi state GPU |
+| [Tagged Union](/patterns/tagged-union/) | Godot | [`variant.h`](https://github.com/godotengine/godot/blob/ec67cbe92628bdaf979b10594359ba6f02cf8838/core/variant/variant.h#L78-L120) | Enum `Variant::Type` + union — mọi giá trị GDScript đều là một `Variant` |
+| [Dirty Flag](/patterns/dirty-flag/) | Godot / Unity | Hệ transform | Dirty flag trên transform cha vô hiệu ma trận thế giới của con — tính lại chỉ khi truy cập |
+| [Event Loop](/patterns/event-loop/) | Godot | [`main_loop.h`](https://github.com/godotengine/godot/blob/ec67cbe92628bdaf979b10594359ba6f02cf8838/core/os/main_loop.h) | Vòng lặp game chính — xử lý input, update, render theo chu kỳ bước cố định |
 
-## How They Compose: One Game Frame
+## Cách chúng kết hợp: Một frame game
 
-At 60fps, each frame has ~16ms. Multiple patterns work together inside that budget:
+Ở 60fps, mỗi frame có ~16ms. Nhiều pattern phối hợp trong khoảng thời gian đó:
 
 <CompositionFlow variant="game-frame" />
 
-The key insight: game engines minimize per-object overhead. Pools avoid malloc, dirty flags avoid recomputation, batching avoids GPU calls, and arenas avoid per-object deallocation. All of these share the same design philosophy — pay O(1) per operation, defer or amortize the expensive work.
+Insight then chốt: game engine giảm tối đa overhead mỗi object. Pool tránh malloc, dirty flag tránh tính lại, batching tránh GPU call và arena tránh giải phóng từng object. Tất cả đều chia sẻ cùng triết lý thiết kế — trả O(1) mỗi thao tác, hoãn hoặc phân bổ công việc tốn kém.
 
-## Further Reading
+## Đọc thêm
 
 - [Godot Engine (GitHub)](https://github.com/godotengine/godot) · [SDL (GitHub)](https://github.com/libsdl-org/SDL)
-- [Game Programming Patterns (book)](https://gameprogrammingpatterns.com/) by Robert Nystrom
+- [Game Programming Patterns (sách)](https://gameprogrammingpatterns.com/) của Robert Nystrom
