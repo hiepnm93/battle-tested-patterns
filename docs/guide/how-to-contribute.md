@@ -1,60 +1,60 @@
 ---
-title: "How to Contribute"
-description: "How to contribute a new pattern: verification requirements, source link standards, multi-language implementation guidelines."
+title: "Cách đóng góp"
+description: "Cách đóng góp một pattern mới: yêu cầu xác minh, chuẩn liên kết nguồn, hướng dẫn triển khai đa ngôn ngữ."
 ---
 
-# How to Contribute
+# Cách đóng góp
 
-We welcome contributions! Here's how to get started.
+Chúng tôi hoan nghênh các đóng góp! Đây là cách bắt đầu.
 
-## Quick Start
+## Khởi động nhanh
 
 ```bash
 git clone https://github.com/Totoro-jam/battle-tested-patterns.git
 cd battle-tested-patterns
 pnpm install
-pnpm dev        # Start docs dev server
-pnpm test       # Run all tests (exercises + docs components)
+pnpm dev        # Khởi động dev server tài liệu
+pnpm test       # Chạy tất cả test (bài tập + component tài liệu)
 ```
 
-## Types of Contributions
+## Các loại đóng góp
 
-### Add a New Pattern
+### Thêm một pattern mới
 
-1. Open an [Issue](https://github.com/Totoro-jam/battle-tested-patterns/issues/new?template=new-pattern.md) to propose the pattern
-2. Follow [SOP 01: New Pattern](https://github.com/Totoro-jam/battle-tested-patterns/blob/e758be266d38db94723be233863e6f3effbf46cc/.sop/01-new-pattern.md)
-3. Submit a PR with the filled-out checklist
+1. Mở một [Issue](https://github.com/Totoro-jam/battle-tested-patterns/issues/new?template=new-pattern.md) đề xuất pattern
+2. Theo [SOP 01: Pattern mới](https://github.com/Totoro-jam/battle-tested-patterns/blob/e758be266d38db94723be233863e6f3effbf46cc/.sop/01-new-pattern.md)
+3. Gửi PR kèm checklist đã điền
 
-### Add a Language Implementation
+### Thêm phần triển khai ngôn ngữ
 
-- Pick a pattern that's missing your language
-- Follow [SOP 03: Multi-Language Implementation](https://github.com/Totoro-jam/battle-tested-patterns/blob/e758be266d38db94723be233863e6f3effbf46cc/.sop/03-multi-lang-impl.md)
-- Implementations must be **idiomatic** — not line-by-line translations
+- Chọn một pattern còn thiếu ngôn ngữ của bạn
+- Theo [SOP 03: Triển khai đa ngôn ngữ](https://github.com/Totoro-jam/battle-tested-patterns/blob/e758be266d38db94723be233863e6f3effbf46cc/.sop/03-multi-lang-impl.md)
+- Bản triển khai phải **theo idiom** — không phải dịch dòng-một-dòng
 
-### Fix a Broken Link
+### Sửa liên kết hỏng
 
-- Follow [SOP 06: Broken Link Fix](https://github.com/Totoro-jam/battle-tested-patterns/blob/e758be266d38db94723be233863e6f3effbf46cc/.sop/06-broken-link-fix.md)
+- Theo [SOP 06: Sửa liên kết hỏng](https://github.com/Totoro-jam/battle-tested-patterns/blob/e758be266d38db94723be233863e6f3effbf46cc/.sop/06-broken-link-fix.md)
 
-### Improve Documentation
+### Cải thiện tài liệu
 
-- Fix typos, clarify explanations, improve diagrams
-- Use commit type `docs:`
+- Sửa lỗi typo, làm rõ phần giải thích, cải thiện sơ đồ
+- Dùng commit type `docs:`
 
-## Quality Bar
+## Tiêu chuẩn chất lượng
 
-Every pattern must meet these minimums:
+Mỗi pattern phải đáp ứng tối thiểu các yêu cầu sau:
 
-- ≥ 2 production proofs with precise GitHub links (to line numbers)
-- TypeScript implementation + ≥ 1 other language (Rust/Go/Python)
-- Exercise files in all 4 languages (TS, Rust, Go, Python) + answer files
-- Chinese translation with identical code blocks
-- All tests pass (`pnpm test` · `cargo test` · `go test ./...` · `pytest`), no lint errors
+- ≥ 2 bằng chứng production với liên kết GitHub chính xác (tới số dòng)
+- Triển khai TypeScript + ≥ 1 ngôn ngữ khác (Rust/Go/Python)
+- File bài tập cho cả 4 ngôn ngữ (TS, Rust, Go, Python) + file đáp án
+- Bản dịch tiếng Trung với khối code giống nhau
+- Tất cả test pass (`pnpm test` · `cargo test` · `go test ./...` · `pytest`), không có lỗi lint
 
-See the full checklist in the [PR template](https://github.com/Totoro-jam/battle-tested-patterns/blob/e758be266d38db94723be233863e6f3effbf46cc/.github/PULL_REQUEST_TEMPLATE.md).
+Xem checklist đầy đủ trong [template PR](https://github.com/Totoro-jam/battle-tested-patterns/blob/e758be266d38db94723be233863e6f3effbf46cc/.github/PULL_REQUEST_TEMPLATE.md).
 
-## Commit Convention
+## Quy ước commit
 
-We use [Conventional Commits](https://www.conventionalcommits.org/):
+Chúng tôi dùng [Conventional Commits](https://www.conventionalcommits.org/):
 
 ```text
 feat: add cooperative-scheduling pattern

@@ -1,130 +1,130 @@
 ---
 title: "Cheat Sheet"
-description: "Quick reference card for all 46 battle-tested patterns — complexity, when to use, and pick-by-problem guide."
+description: "Thẻ tham chiếu nhanh cho cả 46 pattern đã kiểm chứng — độ phức tạp, khi nào dùng và chỉ dẫn chọn theo bài toán."
 ---
 
 # Cheat Sheet
 
-A single-page reference for all 46 patterns. Print it, bookmark it, or ctrl-F your way through it.
+Tham chiếu một trang cho cả 46 pattern. In ra, đánh dấu, hoặc ctrl-F để tìm trong đây.
 
-## Pick by Problem
+## Chọn theo bài toán
 
-Not sure which pattern you need? Start here.
+Chưa rõ cần pattern nào? Bắt đầu từ đây.
 
-| I need to... | Reach for | Why |
+| Tôi cần... | Hãy dùng | Vì sao |
 |---|---|---|
-| Limit concurrent access | [Semaphore](/patterns/semaphore/) | Counter-based, proven in OS kernels |
-| Handle slow consumers | [Backpressure](/patterns/backpressure/) | Don't drop — push back |
-| Cache with eviction | [LRU Cache](/patterns/lru-cache/) | O(1) get/put, auto-evict coldest |
-| Fast prefix lookup | [Trie](/patterns/trie/) | O(k) by key length, not collection size |
-| Probably-in-set check | [Bloom Filter](/patterns/bloom-filter/) | Zero false negatives, tiny memory |
-| Sorted range queries | [B+ Tree](/patterns/b-plus-tree/) or [Skip List](/patterns/skip-list/) | B+ Tree for disk, Skip List for memory |
-| Crash-safe writes | [WAL](/patterns/write-ahead-log/) + [Checkpointing](/patterns/checkpointing/) | Log-then-apply + periodic snapshots |
-| Stop cascading failure | [Circuit Breaker](/patterns/circuit-breaker/) | Fail fast, recover gradually |
-| Retry failed calls | [Retry with Backoff](/patterns/retry-backoff/) | Exponential delay + jitter |
-| Control throughput | [Rate Limiter](/patterns/rate-limiter/) | Token bucket, constant refill |
-| Verify data integrity | [Merkle Tree](/patterns/merkle-tree/) | O(log n) proof with hash chain |
-| Reduce memory via sharing | [Flyweight](/patterns/flyweight/) or [Interning](/patterns/interning/) | Share immutable values |
-| Avoid GC pressure | [Object Pool](/patterns/object-pool/) or [Arena](/patterns/arena-allocator/) | Reuse or bulk-free |
-| Detect changes cheaply | [Dirty Flag](/patterns/dirty-flag/) | Skip recomputation if clean |
-| Order distributed events | [Logical Clock](/patterns/logical-clock/) | Lamport or vector clocks |
-| Lazy evaluation | [Iterator](/patterns/iterator/) | Pull-based, zero intermediate alloc |
-| Handle multiple types | [Tagged Union](/patterns/tagged-union/) or [Vtable](/patterns/vtable/) | Tag for closed set, vtable for open set |
-| Write-heavy workload | [LSM Tree](/patterns/lsm-tree/) | Buffer → flush → merge |
-| Compose middleware | [Middleware Chain](/patterns/middleware-chain/) | Onion model, each handler wraps next |
-| Balance work across threads | [Work Stealing](/patterns/work-stealing/) | Idle steals from busy |
-| Track multiple flags | [Bitmask](/patterns/bitmask/) | N flags in one integer |
-| Schedule by priority | [Min Heap](/patterns/min-heap/) | O(1) peek, O(log n) push/pop |
-| Fixed-size FIFO | [Ring Buffer](/patterns/ring-buffer/) | Wraps around, zero alloc |
-| Minimal diff between states | [Diff / Patch](/patterns/diff-patch/) | Compute + apply changes |
-| Decouple producers/consumers | [Observer](/patterns/observer/) | Subscribe model |
-| Distribute keys across nodes | [Consistent Hashing](/patterns/consistent-hashing/) | Add/remove node remaps ~1/n |
-| Build order from dependencies | [Dependency Graph](/patterns/dependency-graph/) | DAG + topological sort |
-| Atomic state transitions | [State Machine](/patterns/state-machine/) | Explicit states, impossible transitions unrepresentable |
-| Soft-delete with later cleanup | [Tombstone](/patterns/tombstone/) | Mark deleted, compact later |
-| Copy-on-mutation sharing | [Copy-on-Write](/patterns/copy-on-write/) | Share until someone writes |
-| Deterministic cleanup | [Reference Counting](/patterns/reference-counting/) | Free at rc=0, no GC pause |
-| Register/discover services | [Registry](/patterns/registry/) | Name → handler map |
-| Atomic swap of state | [Double Buffering](/patterns/double-buffering/) | Write to back, swap to front |
-| Non-blocking reads | [MVCC](/patterns/mvcc/) | Versioned snapshots |
-| Responsive main thread | [Cooperative Scheduling](/patterns/cooperative-scheduling/) | Yield between chunks |
-| Single-thread I/O | [Event Loop](/patterns/event-loop/) | Multiplex without threads |
-| Accumulate then flush | [Batch Processing](/patterns/batch-processing/) | Amortize per-op overhead |
-| Actor-style isolation | [Actor Model](/patterns/actor-model/) | Private state + message passing |
-| Tree traversal dispatch | [Visitor](/patterns/visitor/) | Type-specific callbacks |
-| O(1) alloc from freed slots | [Free List](/patterns/free-list/) | Linked list of free blocks |
-| Merge sorted streams | [Merge Iterator](/patterns/merge-iterator/) | K-way merge via min-heap |
+| Giới hạn truy cập đồng thời | [Semaphore](/patterns/semaphore/) | Dùng bộ đếm, đã chứng minh trong kernel OS |
+| Xử lý consumer chậm | [Backpressure](/patterns/backpressure/) | Đừng bỏ — đẩy ngược lại |
+| Cache có loại bỏ | [LRU Cache](/patterns/lru-cache/) | get/put O(1), tự loại cái nguội nhất |
+| Tra cứu tiền tố nhanh | [Trie](/patterns/trie/) | O(k) theo độ dài key, không phụ thuộc kích thước tập |
+| Kiểm tra có-thể-thuộc-tập | [Bloom Filter](/patterns/bloom-filter/) | Không âm tính giả, ít bộ nhớ |
+| Truy vấn khoảng đã sắp xếp | [B+ Tree](/patterns/b-plus-tree/) hoặc [Skip List](/patterns/skip-list/) | B+ Tree cho đĩa, Skip List cho bộ nhớ |
+| Ghi an toàn khi crash | [WAL](/patterns/write-ahead-log/) + [Checkpointing](/patterns/checkpointing/) | Log-trước-rồi-apply + snapshot định kỳ |
+| Chặn lỗi lan truyền | [Circuit Breaker](/patterns/circuit-breaker/) | Fail nhanh, khôi phục dần |
+| Retry cuộc gọi thất bại | [Retry with Backoff](/patterns/retry-backoff/) | Delay theo cấp số nhân + jitter |
+| Kiểm soát throughput | [Rate Limiter](/patterns/rate-limiter/) | Token bucket, refill đều |
+| Xác minh toàn vẹn dữ liệu | [Merkle Tree](/patterns/merkle-tree/) | Bằng chứng O(log n) qua chuỗi hash |
+| Giảm bộ nhớ qua chia sẻ | [Flyweight](/patterns/flyweight/) hoặc [Interning](/patterns/interning/) | Chia sẻ giá trị bất biến |
+| Tránh áp lực GC | [Object Pool](/patterns/object-pool/) hoặc [Arena](/patterns/arena-allocator/) | Tái sử dụng hoặc giải phóng hàng loạt |
+| Phát hiện thay đổi rẻ | [Dirty Flag](/patterns/dirty-flag/) | Bỏ qua tính lại nếu sạch |
+| Sắp xếp sự kiện phân tán | [Logical Clock](/patterns/logical-clock/) | Lamport hoặc vector clock |
+| Đánh giá lười | [Iterator](/patterns/iterator/) | Kiểu pull, không cấp phát trung gian |
+| Xử lý nhiều kiểu | [Tagged Union](/patterns/tagged-union/) hoặc [Vtable](/patterns/vtable/) | Tag cho tập đóng, vtable cho tập mở |
+| Tải nặng ghi | [LSM Tree](/patterns/lsm-tree/) | Buffer → flush → merge |
+| Ghép middleware | [Middleware Chain](/patterns/middleware-chain/) | Mô hình hành tây, mỗi handler bọc cái kế |
+| Cân bằng việc giữa các thread | [Work Stealing](/patterns/work-stealing/) | Rảnh lấy trộm từ bận |
+| Theo dõi nhiều flag | [Bitmask](/patterns/bitmask/) | N flag trong một số nguyên |
+| Lập lịch theo ưu tiên | [Min Heap](/patterns/min-heap/) | Peek O(1), push/pop O(log n) |
+| FIFO kích thước cố định | [Ring Buffer](/patterns/ring-buffer/) | Vòng quanh, không cấp phát |
+| Diff tối thiểu giữa hai trạng thái | [Diff / Patch](/patterns/diff-patch/) | Tính + áp dụng thay đổi |
+| Tách producer/consumer | [Observer](/patterns/observer/) | Mô hình subscribe |
+| Phân bố key qua các node | [Consistent Hashing](/patterns/consistent-hashing/) | Thêm/bớt node remap ~1/n |
+| Thứ tự build từ dependency | [Dependency Graph](/patterns/dependency-graph/) | DAG + sắp xếp topo |
+| Chuyển trạng thái nguyên tử | [State Machine](/patterns/state-machine/) | Trạng thái rõ ràng, chuyển bất hợp lệ không biểu diễn được |
+| Xoá mềm và dọn sau | [Tombstone](/patterns/tombstone/) | Đánh dấu đã xoá, dồn nén sau |
+| Chia sẻ với copy khi đổi | [Copy-on-Write](/patterns/copy-on-write/) | Chia sẻ cho đến khi có người ghi |
+| Dọn dẹp xác định | [Reference Counting](/patterns/reference-counting/) | Giải phóng khi rc=0, không tạm dừng GC |
+| Đăng ký/khám phá service | [Registry](/patterns/registry/) | Map name → handler |
+| Hoán đổi trạng thái nguyên tử | [Double Buffering](/patterns/double-buffering/) | Ghi vào back, hoán đổi sang front |
+| Đọc không block | [MVCC](/patterns/mvcc/) | Snapshot có phiên bản |
+| Main thread phản hồi nhanh | [Cooperative Scheduling](/patterns/cooperative-scheduling/) | Yield giữa các khối |
+| I/O đơn luồng | [Event Loop](/patterns/event-loop/) | Ghép kênh không cần thread |
+| Tích luỹ rồi flush | [Batch Processing](/patterns/batch-processing/) | Phân bổ chi phí mỗi thao tác |
+| Cô lập kiểu actor | [Actor Model](/patterns/actor-model/) | State riêng + truyền thông điệp |
+| Dispatch khi duyệt cây | [Visitor](/patterns/visitor/) | Callback đặc thù theo kiểu |
+| Cấp phát O(1) từ slot đã giải phóng | [Free List](/patterns/free-list/) | Linked list các block tự do |
+| Gộp các luồng đã sắp xếp | [Merge Iterator](/patterns/merge-iterator/) | Gộp k-luồng qua min-heap |
 
-## Complexity Reference
+## Tham chiếu độ phức tạp
 
-### Data Structures
+### Cấu trúc dữ liệu
 
-| Pattern | Insert | Lookup | Delete | Space | Key Tradeoff |
+| Pattern | Thêm | Tra | Xoá | Bộ nhớ | Đánh đổi chính |
 |---|---|---|---|---|---|
-| [Bitmask](/patterns/bitmask/) | O(1) | O(1) | O(1) | O(1) | Limited to word-size flags |
-| [Min Heap](/patterns/min-heap/) | O(log n) | O(1) peek | O(log n) | O(n) | Only peek-min is fast |
-| [Ring Buffer](/patterns/ring-buffer/) | O(1) | O(1) | O(1) | O(n) fixed | Fixed capacity |
-| [Trie](/patterns/trie/) | O(k) | O(k) | O(k) | O(SIGMA * n) | Memory-hungry for sparse keys |
-| [Skip List](/patterns/skip-list/) | O(log n) avg | O(log n) avg | O(log n) avg | O(n) avg | Probabilistic, simpler than trees |
-| [Bloom Filter](/patterns/bloom-filter/) | O(k) | O(k) | N/A | O(m) bits | False positives possible |
-| [LRU Cache](/patterns/lru-cache/) | O(1) | O(1) | O(1) | O(n) | Evicts on capacity |
-| [B+ Tree](/patterns/b-plus-tree/) | O(log n) | O(log n) | O(log n) | O(n) | Disk-optimized, high fan-out |
-| [Tagged Union](/patterns/tagged-union/) | N/A | O(1) dispatch | N/A | O(max variant) | Closed set of types |
-| [Merkle Tree](/patterns/merkle-tree/) | O(log n) | O(log n) | O(log n) | O(n) | Verification, not search |
-| [Merge Iterator](/patterns/merge-iterator/) | N/A | O(log k) next | N/A | O(k) | k = number of streams |
+| [Bitmask](/patterns/bitmask/) | O(1) | O(1) | O(1) | O(1) | Giới hạn số flag bằng độ rộng word |
+| [Min Heap](/patterns/min-heap/) | O(log n) | O(1) peek | O(log n) | O(n) | Chỉ peek-min là nhanh |
+| [Ring Buffer](/patterns/ring-buffer/) | O(1) | O(1) | O(1) | O(n) cố định | Sức chứa cố định |
+| [Trie](/patterns/trie/) | O(k) | O(k) | O(k) | O(SIGMA * n) | Tốn bộ nhớ với key thưa |
+| [Skip List](/patterns/skip-list/) | O(log n) trung bình | O(log n) trung bình | O(log n) trung bình | O(n) trung bình | Theo xác suất, đơn giản hơn cây |
+| [Bloom Filter](/patterns/bloom-filter/) | O(k) | O(k) | N/A | O(m) bit | Có thể có dương tính giả |
+| [LRU Cache](/patterns/lru-cache/) | O(1) | O(1) | O(1) | O(n) | Loại bỏ khi đầy |
+| [B+ Tree](/patterns/b-plus-tree/) | O(log n) | O(log n) | O(log n) | O(n) | Tối ưu cho đĩa, fanout cao |
+| [Tagged Union](/patterns/tagged-union/) | N/A | O(1) dispatch | N/A | O(variant lớn nhất) | Tập kiểu đóng |
+| [Merkle Tree](/patterns/merkle-tree/) | O(log n) | O(log n) | O(log n) | O(n) | Để xác minh, không phải tìm kiếm |
+| [Merge Iterator](/patterns/merge-iterator/) | N/A | O(log k) next | N/A | O(k) | k = số luồng |
 
-### System Patterns
+### Pattern hệ thống
 
-| Pattern | Throughput | Latency | Failure Mode |
+| Pattern | Throughput | Độ trễ | Cách lỗi |
 |---|---|---|---|
-| [Circuit Breaker](/patterns/circuit-breaker/) | Normal when closed | +0 closed, fail-fast open | Blocks all calls when open |
-| [Rate Limiter](/patterns/rate-limiter/) | Capped at token rate | +0 if tokens available | Rejects excess (429) |
-| [Retry with Backoff](/patterns/retry-backoff/) | Reduced during retries | Exponential increase | Amplifies if no jitter |
-| [WAL](/patterns/write-ahead-log/) | Sequential write speed | +1 write (log first) | Safe — replay from log |
-| [Batch Processing](/patterns/batch-processing/) | Higher (amortized) | Higher (waits for batch) | Loses batch on crash |
-| [Consistent Hashing](/patterns/consistent-hashing/) | Same as underlying | +hash computation | ~1/n keys remap on node change |
+| [Circuit Breaker](/patterns/circuit-breaker/) | Bình thường khi đóng | +0 đóng, fail-fast khi mở | Chặn mọi cuộc gọi khi mở |
+| [Rate Limiter](/patterns/rate-limiter/) | Bị chặn ở tốc độ token | +0 nếu có token | Từ chối quá tải (429) |
+| [Retry with Backoff](/patterns/retry-backoff/) | Giảm khi retry | Tăng theo cấp số nhân | Khuếch đại nếu không có jitter |
+| [WAL](/patterns/write-ahead-log/) | Tốc độ ghi tuần tự | +1 ghi (log trước) | An toàn — replay từ log |
+| [Batch Processing](/patterns/batch-processing/) | Cao hơn (phân bổ) | Cao hơn (chờ lô) | Mất lô khi crash |
+| [Consistent Hashing](/patterns/consistent-hashing/) | Như nền bên dưới | +chi phí hash | ~1/n key remap khi đổi node |
 
-### Memory Patterns
+### Pattern bộ nhớ
 
-| Pattern | Alloc | Free | Overhead | Best For |
+| Pattern | Cấp phát | Giải phóng | Overhead | Tốt nhất cho |
 |---|---|---|---|---|
-| [Object Pool](/patterns/object-pool/) | O(1) amortized | O(1) return | Pool size | High-churn same-type objects |
-| [Arena Allocator](/patterns/arena-allocator/) | O(1) bump | O(1) bulk free | Alignment waste | Phase-based lifetimes |
-| [Free List](/patterns/free-list/) | O(1) | O(1) | Per-slot next pointer | Fixed-size blocks |
-| [Flyweight](/patterns/flyweight/) | O(1) lookup | Shared, not freed | Lookup table | Many identical small objects |
-| [Copy-on-Write](/patterns/copy-on-write/) | O(1) share | O(n) on first write | Ref count per page | Read-heavy shared data |
-| [Reference Counting](/patterns/reference-counting/) | O(1) clone | O(1) at rc=0 | Per-object counter | Deterministic cleanup |
-| [Interning](/patterns/interning/) | O(k) first, O(1) after | Pooled | Hash table | String/symbol deduplication |
+| [Object Pool](/patterns/object-pool/) | O(1) phân bổ | O(1) trả về | Kích thước pool | Object cùng kiểu thay đổi nhiều |
+| [Arena Allocator](/patterns/arena-allocator/) | O(1) bump | O(1) hàng loạt | Phí canh chỉnh | Vòng đời theo pha |
+| [Free List](/patterns/free-list/) | O(1) | O(1) | Con trỏ next mỗi slot | Block kích thước cố định |
+| [Flyweight](/patterns/flyweight/) | O(1) tra | Chia sẻ, không giải phóng | Bảng tra | Nhiều object nhỏ giống nhau |
+| [Copy-on-Write](/patterns/copy-on-write/) | O(1) chia sẻ | O(n) khi ghi đầu | Ref count mỗi page | Dữ liệu chia sẻ nặng đọc |
+| [Reference Counting](/patterns/reference-counting/) | O(1) clone | O(1) khi rc=0 | Bộ đếm mỗi object | Dọn dẹp xác định |
+| [Interning](/patterns/interning/) | O(k) lần đầu, O(1) sau | Pool | Hash table | Khử trùng lặp chuỗi/symbol |
 
-## Pattern Combos
+## Bộ combo pattern
 
-Patterns rarely appear alone. These are the most common production combos:
+Các pattern hiếm khi xuất hiện đơn lẻ. Đây là các combo production phổ biến nhất:
 
-| Combo | Used In | Why Together |
+| Combo | Dùng trong | Vì sao kết hợp |
 |---|---|---|
-| WAL + Checkpointing | PostgreSQL, etcd | WAL for safety, checkpoint to bound replay |
-| Bloom Filter + LSM Tree | LevelDB, RocksDB | Skip unnecessary disk reads |
-| Min Heap + Merge Iterator | LevelDB compaction | Efficiently merge K sorted runs |
-| Circuit Breaker + Retry | gRPC, Hystrix | Retry transient failures, break on persistent |
-| Rate Limiter + Backpressure | API gateways | Limit ingress, signal overload |
-| Ring Buffer + Event Loop | libuv, io_uring | Fixed-size queue for I/O events |
-| Object Pool + Free List | Go runtime | Pool manages slabs, free list tracks slots |
-| MVCC + B+ Tree | PostgreSQL | Versioned rows in disk-optimized index |
-| Dirty Flag + Double Buffering | React Fiber | Mark dirty, batch into next frame |
-| Bitmask + State Machine | React reconciler | Flags encode state, transitions via bitwise ops |
-| Consistent Hashing + Registry | Service mesh | Hash to locate, registry to discover |
-| Trie + Interning | Compilers | Intern strings, look up by prefix |
+| WAL + Checkpointing | PostgreSQL, etcd | WAL cho an toàn, checkpoint giới hạn replay |
+| Bloom Filter + LSM Tree | LevelDB, RocksDB | Bỏ qua đọc đĩa không cần |
+| Min Heap + Merge Iterator | Compaction LevelDB | Gộp hiệu quả K luồng đã sắp xếp |
+| Circuit Breaker + Retry | gRPC, Hystrix | Retry lỗi thoáng qua, ngắt khi kéo dài |
+| Rate Limiter + Backpressure | API gateway | Giới hạn đầu vào, tín hiệu quá tải |
+| Ring Buffer + Event Loop | libuv, io_uring | Queue kích thước cố định cho event I/O |
+| Object Pool + Free List | Go runtime | Pool quản lý slab, free list theo dõi slot |
+| MVCC + B+ Tree | PostgreSQL | Row có phiên bản trong index tối ưu cho đĩa |
+| Dirty Flag + Double Buffering | React Fiber | Đánh dấu dirty, gom vào frame tiếp theo |
+| Bitmask + State Machine | Reconciler React | Flag mã hoá state, chuyển tiếp qua phép bitwise |
+| Consistent Hashing + Registry | Service mesh | Hash để định vị, registry để khám phá |
+| Trie + Interning | Compiler | Intern chuỗi, tra theo prefix |
 
-## Decision Trees
+## Cây quyết định
 
-### "Which cache?"
+### "Cache nào?"
 
 <DecisionTree variant="which-cache" />
 
-### "Which memory strategy?"
+### "Chiến lược bộ nhớ nào?"
 
 <DecisionTree variant="which-memory" />
 
-### "Which concurrency model?"
+### "Mô hình concurrency nào?"
 
 <DecisionTree variant="which-concurrency" />

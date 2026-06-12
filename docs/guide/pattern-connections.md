@@ -1,95 +1,95 @@
 ---
-title: "How Patterns Connect"
-description: "How the 46 patterns connect: composition chains, shared building blocks, and real-world pattern combinations."
+title: "Các pattern liên kết với nhau như thế nào"
+description: "Cách 46 pattern liên kết: chuỗi kết hợp, các khối xây dựng chung và các tổ hợp pattern trong thực tế."
 ---
 
-# How Patterns Connect
+# Các pattern liên kết với nhau như thế nào
 
-These patterns don't exist in isolation. The most interesting insight is how production systems **compose** them together.
+Các pattern này không tồn tại đơn lẻ. Insight thú vị nhất là cách các hệ thống production **kết hợp** chúng lại với nhau.
 
-**Explore interactively** — click any system to see which patterns it uses and why:
+**Khám phá tương tác** — click vào hệ thống bất kỳ để xem nó dùng pattern nào và vì sao:
 
 <PatternConnectionsViz />
 
-## Composition Chains
+## Chuỗi kết hợp
 
-The most powerful insight isn't which patterns exist — it's how they **chain together** in real systems.
+Insight mạnh nhất không phải là pattern nào tồn tại — mà là cách chúng **móc nối** trong các hệ thống thực.
 
-### React Reconciler: From Flag to Frame
-
-```text
-Bitmask          → flags encode which work is needed
-    ↓
-Dirty Flag       → skip subtrees that haven't changed
-    ↓
-Min Heap         → pick highest-priority work first
-    ↓
-Cooperative Scheduling → yield every 5ms to avoid jank
-    ↓
-Diff / Patch     → compute minimal tree changes
-    ↓
-Double Buffering → build workInProgress tree, swap atomically
-    ↓
-Batch Processing → flush all state updates in one commit
-```
-
-### PostgreSQL: From Write to Recovery
+### React Reconciler: Từ Flag tới Frame
 
 ```text
-Write-Ahead Log  → every mutation logged before applying
+Bitmask          → flag mã hoá việc cần làm
     ↓
-Checkpointing    → periodic snapshot bounds replay on crash
+Dirty Flag       → bỏ qua subtree không đổi
     ↓
-B+ Tree          → disk-optimized index for range queries
+Min Heap         → chọn việc ưu tiên cao nhất trước
     ↓
-MVCC             → readers see consistent snapshot, never block writers
+Cooperative Scheduling → yield mỗi 5ms để tránh giật
     ↓
-LRU Cache        → buffer pool keeps hot pages in memory
+Diff / Patch     → tính thay đổi cây tối thiểu
     ↓
-Bloom Filter     → skip index lookups for absent keys
+Double Buffering → xây workInProgress tree, hoán đổi nguyên tử
+    ↓
+Batch Processing → flush mọi update state trong một commit
 ```
 
-### Kafka Broker: From Producer to Consumer
+### PostgreSQL: Từ ghi tới khôi phục
 
 ```text
-Batch Processing → accumulate messages, fsync as a group
+Write-Ahead Log  → mọi thay đổi được log trước khi áp dụng
     ↓
-Write-Ahead Log  → append-only log segments on disk
+Checkpointing    → snapshot định kỳ giới hạn replay khi crash
     ↓
-Ring Buffer      → fixed-size I/O event queue
+B+ Tree          → index tối ưu cho đĩa cho truy vấn khoảng
     ↓
-Backpressure     → slow consumers signal producers to throttle
+MVCC             → reader thấy snapshot nhất quán, không bao giờ chặn writer
     ↓
-Consistent Hashing → partition assignment across brokers
+LRU Cache        → buffer pool giữ page nóng trong bộ nhớ
     ↓
-Tombstone        → log compaction removes obsolete records
+Bloom Filter     → bỏ qua tra index với key không có
 ```
 
-### Go Runtime: Scheduling + Memory
+### Kafka Broker: Từ Producer tới Consumer
 
 ```text
-Work Stealing    → idle P steals goroutines from busy P's queue
+Batch Processing → gom thông điệp, fsync theo nhóm
     ↓
-Semaphore        → GOMAXPROCS limits concurrent OS threads
+Write-Ahead Log  → segment log append-only trên đĩa
     ↓
-Object Pool      → sync.Pool recycles frequently allocated objects
+Ring Buffer      → queue event I/O kích thước cố định
     ↓
-Free List        → mspan tracks free slots in size classes
+Backpressure     → consumer chậm tín hiệu cho producer điều tiết
     ↓
-Arena Allocator  → stack frames allocated as bump pointer
+Consistent Hashing → gán partition qua các broker
     ↓
-Copy-on-Write    → slice append copies only when capacity exceeded
+Tombstone        → compaction log loại bỏ bản ghi lỗi thời
 ```
 
-## The Bigger Picture
+### Go Runtime: Lập lịch + Bộ nhớ
 
-Understanding individual patterns is useful. Understanding how they **compose** is what separates a senior engineer from a junior one.
+```text
+Work Stealing    → P rảnh lấy goroutine từ queue của P bận
+    ↓
+Semaphore        → GOMAXPROCS giới hạn số thread OS đồng thời
+    ↓
+Object Pool      → sync.Pool tái chế object hay cấp phát
+    ↓
+Free List        → mspan theo dõi slot tự do trong size class
+    ↓
+Arena Allocator  → stack frame cấp phát kiểu bump pointer
+    ↓
+Copy-on-Write    → slice append chỉ copy khi vượt capacity
+```
 
-When you see a performance problem, you don't think "I need a bitmask." You think "I need to track multiple states cheaply (bitmask), skip work that hasn't changed (subtree flags), process work incrementally (cooperative scheduling), prioritize urgent work (min heap), and avoid allocation on the hot path (double buffering)."
+## Bức tranh lớn hơn
 
-That's what React's team built. That's what Redis, Go, Linux, PostgreSQL, and Kafka all demonstrate. The same patterns recombine in different configurations to solve different problems.
+Hiểu từng pattern riêng lẻ là hữu ích. Hiểu cách chúng **kết hợp** là điều phân biệt kỹ sư senior với junior.
 
-## Summary: Patterns Across Systems
+Khi gặp vấn đề hiệu năng, bạn không nghĩ "tôi cần một bitmask." Bạn nghĩ "tôi cần theo dõi nhiều trạng thái với chi phí thấp (bitmask), bỏ qua việc không đổi (flag cho subtree), xử lý việc tăng dần (cooperative scheduling), ưu tiên việc gấp (min heap) và tránh cấp phát trên hot path (double buffering)."
+
+Đó là cái mà team React đã xây. Đó là điều Redis, Go, Linux, PostgreSQL và Kafka đều thể hiện. Cùng những pattern đó kết hợp lại theo các cấu hình khác nhau để giải các bài toán khác nhau.
+
+## Tóm tắt: Pattern xuyên các hệ thống
 
 | Pattern | React | Redis | Go Runtime | Linux | PostgreSQL | Kafka |
 |---------|:-----:|:-----:|:----------:|:-----:|:----------:|:-----:|
@@ -129,20 +129,20 @@ That's what React's team built. That's what Redis, Go, Linux, PostgreSQL, and Ka
 | [**Retry Backoff**](/patterns/retry-backoff/) | | | | | | ✅ |
 | [**Consistent Hashing**](/patterns/consistent-hashing/) | | | ✅ | | | ✅ |
 
-### Patterns Anchored in Other Systems
+### Pattern neo trong các hệ thống khác
 
-The remaining 11 patterns live primarily in systems beyond the six above:
+11 pattern còn lại sống chủ yếu trong các hệ thống ngoài sáu cái phía trên:
 
-| Pattern | Primary Systems |
+| Pattern | Hệ thống chính |
 |---------|----------------|
-| [**LSM Tree**](/patterns/lsm-tree/) | LevelDB, RocksDB — the core write engine for modern KV stores |
-| [**Merge Iterator**](/patterns/merge-iterator/) | LevelDB, RocksDB — K-way merge during compaction |
-| [**Logical Clock**](/patterns/logical-clock/) | etcd (Raft term/index), LevelDB (sequence numbers) |
-| [**Merkle Tree**](/patterns/merkle-tree/) | Git (object integrity), ZFS (block checksums) |
-| [**Actor Model**](/patterns/actor-model/) | Erlang/OTP, Akka — message-passing concurrency |
-| [**Circuit Breaker**](/patterns/circuit-breaker/) | Netflix Hystrix, gobreaker — resilience in microservices |
-| [**Middleware Chain**](/patterns/middleware-chain/) | gRPC-Go interceptors, Koa.js onion model |
-| [**Registry**](/patterns/registry/) | TensorFlow (op registry), gRPC-Go (service registration) |
-| [**Dependency Graph**](/patterns/dependency-graph/) | Cargo (build resolution), pnpm (workspace scheduling) |
-| [**Visitor**](/patterns/visitor/) | LLVM (InstVisitor), Vue compiler (AST transforms) |
-| [**Interning**](/patterns/interning/) | rustc (symbol interning), CPython (string/int caching) |
+| [**LSM Tree**](/patterns/lsm-tree/) | LevelDB, RocksDB — engine ghi cốt lõi cho các KV store hiện đại |
+| [**Merge Iterator**](/patterns/merge-iterator/) | LevelDB, RocksDB — gộp K-luồng trong compaction |
+| [**Logical Clock**](/patterns/logical-clock/) | etcd (term/index Raft), LevelDB (sequence number) |
+| [**Merkle Tree**](/patterns/merkle-tree/) | Git (toàn vẹn object), ZFS (checksum block) |
+| [**Actor Model**](/patterns/actor-model/) | Erlang/OTP, Akka — concurrency truyền thông điệp |
+| [**Circuit Breaker**](/patterns/circuit-breaker/) | Netflix Hystrix, gobreaker — phục hồi trong microservice |
+| [**Middleware Chain**](/patterns/middleware-chain/) | Interceptor gRPC-Go, mô hình hành tây Koa.js |
+| [**Registry**](/patterns/registry/) | TensorFlow (op registry), gRPC-Go (đăng ký service) |
+| [**Dependency Graph**](/patterns/dependency-graph/) | Cargo (phân giải build), pnpm (lập lịch workspace) |
+| [**Visitor**](/patterns/visitor/) | LLVM (InstVisitor), compiler Vue (biến đổi AST) |
+| [**Interning**](/patterns/interning/) | rustc (interning symbol), CPython (cache string/int) |

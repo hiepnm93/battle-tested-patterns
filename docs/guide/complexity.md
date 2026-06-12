@@ -1,100 +1,100 @@
 ---
-title: "Complexity Cheat Sheet"
-description: "Big-O complexity reference for all 46 patterns — key operations, time & space at a glance."
+title: "Bảng tra độ phức tạp"
+description: "Tham chiếu độ phức tạp Big-O cho toàn bộ 46 pattern — các thao tác chính, thời gian & bộ nhớ ở dạng tra nhanh."
 ---
 
-# Complexity Cheat Sheet
+# Bảng tra độ phức tạp
 
-Quick reference for time and space complexity of every pattern's key operations. Use this to compare trade-offs before choosing a pattern.
+Tham chiếu nhanh độ phức tạp thời gian và không gian cho các thao tác chính của mỗi pattern. Dùng nó để so sánh đánh đổi trước khi chọn pattern.
 
-## How to Read This
+## Cách đọc bảng
 
-- **n** = number of elements / items
-- **k** = key length (for string-keyed structures)
-- **m** = number of hash functions (Bloom filter)
-- **L** = number of levels (skip list, LSM tree)
-- Amortized costs marked with **(amort.)**
+- **n** = số phần tử / item
+- **k** = độ dài key (cho cấu trúc đánh key bằng chuỗi)
+- **m** = số hàm hash (Bloom filter)
+- **L** = số tầng (skip list, LSM tree)
+- Chi phí phân bổ trung bình ghi **(phân bổ)**
 
-## Data Structures
+## Cấu trúc dữ liệu
 
-| Pattern | Insert | Lookup | Delete | Space | Notes |
+| Pattern | Thêm | Tra | Xoá | Bộ nhớ | Ghi chú |
 |---------|--------|--------|--------|-------|-------|
-| [Bitmask](/patterns/bitmask/) | O(1) | O(1) | O(1) | O(1) | Fixed-size; limited to word width (32/64 flags) |
-| [Ring Buffer](/patterns/ring-buffer/) | O(1) | O(1) | O(1) | O(n) | Fixed capacity; overwrites oldest on full |
-| [Tagged Union](/patterns/tagged-union/) | — | O(1) | — | O(max variant) | Dispatch by tag; no dynamic allocation |
-| [Min Heap](/patterns/min-heap/) | O(log n) | O(1) peek | O(log n) | O(n) | O(1) min access; used for priority queues |
-| [Trie](/patterns/trie/) | O(k) | O(k) | O(k) | O(n × k) | Independent of total entries; prefix queries O(k + results) |
-| [Bloom Filter](/patterns/bloom-filter/) | O(m) | O(m) | ✗ | O(n) | Probabilistic; false positives possible, no false negatives |
-| [LRU Cache](/patterns/lru-cache/) | O(1) | O(1) | O(1) | O(n) | Hash map + doubly linked list |
-| [Skip List](/patterns/skip-list/) | O(log n) avg | O(log n) avg | O(log n) avg | O(n) | Probabilistic balancing; range queries supported |
-| [B+ Tree](/patterns/b-plus-tree/) | O(log n) | O(log n) | O(log n) | O(n) | Disk-optimized; high fan-out minimizes I/O |
-| [Merkle Tree](/patterns/merkle-tree/) | O(log n) | O(log n) | O(log n) | O(n) | Verification O(log n) proofs |
-| [Merge Iterator](/patterns/merge-iterator/) | — | O(log k) next | — | O(k) | k = number of streams; heap-based merge |
+| [Bitmask](/patterns/bitmask/) | O(1) | O(1) | O(1) | O(1) | Kích thước cố định; giới hạn theo độ rộng word (32/64 flag) |
+| [Ring Buffer](/patterns/ring-buffer/) | O(1) | O(1) | O(1) | O(n) | Sức chứa cố định; ghi đè lên cái cũ nhất khi đầy |
+| [Tagged Union](/patterns/tagged-union/) | — | O(1) | — | O(variant lớn nhất) | Dispatch theo tag; không cấp phát động |
+| [Min Heap](/patterns/min-heap/) | O(log n) | O(1) peek | O(log n) | O(n) | Truy cập min O(1); dùng cho hàng đợi ưu tiên |
+| [Trie](/patterns/trie/) | O(k) | O(k) | O(k) | O(n × k) | Không phụ thuộc tổng số entry; truy vấn prefix O(k + kết quả) |
+| [Bloom Filter](/patterns/bloom-filter/) | O(m) | O(m) | ✗ | O(n) | Theo xác suất; có thể có dương tính giả, không có âm tính giả |
+| [LRU Cache](/patterns/lru-cache/) | O(1) | O(1) | O(1) | O(n) | Hash map + linked list hai chiều |
+| [Skip List](/patterns/skip-list/) | O(log n) trung bình | O(log n) trung bình | O(log n) trung bình | O(n) | Cân bằng theo xác suất; hỗ trợ truy vấn khoảng |
+| [B+ Tree](/patterns/b-plus-tree/) | O(log n) | O(log n) | O(log n) | O(n) | Tối ưu cho đĩa; fanout cao giảm thiểu I/O |
+| [Merkle Tree](/patterns/merkle-tree/) | O(log n) | O(log n) | O(log n) | O(n) | Bằng chứng xác minh O(log n) |
+| [Merge Iterator](/patterns/merge-iterator/) | — | O(log k) next | — | O(k) | k = số luồng; gộp dựa trên heap |
 
 ## Concurrency
 
-| Pattern | Key Operation | Cost | Space | Notes |
+| Pattern | Thao tác chính | Chi phí | Bộ nhớ | Ghi chú |
 |---------|--------------|------|-------|-------|
-| [Semaphore](/patterns/semaphore/) | acquire / release | O(1) | O(1) | Counter-based; may block on contention |
-| [Double Buffering](/patterns/double-buffering/) | swap | O(1) | O(2n) | Pointer swap; no copy |
-| [Event Loop](/patterns/event-loop/) | enqueue / dequeue | O(1) | O(queue) | Single-threaded; I/O multiplexed |
-| [Backpressure](/patterns/backpressure/) | signal / check | O(1) | O(1) | Flow control; often piggybacked on existing channel |
-| [Copy-on-Write](/patterns/copy-on-write/) | read | O(1) | O(n) per snapshot | Write triggers O(n) clone; reads never block |
-| [Cooperative Scheduling](/patterns/cooperative-scheduling/) | yield | O(1) | O(tasks) | Requires voluntary yield points |
-| [MVCC](/patterns/mvcc/) | read / write | O(1) + GC | O(n × versions) | Reads never block; GC cost amortized |
-| [Work Stealing](/patterns/work-stealing/) | push / steal | O(1) amort. | O(tasks) | Lock-free deque; cache-line aware |
-| [Actor Model](/patterns/actor-model/) | send message | O(1) | O(actors × mailbox) | Isolated state; no shared memory |
-| [Logical Clock](/patterns/logical-clock/) | tick / merge | O(1) Lamport, O(n) Vector | O(1) / O(n) | Vector clock grows with node count |
+| [Semaphore](/patterns/semaphore/) | acquire / release | O(1) | O(1) | Dùng bộ đếm; có thể chặn khi tranh chấp |
+| [Double Buffering](/patterns/double-buffering/) | swap | O(1) | O(2n) | Đổi con trỏ; không copy |
+| [Event Loop](/patterns/event-loop/) | enqueue / dequeue | O(1) | O(queue) | Đơn luồng; ghép kênh I/O |
+| [Backpressure](/patterns/backpressure/) | signal / check | O(1) | O(1) | Kiểm soát luồng; thường ghép vào channel có sẵn |
+| [Copy-on-Write](/patterns/copy-on-write/) | đọc | O(1) | O(n) mỗi snapshot | Ghi kích hoạt clone O(n); đọc không bao giờ chặn |
+| [Cooperative Scheduling](/patterns/cooperative-scheduling/) | yield | O(1) | O(số task) | Cần điểm yield tự nguyện |
+| [MVCC](/patterns/mvcc/) | đọc / ghi | O(1) + GC | O(n × phiên bản) | Đọc không bao giờ chặn; chi phí GC phân bổ |
+| [Work Stealing](/patterns/work-stealing/) | push / steal | O(1) phân bổ | O(số task) | Deque lock-free; theo dõi cache-line |
+| [Actor Model](/patterns/actor-model/) | gửi thông điệp | O(1) | O(số actor × mailbox) | Trạng thái cô lập; không bộ nhớ chung |
+| [Logical Clock](/patterns/logical-clock/) | tick / merge | O(1) Lamport, O(n) Vector | O(1) / O(n) | Vector clock tăng theo số node |
 
-## System
+## Hệ thống
 
-| Pattern | Key Operation | Cost | Space | Notes |
+| Pattern | Thao tác chính | Chi phí | Bộ nhớ | Ghi chú |
 |---------|--------------|------|-------|-------|
-| [State Machine](/patterns/state-machine/) | transition | O(1) | O(states) | Constant-time dispatch; explicit states |
-| [Circuit Breaker](/patterns/circuit-breaker/) | call / check | O(1) | O(1) | Counter + timer; 3 states |
-| [Rate Limiter](/patterns/rate-limiter/) | allow? | O(1) | O(1) per limiter | Token bucket or sliding window |
-| [Retry with Backoff](/patterns/retry-backoff/) | retry | O(retries) total | O(1) | Exponential delay + jitter |
-| [Batch Processing](/patterns/batch-processing/) | flush | O(batch) | O(batch) | Amortizes per-item overhead |
-| [Middleware Chain](/patterns/middleware-chain/) | execute | O(middlewares) | O(middlewares) | Linear pipeline; each handler O(1) |
-| [Registry](/patterns/registry/) | register / lookup | O(1) hash | O(n) | String-keyed service locator |
-| [Dirty Flag](/patterns/dirty-flag/) | check / mark | O(1) | O(1) | Boolean guard; skip unchanged |
-| [Dependency Graph](/patterns/dependency-graph/) | topo sort | O(V + E) | O(V + E) | DAG; detects cycles |
-| [Consistent Hashing](/patterns/consistent-hashing/) | lookup node | O(log n) | O(n × vnodes) | Binary search on ring; minimal reshuffling |
-| [Write-Ahead Log](/patterns/write-ahead-log/) | append | O(1) amort. | O(log size) | Sequential writes; fsync for durability |
-| [Checkpointing](/patterns/checkpointing/) | snapshot | O(state size) | O(state size) | Periodic; truncates WAL |
-| [LSM Tree](/patterns/lsm-tree/) | write / read | O(1) write, O(L) read | O(n) | Write-optimized; compaction in background |
+| [State Machine](/patterns/state-machine/) | chuyển trạng thái | O(1) | O(số trạng thái) | Dispatch thời gian hằng; trạng thái rõ ràng |
+| [Circuit Breaker](/patterns/circuit-breaker/) | call / check | O(1) | O(1) | Bộ đếm + timer; 3 trạng thái |
+| [Rate Limiter](/patterns/rate-limiter/) | allow? | O(1) | O(1) mỗi limiter | Token bucket hoặc cửa sổ trượt |
+| [Retry with Backoff](/patterns/retry-backoff/) | retry | O(số lần thử) tổng | O(1) | Delay theo cấp số nhân + jitter |
+| [Batch Processing](/patterns/batch-processing/) | flush | O(batch) | O(batch) | Phân bổ chi phí trên mỗi item |
+| [Middleware Chain](/patterns/middleware-chain/) | execute | O(số middleware) | O(số middleware) | Pipeline tuyến tính; mỗi handler O(1) |
+| [Registry](/patterns/registry/) | register / lookup | O(1) hash | O(n) | Service locator đánh key bằng chuỗi |
+| [Dirty Flag](/patterns/dirty-flag/) | check / mark | O(1) | O(1) | Cờ boolean; bỏ qua nếu không đổi |
+| [Dependency Graph](/patterns/dependency-graph/) | sắp xếp topo | O(V + E) | O(V + E) | DAG; phát hiện chu trình |
+| [Consistent Hashing](/patterns/consistent-hashing/) | tra node | O(log n) | O(n × vnode) | Tìm nhị phân trên vòng; xáo trộn tối thiểu |
+| [Write-Ahead Log](/patterns/write-ahead-log/) | append | O(1) phân bổ | O(log size) | Ghi tuần tự; fsync để bền vững |
+| [Checkpointing](/patterns/checkpointing/) | snapshot | O(kích thước state) | O(kích thước state) | Định kỳ; cắt bớt WAL |
+| [LSM Tree](/patterns/lsm-tree/) | write / read | O(1) write, O(L) read | O(n) | Tối ưu cho ghi; compaction ở background |
 
-## Memory
+## Bộ nhớ
 
-| Pattern | Allocate | Free | Lookup | Space | Notes |
+| Pattern | Cấp phát | Giải phóng | Tra | Bộ nhớ | Ghi chú |
 |---------|----------|------|--------|-------|-------|
-| [Object Pool](/patterns/object-pool/) | O(1) | O(1) | — | O(pool size) | Pre-allocated; avoids GC pressure |
-| [Flyweight](/patterns/flyweight/) | — | — | O(1) | O(unique) | Share identical instances |
-| [Arena Allocator](/patterns/arena-allocator/) | O(1) bump | O(1) bulk | — | O(arena size) | Bump pointer; free all at once |
-| [Free List](/patterns/free-list/) | O(1) | O(1) | — | O(n) | Linked list of freed slots |
-| [Copy-on-Write](/patterns/copy-on-write/) | O(1) share | O(n) on write | O(1) | O(n) per snapshot | Deferred copy |
-| [Reference Counting](/patterns/reference-counting/) | O(1) clone | O(1) drop | — | O(1) per ref | Deterministic; no cycles |
-| [Tombstone](/patterns/tombstone/) | — | O(1) mark | O(1) | O(n + deleted) | Soft delete; compacted later |
-| [Interning](/patterns/interning/) | O(k) first, O(1) after | — | O(1) | O(unique × k) | Hash-based dedup; compare by pointer |
+| [Object Pool](/patterns/object-pool/) | O(1) | O(1) | — | O(kích thước pool) | Cấp phát trước; tránh áp lực GC |
+| [Flyweight](/patterns/flyweight/) | — | — | O(1) | O(số instance duy nhất) | Chia sẻ các instance giống nhau |
+| [Arena Allocator](/patterns/arena-allocator/) | O(1) bump | O(1) hàng loạt | — | O(kích thước arena) | Bump pointer; giải phóng tất cả một lần |
+| [Free List](/patterns/free-list/) | O(1) | O(1) | — | O(n) | Linked list của các slot đã giải phóng |
+| [Copy-on-Write](/patterns/copy-on-write/) | O(1) chia sẻ | O(n) khi ghi | O(1) | O(n) mỗi snapshot | Hoãn copy |
+| [Reference Counting](/patterns/reference-counting/) | O(1) clone | O(1) drop | — | O(1) mỗi ref | Xác định; không tự xử lý chu trình |
+| [Tombstone](/patterns/tombstone/) | — | O(1) đánh dấu | O(1) | O(n + đã xoá) | Xoá mềm; dồn nén sau |
+| [Interning](/patterns/interning/) | O(k) lần đầu, O(1) các lần sau | — | O(1) | O(số duy nhất × k) | Khử trùng lặp dựa trên hash; so sánh bằng con trỏ |
 
-## Behavioral
+## Hành vi
 
-| Pattern | Key Operation | Cost | Space | Notes |
+| Pattern | Thao tác chính | Chi phí | Bộ nhớ | Ghi chú |
 |---------|--------------|------|-------|-------|
-| [Observer](/patterns/observer/) | notify | O(subscribers) | O(subscribers) | Fan-out; order may vary |
-| [Iterator](/patterns/iterator/) | next | O(1) per step | O(1) | Lazy evaluation; pull-based |
-| [Diff / Patch](/patterns/diff-patch/) | diff | O(n × m) Myers | O(n + m) | Minimal edit distance |
-| [Vtable](/patterns/vtable/) | dispatch | O(1) | O(methods) | Pointer indirection; static resolution |
-| [Visitor](/patterns/visitor/) | visit | O(nodes) | O(tree depth) | Double dispatch; traversal + operation |
+| [Observer](/patterns/observer/) | notify | O(số subscriber) | O(số subscriber) | Fan-out; thứ tự có thể khác |
+| [Iterator](/patterns/iterator/) | next | O(1) mỗi bước | O(1) | Đánh giá lười; kiểu pull |
+| [Diff / Patch](/patterns/diff-patch/) | diff | O(n × m) Myers | O(n + m) | Khoảng cách chỉnh sửa tối thiểu |
+| [Vtable](/patterns/vtable/) | dispatch | O(1) | O(số method) | Gián tiếp qua con trỏ; phân giải tĩnh |
+| [Visitor](/patterns/visitor/) | visit | O(số node) | O(độ sâu cây) | Double dispatch; duyệt + thao tác |
 
-## Key Trade-offs Summary
+## Tóm tắt đánh đổi chính
 
-| If you need... | Choose | Trade-off |
+| Nếu bạn cần... | Chọn | Đánh đổi |
 |---------------|--------|-----------|
-| O(1) lookup + O(1) eviction | [LRU Cache](/patterns/lru-cache/) | Extra memory for doubly linked list |
-| O(1) writes at scale | [LSM Tree](/patterns/lsm-tree/) | Read amplification (multiple levels) |
-| O(1) membership test | [Bloom Filter](/patterns/bloom-filter/) | False positives (no false negatives) |
-| O(1) allocation | [Arena](/patterns/arena-allocator/) or [Free List](/patterns/free-list/) | No individual free (arena) or fragmentation (free list) |
-| O(log n) sorted access | [Skip List](/patterns/skip-list/) or [B+ Tree](/patterns/b-plus-tree/) | Skip list simpler, B+ tree disk-optimized |
-| Zero-copy reads | [Copy-on-Write](/patterns/copy-on-write/) or [MVCC](/patterns/mvcc/) | Write amplification on mutation |
-| Minimal rehash on scale | [Consistent Hashing](/patterns/consistent-hashing/) | Virtual nodes add memory overhead |
+| Tra O(1) + loại bỏ O(1) | [LRU Cache](/patterns/lru-cache/) | Thêm bộ nhớ cho linked list hai chiều |
+| Ghi O(1) ở quy mô lớn | [LSM Tree](/patterns/lsm-tree/) | Read amplification (nhiều tầng) |
+| Kiểm tra thành viên O(1) | [Bloom Filter](/patterns/bloom-filter/) | Dương tính giả (không âm tính giả) |
+| Cấp phát O(1) | [Arena](/patterns/arena-allocator/) hoặc [Free List](/patterns/free-list/) | Không giải phóng từng phần (arena) hoặc phân mảnh (free list) |
+| Truy cập sắp xếp O(log n) | [Skip List](/patterns/skip-list/) hoặc [B+ Tree](/patterns/b-plus-tree/) | Skip list đơn giản hơn, B+ tree tối ưu cho đĩa |
+| Đọc không copy | [Copy-on-Write](/patterns/copy-on-write/) hoặc [MVCC](/patterns/mvcc/) | Write amplification khi sửa đổi |
+| Rehash tối thiểu khi mở rộng | [Consistent Hashing](/patterns/consistent-hashing/) | Virtual node thêm chi phí bộ nhớ |

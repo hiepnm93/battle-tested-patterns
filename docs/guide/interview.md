@@ -1,182 +1,182 @@
 ---
-title: "Interview Guide"
-description: "Ace system design and coding interviews — 46 patterns mapped to interview topics with sample questions and what interviewers look for."
+title: "Cẩm nang phỏng vấn"
+description: "Vượt qua các buổi phỏng vấn system design và coding — 46 pattern ánh xạ tới các chủ đề phỏng vấn kèm câu hỏi mẫu và những thứ người phỏng vấn tìm kiếm."
 ---
 
-# Interview Guide
+# Cẩm nang phỏng vấn
 
-These patterns show up constantly in system design and coding interviews. This page maps them to the questions you'll actually get asked.
+Các pattern này xuất hiện liên tục trong phỏng vấn system design và coding. Trang này ánh xạ chúng với những câu hỏi bạn thực sự sẽ được hỏi.
 
-## How to Use This Page
+## Cách dùng trang này
 
-1. **Find the interview topic** you're preparing for
-2. **Read the pattern pages** linked in each section (understand the mechanism, not just the name)
-3. **Run the interactive visualizations** — interviewers love candidates who can draw and explain
-4. **Try the exercises** — they're structured like coding interview problems
+1. **Tìm chủ đề phỏng vấn** bạn đang chuẩn bị
+2. **Đọc các trang pattern** được liên kết trong từng phần (hiểu cơ chế, không chỉ tên gọi)
+3. **Chạy trực quan hoá tương tác** — người phỏng vấn rất thích ứng viên biết vẽ và giải thích
+4. **Thử các bài tập** — chúng được cấu trúc giống bài coding interview
 
-## System Design Interviews
+## Phỏng vấn System Design
 
-### "Design a Rate Limiter"
+### "Thiết kế một Rate Limiter"
 
-This is the single most common system design question. You need:
+Đây là câu hỏi system design phổ biến nhất. Bạn cần:
 
-| Concept | Pattern | What to Say |
+| Khái niệm | Pattern | Câu nên nói |
 |---|---|---|
-| Token bucket algorithm | [Rate Limiter](/patterns/rate-limiter/) | "I'd use a token bucket — it handles bursts up to capacity while maintaining a steady refill rate" |
-| Distributed rate limiting | [Consistent Hashing](/patterns/consistent-hashing/) | "For multi-node, I'd hash client IPs to specific rate limiter instances to avoid cross-node coordination" |
-| Sliding window fallback | [Ring Buffer](/patterns/ring-buffer/) | "A ring buffer can track request timestamps in the sliding window variant" |
+| Thuật toán token bucket | [Rate Limiter](/patterns/rate-limiter/) | "Tôi sẽ dùng token bucket — nó xử lý burst tới sức chứa trong khi giữ tốc độ refill đều" |
+| Rate limit phân tán | [Consistent Hashing](/patterns/consistent-hashing/) | "Với nhiều node, tôi hash IP client tới các instance rate limiter cụ thể để tránh phối hợp giữa các node" |
+| Cửa sổ trượt dự phòng | [Ring Buffer](/patterns/ring-buffer/) | "Ring buffer có thể theo dõi timestamp request trong biến thể cửa sổ trượt" |
 
-### "Design a Cache"
+### "Thiết kế một Cache"
 
-| Concept | Pattern | What to Say |
+| Khái niệm | Pattern | Câu nên nói |
 |---|---|---|
-| Eviction policy | [LRU Cache](/patterns/lru-cache/) | "LRU with a doubly-linked list + hash map gives O(1) get/put/evict" |
-| Cache stampede prevention | [Semaphore](/patterns/semaphore/) | "Use a semaphore so only one request computes the value, others wait" |
-| Distributed cache routing | [Consistent Hashing](/patterns/consistent-hashing/) | "Consistent hashing lets me add/remove cache nodes without full redistribution" |
-| Negative cache | [Bloom Filter](/patterns/bloom-filter/) | "A Bloom filter in front avoids cache lookups for keys that definitely don't exist" |
+| Chính sách loại bỏ | [LRU Cache](/patterns/lru-cache/) | "LRU với linked list hai chiều + hash map cho get/put/evict O(1)" |
+| Chống cache stampede | [Semaphore](/patterns/semaphore/) | "Dùng semaphore để chỉ một request tính giá trị, các request khác chờ" |
+| Định tuyến cache phân tán | [Consistent Hashing](/patterns/consistent-hashing/) | "Consistent hashing cho phép thêm/bớt node cache mà không phải tái phân phối toàn bộ" |
+| Negative cache | [Bloom Filter](/patterns/bloom-filter/) | "Một Bloom filter ở phía trước tránh tra cache với các key chắc chắn không tồn tại" |
 
-### "Design a Key-Value Store"
+### "Thiết kế một Key-Value Store"
 
-| Concept | Pattern | What to Say |
+| Khái niệm | Pattern | Câu nên nói |
 |---|---|---|
-| Write path | [LSM Tree](/patterns/lsm-tree/) | "Write to WAL, then memtable. When memtable is full, flush to sorted SSTable on disk" |
-| Read optimization | [Bloom Filter](/patterns/bloom-filter/) | "Each SSTable has a Bloom filter — skip files that definitely don't contain the key" |
-| Crash recovery | [WAL](/patterns/write-ahead-log/) + [Checkpointing](/patterns/checkpointing/) | "WAL ensures durability. Periodic checkpoints bound recovery time" |
-| Compaction | [Merge Iterator](/patterns/merge-iterator/) | "K-way merge of sorted SSTables using a min-heap" |
-| Deletion | [Tombstone](/patterns/tombstone/) | "Can't remove from immutable SSTables — write a tombstone marker, compact later" |
+| Đường ghi | [LSM Tree](/patterns/lsm-tree/) | "Ghi vào WAL, rồi memtable. Khi memtable đầy, flush thành SSTable đã sắp xếp trên đĩa" |
+| Tối ưu đọc | [Bloom Filter](/patterns/bloom-filter/) | "Mỗi SSTable có một Bloom filter — bỏ qua file chắc chắn không chứa key" |
+| Khôi phục sau crash | [WAL](/patterns/write-ahead-log/) + [Checkpointing](/patterns/checkpointing/) | "WAL đảm bảo bền vững. Checkpoint định kỳ giới hạn thời gian khôi phục" |
+| Compaction | [Merge Iterator](/patterns/merge-iterator/) | "Gộp k SSTable đã sắp xếp bằng min-heap" |
+| Xoá | [Tombstone](/patterns/tombstone/) | "Không thể xoá khỏi SSTable bất biến — ghi một tombstone, dồn nén sau" |
 
-### "Design a Distributed Database"
+### "Thiết kế một Database phân tán"
 
-| Concept | Pattern | What to Say |
+| Khái niệm | Pattern | Câu nên nói |
 |---|---|---|
-| Replication | [WAL](/patterns/write-ahead-log/) + [State Machine](/patterns/state-machine/) | "Raft: replicate WAL entries, apply to state machine in order" |
-| Consistency | [Logical Clock](/patterns/logical-clock/) | "Lamport timestamps for total order, vector clocks for causal consistency" |
-| Partitioning | [Consistent Hashing](/patterns/consistent-hashing/) | "Consistent hashing with virtual nodes for even distribution" |
-| Anti-entropy | [Merkle Tree](/patterns/merkle-tree/) | "Compare Merkle roots between replicas to find divergence in O(log n)" |
-| Concurrent reads | [MVCC](/patterns/mvcc/) | "Each transaction sees a consistent snapshot — readers never block writers" |
-| Conflict resolution | [Tombstone](/patterns/tombstone/) + [Logical Clock](/patterns/logical-clock/) | "Last-write-wins using vector clock comparison, tombstones for deletes" |
+| Replication | [WAL](/patterns/write-ahead-log/) + [State Machine](/patterns/state-machine/) | "Raft: replicate các entry WAL, áp vào state machine theo thứ tự" |
+| Consistency | [Logical Clock](/patterns/logical-clock/) | "Lamport timestamp cho thứ tự tổng quát, vector clock cho consistency nhân quả" |
+| Phân vùng | [Consistent Hashing](/patterns/consistent-hashing/) | "Consistent hashing với virtual node để phân bố đều" |
+| Anti-entropy | [Merkle Tree](/patterns/merkle-tree/) | "So sánh root Merkle giữa các replica để tìm điểm khác biệt trong O(log n)" |
+| Đọc đồng thời | [MVCC](/patterns/mvcc/) | "Mỗi transaction thấy một snapshot nhất quán — reader không bao giờ chặn writer" |
+| Giải quyết xung đột | [Tombstone](/patterns/tombstone/) + [Logical Clock](/patterns/logical-clock/) | "Last-write-wins bằng so sánh vector clock, tombstone cho việc xoá" |
 
-### "Design a Task Scheduler"
+### "Thiết kế một Task Scheduler"
 
-| Concept | Pattern | What to Say |
+| Khái niệm | Pattern | Câu nên nói |
 |---|---|---|
-| Priority queue | [Min Heap](/patterns/min-heap/) | "Min-heap by deadline/priority — O(1) peek, O(log n) insert" |
-| Fair scheduling | [Work Stealing](/patterns/work-stealing/) | "Idle workers steal from busy queues — Go runtime does exactly this" |
-| Time slicing | [Cooperative Scheduling](/patterns/cooperative-scheduling/) | "Each task yields after a time slice — React Scheduler does this to stay under 16ms" |
-| Concurrency limit | [Semaphore](/patterns/semaphore/) | "Semaphore with N permits limits concurrent task execution" |
-| Task dependency | [Dependency Graph](/patterns/dependency-graph/) | "DAG of tasks, execute in topological order" |
+| Hàng đợi ưu tiên | [Min Heap](/patterns/min-heap/) | "Min-heap theo deadline/priority — peek O(1), insert O(log n)" |
+| Lập lịch công bằng | [Work Stealing](/patterns/work-stealing/) | "Worker rảnh lấy việc từ queue bận — Go runtime làm đúng như vậy" |
+| Cắt thời gian | [Cooperative Scheduling](/patterns/cooperative-scheduling/) | "Mỗi task yield sau một time slice — React Scheduler làm vậy để giữ dưới 16ms" |
+| Giới hạn concurrency | [Semaphore](/patterns/semaphore/) | "Semaphore với N permit giới hạn số task chạy đồng thời" |
+| Phụ thuộc task | [Dependency Graph](/patterns/dependency-graph/) | "DAG các task, thực thi theo thứ tự topo" |
 
-### "Design a Message Queue"
+### "Thiết kế một Message Queue"
 
-| Concept | Pattern | What to Say |
+| Khái niệm | Pattern | Câu nên nói |
 |---|---|---|
-| Producer buffering | [Ring Buffer](/patterns/ring-buffer/) | "Fixed-size ring buffer for zero-allocation enqueue/dequeue" |
-| Consumer flow control | [Backpressure](/patterns/backpressure/) | "If consumer is slow, signal producer to slow down — don't drop messages" |
-| Ordered delivery | [Logical Clock](/patterns/logical-clock/) | "Lamport timestamps ensure causal ordering across partitions" |
-| Batched writes | [Batch Processing](/patterns/batch-processing/) | "Accumulate messages, fsync as a batch — Kafka does this for throughput" |
-| Durability | [WAL](/patterns/write-ahead-log/) | "Append-only log on disk — replay for recovery" |
+| Buffer phía producer | [Ring Buffer](/patterns/ring-buffer/) | "Ring buffer kích thước cố định để enqueue/dequeue không cấp phát" |
+| Kiểm soát luồng phía consumer | [Backpressure](/patterns/backpressure/) | "Nếu consumer chậm, tín hiệu cho producer giảm tốc — không bỏ thông điệp" |
+| Giao hàng theo thứ tự | [Logical Clock](/patterns/logical-clock/) | "Lamport timestamp đảm bảo thứ tự nhân quả giữa các partition" |
+| Ghi theo lô | [Batch Processing](/patterns/batch-processing/) | "Gom thông điệp, fsync theo lô — Kafka làm vậy để có throughput" |
+| Bền vững | [WAL](/patterns/write-ahead-log/) | "Log append-only trên đĩa — replay để khôi phục" |
 
-### "Design an API Gateway"
+### "Thiết kế một API Gateway"
 
-| Concept | Pattern | What to Say |
+| Khái niệm | Pattern | Câu nên nói |
 |---|---|---|
-| Rate limiting | [Rate Limiter](/patterns/rate-limiter/) | "Token bucket per client, per endpoint" |
-| Circuit breaking | [Circuit Breaker](/patterns/circuit-breaker/) | "If backend error rate exceeds threshold, open circuit and fail fast" |
-| Retry policy | [Retry with Backoff](/patterns/retry-backoff/) | "Exponential backoff with jitter to avoid thundering herd" |
-| Request pipeline | [Middleware Chain](/patterns/middleware-chain/) | "Auth → rate limit → transform → route → response — composable handlers" |
-| Service discovery | [Registry](/patterns/registry/) | "Services self-register, gateway looks up by name" |
+| Rate limiting | [Rate Limiter](/patterns/rate-limiter/) | "Token bucket theo client, theo endpoint" |
+| Circuit breaking | [Circuit Breaker](/patterns/circuit-breaker/) | "Nếu tỉ lệ lỗi backend vượt ngưỡng, mở mạch và fail nhanh" |
+| Chính sách retry | [Retry with Backoff](/patterns/retry-backoff/) | "Backoff theo cấp số nhân với jitter để tránh thundering herd" |
+| Pipeline request | [Middleware Chain](/patterns/middleware-chain/) | "Auth → rate limit → transform → route → response — các handler có thể ghép" |
+| Khám phá service | [Registry](/patterns/registry/) | "Service tự đăng ký, gateway tra cứu theo tên" |
 
-## Coding Interviews
+## Phỏng vấn Coding
 
-### Data Structure Design
+### Thiết kế cấu trúc dữ liệu
 
-| Question | Core Pattern | Key Insight |
+| Câu hỏi | Pattern cốt lõi | Insight chính |
 |---|---|---|
-| "Implement an LRU cache" | [LRU Cache](/patterns/lru-cache/) | Hash map + doubly-linked list, O(1) everything |
-| "Design a trie with insert/search/startsWith" | [Trie](/patterns/trie/) | Recursive children map, isEnd flag |
-| "Implement a min-heap" | [Min Heap](/patterns/min-heap/) | Array-based, siftUp on insert, siftDown on extract |
-| "Design a skip list" | [Skip List](/patterns/skip-list/) | Randomized levels, search by descending levels |
-| "Implement a Bloom filter" | [Bloom Filter](/patterns/bloom-filter/) | k hash functions, bit array, no false negatives |
-| "Design a thread-safe object pool" | [Object Pool](/patterns/object-pool/) | Acquire/release with mutex or CAS |
+| "Implement một LRU cache" | [LRU Cache](/patterns/lru-cache/) | Hash map + linked list hai chiều, mọi thao tác O(1) |
+| "Thiết kế trie với insert/search/startsWith" | [Trie](/patterns/trie/) | Map con đệ quy, cờ isEnd |
+| "Implement min-heap" | [Min Heap](/patterns/min-heap/) | Dựa trên mảng, siftUp khi insert, siftDown khi extract |
+| "Thiết kế skip list" | [Skip List](/patterns/skip-list/) | Tầng ngẫu nhiên, tìm kiếm từ tầng cao xuống thấp |
+| "Implement Bloom filter" | [Bloom Filter](/patterns/bloom-filter/) | k hàm hash, mảng bit, không âm tính giả |
+| "Thiết kế object pool thread-safe" | [Object Pool](/patterns/object-pool/) | Acquire/release với mutex hoặc CAS |
 
-### Algorithm Problems
+### Bài toán thuật toán
 
-| Question | Core Pattern | Key Insight |
+| Câu hỏi | Pattern cốt lõi | Insight chính |
 |---|---|---|
-| "Merge K sorted lists" | [Merge Iterator](/patterns/merge-iterator/) | Min-heap of k heads, extract-min and advance |
-| "Find the median in a stream" | [Min Heap](/patterns/min-heap/) | Two heaps: max-heap for lower half, min-heap for upper |
-| "Implement an iterator that flattens nested lists" | [Iterator](/patterns/iterator/) | Stack-based lazy traversal |
-| "Detect cycle in linked list" | [Reference Counting](/patterns/reference-counting/) | Floyd's two-pointer is the standard solve — but cycles break ref counting, understanding why sets you apart |
-| "Serialize/deserialize a tree" | [Visitor](/patterns/visitor/) | Pre-order visit for serialize, recursive rebuild for deserialize |
-| "Compute minimum edit distance" | [Diff / Patch](/patterns/diff-patch/) | Dynamic programming on two sequences |
+| "Gộp K danh sách đã sắp xếp" | [Merge Iterator](/patterns/merge-iterator/) | Min-heap chứa k đầu danh sách, extract-min và tiến |
+| "Tìm trung vị trong luồng" | [Min Heap](/patterns/min-heap/) | Hai heap: max-heap cho nửa dưới, min-heap cho nửa trên |
+| "Implement iterator làm phẳng danh sách lồng" | [Iterator](/patterns/iterator/) | Duyệt lười dựa trên stack |
+| "Phát hiện chu trình trong linked list" | [Reference Counting](/patterns/reference-counting/) | Hai con trỏ Floyd là cách giải chuẩn — nhưng chu trình làm vỡ ref counting, hiểu được vì sao giúp bạn nổi bật |
+| "Serialize/deserialize cây" | [Visitor](/patterns/visitor/) | Duyệt pre-order để serialize, xây lại đệ quy để deserialize |
+| "Tính khoảng cách chỉnh sửa tối thiểu" | [Diff / Patch](/patterns/diff-patch/) | Quy hoạch động trên hai chuỗi |
 
-### Concurrency Problems
+### Bài toán concurrency
 
-| Question | Core Pattern | Key Insight |
+| Câu hỏi | Pattern cốt lõi | Insight chính |
 |---|---|---|
-| "Implement a semaphore" | [Semaphore](/patterns/semaphore/) | Counter + mutex + condition variable |
-| "Design a thread pool" | [Work Stealing](/patterns/work-stealing/) | Per-thread deque, steal from tail |
-| "Implement a read-write lock" | [Semaphore](/patterns/semaphore/) | Counting semaphore for shared readers, mutex for exclusive writer |
-| "Producer-consumer problem" | [Ring Buffer](/patterns/ring-buffer/) + [Backpressure](/patterns/backpressure/) | Bounded buffer with wait/signal |
-| "Dining philosophers" | [Semaphore](/patterns/semaphore/) | Resource ordering prevents deadlock |
+| "Implement semaphore" | [Semaphore](/patterns/semaphore/) | Bộ đếm + mutex + condition variable |
+| "Thiết kế thread pool" | [Work Stealing](/patterns/work-stealing/) | Deque mỗi thread, lấy trộm từ đuôi |
+| "Implement read-write lock" | [Semaphore](/patterns/semaphore/) | Counting semaphore cho reader chia sẻ, mutex cho writer độc quyền |
+| "Bài toán producer-consumer" | [Ring Buffer](/patterns/ring-buffer/) + [Backpressure](/patterns/backpressure/) | Buffer giới hạn với wait/signal |
+| "Bài toán bữa ăn triết gia" | [Semaphore](/patterns/semaphore/) | Sắp thứ tự tài nguyên để chống deadlock |
 
-## What Interviewers Actually Look For
+## Người phỏng vấn thực sự tìm kiếm điều gì
 
-It's not about memorizing patterns. Here's what distinguishes strong candidates:
+Không phải về việc thuộc lòng pattern. Đây là điều phân biệt ứng viên xuất sắc:
 
-### 1. Tradeoff Awareness
+### 1. Nhận thức về đánh đổi
 
-Don't just say "I'd use a Bloom filter." Say:
+Đừng chỉ nói "tôi sẽ dùng Bloom filter." Hãy nói:
 
-> "A Bloom filter gives us O(k) lookups in O(m) bits of space, with tunable false positive rate. The tradeoff is we can't delete — for that we'd need a counting Bloom filter, which uses 4x the space."
+> "Bloom filter cho phép lookup O(k) trong O(m) bit bộ nhớ, với tỉ lệ dương tính giả có thể điều chỉnh. Đánh đổi là không xoá được — cho việc đó cần counting Bloom filter, dùng gấp 4 lần bộ nhớ."
 
-Every pattern in this book has a **When NOT to Use** section — read those.
+Mỗi pattern trong bộ này đều có phần **Khi không nên dùng** — hãy đọc chúng.
 
-### 2. Production Context
+### 2. Bối cảnh production
 
-Don't say "I'd use a queue." Say:
+Đừng nói "tôi sẽ dùng một queue." Hãy nói:
 
-> "I'd use a ring buffer like LMAX Disruptor — fixed size, no allocation, and the producer/consumer can be on different cores without cache-line contention because they access different indices."
+> "Tôi sẽ dùng ring buffer giống LMAX Disruptor — kích thước cố định, không cấp phát, và producer/consumer có thể ở các core khác nhau mà không bị tranh chấp cache-line vì chúng truy cập index khác nhau."
 
-The **Production Proof** section of each pattern gives you these references.
+Phần **Bằng chứng từ production** của mỗi pattern cho bạn các tham chiếu này.
 
-### 3. Composition
+### 3. Kết hợp
 
-Real systems combine patterns. When designing a KV store, don't just say "LSM tree." Walk through the full stack:
+Hệ thống thật kết hợp nhiều pattern. Khi thiết kế KV store, đừng chỉ nói "LSM tree." Đi qua toàn bộ stack:
 
-> "Writes go to a WAL for durability, then a memtable (sorted in-memory). When full, flush to an SSTable. Each SSTable has a Bloom filter for read optimization. Compaction uses a merge iterator to combine SSTables. Deletes use tombstones."
+> "Ghi vào WAL để bền vững, rồi memtable (sắp xếp trong bộ nhớ). Khi đầy, flush thành SSTable. Mỗi SSTable có một Bloom filter để tối ưu đọc. Compaction dùng merge iterator để gộp các SSTable. Xoá dùng tombstone."
 
-The [Cheat Sheet](/guide/cheatsheet) has a **Pattern Combos** section for this.
+[Cheat Sheet](/guide/cheatsheet) có phần **Pattern Combos** cho việc này.
 
-### 4. Drawing
+### 4. Vẽ
 
-If you can sketch a pattern's mechanism on a whiteboard, you understand it. If you can't, you've only memorized the name. Every pattern's interactive visualization teaches you what to draw.
+Nếu bạn có thể vẽ cơ chế của pattern lên bảng, bạn đã hiểu nó. Nếu không, bạn mới chỉ thuộc tên. Trực quan hoá tương tác của mỗi pattern dạy bạn cần vẽ những gì.
 
-## Study Plan
+## Kế hoạch học
 
-### 1 Week Sprint
+### Sprint 1 tuần
 
-| Day | Focus | Patterns |
+| Ngày | Trọng tâm | Pattern |
 |---|---|---|
-| 1 | Caching & Lookup | LRU Cache, Bloom Filter, Trie |
-| 2 | Storage Engine | WAL, LSM Tree, B+ Tree, Checkpointing |
-| 3 | Reliability | Circuit Breaker, Rate Limiter, Retry with Backoff |
+| 1 | Caching & tra cứu | LRU Cache, Bloom Filter, Trie |
+| 2 | Storage engine | WAL, LSM Tree, B+ Tree, Checkpointing |
+| 3 | Độ tin cậy | Circuit Breaker, Rate Limiter, Retry with Backoff |
 | 4 | Concurrency | Semaphore, MVCC, Work Stealing |
-| 5 | Distributed | Consistent Hashing, Logical Clock, Merkle Tree |
-| 6 | Memory & Runtime | Object Pool, Arena, Reference Counting, Copy-on-Write |
-| 7 | Review | Run all exercises, practice drawing mechanisms |
+| 5 | Phân tán | Consistent Hashing, Logical Clock, Merkle Tree |
+| 6 | Bộ nhớ & runtime | Object Pool, Arena, Reference Counting, Copy-on-Write |
+| 7 | Ôn tập | Chạy tất cả bài tập, luyện vẽ cơ chế |
 
-### Weekend Crash Course
+### Khoá tốc lực cuối tuần
 
-Focus on the 10 patterns that cover 80% of system design interviews:
+Tập trung vào 10 pattern chiếm 80% các buổi phỏng vấn system design:
 
-1. [LRU Cache](/patterns/lru-cache/) — every cache question
-2. [Rate Limiter](/patterns/rate-limiter/) — dedicated interview question + used in API gateway
-3. [Consistent Hashing](/patterns/consistent-hashing/) — every distributed question
-4. [WAL](/patterns/write-ahead-log/) — every storage/database question
-5. [LSM Tree](/patterns/lsm-tree/) — KV store design
-6. [Bloom Filter](/patterns/bloom-filter/) — read optimization, set membership
-7. [Circuit Breaker](/patterns/circuit-breaker/) — API gateway, microservices
-8. [MVCC](/patterns/mvcc/) — database concurrency
-9. [Min Heap](/patterns/min-heap/) — scheduler, merge-k, median
-10. [Merkle Tree](/patterns/merkle-tree/) — data integrity, anti-entropy
+1. [LRU Cache](/patterns/lru-cache/) — mọi câu hỏi về cache
+2. [Rate Limiter](/patterns/rate-limiter/) — câu hỏi phỏng vấn riêng + dùng trong API gateway
+3. [Consistent Hashing](/patterns/consistent-hashing/) — mọi câu hỏi phân tán
+4. [WAL](/patterns/write-ahead-log/) — mọi câu hỏi storage/database
+5. [LSM Tree](/patterns/lsm-tree/) — thiết kế KV store
+6. [Bloom Filter](/patterns/bloom-filter/) — tối ưu đọc, kiểm tra thành viên tập
+7. [Circuit Breaker](/patterns/circuit-breaker/) — API gateway, microservice
+8. [MVCC](/patterns/mvcc/) — concurrency database
+9. [Min Heap](/patterns/min-heap/) — scheduler, gộp k, trung vị
+10. [Merkle Tree](/patterns/merkle-tree/) — toàn vẹn dữ liệu, anti-entropy

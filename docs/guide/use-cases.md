@@ -1,103 +1,103 @@
 ---
-title: "Use Cases"
-description: "Find the right pattern by scenario — web APIs, databases, distributed systems, frontend, compilers, and more."
+title: "Các trường hợp sử dụng"
+description: "Tìm pattern phù hợp theo kịch bản — web API, database, hệ phân tán, frontend, compiler và hơn thế nữa."
 ---
 
-# Use Cases
+# Các trường hợp sử dụng
 
-Find patterns by the kind of system you're building.
+Tìm pattern theo loại hệ thống bạn đang xây.
 
-## Web APIs & Microservices
+## Web API & Microservice
 
-Building a REST/gRPC service? These patterns keep it reliable under load.
+Đang xây service REST/gRPC? Các pattern này giúp nó tin cậy dưới tải.
 
-| Scenario | Patterns | Real Example |
+| Kịch bản | Pattern | Ví dụ thực tế |
 |---|---|---|
-| Protect against downstream outages | [Circuit Breaker](/patterns/circuit-breaker/) + [Retry with Backoff](/patterns/retry-backoff/) | Netflix Hystrix wraps every HTTP client call |
-| API rate limiting | [Rate Limiter](/patterns/rate-limiter/) | Stripe allows burst of 25, refills at 25/sec |
-| Request middleware (auth, logging, tracing) | [Middleware Chain](/patterns/middleware-chain/) | gRPC interceptors, Koa.js onion model |
-| Service discovery | [Registry](/patterns/registry/) | Consul, etcd service registration |
-| Load distribution across nodes | [Consistent Hashing](/patterns/consistent-hashing/) | HAProxy, groupcache key distribution |
-| Prevent overload | [Backpressure](/patterns/backpressure/) + [Batch Processing](/patterns/batch-processing/) | Node.js stream piping, Kafka consumer groups |
+| Bảo vệ khi downstream gặp sự cố | [Circuit Breaker](/patterns/circuit-breaker/) + [Retry with Backoff](/patterns/retry-backoff/) | Netflix Hystrix bọc mọi cuộc gọi HTTP client |
+| Rate limit API | [Rate Limiter](/patterns/rate-limiter/) | Stripe cho phép burst 25, refill ở 25/giây |
+| Middleware request (auth, log, tracing) | [Middleware Chain](/patterns/middleware-chain/) | Interceptor gRPC, mô hình hành tây Koa.js |
+| Khám phá service | [Registry](/patterns/registry/) | Đăng ký service Consul, etcd |
+| Phân tán tải qua các node | [Consistent Hashing](/patterns/consistent-hashing/) | HAProxy, phân tán key groupcache |
+| Tránh quá tải | [Backpressure](/patterns/backpressure/) + [Batch Processing](/patterns/batch-processing/) | Pipe stream Node.js, consumer group Kafka |
 
-## Databases & Storage
+## Database & lưu trữ
 
-The patterns behind PostgreSQL, Redis, LevelDB, and every serious storage engine.
+Các pattern đằng sau PostgreSQL, Redis, LevelDB và mọi storage engine nghiêm túc.
 
-| Scenario | Patterns | Real Example |
+| Kịch bản | Pattern | Ví dụ thực tế |
 |---|---|---|
-| Crash recovery | [WAL](/patterns/write-ahead-log/) + [Checkpointing](/patterns/checkpointing/) | PostgreSQL: WAL + periodic checkpoint |
-| Write-heavy workload | [LSM Tree](/patterns/lsm-tree/) + [Bloom Filter](/patterns/bloom-filter/) | LevelDB/RocksDB: memtable → SSTable + bloom skip |
-| Range queries on disk | [B+ Tree](/patterns/b-plus-tree/) | PostgreSQL btree index, SQLite |
-| Concurrent reads/writes | [MVCC](/patterns/mvcc/) | PostgreSQL tuple versioning, etcd revisions |
-| Data integrity verification | [Merkle Tree](/patterns/merkle-tree/) | ZFS block checksums, Git object store |
-| Sorted key merge | [Merge Iterator](/patterns/merge-iterator/) + [Min Heap](/patterns/min-heap/) | LevelDB compaction |
-| Delete without immediate removal | [Tombstone](/patterns/tombstone/) | Cassandra tombstones, LevelDB deletion markers |
-| In-memory sorted set | [Skip List](/patterns/skip-list/) | Redis ZADD/ZRANGE sorted sets |
-| In-memory cache | [LRU Cache](/patterns/lru-cache/) | Redis LRU eviction, Go groupcache |
-| Event ordering without clocks | [Logical Clock](/patterns/logical-clock/) | etcd Raft log, DynamoDB version vectors |
+| Khôi phục sau crash | [WAL](/patterns/write-ahead-log/) + [Checkpointing](/patterns/checkpointing/) | PostgreSQL: WAL + checkpoint định kỳ |
+| Tải nặng ghi | [LSM Tree](/patterns/lsm-tree/) + [Bloom Filter](/patterns/bloom-filter/) | LevelDB/RocksDB: memtable → SSTable + bloom bỏ qua |
+| Truy vấn khoảng trên đĩa | [B+ Tree](/patterns/b-plus-tree/) | Chỉ mục btree PostgreSQL, SQLite |
+| Đọc/ghi đồng thời | [MVCC](/patterns/mvcc/) | Versioning tuple PostgreSQL, revision etcd |
+| Xác minh toàn vẹn dữ liệu | [Merkle Tree](/patterns/merkle-tree/) | Checksum block ZFS, kho object Git |
+| Gộp key đã sắp xếp | [Merge Iterator](/patterns/merge-iterator/) + [Min Heap](/patterns/min-heap/) | Compaction LevelDB |
+| Xoá không xoá ngay | [Tombstone](/patterns/tombstone/) | Tombstone Cassandra, marker xoá LevelDB |
+| Sorted set trong bộ nhớ | [Skip List](/patterns/skip-list/) | Sorted set ZADD/ZRANGE Redis |
+| Cache trong bộ nhớ | [LRU Cache](/patterns/lru-cache/) | LRU eviction Redis, Go groupcache |
+| Sắp xếp sự kiện không có đồng hồ | [Logical Clock](/patterns/logical-clock/) | Raft log etcd, version vector DynamoDB |
 
-## Frontend & UI Frameworks
+## Frontend & framework UI
 
-React, Vue, and browser engines use these patterns every frame.
+React, Vue và browser engine dùng các pattern này mỗi frame.
 
-| Scenario | Patterns | Real Example |
+| Kịch bản | Pattern | Ví dụ thực tế |
 |---|---|---|
-| Virtual DOM diffing | [Diff / Patch](/patterns/diff-patch/) + [Bitmask](/patterns/bitmask/) | React reconciler: diff tree, apply minimal patches |
-| Responsive rendering | [Cooperative Scheduling](/patterns/cooperative-scheduling/) | React Scheduler: yield every 5ms to stay under 16ms |
-| Frame-safe state updates | [Double Buffering](/patterns/double-buffering/) | React Fiber: workInProgress ↔ current tree swap |
-| Avoid unnecessary re-renders | [Dirty Flag](/patterns/dirty-flag/) | React shouldComponentUpdate, Chromium layout |
-| State management | [Observer](/patterns/observer/) + [State Machine](/patterns/state-machine/) | Redux subscribe, XState finite states |
-| Priority-based task scheduling | [Min Heap](/patterns/min-heap/) | React Scheduler priority queue |
+| Diff virtual DOM | [Diff / Patch](/patterns/diff-patch/) + [Bitmask](/patterns/bitmask/) | Reconciler React: diff cây, áp patch tối thiểu |
+| Render phản hồi nhanh | [Cooperative Scheduling](/patterns/cooperative-scheduling/) | React Scheduler: yield mỗi 5ms để giữ dưới 16ms |
+| Update state an toàn theo frame | [Double Buffering](/patterns/double-buffering/) | React Fiber: hoán đổi workInProgress ↔ current tree |
+| Tránh re-render không cần | [Dirty Flag](/patterns/dirty-flag/) | shouldComponentUpdate React, layout Chromium |
+| Quản lý state | [Observer](/patterns/observer/) + [State Machine](/patterns/state-machine/) | subscribe Redux, trạng thái hữu hạn XState |
+| Lập lịch task theo ưu tiên | [Min Heap](/patterns/min-heap/) | Queue ưu tiên React Scheduler |
 
-## Distributed Systems
+## Hệ phân tán
 
-Patterns for systems that span multiple machines.
+Pattern cho hệ thống trải qua nhiều máy.
 
-| Scenario | Patterns | Real Example |
+| Kịch bản | Pattern | Ví dụ thực tế |
 |---|---|---|
-| Consensus log | [WAL](/patterns/write-ahead-log/) + [Logical Clock](/patterns/logical-clock/) | etcd Raft: append-only log with term/index |
-| Partition-tolerant routing | [Consistent Hashing](/patterns/consistent-hashing/) | Amazon DynamoDB, Cassandra ring |
-| Replicated state | [State Machine](/patterns/state-machine/) + [WAL](/patterns/write-ahead-log/) | Raft: replicated state machine via log |
-| Conflict-free replication | [Logical Clock](/patterns/logical-clock/) + [Tombstone](/patterns/tombstone/) | CRDTs, Dynamo-style last-write-wins |
-| Data synchronization | [Merkle Tree](/patterns/merkle-tree/) | Cassandra anti-entropy repair |
-| Message-driven architecture | [Actor Model](/patterns/actor-model/) + [Backpressure](/patterns/backpressure/) | Akka cluster, Erlang/OTP |
-| Build/deploy pipelines | [Dependency Graph](/patterns/dependency-graph/) + [Batch Processing](/patterns/batch-processing/) | Cargo build graph, pnpm workspace |
+| Log đồng thuận | [WAL](/patterns/write-ahead-log/) + [Logical Clock](/patterns/logical-clock/) | Raft etcd: log append-only với term/index |
+| Định tuyến chịu phân vùng | [Consistent Hashing](/patterns/consistent-hashing/) | Amazon DynamoDB, vòng Cassandra |
+| State replicated | [State Machine](/patterns/state-machine/) + [WAL](/patterns/write-ahead-log/) | Raft: replicated state machine qua log |
+| Replication không xung đột | [Logical Clock](/patterns/logical-clock/) + [Tombstone](/patterns/tombstone/) | CRDT, last-write-wins kiểu Dynamo |
+| Đồng bộ dữ liệu | [Merkle Tree](/patterns/merkle-tree/) | Anti-entropy repair Cassandra |
+| Kiến trúc hướng thông điệp | [Actor Model](/patterns/actor-model/) + [Backpressure](/patterns/backpressure/) | Cluster Akka, Erlang/OTP |
+| Pipeline build/deploy | [Dependency Graph](/patterns/dependency-graph/) + [Batch Processing](/patterns/batch-processing/) | Đồ thị build Cargo, workspace pnpm |
 
-## Runtime & Memory Management
+## Runtime & quản lý bộ nhớ
 
-How Go, CPython, V8, and game engines manage memory and execution.
+Cách Go, CPython, V8 và game engine quản lý bộ nhớ và thực thi.
 
-| Scenario | Patterns | Real Example |
+| Kịch bản | Pattern | Ví dụ thực tế |
 |---|---|---|
-| Reduce GC pressure | [Object Pool](/patterns/object-pool/) + [Free List](/patterns/free-list/) | Go sync.Pool, Linux SLUB allocator |
-| Phase-based allocation | [Arena Allocator](/patterns/arena-allocator/) | Rust bumpalo, Go arena (experimental) |
-| Deterministic cleanup | [Reference Counting](/patterns/reference-counting/) | CPython refcount, Rust Rc/Arc |
-| String deduplication | [Interning](/patterns/interning/) + [Flyweight](/patterns/flyweight/) | Rust compiler symbol interning, Python small int cache |
-| Efficient cloning | [Copy-on-Write](/patterns/copy-on-write/) | Linux fork(), Rust `Cow<T>` |
-| Work distribution across cores | [Work Stealing](/patterns/work-stealing/) | Go runtime P/M/G scheduler, Tokio |
-| I/O multiplexing | [Event Loop](/patterns/event-loop/) + [Ring Buffer](/patterns/ring-buffer/) | libuv (Node.js), Redis single-thread |
-| Thread-safe counters | [Semaphore](/patterns/semaphore/) | Linux kernel semaphores, Go x/sync |
+| Giảm áp lực GC | [Object Pool](/patterns/object-pool/) + [Free List](/patterns/free-list/) | Go sync.Pool, allocator SLUB Linux |
+| Cấp phát theo pha | [Arena Allocator](/patterns/arena-allocator/) | Rust bumpalo, Go arena (thử nghiệm) |
+| Dọn dẹp xác định | [Reference Counting](/patterns/reference-counting/) | refcount CPython, Rust Rc/Arc |
+| Khử trùng lặp chuỗi | [Interning](/patterns/interning/) + [Flyweight](/patterns/flyweight/) | Symbol interning của Rust compiler, cache số nguyên nhỏ Python |
+| Clone hiệu quả | [Copy-on-Write](/patterns/copy-on-write/) | Linux fork(), Rust `Cow<T>` |
+| Phân tán việc qua các core | [Work Stealing](/patterns/work-stealing/) | Scheduler P/M/G Go runtime, Tokio |
+| Ghép kênh I/O | [Event Loop](/patterns/event-loop/) + [Ring Buffer](/patterns/ring-buffer/) | libuv (Node.js), Redis single-thread |
+| Counter thread-safe | [Semaphore](/patterns/semaphore/) | Semaphore kernel Linux, Go x/sync |
 
-## Compilers & Language Tools
+## Compiler & công cụ ngôn ngữ
 
-Patterns used in LLVM, V8, rustc, and the Vue/React compilers.
+Pattern dùng trong LLVM, V8, rustc và compiler Vue/React.
 
-| Scenario | Patterns | Real Example |
+| Kịch bản | Pattern | Ví dụ thực tế |
 |---|---|---|
-| AST traversal | [Visitor](/patterns/visitor/) | LLVM InstVisitor, Vue compiler transforms |
-| Dynamic dispatch | [Vtable](/patterns/vtable/) | CPython tp_* slots, Rust dyn Trait |
-| Symbol tables | [Interning](/patterns/interning/) + [Trie](/patterns/trie/) | rustc Symbol interning |
-| IR transformations | [Iterator](/patterns/iterator/) + [Diff / Patch](/patterns/diff-patch/) | Rust Iterator adapters, tree-sitter edits |
-| Type representation | [Tagged Union](/patterns/tagged-union/) | V8 tagged pointers, PyTorch TensorImpl |
-| Plugin systems | [Registry](/patterns/registry/) + [Middleware Chain](/patterns/middleware-chain/) | Babel plugins, webpack loaders |
+| Duyệt AST | [Visitor](/patterns/visitor/) | LLVM InstVisitor, biến đổi compiler Vue |
+| Dispatch động | [Vtable](/patterns/vtable/) | Slot tp_* CPython, Rust dyn Trait |
+| Bảng symbol | [Interning](/patterns/interning/) + [Trie](/patterns/trie/) | Symbol interning rustc |
+| Biến đổi IR | [Iterator](/patterns/iterator/) + [Diff / Patch](/patterns/diff-patch/) | Adapter Iterator Rust, edit tree-sitter |
+| Biểu diễn kiểu | [Tagged Union](/patterns/tagged-union/) | Con trỏ có tag V8, TensorImpl PyTorch |
+| Hệ thống plugin | [Registry](/patterns/registry/) + [Middleware Chain](/patterns/middleware-chain/) | Plugin Babel, loader webpack |
 
-## Networking & Protocols
+## Mạng & giao thức
 
-| Scenario | Patterns | Real Example |
+| Kịch bản | Pattern | Ví dụ thực tế |
 |---|---|---|
-| Connection state tracking | [State Machine](/patterns/state-machine/) | Linux TCP state machine (SYN_SENT → ESTABLISHED → ...) |
-| IP routing | [Trie](/patterns/trie/) | Linux LC-trie for IPv4 FIB |
-| Packet buffering | [Ring Buffer](/patterns/ring-buffer/) | Linux sk_buff, DPDK ring |
-| Flow control | [Backpressure](/patterns/backpressure/) + [Rate Limiter](/patterns/rate-limiter/) | TCP flow control, Nginx limit_req |
-| DNS resolution | [Trie](/patterns/trie/) + [LRU Cache](/patterns/lru-cache/) | Domain name lookup + response cache |
+| Theo dõi trạng thái kết nối | [State Machine](/patterns/state-machine/) | State machine TCP Linux (SYN_SENT → ESTABLISHED → ...) |
+| Định tuyến IP | [Trie](/patterns/trie/) | LC-trie cho FIB IPv4 Linux |
+| Đệm gói tin | [Ring Buffer](/patterns/ring-buffer/) | sk_buff Linux, ring DPDK |
+| Kiểm soát luồng | [Backpressure](/patterns/backpressure/) + [Rate Limiter](/patterns/rate-limiter/) | Flow control TCP, Nginx limit_req |
+| Phân giải DNS | [Trie](/patterns/trie/) + [LRU Cache](/patterns/lru-cache/) | Tra cứu tên miền + cache response |

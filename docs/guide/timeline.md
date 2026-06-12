@@ -1,75 +1,75 @@
 ---
-title: "Pattern Timeline"
-description: "Timeline of programming patterns: 80 years of computing history from von Neumann to modern distributed systems."
+title: "Dòng thời gian của các Pattern"
+description: "Dòng thời gian các pattern lập trình: 80 năm lịch sử ngành điện toán, từ von Neumann tới các hệ phân tán hiện đại."
 ---
 
-# Pattern Timeline
+# Dòng thời gian của các Pattern
 
-These patterns span 80+ years of computing history — from the earliest stored-program computers to modern distributed systems.
+Các pattern này trải dài trên 80+ năm lịch sử điện toán — từ những máy tính chương trình-lưu-trữ đầu tiên đến hệ phân tán hiện đại.
 
-**Explore interactively** — filter by category, click any card to jump to the pattern:
+**Khám phá tương tác** — lọc theo nhóm, click vào card bất kỳ để nhảy tới pattern:
 
 <PatternTimelineViz />
 
-## The Full Table
+## Bảng đầy đủ
 
-| Year | Pattern | Origin |
+| Năm | Pattern | Nguồn gốc |
 |------|---------|--------|
-| ~1943 | [State Machine](/patterns/state-machine/) | McCulloch & Pitts modeled neurons as finite automata; Mealy (1955) and Moore (1956) formalized the two canonical types |
-| ~1945 | [Bitmask](/patterns/bitmask/) | Inherent to stored-program computers; von Neumann's EDVAC report described bit-level operations |
-| ~1953 | [Double Buffering](/patterns/double-buffering/) | Used in IBM 701/709 I/O subsystems to overlap computation with data transfer |
-| ~1956 | [Batch Processing](/patterns/batch-processing/) | GM-NAA I/O monitor for IBM 704 — the first documented batch processing system |
-| 1958 | [Free List](/patterns/free-list/) | McCarthy's LISP used free lists to manage cons cell allocation |
-| 1958 | [Cooperative Scheduling](/patterns/cooperative-scheduling/) | Melvin Conway described coroutines (published 1963), formalizing voluntary yield |
-| 1959 | [Trie](/patterns/trie/) | Rene de la Briandais described the trie; Fredkin coined the name "trie" (from retrieval) in 1960 |
-| ~1960 | [Ring Buffer](/patterns/ring-buffer/) | Used in telecommunications and real-time I/O systems; no single inventor |
-| ~1960 | [Arena Allocator](/patterns/arena-allocator/) | Region-based allocation in compilers; Knuth discussed pool allocation in TAOCP (1968) |
-| 1960 | [Reference Counting](/patterns/reference-counting/) | George Collins described reference counting for automatic storage reclamation |
-| ~1960 | [Interning](/patterns/interning/) | LISP interned symbols from its earliest implementations; the technique predates the name |
-| 1962 | [Dependency Graph](/patterns/dependency-graph/) | Kahn published "Topological sorting of large networks" in CACM |
-| 1964 | [Min Heap](/patterns/min-heap/) | Williams invented the binary heap for heapsort; Floyd improved it the same year |
-| 1965 | [Semaphore](/patterns/semaphore/) | Dijkstra invented P() and V() for the THE operating system |
-| ~1965 | [Dirty Flag](/patterns/dirty-flag/) | Virtual memory systems used "dirty bits" to track modified pages; the pattern generalized to any deferred recomputation |
-| 1966 | [LRU Cache](/patterns/lru-cache/) | Belady's "A study of replacement algorithms for virtual-storage computers" (IBM Systems Journal) |
-| ~1966 | [Tagged Union](/patterns/tagged-union/) | Algol 68 formalized discriminated unions; earlier assembly programmers used type tags informally |
-| 1967 | [Vtable](/patterns/vtable/) | Simula 67 introduced virtual method dispatch via method tables; C++ later popularized the "vtable" name |
-| ~1967 | [Event Loop](/patterns/event-loop/) | Early interactive systems used event-driven dispatch; popularized by Smalltalk (1980) and X Window System (1984) |
-| 1970 | [Bloom Filter](/patterns/bloom-filter/) | Burton Bloom published "Space/Time Trade-offs in Hash Coding with Allowable Errors" (CACM) |
-| ~1970 | [B+ Tree](/patterns/b-plus-tree/) | Bayer & McCreight invented B-trees (1970); the B+ variant with leaf-linked pages emerged by 1972 for database indexing |
-| ~1971 | [Copy-on-Write](/patterns/copy-on-write/) | IBM VM/370 virtual memory; later adopted by BSD Unix for fork() |
+| ~1943 | [State Machine](/patterns/state-machine/) | McCulloch & Pitts mô hình hoá nơ-ron như automat hữu hạn; Mealy (1955) và Moore (1956) hình thức hoá hai kiểu chuẩn |
+| ~1945 | [Bitmask](/patterns/bitmask/) | Vốn có trong máy tính chương trình-lưu-trữ; báo cáo EDVAC của von Neumann mô tả thao tác cấp bit |
+| ~1953 | [Double Buffering](/patterns/double-buffering/) | Dùng trong subsystem I/O của IBM 701/709 để chồng lấp tính toán với truyền dữ liệu |
+| ~1956 | [Batch Processing](/patterns/batch-processing/) | GM-NAA I/O monitor cho IBM 704 — hệ thống batch processing được tài liệu hoá đầu tiên |
+| 1958 | [Free List](/patterns/free-list/) | LISP của McCarthy dùng free list để quản lý cấp phát cons cell |
+| 1958 | [Cooperative Scheduling](/patterns/cooperative-scheduling/) | Melvin Conway mô tả coroutine (xuất bản 1963), hình thức hoá yield tự nguyện |
+| 1959 | [Trie](/patterns/trie/) | Rene de la Briandais mô tả trie; Fredkin đặt tên "trie" (từ retrieval) năm 1960 |
+| ~1960 | [Ring Buffer](/patterns/ring-buffer/) | Dùng trong viễn thông và hệ I/O thời gian thực; không có người phát minh duy nhất |
+| ~1960 | [Arena Allocator](/patterns/arena-allocator/) | Cấp phát theo vùng trong compiler; Knuth bàn về pool allocation trong TAOCP (1968) |
+| 1960 | [Reference Counting](/patterns/reference-counting/) | George Collins mô tả reference counting để tự thu hồi bộ nhớ |
+| ~1960 | [Interning](/patterns/interning/) | LISP intern symbol từ những bản triển khai đầu tiên; kỹ thuật có trước cả tên gọi |
+| 1962 | [Dependency Graph](/patterns/dependency-graph/) | Kahn xuất bản "Topological sorting of large networks" trong CACM |
+| 1964 | [Min Heap](/patterns/min-heap/) | Williams phát minh binary heap cho heapsort; Floyd cải tiến cùng năm |
+| 1965 | [Semaphore](/patterns/semaphore/) | Dijkstra phát minh P() và V() cho hệ điều hành THE |
+| ~1965 | [Dirty Flag](/patterns/dirty-flag/) | Hệ thống bộ nhớ ảo dùng "dirty bit" để theo dõi page đã đổi; pattern tổng quát hoá cho mọi tính toán trì hoãn |
+| 1966 | [LRU Cache](/patterns/lru-cache/) | "A study of replacement algorithms for virtual-storage computers" của Belady (IBM Systems Journal) |
+| ~1966 | [Tagged Union](/patterns/tagged-union/) | Algol 68 hình thức hoá discriminated union; lập trình viên assembly trước đó đã dùng type tag không chính thức |
+| 1967 | [Vtable](/patterns/vtable/) | Simula 67 giới thiệu virtual method dispatch qua bảng method; C++ sau này phổ biến tên "vtable" |
+| ~1967 | [Event Loop](/patterns/event-loop/) | Hệ thống tương tác sớm dùng dispatch hướng sự kiện; được Smalltalk (1980) và X Window System (1984) phổ biến |
+| 1970 | [Bloom Filter](/patterns/bloom-filter/) | Burton Bloom xuất bản "Space/Time Trade-offs in Hash Coding with Allowable Errors" (CACM) |
+| ~1970 | [B+ Tree](/patterns/b-plus-tree/) | Bayer & McCreight phát minh B-tree (1970); biến thể B+ với page lá liên kết xuất hiện khoảng 1972 cho index database |
+| ~1971 | [Copy-on-Write](/patterns/copy-on-write/) | Bộ nhớ ảo IBM VM/370; sau được BSD Unix dùng cho fork() |
 | 1973 | [Actor Model](/patterns/actor-model/) | Hewitt, Bishop, Steiger: "A Universal Modular Actor Formalism for AI" |
-| 1973 | [Retry with Backoff](/patterns/retry-backoff/) | Metcalfe's Ethernet introduced truncated binary exponential backoff for CSMA/CD |
-| 1974 | [Diff / Patch](/patterns/diff-patch/) | McIlroy created diff for Unix V5 at Bell Labs |
-| ~1974 | [Backpressure](/patterns/backpressure/) | TCP flow control (Cerf & Kahn) — the earliest production form of backpressure |
-| 1975 | [Iterator](/patterns/iterator/) | Liskov's CLU language introduced iterators as first-class abstractions |
-| ~1975 | [Tombstone](/patterns/tombstone/) | Used in database systems for delete markers; essential for B-tree deletion and later LSM trees |
-| ~1976 | [Write-Ahead Log](/patterns/write-ahead-log/) | IBM System R, the first SQL relational database; formalized in ARIES (1992) |
-| ~1976 | [Checkpointing](/patterns/checkpointing/) | Used alongside WAL in System R for crash recovery; formalized in ARIES |
-| 1978 | [MVCC](/patterns/mvcc/) | David Reed's MIT PhD dissertation on multi-version concurrency control |
-| 1978 | [Logical Clock](/patterns/logical-clock/) | Lamport's "Time, Clocks, and the Ordering of Events in a Distributed System" — Lamport timestamps |
-| 1979 | [Observer](/patterns/observer/) | Reenskaug's MVC pattern at Xerox PARC for Smalltalk |
-| 1979 | [Merkle Tree](/patterns/merkle-tree/) | Ralph Merkle patented the hash tree for efficient and secure verification of large data structures |
-| 1981 | [Work Stealing](/patterns/work-stealing/) | Burton & Sleep described task stealing for parallel graph reduction |
-| ~1986 | [Rate Limiter](/patterns/rate-limiter/) | Turner described the leaky bucket for network traffic shaping |
+| 1973 | [Retry with Backoff](/patterns/retry-backoff/) | Ethernet của Metcalfe giới thiệu truncated binary exponential backoff cho CSMA/CD |
+| 1974 | [Diff / Patch](/patterns/diff-patch/) | McIlroy tạo diff cho Unix V5 tại Bell Labs |
+| ~1974 | [Backpressure](/patterns/backpressure/) | TCP flow control (Cerf & Kahn) — dạng backpressure production sớm nhất |
+| 1975 | [Iterator](/patterns/iterator/) | Ngôn ngữ CLU của Liskov giới thiệu iterator như khái niệm first-class |
+| ~1975 | [Tombstone](/patterns/tombstone/) | Dùng trong hệ thống database làm marker xoá; thiết yếu cho xoá B-tree và sau này LSM tree |
+| ~1976 | [Write-Ahead Log](/patterns/write-ahead-log/) | IBM System R, database quan hệ SQL đầu tiên; hình thức hoá trong ARIES (1992) |
+| ~1976 | [Checkpointing](/patterns/checkpointing/) | Dùng song song WAL trong System R để khôi phục sau crash; hình thức hoá trong ARIES |
+| 1978 | [MVCC](/patterns/mvcc/) | Luận án TS MIT của David Reed về multi-version concurrency control |
+| 1978 | [Logical Clock](/patterns/logical-clock/) | "Time, Clocks, and the Ordering of Events in a Distributed System" của Lamport — Lamport timestamp |
+| 1979 | [Observer](/patterns/observer/) | MVC pattern của Reenskaug tại Xerox PARC cho Smalltalk |
+| 1979 | [Merkle Tree](/patterns/merkle-tree/) | Ralph Merkle đăng ký bằng sáng chế hash tree để xác minh hiệu quả và bảo mật cho cấu trúc dữ liệu lớn |
+| 1981 | [Work Stealing](/patterns/work-stealing/) | Burton & Sleep mô tả task stealing cho giảm đồ thị song song |
+| ~1986 | [Rate Limiter](/patterns/rate-limiter/) | Turner mô tả leaky bucket để tạo hình traffic mạng |
 | 1989 | [Skip List](/patterns/skip-list/) | Pugh: "Skip Lists: A Probabilistic Alternative to Balanced Trees" (CACM) |
 | 1990 | [Flyweight](/patterns/flyweight/) | Calder & Linton: "Glyphs: Flyweight Objects for User Interfaces" (USENIX) |
-| ~1993 | [Middleware Chain](/patterns/middleware-chain/) | Chain of Responsibility (GoF 1994) generalized into middleware pipelines by web frameworks; CORBA middleware predates this |
-| ~1993 | [Registry](/patterns/registry/) | COM (1993) and CORBA used registries for component discovery; GoF's Abstract Factory is related |
-| ~1994 | [Object Pool](/patterns/object-pool/) | Bonwick's slab allocator for Solaris; database connection pooling popularized it |
-| 1994 | [Visitor](/patterns/visitor/) | GoF "Design Patterns" formalized the Visitor pattern for double dispatch on object structures |
-| 1996 | [LSM Tree](/patterns/lsm-tree/) | O'Neil et al.: "The Log-Structured Merge-Tree" — buffer writes in memory, flush to sorted files |
+| ~1993 | [Middleware Chain](/patterns/middleware-chain/) | Chain of Responsibility (GoF 1994) được các framework web tổng quát hoá thành pipeline middleware; middleware CORBA có trước |
+| ~1993 | [Registry](/patterns/registry/) | COM (1993) và CORBA dùng registry để khám phá component; Abstract Factory của GoF có liên quan |
+| ~1994 | [Object Pool](/patterns/object-pool/) | Slab allocator của Bonwick cho Solaris; pool kết nối database phổ biến hoá nó |
+| 1994 | [Visitor](/patterns/visitor/) | "Design Patterns" của GoF hình thức hoá Visitor pattern cho double dispatch trên cấu trúc object |
+| 1996 | [LSM Tree](/patterns/lsm-tree/) | O'Neil et al.: "The Log-Structured Merge-Tree" — đệm ghi trong bộ nhớ, flush thành file đã sắp xếp |
 | 1997 | [Consistent Hashing](/patterns/consistent-hashing/) | Karger et al.: "Consistent Hashing and Random Trees" (STOC) |
-| ~2003 | [Merge Iterator](/patterns/merge-iterator/) | K-way merge of sorted streams via min-heap; formalized in LevelDB/BigTable-era systems |
-| 2007 | [Circuit Breaker](/patterns/circuit-breaker/) | Nygard described it in "Release It!" — borrowed from electrical engineering |
+| ~2003 | [Merge Iterator](/patterns/merge-iterator/) | Gộp K-luồng đã sắp xếp qua min-heap; hình thức hoá trong các hệ thống thời LevelDB/BigTable |
+| 2007 | [Circuit Breaker](/patterns/circuit-breaker/) | Nygard mô tả nó trong "Release It!" — vay mượn từ kỹ thuật điện |
 
-> **Note:** Dates marked with ~ are approximate — these concepts emerged organically from engineering practice rather than a single publication.
+> **Lưu ý:** Các năm có dấu ~ là gần đúng — các khái niệm này nảy sinh tự nhiên từ thực hành kỹ thuật chứ không phải từ một xuất bản duy nhất.
 
-## What This Tells Us
+## Điều này nói lên điều gì
 
-1. **The fundamentals are OLD.** Semaphores (1965), heaps (1964), and state machines (1943) have been battle-tested for 60-80 years. When you use them, you're standing on decades of proven engineering.
+1. **Các kiến thức nền tảng đã rất CŨ.** Semaphore (1965), heap (1964) và state machine (1943) đã được kiểm chứng 60-80 năm. Khi bạn dùng chúng, bạn đang đứng trên hàng chục năm kỹ thuật đã được chứng minh.
 
-2. **Most "new" patterns are compositions.** React's reconciler (2017) composes bitmask + min heap + cooperative scheduling + diff/patch + double buffering — all invented between 1943 and 1974.
+2. **Hầu hết các pattern "mới" là sự kết hợp.** Reconciler của React (2017) kết hợp bitmask + min heap + cooperative scheduling + diff/patch + double buffering — tất cả đều được phát minh giữa 1943 và 1974.
 
-3. **The gap between invention and widespread adoption is shrinking.** Bloom filters took 30 years from paper (1970) to widespread use in databases (2000s). Circuit breakers took only 5 years from book (2007) to Netflix Hystrix (2012).
+3. **Khoảng cách giữa phát minh và được áp dụng rộng rãi đang thu hẹp.** Bloom filter mất 30 năm từ bài báo (1970) đến phổ biến trong database (những năm 2000). Circuit breaker chỉ mất 5 năm từ sách (2007) tới Netflix Hystrix (2012).
 
-4. **Patterns outlive the technologies that popularized them.** Copy-on-Write was invented for IBM mainframes in 1971 — it's now in Git, Rust, and every modern OS kernel.
+4. **Pattern sống lâu hơn các công nghệ phổ biến hoá chúng.** Copy-on-Write được phát minh cho IBM mainframe năm 1971 — giờ có mặt trong Git, Rust và mọi kernel OS hiện đại.

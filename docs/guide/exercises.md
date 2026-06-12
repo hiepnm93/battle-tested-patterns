@@ -1,197 +1,197 @@
 ---
-title: "Exercise Guide"
-description: "Step-by-step setup for TypeScript, Rust, Go, and Python exercises — prerequisites, how to run tests, and troubleshooting."
+title: "Hướng dẫn bài tập"
+description: "Hướng dẫn cài đặt từng bước cho bài tập TypeScript, Rust, Go và Python — điều kiện tiên quyết, cách chạy test và xử lý sự cố."
 ---
 
-# Exercise Guide
+# Hướng dẫn bài tập
 
-This project includes **exercises in 4 languages** — TypeScript, Rust, Go, and Python. Each pattern has at least one exercise per language with working implementations and `TODO` markers for you to rewrite.
+Dự án này có **bài tập bằng 4 ngôn ngữ** — TypeScript, Rust, Go và Python. Mỗi pattern có ít nhất một bài tập cho mỗi ngôn ngữ, với phần triển khai chạy được và các marker `TODO` để bạn viết lại.
 
-## Prerequisites
+## Điều kiện tiên quyết
 
-| Language | Required Version | Install |
+| Ngôn ngữ | Phiên bản yêu cầu | Cài đặt |
 |----------|-----------------|---------|
-| Node.js | v22 LTS | [nvm](https://github.com/nvm-sh/nvm) or [nodejs.org](https://nodejs.org/) |
-| Rust | stable (latest) | [rustup.rs](https://rustup.rs/) |
+| Node.js | v22 LTS | [nvm](https://github.com/nvm-sh/nvm) hoặc [nodejs.org](https://nodejs.org/) |
+| Rust | stable (mới nhất) | [rustup.rs](https://rustup.rs/) |
 | Go | 1.21+ | [go.dev/dl](https://go.dev/dl/) |
-| Python | 3.10+ | [python.org](https://www.python.org/downloads/) or system package manager |
+| Python | 3.10+ | [python.org](https://www.python.org/downloads/) hoặc trình quản lý gói hệ thống |
 
-## Quick Start
+## Khởi động nhanh
 
 ```bash
-# Clone the repository
+# Clone repo
 git clone https://github.com/Totoro-jam/battle-tested-patterns.git
 cd battle-tested-patterns
 
-# Use the correct Node.js version
-nvm use   # reads .nvmrc → Node 22
+# Dùng đúng phiên bản Node.js
+nvm use   # đọc .nvmrc → Node 22
 ```
 
-## Setup by Language
+## Cài đặt theo ngôn ngữ
 
 ### TypeScript
 
 ```bash
-# Install dependencies (one time)
+# Cài dependency (một lần)
 pnpm install
 
-# Run all TypeScript exercises
+# Chạy tất cả bài tập TypeScript
 pnpm test:exercises
 
-# Run a specific pattern
+# Chạy một pattern cụ thể
 pnpm test:exercises bitmask
 
-# Watch mode — re-runs on file save
+# Chế độ watch — chạy lại khi lưu file
 pnpm test:exercises -- --watch
 ```
 
-**File location:** `exercises/typescript/<pattern-name>/01-basic.test.ts`
+**Vị trí file:** `exercises/typescript/<tên-pattern>/01-basic.test.ts`
 
-Each pattern has 1–3 exercise files by difficulty level (01-basic, 02-intermediate, 03-advanced).
+Mỗi pattern có 1–3 file bài tập theo cấp độ (01-basic, 02-intermediate, 03-advanced).
 
 ### Rust
 
 ```bash
-# No extra install needed — Cargo handles everything
+# Không cần cài thêm — Cargo xử lý tất cả
 
-# Run all Rust exercises
+# Chạy tất cả bài tập Rust
 cd exercises/rust
 cargo test
 
-# Run a specific pattern
+# Chạy một pattern cụ thể
 cargo test bitmask
 
-# Run with output visible
+# Chạy với output hiển thị
 cargo test bitmask -- --nocapture
 ```
 
-**File location:** `exercises/rust/src/<pattern_name>/mod.rs`
+**Vị trí file:** `exercises/rust/src/<tên_pattern>/mod.rs`
 
-Each file contains the implementation and tests in a single module with `#[cfg(test)]`.
+Mỗi file chứa cả phần triển khai và test trong một module với `#[cfg(test)]`.
 
 ### Go
 
 ```bash
-# No extra install needed — Go modules handle dependencies
+# Không cần cài thêm — Go module xử lý dependency
 
-# Run all Go exercises
+# Chạy tất cả bài tập Go
 cd exercises/go
 go test ./...
 
-# Run a specific pattern
+# Chạy một pattern cụ thể
 go test -run Bitmask -v ./...
 
-# Run with verbose output
+# Chạy với output chi tiết
 go test -v ./...
 ```
 
-**File location:** `exercises/go/<pattern_name>/<pattern_name>_test.go`
+**Vị trí file:** `exercises/go/<tên_pattern>/<tên_pattern>_test.go`
 
-Each file contains both the implementation and test functions in the same package.
+Mỗi file chứa cả phần triển khai và hàm test trong cùng một package.
 
 ### Python
 
 ```bash
-# Install pytest (one time)
+# Cài pytest (một lần)
 pip install pytest
 
-# Run all Python exercises
+# Chạy tất cả bài tập Python
 cd exercises/python
 pytest
 
-# Run a specific pattern
+# Chạy một pattern cụ thể
 pytest bitmask/test_bitmask.py
 
-# Run with verbose output
+# Chạy với output chi tiết
 pytest -v
 ```
 
-**File location:** `exercises/python/<pattern_name>/test_<pattern_name>.py`
+**Vị trí file:** `exercises/python/<tên_pattern>/test_<tên_pattern>.py`
 
-Each file is self-contained — no cross-file imports.
+Mỗi file độc lập — không import chéo file.
 
-## How Exercises Work
+## Cách bài tập hoạt động
 
-Every exercise follows the **TODO-stub format**:
+Mỗi bài tập theo **định dạng TODO-stub**:
 
-1. Functions have **working implementations** (so CI always passes)
-2. `// TODO: implement` markers indicate lines for you to rewrite
-3. Tests below the separator line are **immutable** — don't modify them
-4. Delete the function body, implement from scratch, run the tests
+1. Các hàm đã có **triển khai chạy được** (để CI luôn pass)
+2. Marker `// TODO: implement` chỉ ra các dòng bạn cần viết lại
+3. Các test phía dưới đường ngăn cách là **bất biến** — đừng sửa
+4. Xoá thân hàm, triển khai từ đầu, chạy test
 
-### Example workflow
+### Quy trình ví dụ
 
 ```bash
-# 1. Pick a pattern — say, ring-buffer
-# 2. Open the exercise file in your editor
-# 3. Find the TODO markers
-# 4. Delete the implementation, keep the function signature
-# 5. Write your own implementation
-# 6. Run the test to check your work:
+# 1. Chọn một pattern — ví dụ ring-buffer
+# 2. Mở file bài tập trong editor
+# 3. Tìm các marker TODO
+# 4. Xoá phần triển khai, giữ chữ ký hàm
+# 5. Viết phần triển khai của bạn
+# 6. Chạy test để kiểm tra:
 pnpm test:exercises ring-buffer     # TypeScript
 cargo test ring_buffer     # Rust
 go test -run RingBuffer    # Go
 pytest ring_buffer/test_ring_buffer.py # Python
 ```
 
-### Separator line
+### Đường ngăn cách
 
 ```text
 // ─── Tests (do not modify below this line) ───────────────────────
 ```
 
-Everything above this line is your playground. Everything below is the test suite.
+Mọi thứ phía trên đường này là sân chơi của bạn. Mọi thứ phía dưới là bộ test.
 
-### What success / failure looks like
+### Thành công / thất bại trông thế nào
 
-When your implementation is correct:
+Khi triển khai đúng:
 
 ```text
 ✓ Ring Buffer - Basic: should enqueue and dequeue in FIFO order (2ms)
 ✓ Ring Buffer - Basic: should reject enqueue when full
 ```
 
-When something is wrong:
+Khi có gì đó sai:
 
 ```text
 ✗ Ring Buffer - Basic: should enqueue and dequeue in FIFO order
   → expected 1, got undefined
 ```
 
-## Answer Files
+## File đáp án
 
-Reference implementations live in `exercises/answers/<language>/<pattern>/`:
+Phần triển khai tham chiếu nằm trong `exercises/answers/<ngôn-ngữ>/<pattern>/`:
 
 ```text
 exercises/answers/
-├── typescript/   # 46 directories, one .ts each
-├── rust/         # 46 directories, one .rs each
-├── go/           # 46 directories, one .go each
-└── python/       # 46 directories, one .py each
+├── typescript/   # 46 thư mục, mỗi cái một .ts
+├── rust/         # 46 thư mục, mỗi cái một .rs
+├── go/           # 46 thư mục, mỗi cái một .go
+└── python/       # 46 thư mục, mỗi cái một .py
 ```
 
-These contain pure implementation code (no tests). Use them to check your work or study alternative approaches.
+Chúng chứa code triển khai thuần (không test). Dùng để đối chiếu hoặc nghiên cứu hướng tiếp cận khác.
 
-## Running All Languages at Once
+## Chạy tất cả ngôn ngữ cùng lúc
 
 ```bash
-# From the project root:
-pnpm test:exercises                        # TypeScript (491 tests)
-(cd exercises/rust && cargo test)          # Rust (173 tests)
-(cd exercises/go && go test ./...)         # Go (176 tests)
-(cd exercises/python && pytest)            # Python (233 tests)
+# Từ thư mục gốc dự án:
+pnpm test:exercises                        # TypeScript (491 test)
+(cd exercises/rust && cargo test)          # Rust (173 test)
+(cd exercises/go && go test ./...)         # Go (176 test)
+(cd exercises/python && pytest)            # Python (233 test)
 ```
 
-## Troubleshooting
+## Xử lý sự cố
 
-| Problem | Solution |
+| Vấn đề | Giải pháp |
 |---------|----------|
-| `nvm: command not found` | Install nvm: `curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh \| bash` |
-| `pnpm: command not found` | Install pnpm: `npm install -g pnpm` |
-| `rustup: command not found` | Install Rust: `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \| sh` |
-| `go: command not found` | Download from [go.dev/dl](https://go.dev/dl/) and add to PATH |
-| `pytest: command not found` | `pip install pytest` (or `pip3 install pytest`) |
-| TypeScript tests fail with import errors | Run `pnpm install` first |
-| Rust tests fail to compile | Run `rustup update` to get latest stable |
-| Go tests show module errors | Run `go mod tidy` in `exercises/go/` |
-| Python `ModuleNotFoundError` | Each file is self-contained — no imports needed |
+| `nvm: command not found` | Cài nvm: `curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh \| bash` |
+| `pnpm: command not found` | Cài pnpm: `npm install -g pnpm` |
+| `rustup: command not found` | Cài Rust: `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \| sh` |
+| `go: command not found` | Tải từ [go.dev/dl](https://go.dev/dl/) và thêm vào PATH |
+| `pytest: command not found` | `pip install pytest` (hoặc `pip3 install pytest`) |
+| Test TypeScript lỗi import | Chạy `pnpm install` trước |
+| Test Rust không compile được | Chạy `rustup update` để có stable mới nhất |
+| Test Go báo lỗi module | Chạy `go mod tidy` trong `exercises/go/` |
+| Python `ModuleNotFoundError` | Mỗi file độc lập — không cần import |
