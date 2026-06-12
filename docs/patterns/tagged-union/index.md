@@ -1,6 +1,6 @@
 ---
 title: "Pattern: Tagged Union / Variant"
-description: "Store a type tag alongside a value union so one variable safely holds different types, dispatching behavior via the tag."
+description: "Lưu tag kiểu cùng union giá trị để một biến giữ an toàn nhiều kiểu khác nhau, dispatch hành vi qua tag."
 difficulty: "beginner"
 ---
 
@@ -8,19 +8,19 @@ difficulty: "beginner"
 
 <DifficultyBadge />
 
-## One Liner
+## Mô tả một câu
 
-Store a type tag alongside a value union so one variable safely holds different types, dispatching behavior via the tag.
+Lưu tag kiểu cùng union giá trị để một biến giữ an toàn nhiều kiểu khác nhau, dispatch hành vi qua tag.
 
 <DemoBadge />
 
-## Real-World Analogy
+## Tương tự thực tế
 
-A shipping label on a package. The label says 'fragile', 'perishable', or 'standard', and the warehouse handles each type differently. The label (tag) determines the handling procedure (dispatch) — one system, multiple behaviors.
+Nhãn vận chuyển trên kiện hàng. Nhãn ghi 'dễ vỡ', 'mau hỏng' hoặc 'tiêu chuẩn', và kho xử lý mỗi loại khác nhau. Nhãn (tag) quyết định quy trình xử lý (dispatch) — một hệ thống, nhiều hành vi.
 
-## Core Idea
+## Ý tưởng cốt lõi
 
-A tagged union (also called a variant, discriminated union, or sum type) pairs a type discriminator with a value payload. At runtime, code inspects the tag to determine which type the value actually is, then dispatches to the correct handler. This is the manual foundation behind TypeScript discriminated unions, Rust enums, and algebraic data types.
+Tagged union (còn gọi variant, discriminated union hoặc sum type) ghép cặp một tag phân biệt kiểu với payload giá trị. Lúc runtime, code kiểm tra tag để xác định kiểu thực tế của giá trị, rồi dispatch tới handler đúng. Đây là nền tảng thủ công đằng sau discriminated union của TypeScript, enum Rust và algebraic data type.
 
 ```text
   TaggedValue
@@ -35,32 +35,32 @@ A tagged union (also called a variant, discriminated union, or sum type) pairs a
 
   Dispatch:
   switch (v.tag) {
-    NUMBER → handle as number
-    STRING → handle as string
-    ARRAY  → recurse into children
-    OBJECT → iterate key-value pairs
+    NUMBER → xử lý như number
+    STRING → xử lý như string
+    ARRAY  → đệ quy vào children
+    OBJECT → lặp cặp key-value
   }
 ```
 
-| Property | Value |
+| Thuộc tính | Giá trị |
 |----------|-------|
-| Memory | Size of tag + size of largest variant |
-| Type safety | Exhaustive switch ensures all cases handled |
-| Extension | Add a new tag + handler (open to extension) |
-| Zero-cost? | In C/Rust: yes (enum tag + union). In JS/Python: object overhead |
+| Bộ nhớ | Kích thước tag + kích thước variant lớn nhất |
+| An toàn kiểu | Switch đầy đủ đảm bảo mọi trường hợp được xử lý |
+| Mở rộng | Thêm tag mới + handler (mở để mở rộng) |
+| Zero-cost? | Trong C/Rust: có (tag enum + union). Trong JS/Python: overhead object |
 
-**Try it yourself** — switch between variant types and see tag-based dispatch in action:
+**Thử ngay** — chuyển giữa các kiểu variant và xem dispatch theo tag hoạt động:
 
 <TaggedUnionViz />
 
-## Production Proof
+## Bằng chứng production
 
-| Project | Source | Usage |
+| Dự án | Nguồn | Cách dùng |
 |---------|--------|-------|
-| Godot Engine | [variant.h#L78-L120](https://github.com/godotengine/godot/blob/ec67cbe92628bdaf979b10594359ba6f02cf8838/core/variant/variant.h#L78-L120) | `Variant::Type` enum (L78-L108) lists 38 types (NIL, BOOL, INT, FLOAT, STRING, VECTOR2, ...). The `Variant` class stores a `Type` tag and a union of all possible values. Every GDScript value is a `Variant` — the engine dispatches operations via the tag. |
-| PyTorch | [ivalue.h#L51-L96](https://github.com/pytorch/pytorch/blob/cef26d1e97fcb9dd61b4471f9bd7fa9a32bd42b9/aten/src/ATen/core/ivalue.h#L51-L96) | `IValue` (Interpreter Value) holds a tag (`Tag` enum: Tensor, Int, Double, Bool, String, List, Dict, etc.) and a `Payload` union. The TorchScript interpreter uses tag-based dispatch for all operations on heterogeneous values. |
+| Godot Engine | [variant.h#L78-L120](https://github.com/godotengine/godot/blob/ec67cbe92628bdaf979b10594359ba6f02cf8838/core/variant/variant.h#L78-L120) | Enum `Variant::Type` (L78-L108) liệt kê 38 kiểu (NIL, BOOL, INT, FLOAT, STRING, VECTOR2, ...). Class `Variant` lưu tag `Type` và union mọi giá trị khả dĩ. Mọi giá trị GDScript là một `Variant` — engine dispatch thao tác qua tag. |
+| PyTorch | [ivalue.h#L51-L96](https://github.com/pytorch/pytorch/blob/cef26d1e97fcb9dd61b4471f9bd7fa9a32bd42b9/aten/src/ATen/core/ivalue.h#L51-L96) | `IValue` (Interpreter Value) giữ tag (enum `Tag`: Tensor, Int, Double, Bool, String, List, Dict, v.v.) và union `Payload`. Interpreter TorchScript dùng dispatch theo tag cho mọi thao tác trên giá trị không đồng nhất. |
 
-## Implementation
+## Triển khai
 
 ::: code-group
 
@@ -182,68 +182,68 @@ def try_add(a: TaggedValue, b: TaggedValue) -> TaggedValue | None:
 
 :::
 
-## Exercises
+## Bài tập
 
-| Level | Exercise | File |
+| Cấp độ | Bài tập | File |
 |-------|----------|------|
-| Basic | Implement tagged values with type dispatch | `exercises/typescript/tagged-union/01-basic.test.ts` |
-| Intermediate | JSON-like value type with nested arrays/objects | `exercises/typescript/tagged-union/02-intermediate.test.ts` |
+| Cơ bản | Triển khai giá trị có tag với dispatch theo kiểu | `exercises/typescript/tagged-union/01-basic.test.ts` |
+| Trung bình | Kiểu giá trị giống JSON với mảng/object lồng | `exercises/typescript/tagged-union/02-intermediate.test.ts` |
 
-Run exercises: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
+Chạy bài tập: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
 
-Exercise files: Rust `exercises/rust/src/tagged_union/mod.rs` · Go `exercises/go/tagged_union/tagged_union_test.go` · Python `exercises/python/tagged_union/test_tagged_union.py`
+File bài tập: Rust `exercises/rust/src/tagged_union/mod.rs` · Go `exercises/go/tagged_union/tagged_union_test.go` · Python `exercises/python/tagged_union/test_tagged_union.py`
 
-## When to Use
+## Khi nào nên dùng
 
-- **Scripting language values** — a single Value type holds numbers, strings, arrays, etc. (Godot Variant, Lua TValue)
-- **Serialization formats** — JSON, MessagePack, Protocol Buffers oneof fields
-- **Compiler IRs** — AST nodes, instruction operands, interpreter values
-- **Configuration systems** — settings that can be string, number, boolean, or list
-- **Database drivers** — column values of varying SQL types in a single interface
+- **Giá trị scripting language** — một kiểu Value duy nhất giữ số, chuỗi, mảng, v.v. (Variant Godot, TValue Lua)
+- **Định dạng serialize** — JSON, MessagePack, oneof field Protocol Buffers
+- **IR compiler** — node AST, toán hạng lệnh, giá trị interpreter
+- **Hệ thống cấu hình** — setting có thể là chuỗi, số, boolean hoặc list
+- **Driver database** — giá trị cột với nhiều kiểu SQL trong một interface
 
-## When NOT to Use
+## Khi nào KHÔNG nên dùng
 
-- **Homogeneous collections** — if everything is the same type, a plain array is simpler
-- **Performance-critical inner loops** — tag dispatch has branch overhead; use concrete types when the type is known statically
-- **Deep hierarchies** — if you need 50+ variants with complex behavior, consider a class hierarchy or trait objects instead
+- **Collection đồng nhất** — nếu mọi thứ cùng kiểu, mảng thường đơn giản hơn
+- **Vòng lặp nội then chốt cho hiệu năng** — dispatch tag có overhead branch; dùng kiểu cụ thể khi kiểu biết tĩnh
+- **Phân cấp sâu** — nếu cần 50+ variant với hành vi phức tạp, cân nhắc phân cấp class hoặc trait object
 
-## More Production Uses
+## Thêm các ứng dụng production
 
-- [V8 Engine](https://github.com/v8/v8/blob/02a623d69f6ba69f513ae2c7aef84b9914fbde51/src/objects/tagged-value.h) — JavaScript values use tagged pointers to distinguish Smis (small integers) from heap objects
-- [SQLite](https://github.com/sqlite/sqlite) — internal `Mem` struct stores type tag + value union for all SQL types
-- [Lua TValue](https://github.com/lua/lua) — every Lua value is a `TValue` with a type tag and `Value` union
-- [GHC Haskell](https://github.com/ghc/ghc) — algebraic data types compile to tagged heap objects
+- [V8 Engine](https://github.com/v8/v8/blob/02a623d69f6ba69f513ae2c7aef84b9914fbde51/src/objects/tagged-value.h) — giá trị JavaScript dùng con trỏ có tag để phân biệt Smi (số nguyên nhỏ) với object heap
+- [SQLite](https://github.com/sqlite/sqlite) — struct `Mem` nội bộ lưu tag kiểu + union giá trị cho mọi kiểu SQL
+- [Lua TValue](https://github.com/lua/lua) — mọi giá trị Lua là một `TValue` với tag kiểu và union `Value`
+- [GHC Haskell](https://github.com/ghc/ghc) — algebraic data type biên dịch thành object heap có tag
 
-## Related Patterns
+## Pattern liên quan
 
-| Pattern | Relationship |
+| Pattern | Quan hệ |
 |---------|-------------|
-| [Vtable](/patterns/vtable/) | Both enable runtime polymorphism — tagged unions via switch, vtables via function pointers |
-| [Bitmask](/patterns/bitmask/) | Bitmask flags can serve as type tags in lightweight tagged union implementations |
-| [Visitor](/patterns/visitor/) | Visitors dispatch on node types, which are often represented as tagged unions |
+| [Vtable](/patterns/vtable/) | Cả hai cho đa hình lúc runtime — tagged union qua switch, vtable qua con trỏ hàm |
+| [Bitmask](/patterns/bitmask/) | Bitmask flag có thể đóng vai tag kiểu trong triển khai tagged union nhẹ |
+| [Visitor](/patterns/visitor/) | Visitor dispatch theo kiểu node, thường biểu diễn dưới dạng tagged union |
 
-## Challenge Questions
+## Câu hỏi thử thách
 
-::: details Q1: You have a tagged union with 4 types. How many bytes does the value occupy in C if the largest variant is 24 bytes?
-**Answer:** The union size equals the largest member: 24 bytes. Add the tag (typically 4 bytes with padding) and you get 28 or 32 bytes total depending on alignment.
+::: details Câu 1: Bạn có tagged union với 4 kiểu. Giá trị chiếm bao nhiêu byte trong C nếu variant lớn nhất 24 byte?
+**Trả lời:** Kích thước union bằng phần tử lớn nhất: 24 byte. Thêm tag (thường 4 byte với padding) và bạn có tổng 28 hoặc 32 byte tuỳ alignment.
 
-Key insight: In a union, all variants share the same memory. The compiler allocates enough space for the largest one. The tag is stored separately (not inside the union), so total size = sizeof(tag) + padding + sizeof(largest_variant).
+Insight then chốt: Trong union, mọi variant chia sẻ cùng bộ nhớ. Compiler cấp phát đủ chỗ cho cái lớn nhất. Tag lưu riêng (không bên trong union), nên tổng size = sizeof(tag) + padding + sizeof(variant_lớn_nhất).
 :::
 
-::: details Q2: TypeScript has discriminated unions built-in. Why would you still implement a tagged union manually?
-**Answer:** TypeScript's discriminated unions only exist at compile time — they're erased to plain JavaScript objects at runtime. If you need runtime type checking (e.g., deserializing JSON from an API, or a plugin system where types aren't known at compile time), you need an explicit tag field that survives into runtime.
+::: details Câu 2: TypeScript có discriminated union sẵn. Sao vẫn triển khai tagged union thủ công?
+**Trả lời:** Discriminated union của TypeScript chỉ tồn tại lúc compile — chúng bị xoá thành object JavaScript thường lúc runtime. Nếu bạn cần kiểm tra kiểu lúc runtime (ví dụ deserialize JSON từ API, hoặc hệ plugin nơi kiểu không biết lúc compile), bạn cần trường tag tường minh sống tới runtime.
 
-Also, when storing heterogeneous values in a database, serialization format, or cross-language boundary, you need a physical tag — TypeScript's type system can't help there.
+Cũng vậy, khi lưu giá trị không đồng nhất trong database, định dạng serialize hoặc ranh giới xuyên ngôn ngữ, bạn cần tag vật lý — hệ kiểu TypeScript không giúp ở đó.
 :::
 
-::: details Q3: Godot's Variant has 38 type tags. What's the risk of adding more tags over time?
-**Answer:** Every function that switches on the tag must handle the new case. If any switch is not exhaustive, you get a runtime error or silent bug. This is the "expression problem" — adding new types is easy (add a tag), but you must update every operation.
+::: details Câu 3: Variant của Godot có 38 tag kiểu. Rủi ro khi thêm nhiều tag theo thời gian là gì?
+**Trả lời:** Mọi hàm switch theo tag phải xử lý trường hợp mới. Nếu switch nào không đầy đủ, bạn gặp lỗi runtime hoặc bug âm thầm. Đây là "expression problem" — thêm kiểu mới dễ (thêm tag), nhưng phải cập nhật mọi thao tác.
 
-Mitigation strategies: (1) Exhaustive switch warnings in the compiler, (2) A default/fallback case, (3) Visitor pattern to centralize dispatch, (4) Rust's `match` enforces exhaustiveness at compile time.
+Chiến lược giảm nhẹ: (1) Cảnh báo switch đầy đủ trong compiler, (2) Trường hợp default/fallback, (3) Pattern visitor để tập trung dispatch, (4) `match` của Rust thực thi đầy đủ lúc compile.
 :::
 
-::: details Q4: What's the difference between a tagged union and a class hierarchy for polymorphism?
-**Answer:** Tagged unions are *closed* — all variants are known upfront and dispatched via a switch. Class hierarchies are *open* — you can add subclasses without modifying existing code, dispatched via vtable.
+::: details Câu 4: Khác biệt giữa tagged union và phân cấp class cho đa hình là gì?
+**Trả lời:** Tagged union *đóng* — mọi variant biết trước và dispatch qua switch. Phân cấp class *mở* — bạn có thể thêm subclass không cần sửa code có sẵn, dispatch qua vtable.
 
-Tradeoffs: Tagged unions make it easy to add new *operations* (just write a new switch). Class hierarchies make it easy to add new *types* (just add a subclass). This is the classic expression problem. Tagged unions are better for data-oriented designs (serialization, interpreters), while class hierarchies suit behavior-oriented designs (UI widgets, game entities).
+Đánh đổi: Tagged union dễ thêm *thao tác* mới (chỉ viết switch mới). Phân cấp class dễ thêm *kiểu* mới (chỉ thêm subclass). Đây là expression problem kinh điển. Tagged union tốt hơn cho thiết kế hướng dữ liệu (serialize, interpreter), trong khi phân cấp class hợp thiết kế hướng hành vi (widget UI, entity game).
 :::
