@@ -1,6 +1,6 @@
 ---
 title: "Pattern: Circuit Breaker"
-description: "Stop calling a failing service by tracking errors and tripping open — fail fast instead of piling up timeouts."
+description: "Ngừng gọi service đang lỗi bằng cách theo dõi lỗi và mở mạch — fail nhanh thay vì chồng chất timeout."
 difficulty: "intermediate"
 ---
 
@@ -8,19 +8,19 @@ difficulty: "intermediate"
 
 <DifficultyBadge />
 
-## One Liner
+## Mô tả một câu
 
-Stop calling a failing service by tracking errors and tripping open — fail fast instead of piling up timeouts.
+Ngừng gọi service đang lỗi bằng cách theo dõi lỗi và mở mạch — fail nhanh thay vì chồng chất timeout.
 
 <DemoBadge />
 
-## Real-World Analogy
+## Tương tự thực tế
 
-An electrical fuse in your home. If too much current flows (repeated failures), the fuse blows and cuts the circuit immediately — protecting the wiring. After cooling down (timeout), you can reset it and try again.
+Cầu chì điện trong nhà bạn. Nếu dòng quá lớn (lỗi lặp lại), cầu chì cháy và cắt mạch ngay — bảo vệ dây. Sau khi nguội (timeout), bạn có thể reset và thử lại.
 
-## Core Idea
+## Ý tưởng cốt lõi
 
-A circuit breaker wraps remote calls with a state machine that has three states. In the **closed** state, calls pass through normally. After a threshold of consecutive failures, the breaker **trips open** and all calls fail immediately without attempting the operation. After a cooldown period, the breaker enters the **half-open** state, allowing one probe call to test if the downstream service has recovered.
+Circuit breaker bọc các cuộc gọi từ xa bằng state machine có ba trạng thái. Ở trạng thái **closed**, cuộc gọi đi qua bình thường. Sau khi đạt ngưỡng lỗi liên tiếp, mạch **mở** và mọi cuộc gọi fail ngay không thử thao tác. Sau khoảng nguội, mạch vào trạng thái **half-open**, cho phép một cuộc gọi probe kiểm tra service downstream đã phục hồi chưa.
 
 ```mermaid
 stateDiagram-v2
@@ -31,31 +31,31 @@ stateDiagram-v2
     HALF_OPEN --> OPEN : probe fails
 ```
 
-| State | Behavior |
+| Trạng thái | Hành vi |
 |-------|----------|
-| CLOSED | Calls pass through. Count consecutive failures. |
-| OPEN | Calls fail immediately (`CircuitOpenError`). Timer running. |
-| HALF_OPEN | Allow one probe call. Success → CLOSED. Failure → OPEN. |
+| CLOSED | Cuộc gọi đi qua. Đếm lỗi liên tiếp. |
+| OPEN | Cuộc gọi fail ngay (`CircuitOpenError`). Timer chạy. |
+| HALF_OPEN | Cho phép một cuộc gọi probe. Thành công → CLOSED. Lỗi → OPEN. |
 
-| Property | Value |
+| Thuộc tính | Giá trị |
 |----------|-------|
-| Call check | O(1) — compare state + failure counter |
-| State transitions | O(1) — atomic state change |
-| States | 3 — Closed, Open, Half-Open |
-| Space | O(1) — counter + timer + state enum |
+| Kiểm tra gọi | O(1) — so state + bộ đếm lỗi |
+| Chuyển state | O(1) — thay đổi state atomic |
+| Trạng thái | 3 — Closed, Open, Half-Open |
+| Bộ nhớ | O(1) — bộ đếm + timer + enum state |
 
-**Try it yourself** — send successes and failures to see the state machine transitions:
+**Thử ngay** — gửi thành công và lỗi để xem chuyển state machine:
 
 <CircuitBreakerViz />
 
-## Production Proof
+## Bằng chứng production
 
-| Project | Source | Usage |
+| Dự án | Nguồn | Cách dùng |
 |---------|--------|-------|
-| Netflix Hystrix | [HystrixCircuitBreaker.java#L138-L289](https://github.com/Netflix/Hystrix/blob/5ce3bc58c38e7ca60ef2fe0e516e390e294ad941/hystrix-core/src/main/java/com/netflix/hystrix/HystrixCircuitBreaker.java#L138-L289) | `HystrixCircuitBreakerImpl` — the canonical circuit breaker. Three-state enum (L142), `markSuccess`/`markNonSuccess` for HALF_OPEN transitions (L204-L224), `attemptExecution` for OPEN→HALF_OPEN via `compareAndSet` after sleep window (L264-L289). Used across Netflix's entire microservice fleet. |
-| Sony gobreaker | [gobreaker.go#L117-L131](https://github.com/sony/gobreaker/blob/fed8e9eb35f9cd3e5c2a67842c924346c3e1fbdd/gobreaker.go#L117-L131) | `CircuitBreaker` struct with state, generation counter, counts, and mutex. `onSuccess`/`onFailure` (L310-L332) drive transitions; generation-based staleness detection (L334-L380) prevents acting on stale state reads. Production use at Sony. |
+| Netflix Hystrix | [HystrixCircuitBreaker.java#L138-L289](https://github.com/Netflix/Hystrix/blob/5ce3bc58c38e7ca60ef2fe0e516e390e294ad941/hystrix-core/src/main/java/com/netflix/hystrix/HystrixCircuitBreaker.java#L138-L289) | `HystrixCircuitBreakerImpl` — circuit breaker chuẩn. Enum 3 trạng thái (L142), `markSuccess`/`markNonSuccess` cho chuyển HALF_OPEN (L204-L224), `attemptExecution` cho OPEN→HALF_OPEN qua `compareAndSet` sau cửa sổ ngủ (L264-L289). Dùng trên toàn bộ microservice của Netflix. |
+| Sony gobreaker | [gobreaker.go#L117-L131](https://github.com/sony/gobreaker/blob/fed8e9eb35f9cd3e5c2a67842c924346c3e1fbdd/gobreaker.go#L117-L131) | Struct `CircuitBreaker` với state, bộ đếm generation, count và mutex. `onSuccess`/`onFailure` (L310-L332) thúc chuyển; phát hiện state cũ dựa trên generation (L334-L380) ngăn hành động trên đọc state cũ. Dùng production tại Sony. |
 
-## Implementation
+## Triển khai
 
 ::: code-group
 
@@ -228,68 +228,68 @@ class CircuitBreaker:
 
 :::
 
-## Exercises
+## Bài tập
 
-| Level | Exercise | File |
+| Cấp độ | Bài tập | File |
 |-------|----------|------|
-| Basic | Implement a circuit breaker with three states | `exercises/typescript/circuit-breaker/01-basic.test.ts` |
-| Intermediate | Circuit breaker with failure rate and rolling window | `exercises/typescript/circuit-breaker/02-intermediate.test.ts` |
+| Cơ bản | Triển khai circuit breaker với 3 trạng thái | `exercises/typescript/circuit-breaker/01-basic.test.ts` |
+| Trung bình | Circuit breaker với tỉ lệ lỗi và cửa sổ trượt | `exercises/typescript/circuit-breaker/02-intermediate.test.ts` |
 
-Run exercises: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
+Chạy bài tập: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
 
-Exercise files: Rust `exercises/rust/src/circuit_breaker/mod.rs` · Go `exercises/go/circuit_breaker/circuit_breaker_test.go` · Python `exercises/python/circuit_breaker/test_circuit_breaker.py`
+File bài tập: Rust `exercises/rust/src/circuit_breaker/mod.rs` · Go `exercises/go/circuit_breaker/circuit_breaker_test.go` · Python `exercises/python/circuit_breaker/test_circuit_breaker.py`
 
-## When to Use
+## Khi nào nên dùng
 
-- **Microservice calls** — prevent cascading failures when a downstream service goes down
-- **Database connections** — stop hammering a database that's overloaded
-- **External APIs** — handle third-party service outages gracefully
-- **Shared resources** — protect any shared resource that can become temporarily unavailable
+- **Cuộc gọi microservice** — chặn lỗi lan truyền khi service downstream sập
+- **Kết nối database** — ngừng đập database đang quá tải
+- **API bên ngoài** — xử lý mất kết nối service bên thứ ba một cách mượt mà
+- **Tài nguyên chia sẻ** — bảo vệ tài nguyên chia sẻ nào có thể tạm thời không khả dụng
 
-## When NOT to Use
+## Khi nào KHÔNG nên dùng
 
-- **In-process calls** — circuit breakers add overhead; use error handling for local function calls
-- **Idempotency not guaranteed** — if retries after half-open can cause duplicates, add deduplication first
-- **Single-consumer systems** — if there's only one caller, backoff/retry is simpler than a full state machine
-- **Fire-and-forget** — if you don't wait for a response, there's nothing to circuit-break
+- **Cuộc gọi trong process** — circuit breaker thêm overhead; dùng xử lý lỗi cho cuộc gọi hàm cục bộ
+- **Không đảm bảo idempotency** — nếu retry sau half-open có thể gây trùng, thêm khử trùng lặp trước
+- **Hệ một consumer** — nếu chỉ một caller, backoff/retry đơn giản hơn state machine đầy đủ
+- **Fire-and-forget** — nếu không đợi response, không có gì để circuit-break
 
-## More Production Uses
+## Thêm các ứng dụng production
 
-- [resilience4j](https://github.com/resilience4j/resilience4j) — Java circuit breaker for Spring/Micronaut
-- [Polly](https://github.com/App-vNext/Polly) — .NET resilience library with circuit breaker policy
-- [Envoy Proxy](https://github.com/envoyproxy/envoy) — outlier detection acts as a distributed circuit breaker
-- [AWS SDK](https://github.com/aws/aws-sdk-js-v3) — retry with circuit-breaking for service endpoints
+- [resilience4j](https://github.com/resilience4j/resilience4j) — circuit breaker Java cho Spring/Micronaut
+- [Polly](https://github.com/App-vNext/Polly) — thư viện phục hồi .NET với chính sách circuit breaker
+- [Envoy Proxy](https://github.com/envoyproxy/envoy) — outlier detection hoạt động như circuit breaker phân tán
+- [AWS SDK](https://github.com/aws/aws-sdk-js-v3) — retry với circuit-breaking cho endpoint service
 
-## Related Patterns
+## Pattern liên quan
 
-| Pattern | Relationship |
+| Pattern | Quan hệ |
 |---------|-------------|
-| [Retry with Exponential Backoff](/patterns/retry-backoff/) | Circuit breaker prevents retries when the service is known to be down |
-| [State Machine](/patterns/state-machine/) | Circuit breaker is a state machine: closed -> open -> half-open |
-| [Rate Limiter (Token Bucket)](/patterns/rate-limiter/) | Both protect services — rate limiter controls throughput, circuit breaker stops failures |
+| [Retry với Exponential Backoff](/patterns/retry-backoff/) | Circuit breaker chặn retry khi service biết đã sập |
+| [State Machine](/patterns/state-machine/) | Circuit breaker là state machine: closed -> open -> half-open |
+| [Rate Limiter (Token Bucket)](/patterns/rate-limiter/) | Cả hai bảo vệ service — rate limiter kiểm soát throughput, circuit breaker chặn lỗi |
 
-## Challenge Questions
+## Câu hỏi thử thách
 
-::: details Q1: Your circuit breaker has a 30-second reset timeout. The downstream service has an average recovery time of 5 seconds. A colleague suggests lowering the timeout to 5 seconds so requests resume faster. What's the tradeoff?
-**Answer:** A shorter timeout means you'll probe the service sooner, but if it hasn't recovered, each failed probe resets the timer and generates additional load on an already-struggling service.
+::: details Câu 1: Circuit breaker của bạn có reset timeout 30 giây. Service downstream có thời gian phục hồi trung bình 5 giây. Đồng nghiệp đề nghị hạ timeout xuống 5 giây để request tiếp tục nhanh hơn. Đánh đổi là gì?
+**Trả lời:** Timeout ngắn hơn nghĩa là bạn probe service sớm hơn, nhưng nếu chưa phục hồi, mỗi probe lỗi reset timer và sinh thêm tải lên service đang vật lộn.
 
-The reset timeout is a tradeoff between recovery speed and protection. If you probe too early and fail, you reopen the circuit and wait another full timeout. Meanwhile, the failed probe adds load to the unhealthy service. A good timeout should be longer than the typical recovery time — 2-3x is common — to give the downstream service breathing room. Some implementations use exponential backoff on the timeout itself.
+Reset timeout là đánh đổi giữa tốc độ phục hồi và bảo vệ. Nếu probe quá sớm và fail, bạn mở lại mạch và chờ thêm timeout đầy đủ. Trong khi đó, probe lỗi thêm tải lên service không khoẻ. Timeout tốt nên dài hơn thời gian phục hồi điển hình — 2-3x phổ biến — để cho service downstream thở. Một số triển khai dùng exponential backoff trên chính timeout.
 :::
 
-::: details Q2: Service A calls Service B, which calls Service C. Service C goes down. Without circuit breakers, what happens to Service A even though it doesn't directly depend on C?
-**Answer:** Service A's threads pile up waiting for Service B, which is itself blocked waiting for Service C — this is a cascading failure.
+::: details Câu 2: Service A gọi Service B, gọi Service C. Service C sập. Không có circuit breaker, chuyện gì với Service A dù không trực tiếp phụ thuộc C?
+**Trả lời:** Thread của Service A chồng chất chờ Service B, mà tự B bị block chờ Service C — đây là lỗi lan truyền.
 
-Each call from A to B occupies a thread (or connection) while B waits for C's timeout. As B's threads exhaust, B starts timing out too, causing A's threads to pile up. Soon A appears down to its own callers. This is exactly why Netflix built Hystrix: a circuit breaker on each service boundary would let B fail fast on C calls and return errors to A immediately, keeping A's threads free. Without it, one downstream failure can topple an entire call chain.
+Mỗi cuộc gọi từ A tới B chiếm một thread (hoặc kết nối) khi B chờ timeout của C. Khi thread của B cạn, B bắt đầu timeout, làm thread của A chồng chất. Sớm A có vẻ sập với caller của chính nó. Đây chính xác lý do Netflix xây Hystrix: circuit breaker trên mỗi ranh giới service sẽ cho B fail nhanh trên cuộc gọi C và trả lỗi cho A ngay, giữ thread của A trống. Không có nó, một lỗi downstream có thể đổ cả chuỗi cuộc gọi.
 :::
 
-::: details Q3: Your circuit breaker enters HALF_OPEN and allows one probe request. But in a high-traffic system, 200 concurrent requests arrive in the same millisecond. All 200 see the state as HALF_OPEN and send probe requests simultaneously. How would you prevent this thundering herd?
-**Answer:** Use an atomic compare-and-swap (CAS) to transition from OPEN to HALF_OPEN, ensuring only one request becomes the probe while all others fail fast.
+::: details Câu 3: Circuit breaker của bạn vào HALF_OPEN và cho phép một request probe. Nhưng trong hệ traffic cao, 200 request đồng thời đến cùng millisecond. Cả 200 thấy state là HALF_OPEN và gửi probe đồng thời. Bạn ngăn thundering herd này thế nào?
+**Trả lời:** Dùng compare-and-swap (CAS) atomic để chuyển từ OPEN sang HALF_OPEN, đảm bảo chỉ một request thành probe trong khi tất cả khác fail nhanh.
 
-Netflix Hystrix solves this with `compareAndSet` on the state flag — exactly one thread wins the CAS and sends the probe. Sony's gobreaker uses a mutex with a generation counter for similar single-probe guarantees. The key insight is that HALF_OPEN is not a state you "read" passively — the transition to it should be an atomic operation that grants probe rights to exactly one caller.
+Netflix Hystrix giải bằng `compareAndSet` trên cờ state — chính xác một thread thắng CAS và gửi probe. gobreaker của Sony dùng mutex với bộ đếm generation cho đảm bảo probe đơn tương tự. Insight then chốt là HALF_OPEN không phải state bạn "đọc" thụ động — chuyển sang nó nên là thao tác atomic cấp quyền probe cho chính xác một caller.
 :::
 
-::: details Q4: Your team uses a circuit breaker for database calls. A developer notices the breaker trips open during a routine database migration that causes 5 seconds of elevated latency but zero actual errors. Should the circuit breaker be tracking latency, not just errors?
-**Answer:** Yes, but carefully. Latency-based tripping protects callers from slow responses, but you need distinct thresholds for "slow" vs "failed" to avoid false trips during normal variance.
+::: details Câu 4: Team bạn dùng circuit breaker cho cuộc gọi database. Một dev nhận thấy breaker mở khi migration database thường gây 5 giây độ trễ tăng nhưng không lỗi thực sự. Circuit breaker có nên theo dõi độ trễ, không chỉ lỗi?
+**Trả lời:** Có, nhưng cẩn thận. Mở dựa trên độ trễ bảo vệ caller khỏi response chậm, nhưng bạn cần ngưỡng riêng cho "chậm" vs "lỗi" để tránh mở sai khi biến động bình thường.
 
-A request that takes 10 seconds and eventually succeeds still ties up a thread for 10 seconds. In a thread-pool model, slow responses are functionally equivalent to failures because they exhaust capacity. Hystrix tracked both errors and timeouts as failures. The nuance is choosing the latency threshold: set it too low and normal P99 variance trips the breaker; set it too high and it provides no protection.
+Request mất 10 giây và cuối cùng thành công vẫn giữ một thread 10 giây. Trong mô hình thread-pool, response chậm tương đương lỗi vì chúng vắt kiệt capacity. Hystrix theo dõi cả lỗi và timeout như lỗi. Sắc thái là chọn ngưỡng độ trễ: đặt quá thấp và biến động P99 bình thường mở breaker; đặt quá cao và nó không bảo vệ gì.
 :::
