@@ -1,6 +1,6 @@
 ---
 title: "Pattern: Logical Clock / Epoch"
-description: "A monotonically increasing counter that orders events without wall-clock time — enabling consistent snapshots and staleness detection."
+description: "Bộ đếm tăng đơn điệu sắp xếp sự kiện không cần wall-clock — cho phép snapshot nhất quán và phát hiện cũ."
 difficulty: "advanced"
 ---
 
@@ -8,19 +8,19 @@ difficulty: "advanced"
 
 <DifficultyBadge />
 
-## One Liner
+## Mô tả một câu
 
-A monotonically increasing counter that orders events without wall-clock time — enabling consistent snapshots and staleness detection.
+Bộ đếm tăng đơn điệu sắp xếp sự kiện không cần wall-clock — cho phép snapshot nhất quán và phát hiện cũ.
 
 <DemoBadge />
 
-## Real-World Analogy
+## Tương tự thực tế
 
-Numbering messages in a group chat where everyone is in different time zones. Instead of using wall-clock time (which differs), you stamp each message with a sequence number that respects 'I saw your message before sending mine' — causal order, not clock order.
+Đánh số thông điệp trong group chat nơi mọi người ở múi giờ khác. Thay vì dùng wall-clock (khác nhau), bạn đóng dấu mỗi thông điệp bằng số thứ tự tôn trọng 'tôi thấy thông điệp của bạn trước khi gửi của tôi' — thứ tự nhân quả, không phải đồng hồ.
 
-## Core Idea
+## Ý tưởng cốt lõi
 
-Wall clocks are unreliable in distributed systems — they drift, jump on NTP sync, and differ across machines. A logical clock is a simple integer that only goes up. Lamport's rule: increment on local event, take `max(local, remote) + 1` on message receive. This guarantees: if event A causally precedes event B, then `clock(A) < clock(B)`.
+Wall clock không tin cậy trong hệ phân tán — chúng trôi, nhảy khi đồng bộ NTP và khác giữa máy. Logical clock là một số nguyên đơn giản chỉ tăng. Quy tắc Lamport: tăng khi event local, lấy `max(local, remote) + 1` khi nhận thông điệp. Điều này đảm bảo: nếu event A có nhân quả trước event B, thì `clock(A) < clock(B)`.
 
 ```text
   Process P1          Process P2
@@ -34,28 +34,28 @@ Wall clocks are unreliable in distributed systems — they drift, jump on NTP sy
   max(2, 4)+1 = 5
   tick → 6
 
-  Causal order: P1:1 → P1:2 → P2:3 → P2:4 → P1:5 → P1:6
+  Thứ tự nhân quả: P1:1 → P1:2 → P2:3 → P2:4 → P1:5 → P1:6
 ```
 
-| Property | Value |
+| Thuộc tính | Giá trị |
 |----------|-------|
-| Increment | O(1) — counter++ |
-| Receive | O(1) — max + 1 |
-| Guarantees | If A → B (causally), then clock(A) < clock(B) |
-| Limitation | Converse is NOT true: clock(A) < clock(B) does not imply A → B |
+| Tăng | O(1) — counter++ |
+| Nhận | O(1) — max + 1 |
+| Đảm bảo | Nếu A → B (nhân quả), thì clock(A) < clock(B) |
+| Giới hạn | Đảo lại KHÔNG đúng: clock(A) < clock(B) không hàm ý A → B |
 
-**Try it yourself** — perform local events and send messages between processes to see Lamport clocks:
+**Thử ngay** — thực hiện event local và gửi thông điệp giữa process để xem Lamport clock:
 
 <LogicalClockViz />
 
-## Production Proof
+## Bằng chứng production
 
-| Project | Source | Usage |
+| Dự án | Nguồn | Cách dùng |
 |---------|--------|-------|
-| etcd | [kvstore.go#L53-L72](https://github.com/etcd-io/etcd/blob/e9b62f804766edf77cfa918d600cb6fb2c56b401/server/storage/mvcc/kvstore.go#L53-L72) | `store` struct (L53) with `currentRev int64` (L72) — a monotonic revision counter. Incremented in [kvstore_txn.go#L214](https://github.com/etcd-io/etcd/blob/e9b62f804766edf77cfa918d600cb6fb2c56b401/server/storage/mvcc/kvstore_txn.go#L214) (`tw.s.currentRev++`) on every write transaction. Watches and snapshots use this revision for consistent reads — "give me everything after revision 42." |
-| LevelDB | [dbformat.h#L62-L66](https://github.com/google/leveldb/blob/7ee830d02b623e8ffe0b95d59a74db1e58da04c5/db/dbformat.h#L62-L66) | `SequenceNumber` (L62) is a `uint64_t` incremented on every write operation. `kMaxSequenceNumber` (L66) reserves 8 bits for packing type info alongside the sequence. Used to order writes in the WAL, determine snapshot visibility, and resolve key conflicts during compaction. |
+| etcd | [kvstore.go#L53-L72](https://github.com/etcd-io/etcd/blob/e9b62f804766edf77cfa918d600cb6fb2c56b401/server/storage/mvcc/kvstore.go#L53-L72) | Struct `store` (L53) với `currentRev int64` (L72) — bộ đếm revision đơn điệu. Tăng trong [kvstore_txn.go#L214](https://github.com/etcd-io/etcd/blob/e9b62f804766edf77cfa918d600cb6fb2c56b401/server/storage/mvcc/kvstore_txn.go#L214) (`tw.s.currentRev++`) mỗi transaction ghi. Watch và snapshot dùng revision này cho đọc nhất quán — "cho tôi mọi thứ sau revision 42." |
+| LevelDB | [dbformat.h#L62-L66](https://github.com/google/leveldb/blob/7ee830d02b623e8ffe0b95d59a74db1e58da04c5/db/dbformat.h#L62-L66) | `SequenceNumber` (L62) là `uint64_t` tăng mỗi thao tác ghi. `kMaxSequenceNumber` (L66) dành 8 bit để đóng gói info kiểu cùng sequence. Dùng để sắp xếp ghi trong WAL, xác định hiển thị snapshot và giải xung đột key khi compaction. |
 
-## Implementation
+## Triển khai
 
 ::: code-group
 
@@ -63,23 +63,23 @@ Wall clocks are unreliable in distributed systems — they drift, jump on NTP sy
 class LamportClock {
   private time = 0;
 
-  /** Increment the clock for a local event. */
+  /** Tăng clock cho event local. */
   tick(): void {
     this.time++;
   }
 
-  /** Record a send event and return the timestamp. */
+  /** Ghi event gửi và trả timestamp. */
   send(): number {
     this.time++;
     return this.time;
   }
 
-  /** Receive a message with a remote timestamp. */
+  /** Nhận thông điệp với timestamp remote. */
   receive(remoteTimestamp: number): void {
     this.time = Math.max(this.time, remoteTimestamp) + 1;
   }
 
-  /** Current clock value. */
+  /** Giá trị clock hiện tại. */
   now(): number {
     return this.time;
   }
@@ -182,70 +182,70 @@ class LamportClock:
 
 :::
 
-## Exercises
+## Bài tập
 
-| Level | Exercise | File |
+| Cấp độ | Bài tập | File |
 |-------|----------|------|
-| Basic | Implement a Lamport clock with tick/send/receive | `exercises/typescript/logical-clock/01-basic.test.ts` |
-| Intermediate | Build a version vector for multi-node causality tracking | `exercises/typescript/logical-clock/02-intermediate.test.ts` |
+| Cơ bản | Triển khai Lamport clock với tick/send/receive | `exercises/typescript/logical-clock/01-basic.test.ts` |
+| Trung bình | Xây version vector cho theo dõi nhân quả đa node | `exercises/typescript/logical-clock/02-intermediate.test.ts` |
 
-Run exercises: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
+Chạy bài tập: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
 
-Exercise files: Rust `exercises/rust/src/logical_clock/mod.rs` · Go `exercises/go/logical_clock/logical_clock_test.go` · Python `exercises/python/logical_clock/test_logical_clock.py`
+File bài tập: Rust `exercises/rust/src/logical_clock/mod.rs` · Go `exercises/go/logical_clock/logical_clock_test.go` · Python `exercises/python/logical_clock/test_logical_clock.py`
 
-## When to Use
+## Khi nào nên dùng
 
-- **Database revision tracking** — etcd, CockroachDB, and Spanner use monotonic revisions for consistent snapshots and watch APIs
-- **Cache invalidation** — epoch-based invalidation: "if your cached epoch < current epoch, your data is stale"
-- **Distributed event ordering** — ordering messages across nodes without synchronized clocks (message queues, event sourcing)
-- **MVCC (multi-version concurrency control)** — each transaction gets a sequence number; readers see a consistent snapshot at a point-in-time
-- **Optimistic concurrency** — "update this row only if the version matches" (compare-and-swap with logical timestamps)
+- **Theo dõi revision database** — etcd, CockroachDB và Spanner dùng revision đơn điệu cho snapshot nhất quán và API watch
+- **Vô hiệu cache** — vô hiệu dựa trên epoch: "nếu epoch cache của bạn < epoch hiện tại, dữ liệu của bạn cũ"
+- **Sắp xếp event phân tán** — sắp xếp thông điệp qua node không cần đồng bộ clock (message queue, event sourcing)
+- **MVCC (multi-version concurrency control)** — mỗi transaction nhận sequence number; reader thấy snapshot nhất quán tại một thời điểm
+- **Concurrency lạc quan** — "cập nhật row này chỉ nếu version khớp" (compare-and-swap với timestamp logic)
 
-## When NOT to Use
+## Khi nào KHÔNG nên dùng
 
-- **Wall-clock time is needed** — if you need "this happened at 2:30 PM" for user-facing timestamps, a logical clock gives you ordering but not real time. Use Hybrid Logical Clocks (HLC) or TrueTime.
-- **Detecting concurrent events** — a Lamport clock cannot determine if two events are concurrent or causally related when `clock(A) < clock(B)`. You need vector clocks for that.
-- **Single-process sequential code** — if everything runs in one thread with no distribution, a simple counter or array index suffices. The Lamport machinery adds nothing.
+- **Cần wall-clock** — nếu bạn cần "này xảy ra lúc 14:30" cho timestamp hướng user, logical clock cho thứ tự nhưng không phải thời gian thật. Dùng Hybrid Logical Clock (HLC) hoặc TrueTime.
+- **Phát hiện event đồng thời** — Lamport clock không xác định được hai event đồng thời hay liên quan nhân quả khi `clock(A) < clock(B)`. Bạn cần vector clock cho điều đó.
+- **Code tuần tự một process** — nếu mọi thứ chạy trong một thread không phân tán, bộ đếm đơn giản hoặc index mảng đủ. Bộ máy Lamport không thêm gì.
 
-## More Production Uses
+## Thêm các ứng dụng production
 
-- [CockroachDB](https://github.com/cockroachdb/cockroach) — Hybrid Logical Clock (HLC) combining wall clock + logical counter for serializable transactions
-- [Amazon DynamoDB](https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf) — vector clocks for conflict detection across replicas
-- [Kafka](https://github.com/apache/kafka) — offsets as monotonic logical positions in a partition log
-- [Raft consensus](https://github.com/etcd-io/raft) — `term` is a logical epoch; higher term wins leader election
+- [CockroachDB](https://github.com/cockroachdb/cockroach) — Hybrid Logical Clock (HLC) kết hợp wall clock + bộ đếm logic cho transaction serializable
+- [Amazon DynamoDB](https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf) — vector clock cho phát hiện xung đột qua replica
+- [Kafka](https://github.com/apache/kafka) — offset là vị trí logic đơn điệu trong log partition
+- [Raft consensus](https://github.com/etcd-io/raft) — `term` là epoch logic; term cao hơn thắng bầu cử leader
 
-## Related Patterns
+## Pattern liên quan
 
-| Pattern | Relationship |
+| Pattern | Quan hệ |
 |---------|-------------|
-| [MVCC (Multi-Version Concurrency Control)](/patterns/mvcc/) | MVCC uses logical timestamps as version identifiers |
-| [Write-Ahead Log (WAL)](/patterns/write-ahead-log/) | WAL entries are ordered by logical clock sequence numbers |
-| [Checkpointing](/patterns/checkpointing/) | Checkpoints are taken at specific logical clock positions |
+| [MVCC (Multi-Version Concurrency Control)](/patterns/mvcc/) | MVCC dùng timestamp logic làm định danh phiên bản |
+| [Write-Ahead Log (WAL)](/patterns/write-ahead-log/) | Entry WAL sắp xếp theo sequence number logical clock |
+| [Checkpointing](/patterns/checkpointing/) | Checkpoint được lấy tại vị trí logical clock cụ thể |
 
-## Challenge Questions
+## Câu hỏi thử thách
 
-::: details Q1: Process A has Lamport clock 5, Process B has clock 3. Can you determine which event happened first?
-**Answer:** No. Lamport clocks only guarantee: if A causally precedes B, then `clock(A) < clock(B)`. The converse is NOT guaranteed.
+::: details Câu 1: Process A có Lamport clock 5, Process B có clock 3. Có thể xác định event nào xảy ra trước không?
+**Trả lời:** Không. Lamport clock chỉ đảm bảo: nếu A có nhân quả trước B, thì `clock(A) < clock(B)`. Đảo lại KHÔNG đảm bảo.
 
-`clock(A) = 5 > clock(B) = 3` does NOT mean A happened after B. They could be concurrent events on different machines that never communicated. To detect concurrency, you need a **vector clock** — one counter per node, with component-wise comparison.
+`clock(A) = 5 > clock(B) = 3` KHÔNG nghĩa A xảy ra sau B. Chúng có thể là event đồng thời trên máy khác không giao tiếp. Để phát hiện đồng thời, bạn cần **vector clock** — một bộ đếm mỗi node, với so sánh theo thành phần.
 :::
 
-::: details Q2: How does a Hybrid Logical Clock (HLC) improve on a pure Lamport clock?
-**Answer:** An HLC combines a physical timestamp (wall clock) with a logical counter. The physical part gives you real-time proximity — "this happened around 2:30 PM." The logical part breaks ties and maintains the Lamport guarantee.
+::: details Câu 2: Hybrid Logical Clock (HLC) cải tiến Lamport clock thuần thế nào?
+**Trả lời:** HLC kết hợp timestamp vật lý (wall clock) với bộ đếm logic. Phần vật lý cho gần thời gian thật — "này xảy ra khoảng 14:30." Phần logic phá thế cờ và duy trì đảm bảo Lamport.
 
-Rule: `hlc = max(local_wall_clock, local_hlc, remote_hlc)`. If the wall clock advances, the logical part resets. If the wall clock is behind (NTP hasn't caught up), the logical part increments.
+Quy tắc: `hlc = max(local_wall_clock, local_hlc, remote_hlc)`. Nếu wall clock tiến, phần logic reset. Nếu wall clock chậm (NTP chưa bắt kịp), phần logic tăng.
 
-CockroachDB uses HLC because it needs both: causal ordering for consistency AND real-time bounds for transaction deadlines. A pure Lamport clock gives ordering but the numbers are meaningless as time. A pure wall clock gives time but can go backward.
+CockroachDB dùng HLC vì cần cả hai: thứ tự nhân quả cho consistency VÀ giới hạn thời gian thật cho deadline transaction. Lamport thuần cho thứ tự nhưng số vô nghĩa như thời gian. Wall clock thuần cho thời gian nhưng có thể đi ngược.
 :::
 
-::: details Q3: Your cache uses an epoch counter for invalidation. A server restarts and the epoch resets to 0. What breaks?
-**Answer:** Stale cache entries appear valid. A client with cached epoch 5 sees the server's epoch 0 and might incorrectly conclude it has newer data (or, depending on the protocol, force a full re-fetch).
+::: details Câu 3: Cache của bạn dùng bộ đếm epoch để vô hiệu. Server restart và epoch reset về 0. Hỏng gì?
+**Trả lời:** Entry cache cũ trông hợp lệ. Client có cache epoch 5 thấy server epoch 0 và có thể kết luận sai nó có dữ liệu mới hơn (hoặc tuỳ protocol, buộc re-fetch đầy đủ).
 
-Solutions: (1) persist the epoch to disk and restore on restart, (2) use a combination of server ID + epoch so restarts are distinguishable, (3) use a timestamp-based epoch that only increases. etcd solves this with persistent revision + a member ID that changes on rejoin.
+Giải pháp: (1) lưu epoch ra đĩa và khôi phục khi restart, (2) dùng kết hợp ID server + epoch để restart phân biệt được, (3) dùng epoch dựa trên timestamp chỉ tăng. etcd giải bằng revision bền vững + ID member đổi khi rejoin.
 :::
 
-::: details Q4: You're building an event sourcing system. Should you use Lamport clocks or sequence numbers as event IDs?
-**Answer:** Sequence numbers are better for a single-writer event store. A Lamport clock adds unnecessary complexity when there's only one source of events — a simple auto-incrementing integer is a perfectly valid logical clock.
+::: details Câu 4: Bạn đang xây hệ event sourcing. Nên dùng Lamport clock hay sequence number làm event ID?
+**Trả lời:** Sequence number tốt hơn cho event store single-writer. Lamport clock thêm phức tạp không cần khi chỉ một nguồn event — auto-incrementing integer đơn giản là logical clock hoàn toàn hợp lệ.
 
-Lamport clocks shine when multiple independent writers exist (distributed systems). For single-writer: use a sequence number. For multi-writer with one coordinating node: use a centralized sequence (like Kafka partition offsets). For truly distributed multi-writer: use Lamport or vector clocks. Match the tool to the distribution model.
+Lamport clock toả sáng khi nhiều writer độc lập tồn tại (hệ phân tán). Cho single-writer: dùng sequence number. Cho multi-writer với một node phối hợp: dùng sequence tập trung (như offset partition Kafka). Cho multi-writer thực sự phân tán: dùng Lamport hoặc vector clock. Match công cụ với mô hình phân tán.
 :::
