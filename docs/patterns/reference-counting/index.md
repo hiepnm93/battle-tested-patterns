@@ -1,6 +1,6 @@
 ---
 title: "Pattern: Reference Counting"
-description: "Track owners via atomic counter, auto-cleanup at zero — deterministic resource lifetime without garbage collection."
+description: "Theo dõi chủ sở hữu qua bộ đếm atomic, tự dọn dẹp khi về 0 — vòng đời tài nguyên xác định không cần garbage collection."
 difficulty: "beginner"
 ---
 
@@ -8,19 +8,19 @@ difficulty: "beginner"
 
 <DifficultyBadge />
 
-## One Liner
+## Mô tả một câu
 
-Track owners via atomic counter, auto-cleanup at zero — deterministic resource lifetime without garbage collection.
+Theo dõi chủ sở hữu qua bộ đếm atomic, tự dọn dẹp khi về 0 — vòng đời tài nguyên xác định không cần garbage collection.
 
 <DemoBadge />
 
-## Real-World Analogy
+## Tương tự thực tế
 
-A shared Netflix account. You keep track of how many people are actively using it. When the last person cancels, the subscription is terminated. No background check needed — the count reaching zero is the signal.
+Tài khoản Netflix chung. Bạn theo dõi bao nhiêu người đang dùng. Khi người cuối cùng huỷ, subscription chấm dứt. Không cần kiểm tra nền — đếm về 0 là tín hiệu.
 
-## Core Idea
+## Ý tưởng cốt lõi
 
-Reference counting assigns each shared resource a counter. Every new owner (clone) increments it; every release (drop) decrements it. When the counter reaches zero, the resource is immediately cleaned up — no GC pause, no finalizer queue, fully deterministic.
+Reference counting gán mỗi tài nguyên chia sẻ một bộ đếm. Mỗi chủ sở hữu mới (clone) tăng nó; mỗi giải phóng (drop) giảm nó. Khi bộ đếm về 0, tài nguyên được dọn dẹp ngay — không pause GC, không queue finalizer, hoàn toàn xác định.
 
 ```text
   ┌────────────┐
@@ -53,25 +53,25 @@ Reference counting assigns each shared resource a counter. Every new owner (clon
   └────────────┘
 ```
 
-| Property | Value |
+| Thuộc tính | Giá trị |
 |----------|-------|
-| Clone | O(1) — increment counter |
-| Drop | O(1) — decrement counter, conditionally cleanup |
-| Cleanup trigger | Deterministic — exactly when last owner drops |
-| Thread safety | Requires atomic operations (or mutex) for multi-threaded use |
+| Clone | O(1) — tăng bộ đếm |
+| Drop | O(1) — giảm bộ đếm, dọn dẹp có điều kiện |
+| Kích hoạt dọn dẹp | Xác định — chính xác khi chủ cuối drop |
+| Thread safety | Cần thao tác atomic (hoặc mutex) cho dùng đa luồng |
 
-**Try it yourself** — drop references to decrement ref counts and watch objects get freed at rc=0:
+**Thử ngay** — drop reference để giảm ref count và xem object được giải phóng khi rc=0:
 
 <ReferenceCountingViz />
 
-## Production Proof
+## Bằng chứng production
 
-| Project | Source | Usage |
+| Dự án | Nguồn | Cách dùng |
 |---------|--------|-------|
-| CPython | [refcount.h#L255-L310](https://github.com/python/cpython/blob/ff64d8de66ab7f8e56b5d410796a7d76c955280c/Include/refcount.h#L255-L310) | `Py_INCREF` (L255-L310) is the inline function that increments `ob_refcnt`. `Py_DECREF` (L417-L430) decrements and calls `_Py_Dealloc` at zero. Every Python object carries `ob_refcnt` in `PyObject` ([object.h#L127-L150](https://github.com/python/cpython/blob/ff64d8de66ab7f8e56b5d410796a7d76c955280c/Include/object.h#L127-L150)). This is the primary memory management mechanism — GC only exists to break reference cycles. |
-| Rust std | [sync.rs#L269-L276](https://github.com/rust-lang/rust/blob/ab26b175979ee7b2cb3302dce204b99df96f7efb/library/alloc/src/sync.rs#L269-L276) | `Arc<T>` (Atomic Reference Counted) struct at L269. `Drop` impl (L2799-L2875) calls `fetch_sub(1, Release)` on strong count, Acquire fence, then `drop_slow()` at zero. Used pervasively across Tokio, Actix, and OS-level Rust code. |
+| CPython | [refcount.h#L255-L310](https://github.com/python/cpython/blob/ff64d8de66ab7f8e56b5d410796a7d76c955280c/Include/refcount.h#L255-L310) | `Py_INCREF` (L255-L310) là hàm inline tăng `ob_refcnt`. `Py_DECREF` (L417-L430) giảm và gọi `_Py_Dealloc` khi về 0. Mọi object Python mang `ob_refcnt` trong `PyObject` ([object.h#L127-L150](https://github.com/python/cpython/blob/ff64d8de66ab7f8e56b5d410796a7d76c955280c/Include/object.h#L127-L150)). Đây là cơ chế quản lý bộ nhớ chính — GC chỉ tồn tại để phá chu trình tham chiếu. |
+| Stdlib Rust | [sync.rs#L269-L276](https://github.com/rust-lang/rust/blob/ab26b175979ee7b2cb3302dce204b99df96f7efb/library/alloc/src/sync.rs#L269-L276) | Struct `Arc<T>` (Atomic Reference Counted) tại L269. Impl `Drop` (L2799-L2875) gọi `fetch_sub(1, Release)` trên strong count, fence Acquire, rồi `drop_slow()` khi về 0. Dùng khắp Tokio, Actix và code Rust cấp OS. |
 
-## Implementation
+## Triển khai
 
 ::: code-group
 
@@ -94,7 +94,7 @@ class RefCounted<T> {
     this.owned = true;
   }
 
-  /** Create a new owner sharing the same value. */
+  /** Tạo chủ mới chia sẻ cùng giá trị. */
   clone(): RefCounted<T> {
     if (!this.owned) throw new Error('Cannot clone a dropped reference');
     this.inner.count++;
@@ -104,9 +104,9 @@ class RefCounted<T> {
     return cloned;
   }
 
-  /** Release this owner's reference. Triggers cleanup when count hits 0. */
+  /** Giải phóng reference của chủ này. Kích hoạt cleanup khi count = 0. */
   drop(): void {
-    if (!this.owned) return; // double-drop is a no-op
+    if (!this.owned) return; // double-drop là no-op
     this.owned = false;
     this.inner.count--;
     if (this.inner.count === 0 && !this.inner.dropped) {
@@ -193,7 +193,7 @@ func (rc *RefCounted[T]) Clone() *RefCounted[T] {
 	rc.mu.Lock()
 	defer rc.mu.Unlock()
 	rc.count++
-	return rc // same pointer, shared state
+	return rc // cùng con trỏ, state chia sẻ
 }
 
 func (rc *RefCounted[T]) Drop() {
@@ -230,7 +230,7 @@ class RefCounted(Generic[T]):
             raise RuntimeError("Cannot clone a dropped reference")
         self._count += 1
         copy = object.__new__(RefCounted)
-        # Share internal state by reference
+        # Chia sẻ state nội bộ qua reference
         copy.__dict__ = self.__dict__
         copy._owned = True
         return copy
@@ -257,70 +257,70 @@ class RefCounted(Generic[T]):
 
 :::
 
-## Exercises
+## Bài tập
 
-| Level | Exercise | File |
+| Cấp độ | Bài tập | File |
 |-------|----------|------|
-| Basic | Implement a ref-counted value with clone/drop and cleanup callback | `exercises/typescript/reference-counting/01-basic.test.ts` |
-| Intermediate | Extend with weak references that don't prevent cleanup | `exercises/typescript/reference-counting/02-intermediate.test.ts` |
+| Cơ bản | Triển khai giá trị ref-counted với clone/drop và callback cleanup | `exercises/typescript/reference-counting/01-basic.test.ts` |
+| Trung bình | Mở rộng với weak reference không ngăn cleanup | `exercises/typescript/reference-counting/02-intermediate.test.ts` |
 
-Run exercises: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
+Chạy bài tập: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
 
-Exercise files: Rust `exercises/rust/src/reference_counting/mod.rs` · Go `exercises/go/reference_counting/reference_counting_test.go` · Python `exercises/python/reference_counting/test_reference_counting.py`
+File bài tập: Rust `exercises/rust/src/reference_counting/mod.rs` · Go `exercises/go/reference_counting/reference_counting_test.go` · Python `exercises/python/reference_counting/test_reference_counting.py`
 
-## When to Use
+## Khi nào nên dùng
 
-- **Shared ownership with deterministic cleanup** — multiple parts of code need the same resource, and you need it freed the moment the last user is done (file handles, GPU buffers, database connections)
-- **Avoiding GC pauses** — real-time systems (games, audio) where stop-the-world GC is unacceptable
-- **Interop between languages** — CPython's refcount lets C extensions manage Python objects naturally; COM uses `AddRef`/`Release` across DLL boundaries
-- **Short-lived shared state** — when objects are mostly owned by one place but occasionally shared briefly (Rust's `Rc`/`Arc` pattern)
+- **Sở hữu chung với dọn dẹp xác định** — nhiều phần code cần cùng tài nguyên, và bạn cần nó giải phóng ngay khi người dùng cuối xong (file handle, GPU buffer, kết nối database)
+- **Tránh pause GC** — hệ realtime (game, audio) nơi stop-the-world GC không chấp nhận được
+- **Interop giữa ngôn ngữ** — refcount của CPython cho extension C quản lý object Python tự nhiên; COM dùng `AddRef`/`Release` qua ranh giới DLL
+- **State chia sẻ sống ngắn** — khi object chủ yếu sở hữu bởi một nơi nhưng thỉnh thoảng chia sẻ ngắn (pattern `Rc`/`Arc` của Rust)
 
-## When NOT to Use
+## Khi nào KHÔNG nên dùng
 
-- **Cyclic data structures** — parent-child cycles (e.g., doubly linked lists, graph nodes) leak because the count never reaches zero. Use weak references or a tracing GC.
-- **High-contention sharing** — if many threads constantly clone/drop the same object, the atomic counter becomes a cache-line bottleneck. Consider epoch-based reclamation or hazard pointers.
-- **Bulk allocation patterns** — if you allocate/free thousands of small objects, per-object counters add overhead. Use arena allocation instead.
+- **Cấu trúc dữ liệu chu trình** — chu trình cha-con (ví dụ doubly linked list, node đồ thị) rò vì count không bao giờ về 0. Dùng weak reference hoặc GC tracing.
+- **Chia sẻ tranh chấp cao** — nếu nhiều thread liên tục clone/drop cùng object, bộ đếm atomic trở thành điểm nghẽn cache-line. Cân nhắc epoch-based reclamation hoặc hazard pointer.
+- **Mẫu cấp phát hàng loạt** — nếu bạn cấp/giải phóng hàng nghìn object nhỏ, bộ đếm mỗi object thêm overhead. Dùng arena allocation.
 
-## More Production Uses
+## Thêm các ứng dụng production
 
-- [Swift ARC](https://github.com/apple/swift) — Swift's entire memory model is built on automatic reference counting (compiler-inserted retain/release)
-- [COM IUnknown](https://learn.microsoft.com/en-us/windows/win32/api/unknwn/nn-unknwn-iunknown) — `AddRef`/`Release` across every COM object in Windows
-- [Linux kernel kobject](https://github.com/torvalds/linux/blob/acb7500801e98639f6d8c2d796ed9f64cba83d3a/lib/kobject.c) — `kref` provides reference counting for kernel objects
-- [Objective-C ARC](https://clang.llvm.org/docs/AutomaticReferenceCounting.html) — compiler-managed `retain`/`release` calls
+- [Swift ARC](https://github.com/apple/swift) — toàn bộ mô hình bộ nhớ của Swift xây trên automatic reference counting (retain/release do compiler chèn)
+- [COM IUnknown](https://learn.microsoft.com/en-us/windows/win32/api/unknwn/nn-unknwn-iunknown) — `AddRef`/`Release` qua mọi object COM trong Windows
+- [Linux kernel kobject](https://github.com/torvalds/linux/blob/acb7500801e98639f6d8c2d796ed9f64cba83d3a/lib/kobject.c) — `kref` cung cấp reference counting cho object kernel
+- [Objective-C ARC](https://clang.llvm.org/docs/AutomaticReferenceCounting.html) — gọi `retain`/`release` do compiler quản lý
 
-## Related Patterns
+## Pattern liên quan
 
-| Pattern | Relationship |
+| Pattern | Quan hệ |
 |---------|-------------|
-| [Copy-on-Write (CoW)](/patterns/copy-on-write/) | Reference counting determines when a CoW value needs to be copied |
-| [Object Pool](/patterns/object-pool/) | Pools provide an alternative to reference counting — return objects instead of freeing |
-| [Tombstone](/patterns/tombstone/) | Tombstones defer cleanup like reference counting defers deallocation |
-| [Arena Allocator](/patterns/arena-allocator/) | Arenas avoid per-object reference counting by freeing everything at scope end |
+| [Copy-on-Write (CoW)](/patterns/copy-on-write/) | Reference counting xác định khi nào giá trị CoW cần copy |
+| [Object Pool](/patterns/object-pool/) | Pool cung cấp thay thế cho reference counting — trả object thay vì giải phóng |
+| [Tombstone](/patterns/tombstone/) | Tombstone hoãn cleanup như reference counting hoãn giải phóng |
+| [Arena Allocator](/patterns/arena-allocator/) | Arena tránh reference counting mỗi object bằng cách giải phóng tất cả khi phạm vi kết thúc |
 
-## Challenge Questions
+## Câu hỏi thử thách
 
-::: details Q1: Object A references B, and B references A. Both have refcount 2. You drop your handle to A. What happens?
-**Answer:** Memory leak. Dropping your handle to A decrements A's refcount to 1 (B still references A). A's refcount never reaches 0, so A is never freed. Since A is never freed, it never drops its reference to B, so B's refcount stays at 1 forever.
+::: details Câu 1: Object A tham chiếu B, và B tham chiếu A. Cả hai có refcount 2. Bạn drop handle của bạn với A. Chuyện gì xảy ra?
+**Trả lời:** Rò bộ nhớ. Drop handle của bạn với A giảm refcount của A xuống 1 (B vẫn tham chiếu A). Refcount của A không bao giờ về 0, nên A không bao giờ được giải phóng. Vì A không bao giờ giải phóng, nó không bao giờ drop reference tới B, nên refcount của B giữ 1 mãi.
 
-This is the **reference cycle problem** — the fundamental weakness of reference counting. Solutions: (1) use weak references for back-pointers (Rust's `Weak<T>`, Python's `weakref`), (2) add a cycle-detecting GC on top (CPython does this), (3) redesign to avoid cycles entirely.
+Đây là **bài toán chu trình tham chiếu** — điểm yếu cơ bản của reference counting. Giải pháp: (1) dùng weak reference cho back-pointer (`Weak<T>` của Rust, `weakref` của Python), (2) thêm GC phát hiện chu trình lên trên (CPython làm vậy), (3) thiết kế lại để tránh chu trình hoàn toàn.
 :::
 
-::: details Q2: CPython uses refcounting as its primary GC strategy, yet it still has a cycle collector. Why not just use refcounting alone?
-**Answer:** Reference counting alone cannot reclaim reference cycles. Any data structure with mutual references (parent-child, graph edges, closures capturing `self`) would leak.
+::: details Câu 2: CPython dùng refcounting làm chiến lược GC chính, nhưng vẫn có cycle collector. Sao không chỉ dùng refcounting?
+**Trả lời:** Reference counting đơn không thể thu hồi chu trình tham chiếu. Bất kỳ cấu trúc dữ liệu nào có tham chiếu lẫn nhau (cha-con, cạnh đồ thị, closure bắt `self`) sẽ rò.
 
-CPython's cycle collector (`gc` module) periodically walks objects that *could* form cycles (containers like lists, dicts, objects with `__dict__`) and identifies unreachable groups. The refcount handles the ~95% of objects that don't participate in cycles, making the cycle collector's job lighter. This hybrid approach gives deterministic cleanup for most objects while still handling cycles.
+Cycle collector của CPython (module `gc`) định kỳ đi các object *có thể* tạo chu trình (container như list, dict, object có `__dict__`) và xác định nhóm không thể đến. Refcount xử lý ~95% object không tham gia chu trình, làm việc của cycle collector nhẹ hơn. Cách lai này cho dọn dẹp xác định cho hầu hết object trong khi vẫn xử lý chu trình.
 :::
 
-::: details Q3: Rust's `Arc` uses `fetch_add(1, Relaxed)` for Clone but `fetch_sub(1, Release)` for Drop. Why different memory orderings?
-**Answer:** Clone only needs to ensure the counter is incremented — no data is accessed or freed, so `Relaxed` (cheapest ordering) suffices. The counter just needs to go up atomically.
+::: details Câu 3: `Arc` của Rust dùng `fetch_add(1, Relaxed)` cho Clone nhưng `fetch_sub(1, Release)` cho Drop. Vì sao thứ tự bộ nhớ khác?
+**Trả lời:** Clone chỉ cần đảm bảo bộ đếm được tăng — không dữ liệu nào được truy cập hoặc giải phóng, nên `Relaxed` (thứ tự rẻ nhất) đủ. Bộ đếm chỉ cần lên atomic.
 
-Drop is different: before freeing the resource, all previous writes by all threads must be visible. `Release` on the decrement ensures that the thread doing the final cleanup (which uses an `Acquire` fence) sees all data written by every thread that ever held a reference. Without this, the destructor might read stale data.
+Drop khác: trước khi giải phóng tài nguyên, mọi ghi trước đó của mọi thread phải hiển thị. `Release` trên giảm đảm bảo thread làm cleanup cuối (dùng fence `Acquire`) thấy mọi dữ liệu ghi bởi mọi thread từng giữ reference. Không có điều này, destructor có thể đọc dữ liệu cũ.
 
-On x86 (Total Store Ordering), both `Relaxed` and `Release` RMW operations compile to the same `lock xadd` instruction — the distinction is free on x86. The ordering matters on weakly-ordered architectures like ARM, where `Release` requires a store barrier. Rust uses `Relaxed` for clone and `Release` for drop to ensure correctness across all architectures.
+Trên x86 (Total Store Ordering), cả thao tác RMW `Relaxed` và `Release` biên dịch thành cùng lệnh `lock xadd` — phân biệt miễn phí trên x86. Thứ tự quan trọng trên kiến trúc yếu thứ tự như ARM, nơi `Release` cần store barrier. Rust dùng `Relaxed` cho clone và `Release` cho drop để đảm bảo tính đúng qua mọi kiến trúc.
 :::
 
-::: details Q4: You're building a resource pool. Should you use reference counting or a finalizer/destructor?
-**Answer:** Neither alone is ideal for pools. Reference counting triggers cleanup at zero, but "cleanup" for a pooled resource should mean "return to pool," not "destroy."
+::: details Câu 4: Bạn xây resource pool. Nên dùng reference counting hay finalizer/destructor?
+**Trả lời:** Không cái nào đơn lý tưởng cho pool. Reference counting kích hoạt cleanup khi về 0, nhưng "cleanup" cho tài nguyên pool nên nghĩa "trả về pool", không phải "huỷ".
 
-The correct pattern is: wrap the pool item in a ref-counted handle where the "cleanup" callback returns the item to the pool instead of freeing it. This is exactly how database connection pools work — `Drop` on the handle returns the connection rather than closing it. The pool itself manages actual destruction (e.g., on shutdown or when connections are stale).
+Pattern đúng là: bọc item pool trong handle ref-counted nơi callback "cleanup" trả item về pool thay vì giải phóng. Đây chính xác cách pool kết nối database hoạt động — `Drop` trên handle trả kết nối thay vì đóng nó. Pool tự quản lý huỷ thực tế (ví dụ khi shutdown hoặc khi kết nối cũ).
 :::
