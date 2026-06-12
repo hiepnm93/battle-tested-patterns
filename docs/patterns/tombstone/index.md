@@ -1,29 +1,29 @@
 ---
-title: "Pattern: Tombstone / Deferred Deletion"
-description: "Mark deleted entries with a tombstone marker instead of removing them — a background process reclaims space later."
+title: "Pattern: Tombstone / Xoá trì hoãn"
+description: "Đánh dấu entry đã xoá bằng marker tombstone thay vì gỡ chúng — process nền thu hồi không gian sau."
 difficulty: "beginner"
 ---
 
-# Pattern: Tombstone / Deferred Deletion
+# Pattern: Tombstone / Xoá trì hoãn
 
 <DifficultyBadge />
 
-## One Liner
+## Mô tả một câu
 
-Mark deleted entries with a tombstone marker instead of removing them — a background process reclaims space later.
+Đánh dấu entry đã xoá bằng marker tombstone thay vì gỡ chúng — process nền thu hồi không gian sau.
 
 <DemoBadge />
 
-## Real-World Analogy
+## Tương tự thực tế
 
-A library book marked 'withdrawn' with a sticker but left on the shelf. Patrons see it's no longer available, and the librarian collects withdrawn books in batch during the monthly shelf cleanup.
+Sách thư viện được đánh dấu 'rút khỏi sử dụng' bằng sticker nhưng vẫn để trên kệ. Người mượn thấy không còn dùng được, và thủ thư thu sách rút khỏi sử dụng theo lô khi dọn kệ hàng tháng.
 
-## Core Idea
+## Ý tưởng cốt lõi
 
-Instead of immediately removing data, write a special "tombstone" record that shadows the original. Reads check for tombstones and treat marked entries as deleted. A background compaction process later reclaims space by physically removing both the tombstone and the shadowed data. This decouples the fast path (mark deleted) from the slow path (reclaim space).
+Thay vì xoá dữ liệu ngay, ghi một bản ghi "tombstone" đặc biệt che bản gốc. Đọc kiểm tra tombstone và xử lý entry được đánh dấu như đã xoá. Process compaction nền sau đó thu hồi không gian bằng cách xoá vật lý cả tombstone và dữ liệu bị che. Điều này tách đường nhanh (đánh dấu đã xoá) khỏi đường chậm (thu hồi không gian).
 
 ```text
-  Write path:                      Read path:
+  Đường ghi:                       Đường đọc:
 
   delete("B")                      get("B")
       │                                │
@@ -31,39 +31,39 @@ Instead of immediately removing data, write a special "tombstone" record that sh
   ┌──────────┐                   ┌───────────┐
   │ Log/SST  │                   │  Lookup   │
   ├──────────┤                   ├───────────┤
-  │ A = "v1" │                   │ Found:    │
-  │ B = tomb │ ◄── tombstone     │ B = tomb  │──► return NOT FOUND
+  │ A = "v1" │                   │ Tìm thấy: │
+  │ B = tomb │ ◄── tombstone     │ B = tomb  │──► trả NOT FOUND
   │ C = "v3" │                   │           │
   └──────────┘                   └───────────┘
 
-  Compaction (background):
+  Compaction (nền):
   ┌──────────┐      ┌──────────┐
   │ A = "v1" │      │ A = "v1" │
-  │ B = "v2" │ ──►  │ C = "v3" │  B removed (tombstone + original)
+  │ B = "v2" │ ──►  │ C = "v3" │  B bị gỡ (tombstone + gốc)
   │ B = tomb │      └──────────┘
   │ C = "v3" │
   └──────────┘
 ```
 
-| Property | Value |
+| Thuộc tính | Giá trị |
 |----------|-------|
-| Delete | O(1) — just append a tombstone marker |
-| Space reclaim | Deferred — background compaction |
-| Read overhead | Must check for tombstones |
-| Consistency | Tombstone must propagate to all replicas before removal |
+| Delete | O(1) — chỉ append marker tombstone |
+| Thu hồi không gian | Hoãn — compaction nền |
+| Overhead đọc | Phải check tombstone |
+| Consistency | Tombstone phải lan tới mọi replica trước khi gỡ |
 
-**Try it yourself** — write entries, delete them with tombstones, and compact to reclaim space:
+**Thử ngay** — ghi entry, xoá bằng tombstone và compact để thu hồi không gian:
 
 <TombstoneViz />
 
-## Production Proof
+## Bằng chứng production
 
-| Project | Source | Usage |
+| Dự án | Nguồn | Cách dùng |
 |---------|--------|-------|
-| LevelDB | [dbformat.h#L39-L43](https://github.com/google/leveldb/blob/7ee830d02b623e8ffe0b95d59a74db1e58da04c5/db/dbformat.h#L39-L43) | `kTypeDeletion` (value 0x0) marks a key as deleted in the write-ahead log and SSTables. During compaction (`DoCompactionWork` in db_impl.cc), tombstones are dropped once no older snapshot references the key. |
-| Apache Cassandra | [DeletionTime.java#L37-L99](https://github.com/apache/cassandra/blob/3831d8265d748c21c0fef9d31d4777b134b20637/src/java/org/apache/cassandra/db/DeletionTime.java#L37-L99) | `DeletionTime` class represents tombstones with `markedForDeleteAt` timestamp. `isLive()` (L99) checks tombstone status on read. Tombstones propagate across replicas during `gc_grace_seconds` (default 10 days, referenced at L89) before compaction purges them. |
+| LevelDB | [dbformat.h#L39-L43](https://github.com/google/leveldb/blob/7ee830d02b623e8ffe0b95d59a74db1e58da04c5/db/dbformat.h#L39-L43) | `kTypeDeletion` (giá trị 0x0) đánh dấu key đã xoá trong WAL và SSTable. Khi compaction (`DoCompactionWork` trong db_impl.cc), tombstone bị bỏ khi không snapshot cũ nào tham chiếu key. |
+| Apache Cassandra | [DeletionTime.java#L37-L99](https://github.com/apache/cassandra/blob/3831d8265d748c21c0fef9d31d4777b134b20637/src/java/org/apache/cassandra/db/DeletionTime.java#L37-L99) | Class `DeletionTime` đại diện tombstone với timestamp `markedForDeleteAt`. `isLive()` (L99) check status tombstone khi đọc. Tombstone lan qua replica trong `gc_grace_seconds` (mặc định 10 ngày, tham chiếu ở L89) trước khi compaction xoá chúng. |
 
-## Implementation
+## Triển khai
 
 ::: code-group
 
@@ -102,7 +102,7 @@ class TombstoneStore<V> {
     return true;
   }
 
-  /** Compact: remove tombstones older than maxAge ms. */
+  /** Compact: xoá tombstone cũ hơn maxAge ms. */
   compact(maxAge: number): number {
     const cutoff = Date.now() - maxAge;
     let removed = 0;
@@ -318,76 +318,76 @@ class TombstoneStore:
 
 :::
 
-## Exercises
+## Bài tập
 
-| Level | Exercise | File |
+| Cấp độ | Bài tập | File |
 |-------|----------|------|
-| Basic | Implement a key-value store with tombstone deletion | `exercises/typescript/tombstone/01-basic.test.ts` |
-| Intermediate | Add time-based compaction and tombstone metrics | `exercises/typescript/tombstone/02-intermediate.test.ts` |
+| Cơ bản | Triển khai kho key-value với xoá tombstone | `exercises/typescript/tombstone/01-basic.test.ts` |
+| Trung bình | Thêm compaction theo thời gian và metric tombstone | `exercises/typescript/tombstone/02-intermediate.test.ts` |
 
-Run exercises: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
+Chạy bài tập: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
 
-Exercise files: Rust `exercises/rust/src/tombstone/mod.rs` · Go `exercises/go/tombstone/tombstone_test.go` · Python `exercises/python/tombstone/test_tombstone.py`
+File bài tập: Rust `exercises/rust/src/tombstone/mod.rs` · Go `exercises/go/tombstone/tombstone_test.go` · Python `exercises/python/tombstone/test_tombstone.py`
 
-## When to Use
+## Khi nào nên dùng
 
-- **LSM-tree storage engines** — LevelDB, RocksDB, Cassandra append tombstones; compaction cleans up
-- **Distributed databases** — tombstones propagate deletion intent across replicas before physical removal
-- **Soft delete in applications** — mark records as deleted but keep audit trail; purge after retention period
-- **Immutable/append-only logs** — cannot modify existing entries, so deletion requires a shadow record
-- **Concurrent data structures** — mark nodes deleted to avoid unsafe pointer manipulation during concurrent reads
+- **Storage engine LSM-tree** — LevelDB, RocksDB, Cassandra append tombstone; compaction dọn dẹp
+- **Database phân tán** — tombstone lan ý định xoá qua replica trước khi gỡ vật lý
+- **Soft delete trong app** — đánh dấu record đã xoá nhưng giữ audit trail; purge sau thời gian giữ
+- **Log bất biến/append-only** — không sửa được entry hiện có, nên xoá cần record bóng
+- **Cấu trúc dữ liệu đồng thời** — đánh dấu node đã xoá để tránh thao tác con trỏ không an toàn khi đọc đồng thời
 
-## When NOT to Use
+## Khi nào KHÔNG nên dùng
 
-- **Mutable in-place storage** — if you can directly remove the entry (hash table, mutable array), just remove it
-- **Memory-constrained systems** — tombstones consume space until compaction; if space is tight, immediate deletion is better
-- **No background processing** — compaction requires a background thread/process; if unavailable, tombstones accumulate forever
+- **Lưu trữ mutable in-place** — nếu có thể trực tiếp xoá entry (hash table, mảng mutable), cứ xoá
+- **Hệ thống eo hẹp bộ nhớ** — tombstone tiêu tốn không gian tới compaction; nếu không gian eo, xoá ngay tốt hơn
+- **Không có xử lý nền** — compaction cần thread/process nền; nếu không có, tombstone tích luỹ mãi
 
-## More Production Uses
+## Thêm các ứng dụng production
 
-- [RocksDB](https://github.com/facebook/rocksdb) — `kTypeDeletion` and `kTypeSingleDeletion` tombstones with configurable compaction triggers
-- [Apache HBase](https://github.com/apache/hbase) — delete markers propagate to all store files during major compaction
-- [CockroachDB](https://github.com/cockroachdb/cockroach) — MVCC tombstones for range deletions, GC-ed by background job
-- [Elasticsearch](https://github.com/elastic/elasticsearch) — soft-deleted docs marked with `_deleted` flag, purged on segment merge
+- [RocksDB](https://github.com/facebook/rocksdb) — tombstone `kTypeDeletion` và `kTypeSingleDeletion` với trigger compaction điều chỉnh được
+- [Apache HBase](https://github.com/apache/hbase) — marker xoá lan tới mọi store file khi major compaction
+- [CockroachDB](https://github.com/cockroachdb/cockroach) — tombstone MVCC cho xoá khoảng, GC bởi job nền
+- [Elasticsearch](https://github.com/elastic/elasticsearch) — doc soft-delete đánh dấu cờ `_deleted`, purge khi merge segment
 
-## Related Patterns
+## Pattern liên quan
 
-| Pattern | Relationship |
+| Pattern | Quan hệ |
 |---------|-------------|
-| [LSM Tree (Log-Structured Merge Tree)](/patterns/lsm-tree/) | LSM trees use tombstones extensively — they're cleaned up during compaction |
-| [MVCC (Multi-Version Concurrency Control)](/patterns/mvcc/) | MVCC marks old versions with tombstones for garbage collection |
-| [Free List](/patterns/free-list/) | After tombstone cleanup, freed slots can be managed by a free list |
-| [LRU Cache](/patterns/lru-cache/) | LRU caches use tombstones to mark deleted entries in distributed scenarios |
-| [Reference Counting](/patterns/reference-counting/) | Reference counting determines when tombstoned objects can be safely reclaimed |
+| [LSM Tree (Log-Structured Merge Tree)](/patterns/lsm-tree/) | LSM tree dùng tombstone rộng rãi — chúng được dọn khi compaction |
+| [MVCC (Multi-Version Concurrency Control)](/patterns/mvcc/) | MVCC đánh dấu phiên bản cũ bằng tombstone cho garbage collection |
+| [Free List](/patterns/free-list/) | Sau dọn tombstone, slot trống có thể quản lý bằng free list |
+| [LRU Cache](/patterns/lru-cache/) | LRU cache dùng tombstone đánh dấu entry đã xoá trong kịch bản phân tán |
+| [Reference Counting](/patterns/reference-counting/) | Reference counting xác định khi nào object tombstone có thể an toàn thu hồi |
 
-## Challenge Questions
+## Câu hỏi thử thách
 
-::: details Q1: A Cassandra cluster with gc_grace_seconds=10 days. Node C goes down for 15 days. What happens when C comes back online?
-**Answer:** Node C may resurrect deleted data.
+::: details Câu 1: Cluster Cassandra với gc_grace_seconds=10 ngày. Node C sập 15 ngày. Chuyện gì khi C online trở lại?
+**Trả lời:** Node C có thể hồi sinh dữ liệu đã xoá.
 
-While C was down, other nodes deleted some keys and their tombstones expired (gc_grace_seconds=10 days). When C comes back, it still has the original data without tombstones. During anti-entropy repair, C's "live" data wins because there's no tombstone to contradict it. The deleted data reappears across the cluster.
+Trong khi C sập, các node khác đã xoá một số key và tombstone của chúng hết hạn (gc_grace_seconds=10 ngày). Khi C quay lại, nó vẫn có dữ liệu gốc không có tombstone. Khi anti-entropy repair, dữ liệu "live" của C thắng vì không có tombstone để mâu thuẫn. Dữ liệu đã xoá xuất hiện lại qua cluster.
 
-Fix: Run `nodetool repair` before gc_grace_seconds expires, or increase gc_grace_seconds to exceed the maximum expected downtime.
+Sửa: Chạy `nodetool repair` trước khi gc_grace_seconds hết, hoặc tăng gc_grace_seconds vượt thời gian downtime tối đa kỳ vọng.
 :::
 
-::: details Q2: Your LSM-tree database has a "tombstone accumulation" problem — reads are getting slower. Why?
-**Answer:** Tombstones must be checked during reads.
+::: details Câu 2: Database LSM-tree của bạn có vấn đề "tích luỹ tombstone" — đọc chậm dần. Tại sao?
+**Trả lời:** Tombstone phải được check khi đọc.
 
-When you read a key, the database must scan from the newest SSTable to the oldest. If it finds a tombstone, it knows the key is deleted — but it still had to read through all the levels to find it. Worse, range scans must check every tombstone in the range to filter deleted keys.
+Khi bạn đọc một key, database phải quét từ SSTable mới nhất đến cũ nhất. Nếu tìm thấy tombstone, biết key đã xoá — nhưng vẫn phải đọc qua mọi tầng để tìm. Tệ hơn, range scan phải check mọi tombstone trong khoảng để lọc key đã xoá.
 
-If compaction falls behind or the delete rate is high, tombstones pile up across levels. Solutions: trigger compaction more aggressively on tombstone-heavy SSTables, or use "single delete" (RocksDB) which cancels exactly one put, avoiding tombstone persistence.
+Nếu compaction tụt lại hoặc tốc độ xoá cao, tombstone chồng chất qua các tầng. Giải pháp: kích hoạt compaction tích cực hơn trên SSTable nặng tombstone, hoặc dùng "single delete" (RocksDB) huỷ chính xác một put, tránh tombstone bền vững.
 :::
 
-::: details Q3: Why can't you just immediately delete the tombstone after all replicas acknowledge the deletion?
-**Answer:** Because of read-repair and anti-entropy.
+::: details Câu 3: Sao bạn không thể xoá tombstone ngay sau khi mọi replica xác nhận xoá?
+**Trả lời:** Vì read-repair và anti-entropy.
 
-Even if all currently-live replicas acknowledge the deletion, a temporarily-offline replica might still hold the original data. When it comes back, it would re-introduce the data. The tombstone must persist long enough to "win" conflict resolution against stale data from any replica that was down.
+Ngay cả khi mọi replica hiện-live xác nhận xoá, một replica tạm-offline có thể vẫn giữ dữ liệu gốc. Khi nó quay lại, sẽ giới thiệu lại dữ liệu. Tombstone phải tồn tại đủ lâu để "thắng" giải quyết xung đột chống dữ liệu cũ từ replica nào đã sập.
 
-This is why Cassandra uses `gc_grace_seconds` — it's the maximum expected time for a node to be offline. The tombstone lives at least that long to guarantee it outlives any stale replica.
+Đó là lý do Cassandra dùng `gc_grace_seconds` — đó là thời gian tối đa kỳ vọng node offline. Tombstone sống ít nhất bằng thời gian đó để đảm bảo nó sống lâu hơn replica cũ nào.
 :::
 
-::: details Q4: Your application performs a bulk delete of 10 million rows using tombstones. Immediately after, a range scan over the deleted range takes 30 seconds instead of the expected 0 seconds. Explain why the range scan isn't instant, even though all rows are "deleted."
-**Answer:** The tombstones themselves are data that must be read and evaluated during the scan.
+::: details Câu 4: App của bạn thực hiện bulk delete 10 triệu row bằng tombstone. Ngay sau, range scan trên khoảng đã xoá mất 30 giây thay vì 0 giây kỳ vọng. Giải thích vì sao range scan không tức thì, dù mọi row đã "xoá."
+**Trả lời:** Tombstone tự nó là dữ liệu phải đọc và đánh giá khi scan.
 
-A range scan doesn't know which keys are deleted until it reads each entry and checks for the tombstone marker. With 10 million tombstones, the scan reads 10 million entries, evaluates each one, and returns zero results. This is the "tombstone scan" problem — the work is proportional to the number of tombstones, not the number of live results. Solutions include: range tombstones (RocksDB's `DeleteRange` marks an entire key range deleted with a single marker instead of per-key tombstones), immediate compaction of the affected range, or using a separate index that tracks only live keys.
+Range scan không biết key nào đã xoá tới khi đọc mỗi entry và check marker tombstone. Với 10 triệu tombstone, scan đọc 10 triệu entry, đánh giá từng cái và trả 0 kết quả. Đây là vấn đề "tombstone scan" — công việc tỉ lệ với số tombstone, không phải số kết quả live. Giải pháp gồm: range tombstone (RocksDB `DeleteRange` đánh dấu cả khoảng key đã xoá bằng một marker thay vì tombstone mỗi key), compaction ngay khoảng bị ảnh hưởng, hoặc dùng index riêng chỉ theo dõi key live.
 :::
