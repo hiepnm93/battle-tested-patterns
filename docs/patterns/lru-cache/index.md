@@ -1,6 +1,6 @@
 ---
 title: "Pattern: LRU Cache"
-description: "Evict the least recently used entry when the cache is full — O(1) get and put using a hash map plus a doubly linked list."
+description: "Loại bỏ entry ít dùng gần nhất khi cache đầy — get và put O(1) qua hash map cộng doubly linked list."
 difficulty: "intermediate"
 ---
 
@@ -8,53 +8,53 @@ difficulty: "intermediate"
 
 <DifficultyBadge />
 
-## One Liner
+## Mô tả một câu
 
-Evict the least recently used entry when the cache is full — O(1) get and put using a hash map plus a doubly linked list.
+Loại bỏ entry ít dùng gần nhất khi cache đầy — get và put O(1) qua hash map cộng doubly linked list.
 
 <DemoBadge />
 
-## Real-World Analogy
+## Tương tự thực tế
 
-A small desk with limited space. You keep the books you've used most recently on the desk. When you need room for a new book, you move the one you haven't touched longest back to the bookshelf.
+Một bàn làm việc nhỏ có không gian giới hạn. Bạn giữ những cuốn sách dùng gần nhất trên bàn. Khi cần chỗ cho cuốn mới, bạn chuyển cuốn không động lâu nhất về kệ sách.
 
-## Core Idea
+## Ý tưởng cốt lõi
 
-An LRU cache combines a hash map (for O(1) key lookup) with a doubly linked list (for O(1) recency tracking). On every access, the entry moves to the front. When the cache exceeds capacity, the entry at the back (least recently used) is evicted.
+LRU cache kết hợp hash map (cho tra cứu key O(1)) với doubly linked list (cho theo dõi mức gần đây O(1)). Mỗi truy cập, entry di chuyển ra đầu. Khi cache vượt capacity, entry ở cuối (ít dùng gần nhất) bị loại bỏ.
 
 ```text
-  Most Recent                                    Least Recent
+  Gần nhất                                       Ít gần nhất
   ┌─────┐    ┌─────┐    ┌─────┐    ┌─────┐    ┌─────┐
-  │  E  │◄──►│  D  │◄──►│  C  │◄──►│  B  │◄──►│  A  │  ← evict this
+  │  E  │◄──►│  D  │◄──►│  C  │◄──►│  B  │◄──►│  A  │  ← loại cái này
   └─────┘    └─────┘    └─────┘    └─────┘    └─────┘
 
-  get("B") → move B to front:
+  get("B") → di chuyển B ra đầu:
   ┌─────┐    ┌─────┐    ┌─────┐    ┌─────┐    ┌─────┐
   │  B  │◄──►│  E  │◄──►│  D  │◄──►│  C  │◄──►│  A  │
   └─────┘    └─────┘    └─────┘    └─────┘    └─────┘
 
-  put("F") with capacity=5 → evict A, add F to front
+  put("F") với capacity=5 → loại A, thêm F vào đầu
 ```
 
-| Property | Value |
+| Thuộc tính | Giá trị |
 |----------|-------|
-| get | O(1) — hash map lookup + move to front |
-| put | O(1) — hash map insert + evict if over capacity |
-| Eviction policy | Least Recently Used (tail of list) |
-| Space | O(capacity) |
+| get | O(1) — tra hash map + di chuyển ra đầu |
+| put | O(1) — chèn hash map + loại nếu quá capacity |
+| Chính sách loại bỏ | Ít Dùng Gần Nhất (đuôi danh sách) |
+| Bộ nhớ | O(capacity) |
 
-**Try it yourself** — put and get keys to see how the LRU eviction works:
+**Thử ngay** — put và get key để xem loại bỏ LRU hoạt động:
 
 <LRUCacheViz />
 
-## Production Proof
+## Bằng chứng production
 
-| Project | Source | Usage |
+| Dự án | Nguồn | Cách dùng |
 |---------|--------|-------|
-| Go groupcache | [lru.go#L23-L104](https://github.com/golang/groupcache/blob/2c02b8208cf8c02a3e358cb1d9b60950647543fc/lru/lru.go#L23-L104) | `Cache` struct (L23-L34) with doubly linked list + hash map. `Add` (L56-L71) inserts/updates and moves to front; `Get` (L74-L83) moves to front on hit; `RemoveOldest` (L96-L104) evicts from back. By Brad Fitzpatrick (memcached creator). |
-| Redis | [evict.c#L55-L83](https://github.com/redis/redis/blob/df63a65d4d4ee33ae67e9f101885074febe0bccb/src/evict.c#L55-L83) | Approximated LRU — reduced-bit LRU clock and idle-time estimation with wraparound. `evictionPoolPopulate` (L134-L225) samples N keys and inserts into a sorted eviction pool. Engineering tradeoff: O(1) memory overhead at scale vs exact LRU. |
+| Go groupcache | [lru.go#L23-L104](https://github.com/golang/groupcache/blob/2c02b8208cf8c02a3e358cb1d9b60950647543fc/lru/lru.go#L23-L104) | Struct `Cache` (L23-L34) với doubly linked list + hash map. `Add` (L56-L71) chèn/cập nhật và di chuyển ra đầu; `Get` (L74-L83) di chuyển ra đầu khi hit; `RemoveOldest` (L96-L104) loại từ cuối. Do Brad Fitzpatrick (cha đẻ memcached). |
+| Redis | [evict.c#L55-L83](https://github.com/redis/redis/blob/df63a65d4d4ee33ae67e9f101885074febe0bccb/src/evict.c#L55-L83) | LRU xấp xỉ — clock LRU giảm bit và ước lượng idle-time với wraparound. `evictionPoolPopulate` (L134-L225) lấy mẫu N key và chèn vào pool eviction đã sắp xếp. Đánh đổi kỹ thuật: overhead bộ nhớ O(1) ở quy mô lớn vs LRU chính xác. |
 
-## Implementation
+## Triển khai
 
 ::: code-group
 
@@ -182,74 +182,74 @@ class LRUCache:
 
 :::
 
-## Exercises
+## Bài tập
 
-| Level | Exercise | File |
+| Cấp độ | Bài tập | File |
 |-------|----------|------|
-| Basic | Implement an LRU cache with get/put and eviction | `exercises/typescript/lru-cache/01-basic.test.ts` |
-| Intermediate | TTL-aware LRU cache with expiry | `exercises/typescript/lru-cache/02-intermediate.test.ts` |
+| Cơ bản | Triển khai LRU cache với get/put và loại bỏ | `exercises/typescript/lru-cache/01-basic.test.ts` |
+| Trung bình | LRU cache nhận biết TTL với hết hạn | `exercises/typescript/lru-cache/02-intermediate.test.ts` |
 
-Run exercises: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
+Chạy bài tập: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
 
-Exercise files: Rust `exercises/rust/src/lru_cache/mod.rs` · Go `exercises/go/lru_cache/lru_cache_test.go` · Python `exercises/python/lru_cache/test_lru_cache.py`
+File bài tập: Rust `exercises/rust/src/lru_cache/mod.rs` · Go `exercises/go/lru_cache/lru_cache_test.go` · Python `exercises/python/lru_cache/test_lru_cache.py`
 
-## When to Use
+## Khi nào nên dùng
 
-- **Database query caching** — cache hot queries, evict cold ones
-- **DNS resolution** — cache recent lookups
-- **Web browsers** — page/resource cache with bounded memory
-- **API response caching** — keep frequently requested responses warm
-- **Operating systems** — page cache, dentry cache, inode cache
+- **Cache truy vấn database** — cache truy vấn nóng, loại cái nguội
+- **Phân giải DNS** — cache tra cứu gần đây
+- **Trình duyệt web** — cache trang/tài nguyên với bộ nhớ giới hạn
+- **Cache response API** — giữ response hay yêu cầu ấm
+- **Hệ điều hành** — cache page, cache dentry, cache inode
 
-## When NOT to Use
+## Khi nào KHÔNG nên dùng
 
-- **Scan-resistant workloads** — a full table scan evicts all useful entries (use LRU-K or ARC instead)
-- **Time-based expiration needed** — LRU evicts by access recency, not age (add TTL layer separately)
-- **Frequency matters more** — if popular items get evicted by a burst of unique requests, use LFU
-- **Unbounded growth OK** — if memory isn't constrained, a simple hash map is simpler
+- **Tải kháng quét** — quét bảng đầy loại bỏ mọi entry hữu ích (dùng LRU-K hoặc ARC)
+- **Cần hết hạn theo thời gian** — LRU loại bỏ theo mức gần đây, không theo tuổi (thêm tầng TTL riêng)
+- **Tần suất quan trọng hơn** — nếu item phổ biến bị loại bởi burst yêu cầu duy nhất, dùng LFU
+- **Tăng không giới hạn OK** — nếu bộ nhớ không bị giới hạn, hash map đơn giản hơn
 
-## More Production Uses
+## Thêm các ứng dụng production
 
-- [Redis](https://github.com/redis/redis) — `maxmemory-policy allkeys-lru` for LRU eviction
-- [Guava Cache](https://github.com/google/guava) — `CacheBuilder.maximumSize()` with LRU eviction
-- [Python functools](https://github.com/python/cpython) — `@lru_cache` decorator
-- [Caffeine](https://github.com/ben-manes/caffeine) — high-performance Java cache (Window TinyLfu, inspired by LRU)
+- [Redis](https://github.com/redis/redis) — `maxmemory-policy allkeys-lru` cho loại bỏ LRU
+- [Guava Cache](https://github.com/google/guava) — `CacheBuilder.maximumSize()` với loại bỏ LRU
+- [Python functools](https://github.com/python/cpython) — decorator `@lru_cache`
+- [Caffeine](https://github.com/ben-manes/caffeine) — cache Java hiệu năng cao (Window TinyLfu, lấy cảm hứng từ LRU)
 
-## Related Patterns
+## Pattern liên quan
 
-| Pattern | Relationship |
+| Pattern | Quan hệ |
 |---------|-------------|
-| [Free List](/patterns/free-list/) | LRU eviction frees nodes; free lists recycle them without calling the allocator |
-| [Flyweight](/patterns/flyweight/) | Both reduce memory — LRU limits cache size, flyweight shares identical objects |
-| [Consistent Hashing](/patterns/consistent-hashing/) | Distributed caches use consistent hashing to route keys to the right LRU instance |
-| [Tombstone](/patterns/tombstone/) | Tombstones mark deleted cache entries in distributed LRU caches |
-| [Bloom Filter](/patterns/bloom-filter/) | Bloom filters pre-check before expensive LRU cache lookups to avoid cache misses |
-| [Interning / Symbol Table](/patterns/interning/) | Intern tables can use LRU eviction to bound memory usage |
+| [Free List](/patterns/free-list/) | Loại bỏ LRU giải phóng node; free list tái chế chúng không gọi allocator |
+| [Flyweight](/patterns/flyweight/) | Cả hai giảm bộ nhớ — LRU giới hạn kích thước cache, flyweight chia sẻ object giống nhau |
+| [Consistent Hashing](/patterns/consistent-hashing/) | Cache phân tán dùng consistent hashing để định tuyến key tới instance LRU đúng |
+| [Tombstone](/patterns/tombstone/) | Tombstone đánh dấu entry cache đã xoá trong LRU cache phân tán |
+| [Bloom Filter](/patterns/bloom-filter/) | Bloom filter kiểm tra trước trước khi tra LRU cache tốn kém để tránh cache miss |
+| [Interning / Symbol Table](/patterns/interning/) | Bảng intern có thể dùng loại bỏ LRU để giới hạn bộ nhớ |
 
-## Challenge Questions
+## Câu hỏi thử thách
 
-::: details Q1: LRU cache with capacity 3. Operations: put(A), put(B), put(C), put(D), get(B). What's in the cache?
-**Answer:** `{B, D, C}`
+::: details Câu 1: LRU cache capacity 3. Thao tác: put(A), put(B), put(C), put(D), get(B). Trong cache có gì?
+**Trả lời:** `{B, D, C}`
 
-After put(A,B,C), cache is full. put(D) evicts A (least recently used). Now `{D, C, B}`. get(B) moves B to front. Final order most→least recent: `B, D, C`.
+Sau put(A,B,C), cache đầy. put(D) loại A (ít dùng gần nhất). Giờ `{D, C, B}`. get(B) di chuyển B ra đầu. Thứ tự cuối gần nhất→ít gần: `B, D, C`.
 
-Key insight: `get()` counts as "use" — it moves the entry to the front, not just returns it.
+Insight then chốt: `get()` tính là "dùng" — di chuyển entry ra đầu, không chỉ trả về nó.
 :::
 
-::: details Q2: You have a web server with an LRU cache for API responses. A bot crawls every page once. What happens?
-**Answer:** The bot evicts all your hot cache entries.
+::: details Câu 2: Bạn có web server với LRU cache cho response API. Một bot crawl mọi trang một lần. Chuyện gì xảy ra?
+**Trả lời:** Bot loại bỏ mọi entry cache nóng của bạn.
 
-Each crawled page is accessed once, pushed to front, and evicts a frequently-used page. After the crawl, your cache is full of pages nobody will request again. This is the **scan resistance** problem — LRU is vulnerable to sequential scans. Solutions: LRU-K (evict only if accessed < K times), ARC (adaptive), or a two-tier cache.
+Mỗi trang được crawl truy cập một lần, đẩy ra đầu, và loại bỏ một trang hay dùng. Sau crawl, cache đầy trang không ai yêu cầu lại. Đây là vấn đề **kháng quét** — LRU dễ bị tổn thương trước quét tuần tự. Giải pháp: LRU-K (loại bỏ chỉ nếu truy cập < K lần), ARC (thích nghi), hoặc cache hai tầng.
 :::
 
-::: details Q3: Why does Redis use "approximated LRU" instead of exact LRU?
-**Answer:** Exact LRU requires a doubly linked list per key — that's 2 pointers (16 bytes on 64-bit) per key just for ordering. With millions of keys, that's significant overhead.
+::: details Câu 3: Sao Redis dùng "LRU xấp xỉ" thay vì LRU chính xác?
+**Trả lời:** LRU chính xác cần doubly linked list mỗi key — đó là 2 con trỏ (16 byte trên 64-bit) mỗi key chỉ để xếp thứ tự. Với hàng triệu key, đó là overhead đáng kể.
 
-Redis instead stores a 24-bit LRU clock per key (3 bytes) and samples N random keys when eviction is needed, evicting the one with the oldest clock. This trades perfect eviction order for O(1) memory overhead per key. In practice, sampling 10 keys gives results very close to exact LRU.
+Redis thay vào đó lưu clock LRU 24-bit mỗi key (3 byte) và lấy mẫu N key ngẫu nhiên khi cần loại bỏ, loại cái có clock cũ nhất. Đánh đổi thứ tự loại bỏ hoàn hảo lấy overhead bộ nhớ O(1) mỗi key. Thực tế, lấy mẫu 10 key cho kết quả rất gần LRU chính xác.
 :::
 
-::: details Q4: Can you build an LRU cache in O(1) without a doubly linked list?
-**Answer:** Yes — using a language with ordered hash maps. In JavaScript, `Map` preserves insertion order. Delete and re-insert on access to move to "most recent." This is exactly what the TypeScript implementation above does.
+::: details Câu 4: Bạn có thể xây LRU cache O(1) mà không có doubly linked list không?
+**Trả lời:** Có — dùng ngôn ngữ có hash map có thứ tự. Trong JavaScript, `Map` bảo toàn thứ tự chèn. Xoá và chèn lại khi truy cập để di chuyển sang "gần nhất". Đó chính xác là điều triển khai TypeScript trên làm.
 
-In languages without ordered maps (C, Go), you need the classic hash map + doubly linked list approach. Go's `groupcache` does this with `container/list`.
+Trong ngôn ngữ không có map có thứ tự (C, Go), bạn cần cách kinh điển hash map + doubly linked list. `groupcache` của Go làm vậy với `container/list`.
 :::
