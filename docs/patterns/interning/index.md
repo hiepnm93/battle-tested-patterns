@@ -1,6 +1,6 @@
 ---
 title: "Pattern: Interning / Symbol Table"
-description: "Deduplicate immutable values through a canonical lookup table — O(1) equality by pointer comparison instead of O(n) content comparison."
+description: "Khử trùng lặp các giá trị bất biến qua một bảng tra cứu chính tắc — so sánh bằng O(1) qua con trỏ thay vì O(n) qua nội dung."
 difficulty: "intermediate"
 ---
 
@@ -8,57 +8,57 @@ difficulty: "intermediate"
 
 <DifficultyBadge />
 
-## One Liner
+## Mô tả một câu
 
-Deduplicate immutable values through a canonical lookup table — O(1) equality by pointer comparison instead of O(n) content comparison.
+Khử trùng lặp các giá trị bất biến qua một bảng tra cứu chính tắc — so sánh bằng O(1) qua con trỏ thay vì O(n) qua nội dung.
 
 <DemoBadge />
 
-## Real-World Analogy
+## Tương tự thực tế
 
-A post office that stores one copy of each ZIP code and gives everyone a reference to it. Instead of every letter carrying its own copy of '94105', they all point to the same shared entry.
+Một bưu điện lưu một bản sao mỗi mã ZIP và cho mọi người tham chiếu đến nó. Thay vì mỗi lá thư mang theo bản '94105' riêng, tất cả đều trỏ tới cùng một entry chung.
 
-## Core Idea
+## Ý tưởng cốt lõi
 
-Interning stores each unique value exactly once in a table and hands out lightweight identifiers (symbols, IDs, or interned pointers) that refer to the canonical copy. Two values that are structurally equal get the same identifier, so equality checks become O(1) pointer/integer comparisons instead of O(n) content comparisons. This trades upfront deduplication cost for massive savings on repeated equality checks.
+Interning lưu mỗi giá trị duy nhất chính xác một lần trong một bảng và phát ra các định danh nhẹ (symbol, ID hoặc con trỏ đã intern) trỏ tới bản chính tắc. Hai giá trị có cấu trúc bằng nhau nhận cùng định danh, nên kiểm tra bằng trở thành so sánh con trỏ/số nguyên O(1) thay vì so nội dung O(n). Đây là đánh đổi chi phí khử trùng lặp ban đầu để tiết kiệm khổng lồ trên các phép so bằng lặp lại.
 
 ```text
   intern("hello") → 0     intern("world") → 1     intern("hello") → 0
-                                                     (reuse!)
+                                                     (tái dùng!)
 
   ┌───────────────────────┐
-  │    Symbol Table       │
+  │    Bảng Symbol        │
   ├────┬──────────────────┤
-  │ ID │  Value           │
+  │ ID │  Giá trị         │
   ├────┼──────────────────┤
   │  0 │  "hello"         │
   │  1 │  "world"         │
   │  2 │  "foo"           │
   └────┴──────────────────┘
 
-  Equality: symbol_a == symbol_b  (integer comparison, O(1))
-  Instead of: strcmp(str_a, str_b) (character scan, O(n))
+  Bằng nhau: symbol_a == symbol_b  (so số nguyên, O(1))
+  Thay vì: strcmp(str_a, str_b) (quét ký tự, O(n))
 ```
 
-| Property | Value |
+| Thuộc tính | Giá trị |
 |----------|-------|
-| intern() | O(n) first time (hash + store), O(1) amortized on hit |
-| Equality | O(1) — integer/pointer comparison |
-| Memory | Deduplicated — each unique value stored once |
-| Tradeoff | Intern table grows monotonically (values never freed) |
+| intern() | O(n) lần đầu (hash + lưu), O(1) phân bổ khi hit |
+| Bằng nhau | O(1) — so số nguyên/con trỏ |
+| Bộ nhớ | Đã khử trùng lặp — mỗi giá trị duy nhất lưu một lần |
+| Đánh đổi | Bảng intern tăng đơn điệu (giá trị không bao giờ giải phóng) |
 
-**Try it yourself** — intern strings and see how duplicates resolve to the same ID:
+**Thử ngay** — intern chuỗi và xem cách các bản trùng phân giải về cùng ID:
 
 <InterningViz />
 
-## Production Proof
+## Bằng chứng production
 
-| Project | Source | Usage |
+| Dự án | Nguồn | Cách dùng |
 |---------|--------|-------|
-| Rust Compiler (rustc) | [symbol.rs#L24-L79](https://github.com/rust-lang/rust/blob/ab26b175979ee7b2cb3302dce204b99df96f7efb/compiler/rustc_span/src/symbol.rs#L24-L79) | `Symbol` (L24) is a newtype around `u32` — an index into the global interning table. `Interner` (L56-L79) stores strings in a `Vec` and deduplicates via a `HashMap`. All identifiers in the Rust compiler are `Symbol`s — equality is a single `u32` comparison. |
-| CPython | [unicodeobject.c#L14416-L14472](https://github.com/python/cpython/blob/ff64d8de66ab7f8e56b5d410796a7d76c955280c/Objects/unicodeobject.c#L14416-L14472) | `PyUnicode_InternInPlace` (L14416) interns Python strings by storing them in a global dict. If the string already exists, the existing object is returned and the new one's refcount is decremented. All identifier strings (variable names, attribute names) are interned automatically for O(1) dict lookups. |
+| Rust Compiler (rustc) | [symbol.rs#L24-L79](https://github.com/rust-lang/rust/blob/ab26b175979ee7b2cb3302dce204b99df96f7efb/compiler/rustc_span/src/symbol.rs#L24-L79) | `Symbol` (L24) là newtype quanh `u32` — index vào bảng intern toàn cục. `Interner` (L56-L79) lưu chuỗi trong `Vec` và khử trùng lặp qua `HashMap`. Mọi identifier trong compiler Rust đều là `Symbol` — bằng nhau là một phép so `u32` duy nhất. |
+| CPython | [unicodeobject.c#L14416-L14472](https://github.com/python/cpython/blob/ff64d8de66ab7f8e56b5d410796a7d76c955280c/Objects/unicodeobject.c#L14416-L14472) | `PyUnicode_InternInPlace` (L14416) intern các chuỗi Python bằng cách lưu vào dict toàn cục. Nếu chuỗi đã tồn tại, object đã tồn tại được trả về và refcount của cái mới giảm. Mọi chuỗi identifier (tên biến, tên thuộc tính) đều được intern tự động cho tra cứu dict O(1). |
 
-## Implementation
+## Triển khai
 
 ::: code-group
 
@@ -165,68 +165,68 @@ class StringInterner:
 
 :::
 
-## Exercises
+## Bài tập
 
-| Level | Exercise | File |
+| Cấp độ | Bài tập | File |
 |-------|----------|------|
-| Basic | Implement a string interner with intern/resolve | `exercises/typescript/interning/01-basic.test.ts` |
-| Intermediate | Type interner with structural equality | `exercises/typescript/interning/02-intermediate.test.ts` |
+| Cơ bản | Triển khai string interner với intern/resolve | `exercises/typescript/interning/01-basic.test.ts` |
+| Trung bình | Type interner với bằng nhau theo cấu trúc | `exercises/typescript/interning/02-intermediate.test.ts` |
 
-Run exercises: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
+Chạy bài tập: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
 
-Exercise files: Rust `exercises/rust/src/interning/mod.rs` · Go `exercises/go/interning/interning_test.go` · Python `exercises/python/interning/test_interning.py`
+File bài tập: Rust `exercises/rust/src/interning/mod.rs` · Go `exercises/go/interning/interning_test.go` · Python `exercises/python/interning/test_interning.py`
 
-## When to Use
+## Khi nào nên dùng
 
-- **Compilers and interpreters** — intern identifiers, keywords, and type descriptors for fast equality
-- **Database query engines** — intern column names, table names for fast comparison in query planning
-- **Serialization** — intern repeated field names in JSON/XML to reduce memory
-- **Game engines** — intern asset names, material IDs, animation states
-- **String-heavy workloads** — any system that compares the same strings millions of times
+- **Compiler và interpreter** — intern identifier, keyword, type descriptor cho so bằng nhanh
+- **Engine truy vấn database** — intern tên cột, tên bảng cho so sánh nhanh khi lên kế hoạch truy vấn
+- **Serialize** — intern tên trường lặp lại trong JSON/XML để giảm bộ nhớ
+- **Game engine** — intern tên asset, ID material, trạng thái animation
+- **Tải nặng chuỗi** — mọi hệ thống so sánh cùng chuỗi hàng triệu lần
 
-## When NOT to Use
+## Khi nào KHÔNG nên dùng
 
-- **Short-lived strings** — if strings are created and discarded quickly, interning overhead outweighs benefit
-- **Mostly unique strings** — if few strings repeat, the intern table wastes memory without saving comparisons
-- **Memory-constrained with no cleanup** — classic interning tables grow monotonically; consider weak references if cleanup is needed
+- **Chuỗi sống ngắn** — nếu chuỗi được tạo và bỏ nhanh, overhead intern lớn hơn lợi ích
+- **Phần lớn chuỗi là duy nhất** — nếu ít chuỗi lặp, bảng intern lãng phí bộ nhớ mà không tiết kiệm so sánh
+- **Eo hẹp bộ nhớ không dọn** — bảng intern cổ điển tăng đơn điệu; cân nhắc weak reference nếu cần dọn
 
-## More Production Uses
+## Thêm các ứng dụng production
 
-- [Java String.intern()](https://github.com/openjdk/jdk) — JVM-level string interning in the string pool
-- [V8 Internalized Strings](https://chromium.googlesource.com/v8/v8/+/refs/heads/main/src/objects/string.h) — V8 interns strings used as property names for O(1) property lookup
-- [Ruby Symbol](https://github.com/ruby/ruby) — `Symbol` is an interned string that's never garbage-collected
-- [LLVM StringPool](https://github.com/llvm/llvm-project) — interned strings for identifiers across the compiler pipeline
+- [Java String.intern()](https://github.com/openjdk/jdk) — interning chuỗi cấp JVM trong string pool
+- [V8 Internalized Strings](https://chromium.googlesource.com/v8/v8/+/refs/heads/main/src/objects/string.h) — V8 intern chuỗi dùng làm tên thuộc tính để tra thuộc tính O(1)
+- [Ruby Symbol](https://github.com/ruby/ruby) — `Symbol` là chuỗi đã intern không bao giờ bị GC
+- [LLVM StringPool](https://github.com/llvm/llvm-project) — chuỗi đã intern cho identifier qua pipeline compiler
 
-## Related Patterns
+## Pattern liên quan
 
-| Pattern | Relationship |
+| Pattern | Quan hệ |
 |---------|-------------|
-| [Flyweight](/patterns/flyweight/) | Interning is the mechanism behind flyweight — deduplicate identical immutable values |
-| [LRU Cache](/patterns/lru-cache/) | Intern tables can use LRU eviction to bound memory usage |
-| [Bloom Filter](/patterns/bloom-filter/) | Bloom filters can pre-check before expensive intern table lookups |
+| [Flyweight](/patterns/flyweight/) | Interning là cơ chế đằng sau flyweight — khử trùng lặp các giá trị bất biến giống nhau |
+| [LRU Cache](/patterns/lru-cache/) | Bảng intern có thể dùng loại bỏ LRU để giới hạn bộ nhớ |
+| [Bloom Filter](/patterns/bloom-filter/) | Bloom filter có thể kiểm tra trước trước khi tra bảng intern tốn kém |
 
-## Challenge Questions
+## Câu hỏi thử thách
 
-::: details Q1: Your compiler interns 100,000 identifiers. How does interning affect memory compared to storing raw strings?
-**Answer:** Each unique string is stored exactly once in the intern table. Every reference is a `u32` (4 bytes) instead of a pointer + length + heap allocation (typically 24+ bytes per string on 64-bit systems).
+::: details Câu 1: Compiler của bạn intern 100.000 identifier. Interning ảnh hưởng bộ nhớ thế nào so với lưu chuỗi thô?
+**Trả lời:** Mỗi chuỗi duy nhất được lưu đúng một lần trong bảng intern. Mỗi tham chiếu là một `u32` (4 byte) thay vì con trỏ + độ dài + cấp phát heap (thường 24+ byte mỗi chuỗi trên hệ thống 64-bit).
 
-If the average identifier is 12 characters with 5x duplication, raw storage costs 100,000 * (24 + 12) = 3.6MB. With interning, you store 20,000 unique strings (720KB) + 100,000 IDs at 4 bytes each (400KB) = 1.12MB. That's ~3x less memory, plus O(1) equality checks.
+Nếu identifier trung bình 12 ký tự với hệ số trùng lặp 5x, lưu thô tốn 100.000 * (24 + 12) = 3,6MB. Với interning, bạn lưu 20.000 chuỗi duy nhất (720KB) + 100.000 ID 4 byte mỗi cái (400KB) = 1,12MB. Đó là ít hơn ~3x bộ nhớ, cộng với so bằng O(1).
 :::
 
-::: details Q2: Ruby Symbols are interned and never garbage-collected. What's the security risk?
-**Answer:** An attacker can exhaust server memory by generating unlimited unique symbols (e.g., converting user input to symbols via `to_sym`). Since symbols are never GC'd, each unique input permanently consumes memory.
+::: details Câu 2: Symbol Ruby được intern và không bao giờ bị GC. Rủi ro bảo mật là gì?
+**Trả lời:** Kẻ tấn công có thể vắt kiệt bộ nhớ server bằng cách tạo vô số symbol duy nhất (ví dụ chuyển input người dùng thành symbol qua `to_sym`). Vì symbol không bao giờ bị GC, mỗi input duy nhất tiêu thụ bộ nhớ vĩnh viễn.
 
-Symbol table exhaustion was a known attack vector in Ruby (related vulnerabilities include CVE-2013-0269 in the JSON gem). The fix: never intern user-controlled input. Use strings for external data, symbols only for known constants. Ruby 2.2+ introduced "mortal symbols" — dynamically created symbols (including via `to_sym`) are now garbage-collectible. Only symbols that appear literally in source code remain immortal.
+Vắt kiệt bảng symbol là một vector tấn công đã biết trong Ruby (lỗ hổng liên quan gồm CVE-2013-0269 trong gem JSON). Cách sửa: không bao giờ intern input do người dùng kiểm soát. Dùng string cho dữ liệu bên ngoài, symbol chỉ cho hằng đã biết. Ruby 2.2+ giới thiệu "mortal symbol" — symbol tạo động (kể cả qua `to_sym`) giờ có thể bị GC. Chỉ symbol xuất hiện literal trong source code mới bất tử.
 :::
 
-::: details Q3: Why does the Rust compiler use u32 for Symbol instead of u64 or usize?
-**Answer:** A u32 limits the compiler to ~4 billion unique symbols, which is more than enough for any real program. The benefit is that every `Symbol` is only 4 bytes — half the size of `u64` on 64-bit systems.
+::: details Câu 3: Tại sao compiler Rust dùng u32 cho Symbol thay vì u64 hoặc usize?
+**Trả lời:** Một `u32` giới hạn compiler ở ~4 tỉ symbol duy nhất, đủ dư cho mọi chương trình thực. Lợi ích là mỗi `Symbol` chỉ 4 byte — một nửa kích thước `u64` trên hệ thống 64-bit.
 
-Since symbols appear everywhere in the compiler's data structures (AST nodes, types, scopes), halving their size provides meaningful cache efficiency improvements. This is a deliberate space-time tradeoff: the compiler's performance is memory-bound, so smaller data = fewer cache misses.
+Vì symbol xuất hiện khắp các cấu trúc dữ liệu của compiler (node AST, type, scope), giảm một nửa kích thước cho cải thiện hiệu suất cache rõ rệt. Đây là đánh đổi không gian-thời gian có chủ ý: hiệu năng compiler bị giới hạn bởi bộ nhớ, nên dữ liệu nhỏ hơn = ít cache miss hơn.
 :::
 
-::: details Q4: Your multi-threaded application uses a global string interner protected by a mutex. Profiling shows the intern lock is the top contention point. How would you reduce contention without giving up interning?
-**Answer:** Use per-thread (thread-local) interners for the hot path, and merge into a global table only when cross-thread comparison is needed.
+::: details Câu 4: Ứng dụng đa luồng của bạn dùng một interner chuỗi toàn cục được bảo vệ bởi mutex. Profiling cho thấy khoá intern là điểm tranh chấp hàng đầu. Làm sao giảm tranh chấp mà không bỏ interning?
+**Trả lời:** Dùng interner mỗi luồng (thread-local) cho hot path, và chỉ merge vào bảng toàn cục khi cần so sánh xuyên luồng.
 
-A single global interner becomes a serialization bottleneck when many threads intern concurrently. The solution is sharded or thread-local interning: each thread maintains its own interner for fast, lock-free interning. Symbols from different thread-local interners are not directly comparable, so cross-thread comparison requires either a merge step or a two-level scheme (local ID + thread ID). The Rust compiler uses a scoped interner per session, and some JVMs use concurrent hash maps with striped locks to reduce contention. The key insight is that most equality checks are thread-local (within a single compilation unit or query), so paying for global synchronization on every intern is wasteful.
+Một interner toàn cục duy nhất trở thành điểm nghẽn serialize khi nhiều thread intern đồng thời. Giải pháp là interning chia mảnh hoặc thread-local: mỗi thread duy trì interner riêng để intern nhanh, lock-free. Symbol từ các interner thread-local khác nhau không so sánh trực tiếp được, nên so xuyên luồng cần bước merge hoặc lược đồ hai cấp (ID local + ID thread). Compiler Rust dùng interner theo phạm vi mỗi session, và một số JVM dùng concurrent hash map với khoá phân vạch để giảm tranh chấp. Insight chính là phần lớn so bằng đều thread-local (trong một đơn vị biên dịch hoặc truy vấn), nên phải trả tiền đồng bộ toàn cục cho mỗi lần intern là lãng phí.
 :::

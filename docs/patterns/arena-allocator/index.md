@@ -1,6 +1,6 @@
 ---
 title: "Pattern: Arena Allocator"
-description: "Allocate objects by bumping a pointer in a pre-allocated region — free everything at once when the region is no longer needed."
+description: "Cấp phát object bằng cách bump con trỏ trong một vùng cấp phát trước — giải phóng tất cả một lần khi vùng không còn cần."
 difficulty: "intermediate"
 ---
 
@@ -8,52 +8,52 @@ difficulty: "intermediate"
 
 <DifficultyBadge />
 
-## One Liner
+## Mô tả một câu
 
-Allocate objects by bumping a pointer in a pre-allocated region — free everything at once when the region is no longer needed.
+Cấp phát object bằng cách bump con trỏ trong một vùng cấp phát trước — giải phóng tất cả một lần khi vùng không còn cần.
 
 <DemoBadge />
 
-## Real-World Analogy
+## Tương tự thực tế
 
-A whiteboard for a meeting. Everyone writes wherever there's space, moving the marker forward. When the meeting ends, you erase the entire board at once — no need to clean each note individually.
+Một bảng trắng cho cuộc họp. Mọi người viết ở bất cứ chỗ nào còn trống, kéo bút lên trước. Khi cuộc họp kết thúc, bạn xoá cả bảng cùng lúc — không cần lau từng dòng riêng.
 
-## Core Idea
+## Ý tưởng cốt lõi
 
-An arena (or bump allocator) pre-allocates a contiguous block of memory and hands out chunks by advancing a pointer. Individual allocations cannot be freed — the entire arena is freed at once. This eliminates per-object allocation overhead, fragmentation, and GC pressure.
+Arena (hay bump allocator) cấp phát trước một khối bộ nhớ liền kề và phát các đoạn ra bằng cách tiến con trỏ. Không thể giải phóng từng cấp phát riêng — toàn bộ arena được giải phóng cùng một lúc. Điều đó loại bỏ overhead cấp phát mỗi object, phân mảnh và áp lực GC.
 
 ```text
   Arena: [                 capacity                    ]
          ┌──────┬──────┬──────┬────────────────────────┐
-         │ obj1 │ obj2 │ obj3 │    free space          │
+         │ obj1 │ obj2 │ obj3 │    không gian trống    │
          └──────┴──────┴──────┴────────────────────────┘
                               ▲
                               └── offset (bump pointer)
 
-  alloc(16) → offset: 0→16   (return region 0..16)
-  alloc(8)  → offset: 16→24  (return region 16..24)
-  reset()   → offset: 0      (all objects freed instantly)
+  alloc(16) → offset: 0→16   (trả vùng 0..16)
+  alloc(8)  → offset: 16→24  (trả vùng 16..24)
+  reset()   → offset: 0      (mọi object được giải phóng tức thì)
 ```
 
-| Property | Value |
+| Thuộc tính | Giá trị |
 |----------|-------|
-| Allocation speed | O(1) — just bump a pointer |
-| Deallocation | O(1) — reset the pointer (frees everything) |
-| Individual free | **Not supported** (use free-list or GC for that) |
-| Fragmentation | **None** — contiguous allocation, no gaps |
+| Tốc độ cấp phát | O(1) — chỉ bump một con trỏ |
+| Giải phóng | O(1) — reset con trỏ (giải phóng tất cả) |
+| Giải phóng riêng | **Không hỗ trợ** (dùng free-list hoặc GC cho việc đó) |
+| Phân mảnh | **Không** — cấp phát liền kề, không khe |
 
-**Try it yourself** — allocate blocks in the arena and reset to free everything at once:
+**Thử ngay** — cấp phát các block trong arena và reset để giải phóng tất cả một lần:
 
 <ArenaAllocatorViz />
 
-## Production Proof
+## Bằng chứng production
 
-| Project | Source | Usage |
+| Dự án | Nguồn | Cách dùng |
 |---------|--------|-------|
-| Rust bumpalo | [lib.rs#L378-L383](https://github.com/fitzgen/bumpalo/blob/d2cc4dd0b8830d5b05d44e9decc776823e6a70ea/src/lib.rs#L378-L383) | `Bump` struct (L378) holds a bump pointer into the current chunk. `try_alloc_layout_fast` (L1330-L1422) is the hot path: read pointer, align, subtract size, check capacity. `reset` (L1059-L1099) bulk-frees all chunks. Used in `wasm-bindgen`, Rust compiler, and Deno. |
-| Go stdlib | [arena.go#L44-L67](https://github.com/golang/go/blob/f5cdf4745455415c7a43cfc7d925214d4511489b/src/arena/arena.go#L44-L67) | Experimental `Arena` type — `New[T]()` allocates from the arena, `Free()` releases everything at once bypassing GC. Minimal API wrapping runtime arena primitives. |
+| Rust bumpalo | [lib.rs#L378-L383](https://github.com/fitzgen/bumpalo/blob/d2cc4dd0b8830d5b05d44e9decc776823e6a70ea/src/lib.rs#L378-L383) | Struct `Bump` (L378) giữ bump pointer vào chunk hiện tại. `try_alloc_layout_fast` (L1330-L1422) là hot path: đọc con trỏ, align, trừ size, kiểm tra capacity. `reset` (L1059-L1099) giải phóng hàng loạt mọi chunk. Dùng trong `wasm-bindgen`, compiler Rust và Deno. |
+| Stdlib Go | [arena.go#L44-L67](https://github.com/golang/go/blob/f5cdf4745455415c7a43cfc7d925214d4511489b/src/arena/arena.go#L44-L67) | Kiểu `Arena` thử nghiệm — `New[T]()` cấp phát từ arena, `Free()` giải phóng tất cả một lúc, bỏ qua GC. API tối giản bọc primitive arena của runtime. |
 
-## Implementation
+## Triển khai
 
 ::: code-group
 
@@ -161,68 +161,68 @@ class Arena:
 
 :::
 
-## Exercises
+## Bài tập
 
-| Level | Exercise | File |
+| Cấp độ | Bài tập | File |
 |-------|----------|------|
-| Basic | Implement a bump allocator with alloc/reset | `exercises/typescript/arena-allocator/01-basic.test.ts` |
-| Intermediate | String arena with handle-based allocation | `exercises/typescript/arena-allocator/02-intermediate.test.ts` |
+| Cơ bản | Triển khai bump allocator với alloc/reset | `exercises/typescript/arena-allocator/01-basic.test.ts` |
+| Trung bình | Arena chuỗi với cấp phát dựa trên handle | `exercises/typescript/arena-allocator/02-intermediate.test.ts` |
 
-Run exercises: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
+Chạy bài tập: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
 
-Exercise files: Rust `exercises/rust/src/arena_allocator/mod.rs` · Go `exercises/go/arena_allocator/arena_allocator_test.go` · Python `exercises/python/arena_allocator/test_arena_allocator.py`
+File bài tập: Rust `exercises/rust/src/arena_allocator/mod.rs` · Go `exercises/go/arena_allocator/arena_allocator_test.go` · Python `exercises/python/arena_allocator/test_arena_allocator.py`
 
-## When to Use
+## Khi nào nên dùng
 
-- **Compilers/parsers** — AST nodes allocated during parsing, freed all at once after compilation
-- **Game frame data** — per-frame allocations reset at frame boundary
-- **Request-scoped data** — web server allocations tied to a single request lifecycle
-- **Serialization** — temporary buffers for encoding/decoding
+- **Compiler/parser** — node AST được cấp phát khi parse, giải phóng tất cả sau biên dịch
+- **Dữ liệu frame của game** — cấp phát theo từng frame, reset ở ranh giới frame
+- **Dữ liệu theo phạm vi request** — cấp phát của web server gắn với vòng đời một request
+- **Serialize** — buffer tạm cho encode/decode
 
-## When NOT to Use
+## Khi nào KHÔNG nên dùng
 
-- **Long-lived objects** — arena frees everything at once; can't free individual objects
-- **Variable lifetimes** — if objects have different lifecycles, use a general allocator
-- **Memory-constrained** — arenas may waste space if allocation sizes are unpredictable
-- **Thread-shared arenas** — without synchronization, arenas are not thread-safe (use thread-local arenas)
+- **Object sống lâu** — arena giải phóng tất cả một lúc; không thể giải phóng object riêng
+- **Vòng đời khác nhau** — nếu object có vòng đời khác nhau, dùng allocator tổng quát
+- **Eo hẹp bộ nhớ** — arena có thể lãng phí nếu kích thước cấp phát khó dự đoán
+- **Arena chia sẻ giữa thread** — không có đồng bộ, arena không thread-safe (dùng arena thread-local)
 
-## More Production Uses
+## Thêm các ứng dụng production
 
-- [Go arena](https://github.com/golang/go/blob/f5cdf4745455415c7a43cfc7d925214d4511489b/src/arena/arena.go) — experimental arena API in Go standard library
-- [V8 Engine](https://chromium.googlesource.com/v8/v8/+/refs/heads/main/src/zone/zone.h) — `Zone` allocator provides arena-style bump allocation for compiler temporaries
-- [Zig](https://github.com/ziglang/zig) — `std.mem.ArenaAllocator` as a core allocator pattern
-- [ECS game engines](https://github.com/SanderMertens/flecs) — component storage with arena-style allocation
+- [Go arena](https://github.com/golang/go/blob/f5cdf4745455415c7a43cfc7d925214d4511489b/src/arena/arena.go) — API arena thử nghiệm trong thư viện chuẩn Go
+- [V8 Engine](https://chromium.googlesource.com/v8/v8/+/refs/heads/main/src/zone/zone.h) — allocator `Zone` cung cấp cấp phát kiểu arena cho biến tạm của compiler
+- [Zig](https://github.com/ziglang/zig) — `std.mem.ArenaAllocator` như một pattern allocator cốt lõi
+- [Game engine ECS](https://github.com/SanderMertens/flecs) — lưu trữ component với cấp phát kiểu arena
 
-## Related Patterns
+## Pattern liên quan
 
-| Pattern | Relationship |
+| Pattern | Quan hệ |
 |---------|-------------|
-| [Free List](/patterns/free-list/) | Free lists recycle individual objects; arenas bulk-free all at once |
-| [Object Pool](/patterns/object-pool/) | Object pools pre-allocate; arenas bump-allocate — both reduce malloc overhead |
-| [Reference Counting](/patterns/reference-counting/) | Arenas avoid per-object reference counting by freeing everything at scope end |
+| [Free List](/patterns/free-list/) | Free list tái chế object riêng; arena giải phóng hàng loạt |
+| [Object Pool](/patterns/object-pool/) | Object pool cấp phát trước; arena bump cấp phát — cả hai giảm overhead malloc |
+| [Reference Counting](/patterns/reference-counting/) | Arena tránh reference counting mỗi object bằng cách giải phóng tất cả khi phạm vi kết thúc |
 
-## Challenge Questions
+## Câu hỏi thử thách
 
-::: details Q1: An arena allocator never fragments memory. A general-purpose allocator does. Why?
-**Answer:** Because the arena allocates contiguously by bumping a pointer forward, and frees everything at once — there are never gaps between live objects.
+::: details Câu 1: Arena allocator không bao giờ phân mảnh bộ nhớ. Allocator tổng quát thì có. Tại sao?
+**Trả lời:** Vì arena cấp phát liền kề bằng cách bump con trỏ tiến lên và giải phóng tất cả một lúc — không bao giờ có khe giữa các object sống.
 
-Fragmentation happens when objects are allocated and freed individually, leaving holes between live objects that are too small to reuse. An arena avoids this because it never frees individual objects — it only resets the pointer to zero, reclaiming everything in one shot. The trade-off is that you can't free a single object early; if one allocation in the arena is still needed, the entire arena must stay alive.
+Phân mảnh xảy ra khi object được cấp phát và giải phóng riêng, để lại lỗ giữa các object sống quá nhỏ để tái dùng. Arena tránh được điều đó vì không bao giờ giải phóng object riêng — chỉ reset con trỏ về 0, thu hồi tất cả một lần. Đánh đổi là không thể giải phóng một object đơn lẻ sớm; nếu một cấp phát trong arena vẫn cần, toàn bộ arena phải sống tiếp.
 :::
 
-::: details Q2: You use an arena for per-HTTP-request allocations. One request triggers a 50MB file upload parsed into the arena. What's the problem?
-**Answer:** The arena holds the entire 50MB until the request completes, even if the parsed data is consumed incrementally and could have been freed along the way.
+::: details Câu 2: Bạn dùng arena cho các cấp phát mỗi HTTP request. Một request kích hoạt upload file 50MB được parse vào arena. Vấn đề là gì?
+**Trả lời:** Arena giữ toàn bộ 50MB cho đến khi request hoàn tất, ngay cả khi dữ liệu đã parse được tiêu thụ dần và lẽ ra có thể giải phóng dọc đường.
 
-Arenas work best when all allocations have roughly the same lifetime. If you parse a large file into an arena but only need a small summary, the bulk of the data sits in memory until `reset()`. The fix is either to stream-process the file without loading it all into the arena, or use a separate short-lived arena for the parsing pass and copy only the summary to the request arena.
+Arena hoạt động tốt nhất khi mọi cấp phát có vòng đời gần như nhau. Nếu bạn parse file lớn vào arena nhưng chỉ cần một tóm tắt nhỏ, phần lớn dữ liệu nằm trong bộ nhớ tới khi `reset()`. Cách sửa: hoặc stream-process file mà không nạp tất cả vào arena, hoặc dùng arena ngắn riêng cho pass parse và copy chỉ tóm tắt sang arena request.
 :::
 
-::: details Q3: A colleague suggests replacing Go's garbage collector with arenas everywhere for better performance. What's the flaw in this reasoning?
-**Answer:** Arenas require that all objects within them share the same lifetime. Real programs have objects with widely varying lifetimes, which arenas cannot handle.
+::: details Câu 3: Một đồng nghiệp đề nghị thay garbage collector của Go bằng arena ở khắp nơi cho hiệu năng tốt hơn. Lỗ hổng trong lập luận này là gì?
+**Trả lời:** Arena đòi hỏi mọi object bên trong nó chia sẻ cùng vòng đời. Chương trình thật có object với vòng đời rất khác nhau, mà arena không xử lý được.
 
-If object A must outlive object B but they're in the same arena, you can't free B without also freeing A. You'd end up either leaking memory (keeping arenas alive too long) or creating dozens of micro-arenas to match different lifetimes — which is just reinventing the allocator with more complexity. GC handles arbitrary lifetimes automatically. Arenas excel in specific scopes (per-request, per-frame, per-compilation-pass) where lifetime is uniform.
+Nếu object A phải sống lâu hơn object B nhưng chúng cùng arena, bạn không thể giải phóng B mà không giải phóng A. Bạn sẽ hoặc rò bộ nhớ (giữ arena sống quá lâu) hoặc tạo hàng chục micro-arena để khớp các vòng đời khác nhau — đó là tự phát minh lại allocator với độ phức tạp cao hơn. GC tự xử lý vòng đời tuỳ ý. Arena vượt trội trong phạm vi cụ thể (mỗi request, mỗi frame, mỗi pass biên dịch) nơi vòng đời đồng nhất.
 :::
 
-::: details Q4: Two arenas exist: one for AST nodes during parsing, one for IR nodes during code generation. The IR pass needs to reference AST nodes. What's the danger?
-**Answer:** If the AST arena is reset before the IR pass finishes reading from it, the IR holds dangling references into freed memory.
+::: details Câu 4: Có hai arena: một cho node AST khi parse, một cho node IR khi sinh mã. Pass IR cần tham chiếu các node AST. Nguy hiểm là gì?
+**Trả lời:** Nếu arena AST bị reset trước khi pass IR hoàn tất đọc từ nó, IR sẽ giữ tham chiếu lủng lẳng vào bộ nhớ đã giải phóng.
 
-This is the lifetime scoping problem: arena B's objects reference arena A's objects, creating an implicit lifetime dependency. Arena A must not be reset until arena B is done. In Rust, the borrow checker enforces this statically. In C/Go/TypeScript, it's a discipline issue. The solution is either to copy needed data out of arena A before resetting it, or to enforce a strict ordering: reset A only after resetting B.
+Đây là bài toán phạm vi vòng đời: object của arena B tham chiếu object của arena A, tạo phụ thuộc vòng đời ngầm. Arena A không được reset cho đến khi arena B xong. Trong Rust, borrow checker thực thi điều này tĩnh. Trong C/Go/TypeScript, đây là vấn đề kỷ luật. Giải pháp: hoặc copy dữ liệu cần thiết ra khỏi arena A trước khi reset, hoặc thực thi thứ tự nghiêm ngặt: reset A chỉ sau khi reset B.
 :::
