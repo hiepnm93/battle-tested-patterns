@@ -1,6 +1,6 @@
 ---
 title: "Pattern: Merkle Tree"
-description: "Hash leaves, then hash pairs upward to a root — verify any leaf's integrity in O(log n) without re-hashing the entire dataset."
+description: "Hash lá, rồi hash các cặp lên trên tới root — xác minh toàn vẹn lá nào trong O(log n) không cần re-hash toàn bộ dataset."
 difficulty: "advanced"
 ---
 
@@ -8,19 +8,19 @@ difficulty: "advanced"
 
 <DifficultyBadge />
 
-## One Liner
+## Mô tả một câu
 
-Hash leaves, then hash pairs upward to a root — verify any leaf's integrity in O(log n) without re-hashing the entire dataset.
+Hash lá, rồi hash các cặp lên trên tới root — xác minh toàn vẹn lá nào trong O(log n) không cần re-hash toàn bộ dataset.
 
 <DemoBadge />
 
-## Real-World Analogy
+## Tương tự thực tế
 
-A tamper-evident shipping seal system. Each box gets a unique wax seal. Boxes are grouped into crates, each crate sealed with a stamp derived from all its box seals. Crates go into containers with their own master seal. If one item is swapped, every seal above it breaks — and you can find the tampered box by checking just log(n) seals instead of opening every box.
+Hệ thống niêm phong vận chuyển bằng chứng giả mạo. Mỗi hộp nhận niêm phong sáp duy nhất. Hộp gom thành thùng, mỗi thùng niêm phong bằng dấu lấy từ tất cả niêm phong hộp. Thùng vào container với niêm phong tổng riêng. Nếu một item bị tráo, mọi niêm phong phía trên nó vỡ — và bạn có thể tìm hộp bị làm giả bằng cách check chỉ log(n) niêm phong thay vì mở mọi hộp.
 
-## Core Idea
+## Ý tưởng cốt lõi
 
-A Merkle tree is a binary tree of hashes. Each leaf node contains the hash of a data block. Each internal node contains the hash of its two children concatenated. The root hash is a fingerprint of the entire dataset. To verify a single leaf, you only need the "proof path" — the sibling hashes along the path from the leaf to the root — giving O(log n) verification.
+Merkle tree là cây nhị phân các hash. Mỗi node lá chứa hash của một block dữ liệu. Mỗi node nội bộ chứa hash của hai con nối lại. Root hash là dấu vân tay của toàn bộ dataset. Để xác minh một lá, bạn chỉ cần "đường bằng chứng" — các hash anh em dọc đường từ lá tới root — cho xác minh O(log n).
 
 ```text
                     Root Hash
@@ -33,35 +33,35 @@ A Merkle tree is a binary tree of hashes. Each leaf node contains the hash of a 
           |       |         |       |
         Data A  Data B    Data C  Data D
 
-  Verify Data C:
+  Xác minh Data C:
   ┌──────────────────────────────────────┐
-  │ Need: H4 (sibling), H12 (uncle)     │
-  │ Compute: H3 = hash(Data C)          │
-  │          H34 = hash(H3 + H4)        │
-  │          root = hash(H12 + H34)     │
-  │ Compare: root == known root? ✓      │
+  │ Cần: H4 (anh em), H12 (chú)         │
+  │ Tính: H3 = hash(Data C)             │
+  │       H34 = hash(H3 + H4)           │
+  │       root = hash(H12 + H34)        │
+  │ So: root == root đã biết? ✓         │
   └──────────────────────────────────────┘
 ```
 
-| Property | Value |
+| Thuộc tính | Giá trị |
 |----------|-------|
-| Verification cost | O(log n) hashes per leaf |
-| Tree construction | O(n) hashes |
-| Space for proof | O(log n) sibling hashes |
-| Tamper detection | Any change flips the root hash |
+| Chi phí xác minh | O(log n) hash mỗi lá |
+| Xây cây | O(n) hash |
+| Bộ nhớ cho bằng chứng | O(log n) hash anh em |
+| Phát hiện giả mạo | Bất kỳ thay đổi nào lật root hash |
 
-**Try it yourself** — verify a leaf's integrity by tracing the proof path, or tamper with data to see the root hash change:
+**Thử ngay** — xác minh toàn vẹn lá bằng cách lần theo đường bằng chứng, hoặc làm giả dữ liệu để xem root hash đổi:
 
 <MerkleTreeViz />
 
-## Production Proof
+## Bằng chứng production
 
-| Project | Source | Usage |
+| Dự án | Nguồn | Cách dùng |
 |---------|--------|-------|
-| Git | [tree.c#L136-L171](https://github.com/git/git/blob/1ff279f3404a482a83fb04c7457e41ab26884aea/tree.c#L136-L171) | `parse_tree_gently` parses tree objects, each storing hashes of child blobs/trees. Git's object model is a Merkle DAG — every commit, tree, and blob is content-addressed by SHA-1. Changing a single byte in any file changes all hashes up to the root commit. This enables efficient diff, fetch (only transfer missing objects), and integrity verification with `git fsck`. |
-| ZFS | [blkptr.c (OpenZFS)](https://github.com/openzfs/zfs/blob/7e054b2e7ea80c7c838f7fd44b7d517eea5c9d18/module/zfs/blkptr.c#L30-L77) | `blkptr_verify` validates block pointer checksums. Every block in ZFS stores a checksum of its contents in the parent block's pointer — forming a Merkle tree from data blocks up to the uberblock. This self-validating structure detects silent data corruption (bit rot) without a separate integrity database. The `zpool scrub` command walks this tree to verify every block. |
+| Git | [tree.c#L136-L171](https://github.com/git/git/blob/1ff279f3404a482a83fb04c7457e41ab26884aea/tree.c#L136-L171) | `parse_tree_gently` parse object tree, mỗi cái lưu hash của blob/tree con. Mô hình object Git là Merkle DAG — mọi commit, tree và blob được địa chỉ-theo-nội-dung bằng SHA-1. Đổi một byte trong file nào đổi mọi hash lên tới commit root. Điều này cho phép diff, fetch (chỉ chuyển object thiếu) và xác minh toàn vẹn hiệu quả với `git fsck`. |
+| ZFS | [blkptr.c (OpenZFS)](https://github.com/openzfs/zfs/blob/7e054b2e7ea80c7c838f7fd44b7d517eea5c9d18/module/zfs/blkptr.c#L30-L77) | `blkptr_verify` xác minh checksum block pointer. Mọi block trong ZFS lưu checksum nội dung trong con trỏ của block cha — tạo Merkle tree từ block dữ liệu lên uberblock. Cấu trúc tự-xác-minh này phát hiện hư dữ liệu âm thầm (bit rot) không cần database toàn vẹn riêng. Command `zpool scrub` đi qua cây này để xác minh mọi block. |
 
-## Implementation
+## Triển khai
 
 ::: code-group
 
@@ -91,7 +91,7 @@ class MerkleTree {
       const next: string[] = [];
       for (let i = 0; i < current.length; i += 2) {
         const left = current[i]!;
-        const right = current[i + 1] ?? left; // duplicate last if odd
+        const right = current[i + 1] ?? left; // nhân đôi cái cuối nếu lẻ
         next.push(hash(left + right));
       }
       this.layers.push(next);
@@ -153,7 +153,7 @@ fn hash_str(data: &str) -> String {
 
 pub struct ProofStep {
     pub hash: String,
-    pub position: String, // "left" or "right"
+    pub position: String, // "left" hoặc "right"
 }
 
 pub struct MerkleTree {
@@ -239,7 +239,7 @@ func hashStr(data string) string {
 
 type ProofStep struct {
 	Hash     string
-	Position string // "left" or "right"
+	Position string // "left" hoặc "right"
 }
 
 type MerkleTree struct {
@@ -370,71 +370,71 @@ class MerkleTree:
 
 :::
 
-## Exercises
+## Bài tập
 
-| Level | Exercise | File |
+| Cấp độ | Bài tập | File |
 |-------|----------|------|
-| Basic | Build a Merkle tree, get root hash, generate and verify proof | `exercises/typescript/merkle-tree/01-basic.test.ts` |
-| Intermediate | Detect tampered leaf and generate minimal proof path | `exercises/typescript/merkle-tree/02-intermediate.test.ts` |
+| Cơ bản | Xây Merkle tree, lấy root hash, sinh và xác minh bằng chứng | `exercises/typescript/merkle-tree/01-basic.test.ts` |
+| Trung bình | Phát hiện lá bị giả mạo và sinh đường bằng chứng tối thiểu | `exercises/typescript/merkle-tree/02-intermediate.test.ts` |
 
-Run exercises: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
+Chạy bài tập: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
 
-Exercise files: Rust `exercises/rust/src/merkle_tree/mod.rs` · Go `exercises/go/merkle_tree/merkle_tree_test.go` · Python `exercises/python/merkle_tree/test_merkle_tree.py`
+File bài tập: Rust `exercises/rust/src/merkle_tree/mod.rs` · Go `exercises/go/merkle_tree/merkle_tree_test.go` · Python `exercises/python/merkle_tree/test_merkle_tree.py`
 
-## When to Use
+## Khi nào nên dùng
 
-- **Version control** — content-addressed storage where any change is detectable (Git)
-- **Blockchain** — transaction verification without downloading the full chain (Bitcoin SPV)
-- **File systems** — silent data corruption detection (ZFS, Btrfs)
-- **Peer-to-peer** — verify downloaded chunks from untrusted peers (BitTorrent, IPFS)
-- **Certificate transparency** — append-only Merkle log of TLS certificates
+- **Version control** — lưu trữ địa chỉ-theo-nội-dung nơi mọi thay đổi đều phát hiện được (Git)
+- **Blockchain** — xác minh giao dịch không cần tải toàn chuỗi (Bitcoin SPV)
+- **Filesystem** — phát hiện hư dữ liệu âm thầm (ZFS, Btrfs)
+- **Peer-to-peer** — xác minh chunk tải về từ peer không tin cậy (BitTorrent, IPFS)
+- **Minh bạch chứng chỉ** — log Merkle append-only của chứng chỉ TLS
 
-## When NOT to Use
+## Khi nào KHÔNG nên dùng
 
-- **Small datasets** — if you can hash everything at once, a Merkle tree adds needless complexity
-- **Frequently changing data** — every mutation requires O(log n) rehashes up to the root
-- **Non-verifiable context** — if you trust the data source entirely, integrity proofs are wasted work
-- **Ordered access patterns** — Merkle trees are not search trees; use B+ trees for range queries
+- **Dataset nhỏ** — nếu có thể hash mọi thứ một lần, Merkle tree thêm phức tạp không cần
+- **Dữ liệu đổi thường xuyên** — mỗi mutation cần O(log n) re-hash lên root
+- **Bối cảnh không-xác-minh-được** — nếu bạn tin nguồn dữ liệu hoàn toàn, bằng chứng toàn vẹn là việc phí
+- **Mẫu truy cập có thứ tự** — Merkle tree không phải cây tìm kiếm; dùng B+ tree cho truy vấn khoảng
 
-## More Production Uses
+## Thêm các ứng dụng production
 
-- [Bitcoin](https://github.com/bitcoin/bitcoin) — block header contains Merkle root of all transactions
-- [Ethereum](https://github.com/ethereum/go-ethereum) — Patricia Merkle Trie for state, transactions, and receipts
-- [IPFS](https://github.com/ipfs/kubo) — content-addressed Merkle DAG for distributed file storage
-- [Certificate Transparency](https://certificate.transparency.dev/) — Merkle tree log for auditing TLS certificates
+- [Bitcoin](https://github.com/bitcoin/bitcoin) — header block chứa Merkle root mọi transaction
+- [Ethereum](https://github.com/ethereum/go-ethereum) — Patricia Merkle Trie cho state, transaction và receipt
+- [IPFS](https://github.com/ipfs/kubo) — Merkle DAG địa chỉ-theo-nội-dung cho lưu trữ file phân tán
+- [Certificate Transparency](https://certificate.transparency.dev/) — log Merkle tree cho audit chứng chỉ TLS
 
-## Related Patterns
+## Pattern liên quan
 
-| Pattern | Relationship |
+| Pattern | Quan hệ |
 |---------|-------------|
-| [Copy-on-Write (CoW)](/patterns/copy-on-write/) | Merkle trees enable efficient copy-on-write — only rehash the changed path |
-| [Write-Ahead Log (WAL)](/patterns/write-ahead-log/) | WAL records changes; Merkle trees verify the resulting state is consistent |
-| [Checkpointing](/patterns/checkpointing/) | Merkle roots serve as integrity proofs for checkpoint snapshots |
-| [B+ Tree](/patterns/b-plus-tree/) | Both are tree structures — Merkle for verification, B+ for ordered access |
-| [Diff & Patch](/patterns/diff-patch/) | Merkle trees enable efficient diff detection — only rehash paths to changed nodes |
+| [Copy-on-Write (CoW)](/patterns/copy-on-write/) | Merkle tree cho copy-on-write hiệu quả — chỉ re-hash đường đã đổi |
+| [Write-Ahead Log (WAL)](/patterns/write-ahead-log/) | WAL ghi thay đổi; Merkle tree xác minh state kết quả nhất quán |
+| [Checkpointing](/patterns/checkpointing/) | Root Merkle phục vụ bằng chứng toàn vẹn cho snapshot checkpoint |
+| [B+ Tree](/patterns/b-plus-tree/) | Cả hai là cấu trúc cây — Merkle cho xác minh, B+ cho truy cập có thứ tự |
+| [Diff & Patch](/patterns/diff-patch/) | Merkle tree cho phát hiện diff hiệu quả — chỉ re-hash đường tới node đã đổi |
 
-## Challenge Questions
+## Câu hỏi thử thách
 
-::: details Q1: Your Merkle tree has 1 million leaves. A client wants to verify that leaf #500,000 is authentic. How many hashes does the client need to receive and compute?
-**Answer:** About 20 hashes (log2(1,000,000) ~ 20). The client receives ~20 sibling hashes (the proof path) and computes ~20 hash operations to walk from the leaf to the root.
+::: details Câu 1: Merkle tree của bạn có 1 triệu lá. Client muốn xác minh rằng lá #500.000 là xác thực. Client cần nhận và tính bao nhiêu hash?
+**Trả lời:** Khoảng 20 hash (log2(1.000.000) ~ 20). Client nhận ~20 hash anh em (đường bằng chứng) và tính ~20 thao tác hash để đi từ lá tới root.
 
-This is the core value proposition of Merkle trees: verification cost is logarithmic in the dataset size. The client needs the leaf data, the proof path (one sibling hash per tree level), and the known root hash. For 1 million leaves, that's roughly 20 × 32 bytes = 640 bytes of proof data — trivial compared to re-downloading and hashing all 1 million leaves.
+Đây là giá trị cốt lõi của Merkle tree: chi phí xác minh logarit theo size dataset. Client cần dữ liệu lá, đường bằng chứng (một hash anh em mỗi tầng cây) và root hash đã biết. Cho 1 triệu lá, đó là khoảng 20 × 32 byte = 640 byte dữ liệu bằng chứng — không đáng kể so với tải lại và hash cả 1 triệu lá.
 :::
 
-::: details Q2: Git uses SHA-1 for its Merkle DAG. If you change a single character in a file deep in the repository, what exactly changes in the object database?
-**Answer:** The blob hash changes, which changes the tree hash of its parent directory, which changes every tree hash up to the root tree, which changes the commit hash. All ancestor objects get new hashes.
+::: details Câu 2: Git dùng SHA-1 cho Merkle DAG. Nếu bạn đổi một ký tự trong file sâu trong repo, chính xác gì đổi trong object database?
+**Trả lời:** Blob hash đổi, đổi tree hash của thư mục cha, đổi mọi tree hash lên tree root, đổi commit hash. Mọi object tổ tiên nhận hash mới.
 
-This is the "tamper-evident" property: a single-bit change at any leaf cascades all the way to the root. In Git, this means every commit hash is a fingerprint of the entire repository state at that point. It's also why Git can efficiently determine what changed between two commits — if two tree hashes match, the entire subtree is identical, so Git can skip it entirely during diff/fetch operations.
+Đây là tính chất "chứng cứ giả mạo": thay đổi một bit ở lá nào cũng lan tới root. Trong Git, điều này nghĩa mọi commit hash là dấu vân tay của toàn bộ state repo tại điểm đó. Đó cũng là lý do Git có thể hiệu quả xác định cái gì đổi giữa hai commit — nếu hai tree hash khớp, toàn bộ subtree giống nhau, nên Git có thể bỏ qua hoàn toàn khi diff/fetch.
 :::
 
-::: details Q3: You're building a Merkle tree with an odd number of leaves (e.g., 5). How do you handle the unpaired leaf at each level?
-**Answer:** Duplicate the last leaf (hash it with itself) to create a pair. This is the standard approach used in Bitcoin's Merkle tree implementation.
+::: details Câu 3: Bạn đang xây Merkle tree với số lá lẻ (ví dụ 5). Xử lý lá không cặp ở mỗi tầng thế nào?
+**Trả lời:** Nhân đôi lá cuối (hash nó với chính nó) để tạo cặp. Đây là cách tiếp cận chuẩn dùng trong triển khai Merkle tree Bitcoin.
 
-There are two common strategies: (1) duplicate the unpaired node and hash it with itself (Bitcoin's approach), or (2) promote the unpaired node to the next level unchanged (some academic implementations). The duplication approach is simpler but creates a subtle issue: two different datasets (e.g., [A, B, C] and [A, B, C, C]) could produce the same root hash. Bitcoin addresses this with additional validation rules. The promote approach avoids this ambiguity but makes proof generation slightly more complex.
+Có hai chiến lược phổ biến: (1) nhân đôi node không cặp và hash với chính nó (cách Bitcoin), hoặc (2) thăng node không cặp lên tầng tiếp không đổi (một số triển khai học thuật). Cách nhân đôi đơn giản hơn nhưng tạo vấn đề tinh tế: hai dataset khác nhau (ví dụ [A, B, C] và [A, B, C, C]) có thể sinh cùng root hash. Bitcoin giải bằng quy tắc xác minh thêm. Cách thăng tránh mơ hồ này nhưng làm sinh bằng chứng phức tạp hơn chút.
 :::
 
-::: details Q4: Your Merkle tree is used in a peer-to-peer file sharing system. A malicious peer sends you a valid proof for a leaf, but the leaf data itself is garbage. Does the proof verify?
-**Answer:** No. The proof won't verify because hash(garbage_data) will produce a different leaf hash than the original, and the computed root won't match the known root.
+::: details Câu 4: Merkle tree của bạn dùng trong hệ chia sẻ file peer-to-peer. Peer độc hại gửi bạn bằng chứng hợp lệ cho một lá, nhưng dữ liệu lá là rác. Bằng chứng có xác minh được không?
+**Trả lời:** Không. Bằng chứng không xác minh được vì hash(dữ_liệu_rác) sẽ sinh lá hash khác bản gốc, và root tính được không khớp root đã biết.
 
-The proof verification recomputes the root starting from hash(received_data). If the data is different, hash(received_data) != hash(original_data), and the mismatch propagates up through every level. This is exactly why Merkle proofs work for untrusted data sources — you don't need to trust the peer, only the root hash (which comes from a trusted source like the blockchain or a signed manifest).
+Xác minh bằng chứng tính lại root bắt đầu từ hash(dữ_liệu_nhận). Nếu dữ liệu khác, hash(dữ_liệu_nhận) != hash(dữ_liệu_gốc), và lệch lan lên qua mọi tầng. Đây chính xác lý do Merkle proof hoạt động cho nguồn dữ liệu không tin cậy — bạn không cần tin peer, chỉ tin root hash (từ nguồn tin cậy như blockchain hoặc manifest đã ký).
 :::
