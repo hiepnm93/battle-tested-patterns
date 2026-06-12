@@ -1,6 +1,6 @@
 ---
 title: "Pattern: MVCC (Multi-Version Concurrency Control)"
-description: "Keep multiple timestamped versions of each value so readers never block writers — each transaction sees a consistent snapshot without locks."
+description: "Giữ nhiều phiên bản có timestamp của mỗi giá trị để reader không bao giờ chặn writer — mỗi transaction thấy snapshot nhất quán không cần lock."
 difficulty: "advanced"
 ---
 
@@ -8,19 +8,19 @@ difficulty: "advanced"
 
 <DifficultyBadge />
 
-## One Liner
+## Mô tả một câu
 
-Keep multiple timestamped versions of each value so readers never block writers — each transaction sees a consistent snapshot without locks.
+Giữ nhiều phiên bản có timestamp của mỗi giá trị để reader không bao giờ chặn writer — mỗi transaction thấy snapshot nhất quán không cần lock.
 
 <DemoBadge />
 
-## Real-World Analogy
+## Tương tự thực tế
 
-A library that keeps old editions of books alongside new ones. Readers who checked out edition 3 can finish reading it even after edition 4 is published. Each reader sees a consistent snapshot — no one sees a half-written update.
+Thư viện giữ ấn bản cũ của sách cùng với ấn bản mới. Người đọc đã mượn ấn bản 3 có thể đọc xong dù ấn bản 4 đã ra. Mỗi người đọc thấy snapshot nhất quán — không ai thấy update viết dở.
 
-## Core Idea
+## Ý tưởng cốt lõi
 
-MVCC stores every write as a new version tagged with a timestamp or transaction ID. Readers see the latest version visible to their snapshot, ignoring concurrent writes. This eliminates read-write contention: readers never block writers, writers never block readers.
+MVCC lưu mỗi ghi như phiên bản mới gắn timestamp hoặc transaction ID. Reader thấy phiên bản mới nhất visible với snapshot của họ, bỏ qua ghi đồng thời. Điều này loại bỏ tranh chấp đọc-ghi: reader không bao giờ chặn writer, writer không bao giờ chặn reader.
 
 ```text
   Key "balance"
@@ -29,30 +29,30 @@ MVCC stores every write as a new version tagged with a timestamp or transaction 
   │ val=500  │ val=450  │ val=600  │ val=580  │
   └──────────┴──────────┴──────────┴──────────┘
 
-  Transaction at t=250:  sees val=450  (latest version ≤ 250)
-  Transaction at t=350:  sees val=600  (latest version ≤ 350)
-  Both read without blocking the writer at t=400.
+  Transaction tại t=250:  thấy val=450  (phiên bản mới nhất ≤ 250)
+  Transaction tại t=350:  thấy val=600  (phiên bản mới nhất ≤ 350)
+  Cả hai đọc không chặn writer tại t=400.
 ```
 
-| Property | Value |
+| Thuộc tính | Giá trị |
 |----------|-------|
-| Read-write conflict | **None** — readers see their snapshot, writers append new versions |
-| Write-write conflict | Detected at commit time (first-writer-wins or abort) |
-| Space overhead | Multiple versions per key (garbage collected via compaction) |
-| Isolation level | Snapshot isolation (stronger than read-committed, weaker than serializable) |
+| Xung đột đọc-ghi | **Không** — reader thấy snapshot của họ, writer append phiên bản mới |
+| Xung đột ghi-ghi | Phát hiện lúc commit (first-writer-wins hoặc abort) |
+| Overhead bộ nhớ | Nhiều phiên bản mỗi key (GC qua compaction) |
+| Mức cô lập | Snapshot isolation (mạnh hơn read-committed, yếu hơn serializable) |
 
-**Try it yourself** — start transactions, read and write keys, and observe snapshot isolation:
+**Thử ngay** — bắt đầu transaction, đọc và ghi key, và quan sát cô lập snapshot:
 
 <MVCCViz />
 
-## Production Proof
+## Bằng chứng production
 
-| Project | Source | Usage |
+| Dự án | Nguồn | Cách dùng |
 |---------|--------|-------|
-| PostgreSQL | [heapam_visibility.c#L917-L1096](https://github.com/postgres/postgres/blob/e18b0cb7344cb4bd28468f6c0aeeb9b9241d30aa/src/backend/access/heap/heapam_visibility.c#L917-L1096) | `HeapTupleSatisfiesMVCC` — the core visibility check. Given a heap tuple and an MVCC snapshot, determines if the tuple is visible to the current transaction. Uses `XidInMVCCSnapshot` to check transaction visibility without contention on `ProcArrayLock`. |
-| etcd | [kvstore.go#L53-L135](https://github.com/etcd-io/etcd/blob/e9b62f804766edf77cfa918d600cb6fb2c56b401/server/storage/mvcc/kvstore.go#L53-L135) | `store` struct (L53-L82) tracks `currentRev` and `compactMainRev` with a B-tree `kvindex` for multi-version lookups. `NewStore` (L87-L135) initializes the MVCC store and rebuilds the in-memory index from persisted revisions. Powers Kubernetes' configuration backbone. |
+| PostgreSQL | [heapam_visibility.c#L917-L1096](https://github.com/postgres/postgres/blob/e18b0cb7344cb4bd28468f6c0aeeb9b9241d30aa/src/backend/access/heap/heapam_visibility.c#L917-L1096) | `HeapTupleSatisfiesMVCC` — check hiển thị cốt lõi. Cho tuple heap và snapshot MVCC, xác định tuple visible với transaction hiện tại. Dùng `XidInMVCCSnapshot` để check hiển thị transaction không tranh chấp trên `ProcArrayLock`. |
+| etcd | [kvstore.go#L53-L135](https://github.com/etcd-io/etcd/blob/e9b62f804766edf77cfa918d600cb6fb2c56b401/server/storage/mvcc/kvstore.go#L53-L135) | Struct `store` (L53-L82) theo dõi `currentRev` và `compactMainRev` với B-tree `kvindex` cho tra cứu đa phiên bản. `NewStore` (L87-L135) khởi tạo store MVCC và dựng lại index trong bộ nhớ từ revision đã lưu. Chạy xương sống cấu hình Kubernetes. |
 
-## Implementation
+## Triển khai
 
 ::: code-group
 
@@ -200,69 +200,69 @@ class MVCCStore:
 
 :::
 
-## Exercises
+## Bài tập
 
-| Level | Exercise | File |
+| Cấp độ | Bài tập | File |
 |-------|----------|------|
-| Basic | Implement a multi-version key-value store | `exercises/typescript/mvcc/01-basic.test.ts` |
-| Intermediate | Snapshot transactions with consistent reads | `exercises/typescript/mvcc/02-intermediate.test.ts` |
+| Cơ bản | Triển khai kho key-value đa phiên bản | `exercises/typescript/mvcc/01-basic.test.ts` |
+| Trung bình | Transaction snapshot với đọc nhất quán | `exercises/typescript/mvcc/02-intermediate.test.ts` |
 
-Run exercises: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
+Chạy bài tập: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
 
-Exercise files: Rust `exercises/rust/src/mvcc/mod.rs` · Go `exercises/go/mvcc/mvcc_test.go` · Python `exercises/python/mvcc/test_mvcc.py`
+File bài tập: Rust `exercises/rust/src/mvcc/mod.rs` · Go `exercises/go/mvcc/mvcc_test.go` · Python `exercises/python/mvcc/test_mvcc.py`
 
-## When to Use
+## Khi nào nên dùng
 
-- **Databases** — snapshot isolation for concurrent transactions (PostgreSQL, MySQL InnoDB)
-- **Distributed KV stores** — consistent reads without distributed locks (etcd, CockroachDB, TiKV)
-- **Time-travel queries** — read data as of a past timestamp
-- **Optimistic concurrency** — detect conflicts at commit time instead of locking upfront
+- **Database** — snapshot isolation cho transaction đồng thời (PostgreSQL, MySQL InnoDB)
+- **KV store phân tán** — đọc nhất quán không cần lock phân tán (etcd, CockroachDB, TiKV)
+- **Truy vấn time-travel** — đọc dữ liệu tại timestamp quá khứ
+- **Concurrency lạc quan** — phát hiện xung đột lúc commit thay vì lock từ đầu
 
-## When NOT to Use
+## Khi nào KHÔNG nên dùng
 
-- **Single-writer systems** — MVCC overhead is unnecessary if only one writer exists
-- **Memory-constrained** — multiple versions per key consume significant storage
-- **Write-heavy, no reads** — version management overhead with no reader benefit
-- **Strict serializability needed** — MVCC provides snapshot isolation; full serializability requires additional mechanisms (SSI)
+- **Hệ single-writer** — overhead MVCC không cần nếu chỉ một writer
+- **Eo hẹp bộ nhớ** — nhiều phiên bản mỗi key tiêu thụ storage đáng kể
+- **Nặng ghi, không đọc** — overhead quản lý phiên bản không lợi cho reader
+- **Cần serializability nghiêm ngặt** — MVCC cung cấp snapshot isolation; serializability đầy đủ cần cơ chế thêm (SSI)
 
-## More Production Uses
+## Thêm các ứng dụng production
 
-- [CockroachDB](https://github.com/cockroachdb/cockroach/blob/5f5932a2bf50713ff76a0f859a41fd7985dec307/pkg/storage/mvcc.go#L1923-L1962) — `MVCCPut` / `MVCCGet` for distributed SQL
-- [MySQL InnoDB](https://github.com/mysql/mysql-server) — undo logs for MVCC row versioning
-- [TiKV](https://github.com/tikv/tikv) — Percolator-based distributed MVCC transactions
-- [FoundationDB](https://github.com/apple/foundationdb) — multi-version storage layer
+- [CockroachDB](https://github.com/cockroachdb/cockroach/blob/5f5932a2bf50713ff76a0f859a41fd7985dec307/pkg/storage/mvcc.go#L1923-L1962) — `MVCCPut` / `MVCCGet` cho SQL phân tán
+- [MySQL InnoDB](https://github.com/mysql/mysql-server) — undo log cho versioning row MVCC
+- [TiKV](https://github.com/tikv/tikv) — transaction MVCC phân tán nền Percolator
+- [FoundationDB](https://github.com/apple/foundationdb) — lớp lưu trữ đa phiên bản
 
-## Related Patterns
+## Pattern liên quan
 
-| Pattern | Relationship |
+| Pattern | Quan hệ |
 |---------|-------------|
-| [Copy-on-Write (CoW)](/patterns/copy-on-write/) | MVCC creates new versions on write, similar to copy-on-write semantics |
-| [Logical Clock](/patterns/logical-clock/) | Logical clocks provide the version timestamps that MVCC depends on |
-| [Tombstone](/patterns/tombstone/) | MVCC marks deleted versions with tombstones for later garbage collection |
-| [Write-Ahead Log (WAL)](/patterns/write-ahead-log/) | WAL ensures MVCC version changes survive crashes |
+| [Copy-on-Write (CoW)](/patterns/copy-on-write/) | MVCC tạo phiên bản mới khi ghi, tương tự ngữ nghĩa copy-on-write |
+| [Logical Clock](/patterns/logical-clock/) | Logical clock cung cấp timestamp phiên bản mà MVCC phụ thuộc |
+| [Tombstone](/patterns/tombstone/) | MVCC đánh dấu phiên bản đã xoá bằng tombstone cho GC sau |
+| [Write-Ahead Log (WAL)](/patterns/write-ahead-log/) | WAL đảm bảo thay đổi phiên bản MVCC sống sót crash |
 
-## Challenge Questions
+## Câu hỏi thử thách
 
-::: details Q1: Your MVCC store keeps every version of every key forever. After a year of operation, storage usage is 50x the actual live dataset size. How do production databases like PostgreSQL handle this?
-**Answer:** They run garbage collection (called "vacuuming" in PostgreSQL) to remove versions that are no longer visible to any active transaction.
+::: details Câu 1: MVCC store của bạn giữ mọi phiên bản của mọi key mãi. Sau một năm hoạt động, dùng storage 50x kích thước dataset live thực. Database production như PostgreSQL xử lý thế nào?
+**Trả lời:** Họ chạy garbage collection (gọi "vacuum" trong PostgreSQL) để xoá phiên bản không còn visible với transaction active nào.
 
-PostgreSQL's `VACUUM` process identifies "dead" tuples — versions older than the oldest active transaction's snapshot. Since no transaction can ever see these versions, they're safe to reclaim. etcd uses `compaction` to discard revisions older than a threshold. The challenge is determining the "low-water mark": the oldest snapshot still in use. If a long-running transaction holds an old snapshot, it blocks garbage collection for all versions newer than that snapshot — a common source of PostgreSQL bloat.
+Process `VACUUM` của PostgreSQL xác định tuple "chết" — phiên bản cũ hơn snapshot transaction active cũ nhất. Vì không transaction nào có thể thấy phiên bản này, chúng an toàn để thu hồi. etcd dùng `compaction` để bỏ revision cũ hơn ngưỡng. Thách thức là xác định "low-water mark": snapshot cũ nhất vẫn dùng. Nếu transaction chạy lâu giữ snapshot cũ, nó chặn GC cho mọi phiên bản mới hơn snapshot đó — nguồn phổ biến của bloat PostgreSQL.
 :::
 
-::: details Q2: Two transactions both read key "balance" (value=100) at the same snapshot timestamp, then both try to write "balance=90" (deducting 10). Under MVCC snapshot isolation, both reads succeed without blocking. What happens at commit time?
-**Answer:** One transaction commits successfully; the other detects a write-write conflict and aborts. The balance ends up at 90, not 80.
+::: details Câu 2: Hai transaction đều đọc key "balance" (value=100) ở cùng snapshot timestamp, rồi cả hai cố ghi "balance=90" (trừ 10). Dưới MVCC snapshot isolation, cả hai đọc thành công không chặn. Chuyện gì lúc commit?
+**Trả lời:** Một transaction commit thành công; cái khác phát hiện xung đột ghi-ghi và abort. Balance kết thúc ở 90, không phải 80.
 
-This is the "lost update" anomaly under snapshot isolation. Both transactions read the same snapshot (balance=100) and independently compute balance=90. MVCC detects the conflict at commit time using a "first-writer-wins" rule: the first to commit writes version t=200 with value=90. The second transaction tries to commit but sees that "balance" was modified after its snapshot — it must abort and retry. On retry, it reads the new value (90) and writes 80. This is why MVCC provides snapshot isolation, not serializable: it prevents lost updates but requires application-level handling of write conflicts.
+Đây là dị thường "lost update" dưới snapshot isolation. Cả hai transaction đọc cùng snapshot (balance=100) và tính độc lập balance=90. MVCC phát hiện xung đột lúc commit dùng quy tắc "first-writer-wins": cái đầu commit ghi phiên bản t=200 với giá trị=90. Cái thứ hai cố commit nhưng thấy "balance" đã sửa sau snapshot của nó — phải abort và retry. Khi retry, đọc giá trị mới (90) và ghi 80. Đó là lý do MVCC cung cấp snapshot isolation, không phải serializable: nó chặn lost update nhưng cần xử lý cấp ứng dụng cho xung đột ghi.
 :::
 
-::: details Q3: Your team uses MVCC with snapshot isolation for a banking system. A compliance audit asks: "Can two concurrent transfers between the same accounts produce an inconsistent total?" Your team says snapshot isolation prevents this. Are they correct?
-**Answer:** No. Snapshot isolation prevents lost updates but is vulnerable to write skew anomalies, where two transactions read overlapping data and make non-conflicting writes that together violate a constraint.
+::: details Câu 3: Team bạn dùng MVCC với snapshot isolation cho hệ ngân hàng. Audit compliance hỏi: "Hai chuyển tiền đồng thời giữa cùng tài khoản có thể sinh tổng không nhất quán không?" Team bạn nói snapshot isolation chặn điều này. Có đúng không?
+**Trả lời:** Không. Snapshot isolation chặn lost update nhưng dễ bị dị thường write skew, nơi hai transaction đọc dữ liệu chồng và làm ghi không xung đột mà cùng vi phạm ràng buộc.
 
-Example: accounts A=50 and B=50 with a constraint "A+B >= 0." Transaction 1 reads both, sees total=100, writes A=-10. Transaction 2 reads both (same snapshot, A=50, B=50), writes B=-60. Both pass the constraint check independently, both commit (they write different keys, so no write-write conflict), and the result is A=-10, B=-60, total=-70 — violating the constraint. Full serializability (PostgreSQL's SSI, CockroachDB's serializable mode) is needed to prevent write skew.
+Ví dụ: account A=50 và B=50 với ràng buộc "A+B >= 0." Transaction 1 đọc cả hai, thấy total=100, ghi A=-10. Transaction 2 đọc cả hai (cùng snapshot, A=50, B=50), ghi B=-60. Cả hai pass check ràng buộc độc lập, cả hai commit (ghi key khác, nên không xung đột ghi-ghi), và kết quả A=-10, B=-60, total=-70 — vi phạm ràng buộc. Serializability đầy đủ (SSI của PostgreSQL, mode serializable CockroachDB) cần để chặn write skew.
 :::
 
-::: details Q4: etcd uses MVCC to power Kubernetes' configuration store. Why does a distributed key-value store benefit from keeping old versions, rather than just storing the latest value?
-**Answer:** Old versions enable watch/subscribe semantics — clients can ask "what changed since revision X?" without polling, and disconnected clients can catch up from their last-seen revision.
+::: details Câu 4: etcd dùng MVCC để chạy kho cấu hình Kubernetes. Sao kho key-value phân tán hưởng lợi từ giữ phiên bản cũ, thay vì chỉ lưu giá trị mới nhất?
+**Trả lời:** Phiên bản cũ cho phép ngữ nghĩa watch/subscribe — client có thể hỏi "cái gì đổi từ revision X?" không cần polling, và client bị ngắt kết nối có thể catch up từ revision thấy cuối.
 
-Kubernetes controllers (like the replication controller) use etcd watches to react to state changes. If etcd only stored the latest value, a controller that disconnects for 5 seconds would miss intermediate changes and need a full resync. With MVCC, the controller reconnects and says "give me all changes since revision 12345," receiving a precise stream of what changed. This is also essential for etcd's consistency guarantees: linearizable reads can be served from a specific revision, and time-travel queries enable debugging ("what was the cluster state 10 minutes ago?").
+Controller Kubernetes (như replication controller) dùng watch etcd để phản ứng thay đổi state. Nếu etcd chỉ lưu giá trị mới nhất, controller ngắt 5 giây sẽ lỡ thay đổi trung gian và cần resync đầy đủ. Với MVCC, controller kết nối lại và nói "cho tôi mọi thay đổi từ revision 12345," nhận luồng chính xác cái gì đổi. Đây cũng thiết yếu cho đảm bảo consistency etcd: đọc linearizable có thể phục vụ từ revision cụ thể, và truy vấn time-travel cho debug ("state cluster 10 phút trước là gì?").
 :::
