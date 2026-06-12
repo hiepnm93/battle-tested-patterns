@@ -1,6 +1,6 @@
 ---
 title: "Pattern: Bloom Filter"
-description: "Test set membership in O(k) time with zero false negatives — at the cost of a tunable false positive rate."
+description: "Kiểm tra thành viên tập trong O(k) thời gian không có âm tính giả — đánh đổi tỉ lệ dương tính giả điều chỉnh được."
 difficulty: "intermediate"
 ---
 
@@ -8,19 +8,19 @@ difficulty: "intermediate"
 
 <DifficultyBadge />
 
-## One Liner
+## Mô tả một câu
 
-Test set membership in O(k) time with zero false negatives — at the cost of a tunable false positive rate.
+Kiểm tra thành viên tập trong O(k) thời gian không có âm tính giả — đánh đổi tỉ lệ dương tính giả điều chỉnh được.
 
 <DemoBadge />
 
-## Real-World Analogy
+## Tương tự thực tế
 
-A bouncer with a guest list who sometimes lets in non-guests. If the bouncer says 'you're NOT on the list,' that's definitive. But if he says 'you might be on the list,' you still need to check with the actual registry inside.
+Một bảo vệ có danh sách khách đôi khi cho người không phải khách vào. Nếu bảo vệ nói 'bạn KHÔNG có trong danh sách', đó là khẳng định. Nhưng nếu nói 'bạn có thể có trong danh sách', bạn vẫn phải kiểm với sổ đăng ký thực tế bên trong.
 
-## Core Idea
+## Ý tưởng cốt lõi
 
-A bloom filter is a space-efficient probabilistic data structure. It uses a bit array of size `m` and `k` independent hash functions. To **add** an element, hash it `k` times and set those bit positions. To **test**, hash it `k` times and check if all positions are set.
+Bloom filter là cấu trúc dữ liệu xác suất tiết kiệm không gian. Nó dùng mảng bit kích thước `m` và `k` hàm hash độc lập. Để **thêm** một phần tử, hash `k` lần và set các vị trí bit đó. Để **kiểm tra**, hash `k` lần và xem mọi vị trí có được set không.
 
 ```text
   hash1=2         hash2=5               hash3=9
@@ -31,30 +31,30 @@ A bloom filter is a space-efficient probabilistic data structure. It uses a bit 
   └──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┘
     0  1  2  3  4  5  6  7  8  9 10 11
 
-  add("apple")  → set bits 2, 5, 9
-  test("apple") → all set     → "maybe yes"
-  test("grape") → bit 7 not set → "definitely no"
+  add("apple")  → set bit 2, 5, 9
+  test("apple") → đều set         → "có thể có"
+  test("grape") → bit 7 không set → "chắc chắn không"
 ```
 
-| Property | Value |
+| Thuộc tính | Giá trị |
 |----------|-------|
-| False negatives | **Impossible** — added elements always test positive |
-| False positives | **Possible** — non-added elements may test positive |
-| False positive rate | ≈ `(1 - e^(-kn/m))^k` where `n` = elements inserted |
-| Deletion | **Not supported** — clearing bits may affect other elements |
+| Âm tính giả | **Không thể** — phần tử đã thêm luôn test dương |
+| Dương tính giả | **Có thể** — phần tử chưa thêm có thể test dương |
+| Tỉ lệ dương tính giả | ≈ `(1 - e^(-kn/m))^k` trong đó `n` = số phần tử đã chèn |
+| Xoá | **Không hỗ trợ** — clear bit có thể ảnh hưởng phần tử khác |
 
-**Try it yourself** — add items and test membership to see false positives in action:
+**Thử ngay** — thêm item và kiểm tra thành viên để xem dương tính giả hoạt động:
 
 <BloomFilterViz />
 
-## Production Proof
+## Bằng chứng production
 
-| Project | Source | Usage |
+| Dự án | Nguồn | Cách dùng |
 |---------|--------|-------|
-| LevelDB | [bloom.cc#L17-L80](https://github.com/google/leveldb/blob/7ee830d02b623e8ffe0b95d59a74db1e58da04c5/util/bloom.cc#L17-L80) | `BloomFilterPolicy` — uses double-hashing (Kirsch-Mitzenmacher) with rotate-right-17 to set `k` bits per key. `KeyMayMatch` returns false immediately if any probed bit is zero. Avoids disk reads for keys that don't exist. |
-| Chromium (Blink) | [selector_filter.h#L149-L175](https://github.com/chromium/chromium/blob/5cffea3f665b7762369a0fa84d2f208875e7225e/third_party/blink/renderer/core/css/selector_filter.h#L149-L175) | 8192-bit bloom filter for CSS ancestor selector fast-rejection — discards 60-70% of CSS rules without full matching. Uses salted hashing (tag/id/class/attr) to prevent cross-type collisions. |
+| LevelDB | [bloom.cc#L17-L80](https://github.com/google/leveldb/blob/7ee830d02b623e8ffe0b95d59a74db1e58da04c5/util/bloom.cc#L17-L80) | `BloomFilterPolicy` — dùng double-hashing (Kirsch-Mitzenmacher) với rotate-right-17 để set `k` bit mỗi key. `KeyMayMatch` trả false ngay nếu bit probed nào bằng 0. Tránh đọc đĩa cho key không tồn tại. |
+| Chromium (Blink) | [selector_filter.h#L149-L175](https://github.com/chromium/chromium/blob/5cffea3f665b7762369a0fa84d2f208875e7225e/third_party/blink/renderer/core/css/selector_filter.h#L149-L175) | Bloom filter 8192-bit cho fast-rejection selector ancestor CSS — loại 60-70% rule CSS không cần match đầy đủ. Dùng hash có salt (tag/id/class/attr) để chống va chạm xuyên kiểu. |
 
-## Implementation
+## Triển khai
 
 ::: code-group
 
@@ -196,71 +196,71 @@ class BloomFilter:
 
 :::
 
-## Exercises
+## Bài tập
 
-| Level | Exercise | File |
+| Cấp độ | Bài tập | File |
 |-------|----------|------|
-| Basic | Implement a bloom filter with add/mightContain | `exercises/typescript/bloom-filter/01-basic.test.ts` |
-| Intermediate | Spell checker using a bloom filter dictionary | `exercises/typescript/bloom-filter/02-intermediate.test.ts` |
+| Cơ bản | Triển khai bloom filter với add/mightContain | `exercises/typescript/bloom-filter/01-basic.test.ts` |
+| Trung bình | Spell checker dùng từ điển bloom filter | `exercises/typescript/bloom-filter/02-intermediate.test.ts` |
 
-Run exercises: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
+Chạy bài tập: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
 
-Exercise files: Rust `exercises/rust/src/bloom_filter/mod.rs` · Go `exercises/go/bloom_filter/bloom_filter_test.go` · Python `exercises/python/bloom_filter/test_bloom_filter.py`
+File bài tập: Rust `exercises/rust/src/bloom_filter/mod.rs` · Go `exercises/go/bloom_filter/bloom_filter_test.go` · Python `exercises/python/bloom_filter/test_bloom_filter.py`
 
-## When to Use
+## Khi nào nên dùng
 
-- **Database key lookup** — skip disk reads for keys that definitely don't exist (LevelDB, Cassandra, HBase)
-- **Web caching** — avoid caching one-hit-wonders by checking if a URL was seen before
-- **Network security** — check if a URL is in a malicious list without storing all URLs
-- **Spell checkers** — fast "definitely not a word" rejection before dictionary lookup
-- **Distributed systems** — reduce inter-node communication by filtering locally first
+- **Tra key database** — bỏ qua đọc đĩa cho key chắc chắn không tồn tại (LevelDB, Cassandra, HBase)
+- **Cache web** — tránh cache one-hit-wonder bằng cách kiểm tra URL đã thấy chưa
+- **Bảo mật mạng** — kiểm tra URL có trong danh sách độc hại không cần lưu mọi URL
+- **Spell checker** — từ chối nhanh "chắc chắn không phải từ" trước khi tra từ điển
+- **Hệ phân tán** — giảm giao tiếp giữa node bằng cách lọc cục bộ trước
 
-## When NOT to Use
+## Khi nào KHÔNG nên dùng
 
-- **Need deletion** — standard bloom filters don't support removal (use counting bloom filters instead)
-- **Need exact membership** — if false positives are unacceptable, use a hash set
-- **Small sets** — for < 1000 elements, a hash set uses comparable memory with zero false positives
-- **Need to enumerate elements** — bloom filters only answer "is X in the set?", not "what's in the set?"
+- **Cần xoá** — bloom filter chuẩn không hỗ trợ remove (dùng counting bloom filter)
+- **Cần thành viên chính xác** — nếu dương tính giả không chấp nhận được, dùng hash set
+- **Tập nhỏ** — cho < 1000 phần tử, hash set dùng bộ nhớ tương đương không có dương tính giả
+- **Cần liệt kê phần tử** — bloom filter chỉ trả lời "X có trong tập?", không phải "trong tập có gì?"
 
-## More Production Uses
+## Thêm các ứng dụng production
 
-- [PostgreSQL](https://github.com/postgres/postgres/blob/e18b0cb7344cb4bd28468f6c0aeeb9b9241d30aa/contrib/bloom/blutils.c#L265-L293) — bloom index for multi-column filtering
-- [Apache Cassandra](https://github.com/apache/cassandra) — SSTable bloom filters to avoid disk reads
-- [bits-and-blooms/bloom](https://github.com/bits-and-blooms/bloom/blob/f0c3e57ab5ce07691a0a3124b9ed2db6df82ac9b/bloom.go#L77-L81) — popular Go bloom filter library (7k+ stars)
-- [Bitcoin](https://github.com/bitcoin/bitcoin) — SPV bloom filters for lightweight clients
+- [PostgreSQL](https://github.com/postgres/postgres/blob/e18b0cb7344cb4bd28468f6c0aeeb9b9241d30aa/contrib/bloom/blutils.c#L265-L293) — bloom index cho lọc nhiều cột
+- [Apache Cassandra](https://github.com/apache/cassandra) — bloom filter SSTable tránh đọc đĩa
+- [bits-and-blooms/bloom](https://github.com/bits-and-blooms/bloom/blob/f0c3e57ab5ce07691a0a3124b9ed2db6df82ac9b/bloom.go#L77-L81) — thư viện bloom filter Go phổ biến (7k+ sao)
+- [Bitcoin](https://github.com/bitcoin/bitcoin) — bloom filter SPV cho client nhẹ
 
-## Related Patterns
+## Pattern liên quan
 
-| Pattern | Relationship |
+| Pattern | Quan hệ |
 |---------|-------------|
-| [LSM Tree (Log-Structured Merge Tree)](/patterns/lsm-tree/) | LSM trees attach bloom filters to each SSTable to avoid unnecessary disk reads |
-| [Trie (Prefix Tree)](/patterns/trie/) | Bloom filter pre-screens before expensive trie traversal |
-| [LRU Cache](/patterns/lru-cache/) | Both speed up lookups — bloom filters eliminate negatives, LRU caches store positives |
-| [Interning / Symbol Table](/patterns/interning/) | Bloom filters can pre-check before expensive intern table lookups |
-| [Skip List](/patterns/skip-list/) | Bloom filters can reduce unnecessary disk reads in skip-list-based storage |
+| [LSM Tree (Log-Structured Merge Tree)](/patterns/lsm-tree/) | LSM tree gắn bloom filter vào mỗi SSTable để tránh đọc đĩa không cần |
+| [Trie (Prefix Tree)](/patterns/trie/) | Bloom filter lọc sơ trước khi duyệt trie tốn kém |
+| [LRU Cache](/patterns/lru-cache/) | Cả hai tăng tốc tra cứu — bloom filter loại âm, LRU cache lưu dương |
+| [Interning / Symbol Table](/patterns/interning/) | Bloom filter kiểm tra trước khi tra bảng intern tốn kém |
+| [Skip List](/patterns/skip-list/) | Bloom filter giảm đọc đĩa không cần trong lưu trữ nền skip-list |
 
-## Challenge Questions
+## Câu hỏi thử thách
 
-::: details Q1: You deploy a bloom filter with m=1000 bits and k=3 hashes to check URL membership. After inserting 800 URLs, your false positive rate is unacceptably high. You expected around 1%. What went wrong?
-**Answer:** The bit array is oversaturated — 800 items in 1000 bits means most bits are set to 1, making almost any query return "maybe yes."
+::: details Câu 1: Bạn triển khai bloom filter với m=1000 bit và k=3 hash để kiểm tra thành viên URL. Sau khi chèn 800 URL, tỉ lệ dương tính giả cao không chấp nhận được. Bạn kỳ vọng ~1%. Có gì sai?
+**Trả lời:** Mảng bit bị bão hoà — 800 item trong 1000 bit nghĩa là hầu hết bit đã set 1, làm gần như mọi truy vấn trả "có thể có."
 
-The false positive rate formula `(1 - e^(-kn/m))^k` shows that with k=3, n=800, m=1000, approximately 91% of bits are set, giving a ~75% false positive rate. The fix is to increase m. For a 1% false positive rate with n=800 and k=3, you need roughly m=11,500 bits (about 1.4 KB). The rule of thumb is ~10 bits per element for a 1% false positive rate.
+Công thức tỉ lệ dương tính giả `(1 - e^(-kn/m))^k` cho thấy với k=3, n=800, m=1000, khoảng 91% bit đã set, cho tỉ lệ dương tính giả ~75%. Cách sửa là tăng m. Cho tỉ lệ 1% với n=800 và k=3, bạn cần m ≈ 11.500 bit (~1,4 KB). Quy tắc thump: ~10 bit mỗi phần tử cho tỉ lệ 1%.
 :::
 
-::: details Q2: Your colleague proposes deleting items from a bloom filter by clearing the bits that were set during insertion. Why does this break the data structure?
-**Answer:** Clearing bits for one item can destroy membership evidence for other items whose hashes mapped to the same bit positions.
+::: details Câu 2: Đồng nghiệp đề nghị xoá item khỏi bloom filter bằng cách clear bit đã set khi chèn. Tại sao điều đó phá vỡ cấu trúc dữ liệu?
+**Trả lời:** Clear bit cho một item có thể phá huỷ bằng chứng thành viên của item khác mà hash của chúng đi vào cùng vị trí bit.
 
-In a bloom filter, multiple items share bits. If "apple" and "banana" both hash to bit position 5, clearing bit 5 when removing "apple" creates a false negative for "banana" — violating the bloom filter's fundamental guarantee of zero false negatives. Counting bloom filters solve this by storing counters instead of single bits, decrementing on delete and only clearing when the counter reaches zero.
+Trong bloom filter, nhiều item chia sẻ bit. Nếu "apple" và "banana" cùng hash đến bit 5, clear bit 5 khi xoá "apple" tạo âm tính giả cho "banana" — vi phạm đảm bảo cơ bản không có âm tính giả của bloom filter. Counting bloom filter giải bằng cách lưu counter thay vì bit đơn, giảm khi xoá và chỉ clear khi counter về 0.
 :::
 
-::: details Q3: Your system has two bloom filters — one built from server A's dataset and another from server B's dataset. A query needs to check "was this key seen by either server?" Can you answer this without querying both filters separately?
-**Answer:** Yes. Bitwise OR the two bit arrays together to create a union filter that answers "seen by A or B" in a single query.
+::: details Câu 3: Hệ thống của bạn có hai bloom filter — một xây từ dataset server A và một từ dataset server B. Một truy vấn cần kiểm tra "key này có được server nào thấy chưa?" Bạn có thể trả lời không cần truy vấn từng filter riêng?
+**Trả lời:** Có. OR bitwise hai mảng bit để tạo filter hợp trả lời "thấy bởi A hoặc B" trong một truy vấn.
 
-This works because a bloom filter's membership test is purely a function of which bits are set. ORing the arrays produces a filter where a bit is set if it was set in either A or B, which is exactly the union semantics. The resulting filter has a higher false positive rate (more bits are set), but zero false negatives are preserved. This property makes bloom filters uniquely composable — you cannot do this with hash sets without transferring all elements.
+Hoạt động được vì test thành viên bloom filter thuần là hàm của bit nào đã set. OR các mảng tạo filter mà một bit được set nếu nó đã set ở A hoặc B, đúng ngữ nghĩa hợp. Filter kết quả có tỉ lệ dương tính giả cao hơn (nhiều bit set hơn), nhưng không có âm tính giả được bảo toàn. Tính chất này làm bloom filter có khả năng ghép duy nhất — bạn không làm được điều này với hash set mà không chuyển mọi phần tử.
 :::
 
-::: details Q4: LevelDB uses bloom filters to skip disk reads for nonexistent keys. If the bloom filter says "maybe yes" for a key that doesn't actually exist, what is the cost? What if it said "no" for a key that does exist?
-**Answer:** A false positive costs one unnecessary disk read (wasted I/O but correct result). A false negative would return "key not found" for an existing key — silent data loss.
+::: details Câu 4: LevelDB dùng bloom filter để bỏ qua đọc đĩa cho key không tồn tại. Nếu bloom filter nói "có thể có" cho key thực sự không tồn tại, chi phí là gì? Nếu nói "không" cho key thực sự tồn tại thì sao?
+**Trả lời:** Dương tính giả tốn một lần đọc đĩa không cần (lãng phí I/O nhưng kết quả đúng). Âm tính giả sẽ trả "key not found" cho key tồn tại — mất dữ liệu âm thầm.
 
-This asymmetry is why bloom filters guarantee zero false negatives. A false positive just means "we checked the disk and the key wasn't there" — the system self-corrects at the cost of one extra I/O. But if a bloom filter could produce false negatives, the database would skip the disk read entirely and incorrectly report the key as missing. That's data corruption, not a performance issue. The entire value of bloom filters in databases depends on this one-sided error guarantee.
+Sự bất đối xứng này là lý do bloom filter đảm bảo không có âm tính giả. Dương tính giả chỉ nghĩa "đã kiểm tra đĩa và key không có" — hệ thống tự sửa với một I/O thêm. Nhưng nếu bloom filter có thể sinh âm tính giả, database sẽ bỏ hoàn toàn đọc đĩa và báo sai key không có. Đó là hư dữ liệu, không phải vấn đề hiệu năng. Toàn bộ giá trị bloom filter trong database phụ thuộc vào đảm bảo lỗi một phía này.
 :::
