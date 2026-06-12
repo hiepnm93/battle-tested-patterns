@@ -1,6 +1,6 @@
 ---
 title: "Pattern: LSM Tree (Log-Structured Merge Tree)"
-description: "Buffer writes in memory, flush to sorted files on disk, merge files in background — trading read amplification for fast writes."
+description: "Đệm ghi trong bộ nhớ, flush thành file đã sắp xếp trên đĩa, gộp file ở background — đánh đổi read amplification lấy ghi nhanh."
 difficulty: "advanced"
 ---
 
@@ -8,72 +8,72 @@ difficulty: "advanced"
 
 <DifficultyBadge />
 
-## One Liner
+## Mô tả một câu
 
-Buffer writes in memory, flush to sorted files on disk, merge files in background — trading read amplification for fast writes.
+Đệm ghi trong bộ nhớ, flush thành file đã sắp xếp trên đĩa, gộp file ở background — đánh đổi read amplification lấy ghi nhanh.
 
 <DemoBadge />
 
-## Real-World Analogy
+## Tương tự thực tế
 
-A filing system where you first write notes on a sticky pad (memtable), then periodically file them into sorted folders (SSTables). Over time, you merge small folders into bigger ones during quiet hours (compaction).
+Hệ thống tài liệu nơi bạn ghi note vào tờ sticky trước (memtable), rồi định kỳ xếp chúng vào thư mục đã sắp xếp (SSTable). Theo thời gian, bạn gộp thư mục nhỏ thành thư mục lớn vào giờ vắng (compaction).
 
-## Core Idea
+## Ý tưởng cốt lõi
 
-An LSM tree absorbs writes into an in-memory sorted structure (the memtable). When the memtable reaches a size threshold, it is flushed to disk as an immutable sorted run (SSTable). Background compaction merges multiple sorted runs to bound the number of files and reclaim space from deleted/overwritten keys. Reads check the memtable first, then each level of sorted runs.
+LSM tree hấp thụ ghi vào cấu trúc sắp xếp trong bộ nhớ (memtable). Khi memtable đạt ngưỡng kích thước, nó được flush ra đĩa thành sorted run bất biến (SSTable). Compaction nền gộp nhiều sorted run để giới hạn số file và thu hồi không gian từ key đã xoá/ghi đè. Đọc kiểm tra memtable trước, rồi mỗi tầng sorted run.
 
 ```text
-  Write Path                          Read Path
+  Đường ghi                           Đường đọc
   ──────────                          ─────────
   PUT k=v ──►  ┌────────────┐         GET k
                │  Memtable  │ ◄──── 1. Check memtable
                │ (sorted,   │
-               │  in-memory)│
+               │ in-memory) │
                └─────┬──────┘
-          flush when  │
-          size > limit│
+          flush khi   │
+          size > giới hạn
                       ▼
                ┌────────────┐
-               │  Level 0   │ ◄──── 2. Check L0 files
+               │  Level 0   │ ◄──── 2. Check file L0
                │  (SSTables)│
                └─────┬──────┘
           compact     │
-          when full   │
+          khi đầy     │
                       ▼
                ┌────────────┐
-               │  Level 1   │ ◄──── 3. Check L1 files
-               │  (merged)  │
+               │  Level 1   │ ◄──── 3. Check file L1
+               │  (đã gộp)  │
                └─────┬──────┘
                       ▼
                      ...
 ```
 
-| Property | Value |
+| Thuộc tính | Giá trị |
 |----------|-------|
-| Write amplification | O(level_count) due to compaction |
-| Read amplification | O(level_count) in worst case |
-| Write throughput | Very high — sequential I/O only |
-| Space amplification | Temporary duplication during compaction |
+| Write amplification | O(số tầng) do compaction |
+| Read amplification | O(số tầng) worst case |
+| Throughput ghi | Rất cao — chỉ I/O tuần tự |
+| Space amplification | Trùng lặp tạm thời khi compaction |
 
-**Try it yourself** — write keys to the memtable, watch it flush to SSTables, and compact levels:
+**Thử ngay** — ghi key vào memtable, xem nó flush thành SSTable, và compact các tầng:
 
 <LSMTreeViz />
 
-## Production Proof
+## Bằng chứng production
 
-| Project | Source | Usage |
+| Dự án | Nguồn | Cách dùng |
 |---------|--------|-------|
-| LevelDB | [db_impl.cc#L1241-L1368](https://github.com/google/leveldb/blob/7ee830d02b623e8ffe0b95d59a74db1e58da04c5/db/db_impl.cc#L1241-L1368) | `DBImpl::Write` — the core write path. Batches writes into a group (L1241-L1288), appends to WAL (L1311), inserts into memtable (L1337-L1354). When memtable exceeds `write_buffer_size`, `MakeRoomForWrite` (L1368) triggers a flush: the current memtable becomes immutable and a new one is created. Background compaction then merges SSTable files across levels. |
-| RocksDB | [memtable.cc#L458-L534](https://github.com/facebook/rocksdb/blob/7affaee1c49ebc80cb213ad86fe7d2a3ad447da2/db/memtable.cc#L458-L534) | `MemTable::Add` inserts a key-value pair with sequence number and type into the skip-list backed memtable. The memtable is the first destination for all writes. When it reaches `write_buffer_size`, it's made immutable and scheduled for flush to an L0 SST file. RocksDB extends LevelDB's design with concurrent memtable writes, column families, and pluggable memtable implementations. |
+| LevelDB | [db_impl.cc#L1241-L1368](https://github.com/google/leveldb/blob/7ee830d02b623e8ffe0b95d59a74db1e58da04c5/db/db_impl.cc#L1241-L1368) | `DBImpl::Write` — đường ghi cốt lõi. Batch ghi thành nhóm (L1241-L1288), append vào WAL (L1311), chèn vào memtable (L1337-L1354). Khi memtable vượt `write_buffer_size`, `MakeRoomForWrite` (L1368) kích hoạt flush: memtable hiện tại trở thành bất biến và cái mới được tạo. Compaction nền sau đó gộp file SSTable qua các tầng. |
+| RocksDB | [memtable.cc#L458-L534](https://github.com/facebook/rocksdb/blob/7affaee1c49ebc80cb213ad86fe7d2a3ad447da2/db/memtable.cc#L458-L534) | `MemTable::Add` chèn cặp key-value với sequence number và type vào memtable nền skip-list. Memtable là điểm đến đầu tiên cho mọi ghi. Khi đạt `write_buffer_size`, nó được làm bất biến và xếp lịch flush thành file L0 SST. RocksDB mở rộng thiết kế LevelDB với ghi memtable đồng thời, column family và triển khai memtable pluggable. |
 
-## Implementation
+## Triển khai
 
 ::: code-group
 
 ```typescript [TypeScript]
 interface KVEntry {
   key: string;
-  value: string | null; // null = tombstone (deleted)
+  value: string | null; // null = tombstone (đã xoá)
   seq: number;
 }
 
@@ -109,7 +109,7 @@ type SortedRun = KVEntry[];
 
 class LSMTree {
   private memtable = new Memtable();
-  private runs: SortedRun[] = []; // L0 sorted runs, newest first
+  private runs: SortedRun[] = []; // L0 sorted run, mới nhất trước
   private seq = 0;
   private readonly flushThreshold: number;
   private readonly maxRuns: number;
@@ -134,11 +134,11 @@ class LSMTree {
   }
 
   get(key: string): string | undefined {
-    // Check memtable first
+    // Check memtable trước
     const memEntry = this.memtable.get(key);
     if (memEntry) return memEntry.value ?? undefined;
 
-    // Check sorted runs (newest first)
+    // Check sorted run (mới nhất trước)
     for (const run of this.runs) {
       const entry = this.binarySearch(run, key);
       if (entry) return entry.value ?? undefined;
@@ -160,22 +160,22 @@ class LSMTree {
 
   private flushMemtable(): void {
     const run = this.memtable.flush();
-    this.runs.unshift(run); // newest first
+    this.runs.unshift(run); // mới nhất trước
     if (this.runs.length > this.maxRuns) {
       this.compact();
     }
   }
 
   private compact(): void {
-    // Merge all runs into one
+    // Gộp mọi run thành một
     const merged = new Map<string, KVEntry>();
-    // Process oldest first so newest wins
+    // Xử lý cũ nhất trước để mới nhất thắng
     for (let i = this.runs.length - 1; i >= 0; i--) {
       for (const entry of this.runs[i]!) {
         merged.set(entry.key, entry);
       }
     }
-    // Remove tombstones and sort
+    // Xoá tombstone và sort
     const compacted = [...merged.values()]
       .filter((e) => e.value !== null)
       .sort((a, b) => a.key.localeCompare(b.key));
@@ -552,72 +552,72 @@ class LSMTree:
 
 :::
 
-## Exercises
+## Bài tập
 
-| Level | Exercise | File |
+| Cấp độ | Bài tập | File |
 |-------|----------|------|
-| Basic | In-memory memtable with flush to sorted runs | `exercises/typescript/lsm-tree/01-basic.test.ts` |
-| Intermediate | Multi-level compaction with size-triggered merge | `exercises/typescript/lsm-tree/02-intermediate.test.ts` |
+| Cơ bản | Memtable trong bộ nhớ với flush thành sorted run | `exercises/typescript/lsm-tree/01-basic.test.ts` |
+| Trung bình | Compaction đa tầng với gộp kích hoạt theo size | `exercises/typescript/lsm-tree/02-intermediate.test.ts` |
 
-Run exercises: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
+Chạy bài tập: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
 
-Exercise files: Rust `exercises/rust/src/lsm_tree/mod.rs` · Go `exercises/go/lsm_tree/lsm_tree_test.go` · Python `exercises/python/lsm_tree/test_lsm_tree.py`
+File bài tập: Rust `exercises/rust/src/lsm_tree/mod.rs` · Go `exercises/go/lsm_tree/lsm_tree_test.go` · Python `exercises/python/lsm_tree/test_lsm_tree.py`
 
-## When to Use
+## Khi nào nên dùng
 
-- **Write-heavy workloads** — logging, time-series data, event streams
-- **Key-value stores** — LevelDB, RocksDB, Cassandra, HBase
-- **Embedded databases** — space-efficient, simple to implement
-- **Append-mostly data** — IoT sensor data, analytics events
-- **SSD-optimized storage** — sequential writes maximize SSD lifespan
+- **Tải nặng ghi** — log, dữ liệu time-series, luồng event
+- **Kho key-value** — LevelDB, RocksDB, Cassandra, HBase
+- **Database nhúng** — tiết kiệm không gian, đơn giản triển khai
+- **Dữ liệu phần lớn append** — dữ liệu sensor IoT, event analytics
+- **Lưu trữ tối ưu SSD** — ghi tuần tự tối đa hoá tuổi thọ SSD
 
-## When NOT to Use
+## Khi nào KHÔNG nên dùng
 
-- **Read-heavy workloads** — reads may check multiple levels; use B+ trees for fast reads
-- **Small datasets** — LSM overhead (compaction, multiple files) isn't worth it for data that fits in a B+ tree
-- **Range scans with strict latency** — compaction can cause latency spikes
-- **Update-heavy with point reads** — repeated updates to the same key create write amplification during compaction
+- **Tải nặng đọc** — đọc có thể check nhiều tầng; dùng B+ tree cho đọc nhanh
+- **Dataset nhỏ** — overhead LSM (compaction, nhiều file) không đáng cho dữ liệu vừa B+ tree
+- **Range scan với độ trễ nghiêm ngặt** — compaction có thể gây đỉnh độ trễ
+- **Nặng update với đọc điểm** — update lặp tới cùng key tạo write amplification khi compaction
 
-## More Production Uses
+## Thêm các ứng dụng production
 
-- [Apache Cassandra](https://github.com/apache/cassandra) — LSM-based distributed NoSQL database
-- [ScyllaDB](https://github.com/scylladb/scylladb) — high-performance Cassandra-compatible LSM store
-- [BadgerDB](https://github.com/dgraph-io/badger) — Go-native LSM key-value store with value separation
-- [SQLite LSM extension](https://www.sqlite.org/lsm.html) — LSM-based storage backend for SQLite
+- [Apache Cassandra](https://github.com/apache/cassandra) — database NoSQL phân tán nền LSM
+- [ScyllaDB](https://github.com/scylladb/scylladb) — store LSM tương thích Cassandra hiệu năng cao
+- [BadgerDB](https://github.com/dgraph-io/badger) — kho key-value LSM gốc Go với tách giá trị
+- [SQLite LSM extension](https://www.sqlite.org/lsm.html) — backend lưu trữ nền LSM cho SQLite
 
-## Related Patterns
+## Pattern liên quan
 
-| Pattern | Relationship |
+| Pattern | Quan hệ |
 |---------|-------------|
-| [Skip List](/patterns/skip-list/) | Skip lists serve as the in-memory sorted buffer (memtable) in LSM trees |
-| [Bloom Filter](/patterns/bloom-filter/) | Bloom filters on each SSTable avoid unnecessary disk reads during lookups |
-| [Merge Iterator (K-Way Merge)](/patterns/merge-iterator/) | Compaction merges multiple sorted SSTables using merge iterators |
-| [Write-Ahead Log (WAL)](/patterns/write-ahead-log/) | WAL ensures memtable writes survive crashes before flushing to SSTables |
-| [Tombstone](/patterns/tombstone/) | LSM trees use tombstones to mark deletions that are cleaned up during compaction |
-| [B+ Tree](/patterns/b-plus-tree/) | B+ trees provide read-optimized indexing; LSM trees optimize for write-heavy workloads |
+| [Skip List](/patterns/skip-list/) | Skip list phục vụ buffer sắp xếp trong bộ nhớ (memtable) trong LSM tree |
+| [Bloom Filter](/patterns/bloom-filter/) | Bloom filter trên mỗi SSTable tránh đọc đĩa không cần khi tra cứu |
+| [Merge Iterator (K-Way Merge)](/patterns/merge-iterator/) | Compaction gộp nhiều SSTable đã sắp xếp dùng merge iterator |
+| [Write-Ahead Log (WAL)](/patterns/write-ahead-log/) | WAL đảm bảo ghi memtable sống sót crash trước khi flush sang SSTable |
+| [Tombstone](/patterns/tombstone/) | LSM tree dùng tombstone đánh dấu xoá được dọn khi compaction |
+| [B+ Tree](/patterns/b-plus-tree/) | B+ tree cung cấp index tối ưu đọc; LSM tree tối ưu cho tải nặng ghi |
 
-## Challenge Questions
+## Câu hỏi thử thách
 
-::: details Q1: Your LSM tree has 5 levels (L0-L4). A read for key "user:999" finds nothing. How many files did it potentially have to check?
-**Answer:** In the worst case, all files across all levels. L0 files can overlap, so you check all L0 files. L1-L4 files are non-overlapping within a level, so you check at most one file per level. Total: all L0 files + 4 (one per remaining level).
+::: details Câu 1: LSM tree của bạn có 5 tầng (L0-L4). Đọc key "user:999" không tìm thấy. Có khả năng phải check bao nhiêu file?
+**Trả lời:** Tệ nhất, mọi file qua mọi tầng. File L0 có thể chồng, nên check mọi file L0. File L1-L4 không chồng trong tầng, nên check tối đa một file mỗi tầng. Tổng: mọi file L0 + 4 (một mỗi tầng còn lại).
 
-This is "read amplification" — the fundamental trade-off of LSM trees. Solutions: (1) Bloom filters on each SSTable to skip files that definitely don't contain the key (LevelDB/RocksDB do this); (2) minimize L0 files by compacting aggressively; (3) use a prefix-based index to skip entire levels. RocksDB's Bloom filter typically reduces reads to 1-2 file reads even with many levels.
+Đây là "read amplification" — đánh đổi cơ bản của LSM tree. Giải pháp: (1) Bloom filter trên mỗi SSTable để bỏ qua file chắc chắn không chứa key (LevelDB/RocksDB làm vậy); (2) giảm thiểu file L0 bằng compact tích cực; (3) dùng index dựa trên prefix để bỏ qua cả tầng. Bloom filter của RocksDB thường giảm đọc xuống 1-2 lần đọc file kể cả với nhiều tầng.
 :::
 
-::: details Q2: You delete a key from the LSM tree. The key still exists in an older SSTable on disk. Is the space freed immediately?
-**Answer:** No. The delete writes a tombstone marker to the memtable. The original key-value pair remains in the old SSTable until compaction merges that SSTable and encounters the tombstone, at which point both are discarded.
+::: details Câu 2: Bạn xoá một key khỏi LSM tree. Key vẫn tồn tại trong SSTable cũ trên đĩa. Không gian có được giải phóng ngay không?
+**Trả lời:** Không. Xoá ghi marker tombstone vào memtable. Cặp key-value gốc vẫn trong SSTable cũ tới khi compaction gộp SSTable đó và gặp tombstone, lúc đó cả hai bị bỏ.
 
-This is why LSM trees have "space amplification." Deleted data occupies disk space until compaction reaches it. In extreme cases (delete-heavy workloads), the disk usage can temporarily exceed the logical data size significantly. RocksDB addresses this with periodic compaction filters and manual compaction triggers. The tombstone itself also occupies space and must be kept long enough to shadow all older copies of the key across all levels.
+Đây là lý do LSM tree có "space amplification." Dữ liệu đã xoá chiếm không gian đĩa tới khi compaction tới. Trường hợp cực đoan (tải nặng xoá), dùng đĩa có thể tạm thời vượt size dữ liệu logic đáng kể. RocksDB giải bằng filter compaction định kỳ và trigger compaction thủ công. Tombstone tự nó cũng chiếm không gian và phải giữ đủ lâu để che mọi bản sao cũ của key qua mọi tầng.
 :::
 
-::: details Q3: Your LSM tree is receiving 100K writes/second. Compaction can't keep up — L0 is accumulating files faster than they're merged. What happens and how do you fix it?
-**Answer:** Write stalls. When L0 exceeds its file limit, the system must throttle or pause incoming writes until compaction catches up. This causes latency spikes.
+::: details Câu 3: LSM tree của bạn nhận 100K ghi/giây. Compaction không theo kịp — L0 tích luỹ file nhanh hơn gộp. Chuyện gì và sửa thế nào?
+**Trả lời:** Write stall. Khi L0 vượt giới hạn file, hệ thống phải throttle hoặc tạm dừng ghi đến tới khi compaction theo kịp. Điều này gây đỉnh độ trễ.
 
-LevelDB's `MakeRoomForWrite` explicitly checks L0 file count and sleeps if it exceeds `kL0_SlowdownWritesTrigger` (8 files) or stops writes entirely at `kL0_StopWritesTrigger` (12 files). Solutions: (1) increase compaction parallelism (RocksDB supports concurrent compaction threads); (2) use leveled compaction instead of size-tiered to bound L0 growth; (3) increase memtable size to flush less often; (4) use write rate limiting to smooth out bursts rather than hitting hard stops.
+`MakeRoomForWrite` của LevelDB tường minh check số file L0 và ngủ nếu vượt `kL0_SlowdownWritesTrigger` (8 file) hoặc dừng ghi hoàn toàn ở `kL0_StopWritesTrigger` (12 file). Giải pháp: (1) tăng song song compaction (RocksDB hỗ trợ thread compaction đồng thời); (2) dùng leveled compaction thay size-tiered để giới hạn tăng L0; (3) tăng size memtable để flush ít hơn; (4) dùng rate limit ghi để làm mịn burst thay vì đụng dừng cứng.
 :::
 
-::: details Q4: LevelDB uses a single-threaded compaction model. RocksDB switched to multi-threaded compaction. What problem does this solve, and what new problem does it create?
-**Answer:** Multi-threaded compaction solves the throughput bottleneck — compaction can keep up with higher write rates by running multiple merge operations in parallel. The new problem: concurrent compaction of overlapping key ranges can cause write conflicts and requires careful coordination.
+::: details Câu 4: LevelDB dùng mô hình compaction đơn luồng. RocksDB chuyển sang compaction đa luồng. Vấn đề gì điều này giải, và tạo vấn đề mới gì?
+**Trả lời:** Compaction đa luồng giải nút thắt throughput — compaction có thể theo kịp tốc độ ghi cao hơn bằng cách chạy nhiều thao tác gộp song song. Vấn đề mới: compaction đồng thời khoảng key chồng có thể gây xung đột ghi và cần phối hợp cẩn thận.
 
-With single-threaded compaction, one slow merge blocks all others — write stalls become common under high load. Multi-threaded compaction allows L0→L1 and L2→L3 merges to happen simultaneously. However, two compaction jobs touching the same key range would produce conflicting outputs. RocksDB solves this by tracking which key ranges are "locked" by active compactions and only scheduling non-overlapping compaction jobs. This coordination adds complexity but dramatically improves sustained write throughput.
+Với compaction đơn luồng, một merge chậm chặn mọi cái khác — write stall trở nên phổ biến dưới tải cao. Compaction đa luồng cho phép merge L0→L1 và L2→L3 xảy ra đồng thời. Tuy nhiên, hai job compaction chạm cùng khoảng key sẽ sinh output xung đột. RocksDB giải bằng cách theo dõi khoảng key nào đang "khoá" bởi compaction active và chỉ lập lịch job compaction không chồng. Phối hợp này thêm phức tạp nhưng cải thiện đáng kể throughput ghi duy trì.
 :::
