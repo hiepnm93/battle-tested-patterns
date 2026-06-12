@@ -1,26 +1,26 @@
 ---
-title: "Pattern: Semaphore / Bounded Concurrency"
-description: "Limit the number of concurrent operations by maintaining a counter — acquire before work, release after, block when the limit is reached."
+title: "Pattern: Semaphore / Concurrency có giới hạn"
+description: "Giới hạn số thao tác đồng thời bằng cách duy trì một bộ đếm — acquire trước khi làm, release sau, block khi đạt giới hạn."
 difficulty: "beginner"
 ---
 
-# Pattern: Semaphore / Bounded Concurrency
+# Pattern: Semaphore / Concurrency có giới hạn
 
 <DifficultyBadge />
 
-## One Liner
+## Mô tả một câu
 
-Limit the number of concurrent operations by maintaining a counter — acquire before work, release after, block when the limit is reached.
+Giới hạn số thao tác đồng thời bằng cách duy trì một bộ đếm — acquire trước khi làm, release sau, block khi đạt giới hạn.
 
 <DemoBadge />
 
-## Real-World Analogy
+## Tương tự thực tế
 
-A parking garage with a capacity sign. The sign shows how many spots are left. Cars enter (decrementing the count) and leave (incrementing it). When it reads 0, incoming cars must wait at the gate.
+Một bãi đỗ xe có biển báo sức chứa. Biển báo hiển thị còn bao nhiêu chỗ. Xe vào (giảm số đếm) và rời đi (tăng nó lên). Khi nó hiển thị 0, xe đến phải chờ ở cổng.
 
-## Core Idea
+## Ý tưởng cốt lõi
 
-A semaphore is a counter with two atomic operations: `acquire` (decrement, block if zero) and `release` (increment). It controls how many concurrent tasks can access a shared resource.
+Semaphore là một bộ đếm với hai thao tác nguyên tử: `acquire` (giảm, block nếu bằng 0) và `release` (tăng). Nó kiểm soát có bao nhiêu task đồng thời được truy cập một tài nguyên chung.
 
 ```mermaid
 sequenceDiagram
@@ -36,25 +36,25 @@ sequenceDiagram
     S->>T3: unblock (count: 1→0)
 ```
 
-| Property | Value |
+| Thuộc tính | Giá trị |
 |----------|-------|
-| acquire | O(1) if permits available; blocks if count = 0 |
-| release | O(1) — increment counter, wake one waiter |
-| Fairness | Implementation-dependent (FIFO or arbitrary) |
-| Space | O(1) for counter + O(waiters) for blocked tasks |
+| acquire | O(1) nếu còn permit; block nếu count = 0 |
+| release | O(1) — tăng bộ đếm, đánh thức một waiter |
+| Tính công bằng | Phụ thuộc triển khai (FIFO hoặc tuỳ ý) |
+| Bộ nhớ | O(1) cho bộ đếm + O(số waiter) cho task bị block |
 
-**Try it yourself** — acquire permits and watch workers queue when the semaphore is full:
+**Thử ngay** — acquire các permit và xem worker xếp hàng khi semaphore đầy:
 
 <SemaphoreViz />
 
-## Production Proof
+## Bằng chứng production
 
-| Project | Source | Usage |
+| Dự án | Nguồn | Cách dùng |
 |---------|--------|-------|
-| Linux Kernel | [semaphore.h#L15-L55](https://github.com/torvalds/linux/blob/acb7500801e98639f6d8c2d796ed9f64cba83d3a/include/linux/semaphore.h#L15-L55) | `struct semaphore` — kernel counting semaphore with `down()` (acquire) and `up()` (release). Used for device driver access control, limiting concurrent I/O operations. |
-| Go stdlib | [semaphore.go#L28-L107](https://github.com/golang/sync/blob/5071ed6a9f1617117556b66384f765c934de3698/semaphore/semaphore.go#L28-L107) | `Weighted` struct (L28-L33) with `size`, `cur`, `mu`, `waiters`. `Acquire` (L38-L107) blocks until semaphore weight is available or context is cancelled. Used internally by `errgroup` to limit goroutine concurrency. |
+| Nhân Linux | [semaphore.h#L15-L55](https://github.com/torvalds/linux/blob/acb7500801e98639f6d8c2d796ed9f64cba83d3a/include/linux/semaphore.h#L15-L55) | `struct semaphore` — counting semaphore của kernel với `down()` (acquire) và `up()` (release). Dùng cho kiểm soát truy cập driver thiết bị, giới hạn thao tác I/O đồng thời. |
+| Stdlib Go | [semaphore.go#L28-L107](https://github.com/golang/sync/blob/5071ed6a9f1617117556b66384f765c934de3698/semaphore/semaphore.go#L28-L107) | Struct `Weighted` (L28-L33) với `size`, `cur`, `mu`, `waiters`. `Acquire` (L38-L107) block đến khi đủ trọng số hoặc context bị huỷ. `errgroup` dùng nội bộ để giới hạn concurrency goroutine. |
 
-## Implementation
+## Triển khai
 
 ::: code-group
 
@@ -123,7 +123,7 @@ impl Semaphore {
 ```
 
 ```go [Go]
-// Idiomatic Go: buffered channel as semaphore
+// Go theo idiom: buffered channel làm semaphore
 func process(s string) { /* work */ }
 
 func processWithLimit(items []string, maxConcurrent int) {
@@ -149,74 +149,74 @@ import asyncio
 async def fetch_with_limit(urls: list[str], max_concurrent: int = 5):
     sem = asyncio.Semaphore(max_concurrent)
     async def fetch_one(url: str):
-        async with sem:  # acquire + release via context manager
+        async with sem:  # acquire + release qua context manager
             return await do_fetch(url)
     return await asyncio.gather(*(fetch_one(u) for u in urls))
 ```
 
 :::
 
-## Exercises
+## Bài tập
 
-| Level | Exercise | File |
+| Cấp độ | Bài tập | File |
 |-------|----------|------|
-| Basic | Implement a counting semaphore with acquire/release | `exercises/typescript/semaphore/01-basic.test.ts` |
-| Intermediate | Connection pool guarded by a semaphore | `exercises/typescript/semaphore/02-intermediate.test.ts` |
+| Cơ bản | Triển khai counting semaphore với acquire/release | `exercises/typescript/semaphore/01-basic.test.ts` |
+| Trung bình | Connection pool được bảo vệ bằng semaphore | `exercises/typescript/semaphore/02-intermediate.test.ts` |
 
-Run exercises: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
+Chạy bài tập: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
 
-Exercise files: Rust `exercises/rust/src/semaphore/mod.rs` · Go `exercises/go/semaphore/semaphore_test.go` · Python `exercises/python/semaphore/test_semaphore.py`
+File bài tập: Rust `exercises/rust/src/semaphore/mod.rs` · Go `exercises/go/semaphore/semaphore_test.go` · Python `exercises/python/semaphore/test_semaphore.py`
 
-## When to Use
+## Khi nào nên dùng
 
-- **Rate limiting** — limit concurrent API calls, database connections
-- **Resource pools** — control access to a fixed number of resources
-- **Backpressure** — prevent overwhelming downstream services
-- **Throttling** — limit concurrent file I/O, network requests
+- **Rate limit** — giới hạn cuộc gọi API đồng thời, kết nối database
+- **Pool tài nguyên** — kiểm soát truy cập một số tài nguyên cố định
+- **Backpressure** — tránh làm quá tải service downstream
+- **Throttling** — giới hạn I/O file đồng thời, request mạng
 
-## When NOT to Use
+## Khi nào KHÔNG nên dùng
 
-- **Mutual exclusion** — if you need exclusive access (max=1), use a mutex/lock instead
-- **Simple counters** — if you don't need blocking, use an atomic counter
-- **Queue-based flow** — if order matters, use a bounded queue instead
+- **Loại trừ tương hỗ** — nếu cần truy cập độc quyền (max=1), dùng mutex/lock thay thế
+- **Bộ đếm đơn giản** — nếu không cần block, dùng atomic counter
+- **Luồng dựa trên queue** — nếu thứ tự quan trọng, dùng bounded queue
 
-## More Production Uses
+## Thêm các ứng dụng production
 
-- [Java Semaphore](https://github.com/openjdk/jdk/blob/4b3ec455c85314d051800a8f46dd8f5c93881e3a/src/java.base/share/classes/java/util/concurrent/Semaphore.java) — fair/nonfair counting semaphore
-- [Python threading.Semaphore](https://github.com/python/cpython/blob/ff64d8de66ab7f8e56b5d410796a7d76c955280c/Lib/threading.py) — condition-variable-based semaphore
-- [Nginx](https://github.com/nginx/nginx) — worker connections
+- [Java Semaphore](https://github.com/openjdk/jdk/blob/4b3ec455c85314d051800a8f46dd8f5c93881e3a/src/java.base/share/classes/java/util/concurrent/Semaphore.java) — counting semaphore công bằng/không công bằng
+- [Python threading.Semaphore](https://github.com/python/cpython/blob/ff64d8de66ab7f8e56b5d410796a7d76c955280c/Lib/threading.py) — semaphore dựa trên condition variable
+- [Nginx](https://github.com/nginx/nginx) — worker connection
 - [PostgreSQL](https://github.com/postgres/postgres) — `max_connections`
 
-## Related Patterns
+## Pattern liên quan
 
-| Pattern | Relationship |
+| Pattern | Quan hệ |
 |---------|-------------|
-| [Rate Limiter (Token Bucket)](/patterns/rate-limiter/) | Rate limiters control throughput over time; semaphores control concurrent access count |
-| [Backpressure](/patterns/backpressure/) | Semaphores implement backpressure by blocking when the limit is reached |
-| [Object Pool](/patterns/object-pool/) | Pool size is effectively a semaphore — acquire an object, release when done |
+| [Rate Limiter (Token Bucket)](/patterns/rate-limiter/) | Rate limiter kiểm soát throughput theo thời gian; semaphore kiểm soát số truy cập đồng thời |
+| [Backpressure](/patterns/backpressure/) | Semaphore hiện thực backpressure bằng cách block khi đạt giới hạn |
+| [Object Pool](/patterns/object-pool/) | Kích thước pool thực chất là một semaphore — acquire một object, release khi xong |
 
-## Challenge Questions
+## Câu hỏi thử thách
 
-::: details Q1: A semaphore with max=1 behaves like a mutex. Why would you ever use a mutex instead of a semaphore(1)?
-**Answer:** A mutex has ownership semantics — only the thread that acquired it can release it — which prevents accidental release by another thread and enables priority inheritance.
+::: details Câu 1: Semaphore với max=1 hành xử như mutex. Vậy tại sao có lúc bạn vẫn dùng mutex thay vì semaphore(1)?
+**Trả lời:** Mutex có ngữ nghĩa quyền sở hữu — chỉ thread đã acquire mới được release — điều đó tránh release nhầm bởi thread khác và cho phép kế thừa ưu tiên.
 
-A semaphore is an anonymous counter: any thread can call `release()` regardless of who called `acquire()`. This means a bug where thread B accidentally releases thread A's semaphore goes undetected. A mutex tracks its owner, so an unlock by a non-owner is an error (or panic). Additionally, mutex ownership enables priority inheritance: if a high-priority thread is waiting for a mutex held by a low-priority thread, the OS can temporarily boost the holder's priority. Semaphores can't do this because there's no "holder."
+Semaphore là một bộ đếm vô danh: bất kỳ thread nào cũng có thể gọi `release()` bất kể ai đã gọi `acquire()`. Điều đó nghĩa là một bug khi thread B vô tình release semaphore của thread A sẽ không bị phát hiện. Mutex theo dõi chủ sở hữu, nên unlock bởi không-phải-chủ là lỗi (hoặc panic). Ngoài ra, quyền sở hữu mutex cho phép kế thừa ưu tiên: nếu một thread ưu tiên cao đang chờ mutex do thread ưu tiên thấp giữ, OS có thể tạm thời tăng ưu tiên người giữ. Semaphore không làm được vì không có "người giữ".
 :::
 
-::: details Q2: Three high-priority tasks and one low-priority task share a semaphore(1). The low-priority task acquires the semaphore, then a medium-priority task preempts it. The high-priority tasks are now blocked. What is this called and how is it solved?
-**Answer:** This is priority inversion — a high-priority task is indirectly blocked by a medium-priority task that preempts the low-priority lock holder.
+::: details Câu 2: Ba task ưu tiên cao và một task ưu tiên thấp chia sẻ semaphore(1). Task ưu tiên thấp acquire semaphore, rồi một task ưu tiên trung bình preempt nó. Các task ưu tiên cao giờ bị block. Đây gọi là gì và làm sao giải quyết?
+**Trả lời:** Đây là priority inversion (đảo ngược ưu tiên) — task ưu tiên cao bị block gián tiếp bởi task ưu tiên trung bình đã preempt người giữ khoá ưu tiên thấp.
 
-The classic example is the Mars Pathfinder bug. The medium-priority task runs indefinitely because it doesn't need the semaphore, preventing the low-priority task from finishing and releasing the semaphore. Solutions: (1) priority inheritance — temporarily boost the lock holder to the highest waiter's priority, (2) priority ceiling — assign the semaphore a ceiling priority equal to the highest-priority task that uses it, (3) avoid holding semaphores across preemption points.
+Ví dụ kinh điển là bug Mars Pathfinder. Task ưu tiên trung bình chạy mãi vì không cần semaphore, cản trở task ưu tiên thấp hoàn thành và release semaphore. Giải pháp: (1) kế thừa ưu tiên — tạm tăng người giữ khoá lên ưu tiên cao nhất của waiter, (2) ưu tiên trần — gán cho semaphore một ưu tiên trần bằng ưu tiên cao nhất của task dùng nó, (3) tránh giữ semaphore qua các điểm preempt.
 :::
 
-::: details Q3: You use a semaphore(10) to limit concurrent database connections. Under load, you discover connections are being created and destroyed rapidly. What is wrong with this design?
-**Answer:** A semaphore only limits concurrency, not reuse. You need a connection pool (object pool pattern) combined with a semaphore, not a semaphore alone.
+::: details Câu 3: Bạn dùng semaphore(10) để giới hạn kết nối database đồng thời. Khi tải cao, bạn thấy kết nối được tạo và huỷ liên tục. Có gì sai với thiết kế này?
+**Trả lời:** Semaphore chỉ giới hạn concurrency, không phải tái sử dụng. Bạn cần connection pool (pattern object pool) kết hợp với semaphore, không chỉ riêng semaphore.
 
-A semaphore permits up to 10 tasks to proceed but doesn't manage the connections themselves. Each task creates a new connection, uses it, and destroys it — the semaphore just gates how many do this simultaneously. A connection pool holds 10 pre-created connections and lends them out. The pool internally uses a semaphore (or equivalent blocking mechanism) to make callers wait when all connections are checked out. The semaphore is the concurrency primitive; the pool is the resource manager.
+Semaphore cho phép tới 10 task tiến hành nhưng không quản lý các kết nối. Mỗi task tạo kết nối mới, dùng và huỷ — semaphore chỉ chốt cửa số task làm việc này đồng thời. Connection pool giữ 10 kết nối tạo sẵn và cho mượn. Pool dùng nội bộ một semaphore (hoặc cơ chế block tương đương) để bắt người gọi chờ khi tất cả kết nối đang được mượn. Semaphore là primitive concurrency; pool là manager tài nguyên.
 :::
 
-::: details Q4: Go uses a buffered channel as a semaphore (`sem := make(chan struct{}, N)`). What advantage does this have over a traditional semaphore implementation?
-**Answer:** It composes naturally with Go's `select` statement, enabling timeout, cancellation, and multi-resource acquisition without additional APIs.
+::: details Câu 4: Go dùng buffered channel làm semaphore (`sem := make(chan struct{}, N)`). Cách này có ưu thế gì so với triển khai semaphore truyền thống?
+**Trả lời:** Nó kết hợp tự nhiên với câu lệnh `select` của Go, cho phép timeout, huỷ và acquire nhiều tài nguyên mà không cần thêm API.
 
-With a channel-based semaphore, you can write `select { case sem <- struct{}{}: /* acquired */ case <-ctx.Done(): /* cancelled */ }` — combining acquisition with context cancellation in one construct. A traditional semaphore needs a separate `TryAcquire` or `AcquireWithTimeout` method. The channel approach also benefits from Go's runtime scheduler: goroutines blocked on channel operations are parked efficiently without consuming OS threads. The tradeoff is that channels have slightly higher overhead than a mutex-based counter for simple cases.
+Với semaphore dựa trên channel, bạn có thể viết `select { case sem <- struct{}{}: /* acquired */ case <-ctx.Done(): /* cancelled */ }` — kết hợp acquire với huỷ context trong một cấu trúc. Semaphore truyền thống cần method `TryAcquire` hoặc `AcquireWithTimeout` riêng. Cách dựa trên channel cũng được lợi từ scheduler runtime Go: goroutine bị block trên thao tác channel được park hiệu quả mà không tốn thread OS. Đánh đổi là channel có overhead nhỉnh hơn chút so với bộ đếm dựa trên mutex cho trường hợp đơn giản.
 :::
