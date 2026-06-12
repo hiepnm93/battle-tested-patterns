@@ -1,6 +1,6 @@
 ---
 title: "Pattern: Trie (Prefix Tree)"
-description: "Store strings in a tree where each edge represents a character — shared prefixes share nodes, enabling O(k) lookup by key length."
+description: "Lưu chuỗi trong cây nơi mỗi cạnh đại diện một ký tự — các tiền tố chung dùng chung node, cho tra cứu O(k) theo độ dài key."
 difficulty: "intermediate"
 ---
 
@@ -8,19 +8,19 @@ difficulty: "intermediate"
 
 <DifficultyBadge />
 
-## One Liner
+## Mô tả một câu
 
-Store strings in a tree where each edge represents a character — shared prefixes share nodes, enabling O(k) lookup by key length.
+Lưu chuỗi trong cây nơi mỗi cạnh đại diện một ký tự — các tiền tố chung dùng chung node, cho tra cứu O(k) theo độ dài key.
 
 <DemoBadge />
 
-## Real-World Analogy
+## Tương tự thực tế
 
-An old phone book's thumb tabs — A, B, C along the edge. To find 'Smith', you jump to S, then SM, then SMI. Each letter narrows the search, and names sharing a prefix ('Smith', 'Smithson') share the same path.
+Mép sách danh bạ điện thoại cũ có tab ngón — A, B, C dọc theo cạnh. Để tìm 'Smith', bạn nhảy tới S, rồi SM, rồi SMI. Mỗi chữ thu hẹp tìm kiếm, và tên chia sẻ tiền tố ('Smith', 'Smithson') dùng chung cùng đường.
 
-## Core Idea
+## Ý tưởng cốt lõi
 
-A trie (pronounced "try") is a tree where each path from root to node spells a prefix. Nodes branch on characters. This makes prefix queries trivial and key lookup proportional to key length, not the number of stored keys.
+Trie (đọc "try") là cây nơi mỗi đường từ gốc tới node tạo thành một tiền tố. Node phân nhánh trên ký tự. Điều đó làm truy vấn tiền tố dễ dàng và tra cứu key tỉ lệ với độ dài key, không phải số key đã lưu.
 
 ```text
   Root
@@ -37,25 +37,25 @@ A trie (pronounced "try") is a tree where each path from root to node spells a p
            └── g ●       "dog"
 ```
 
-| Property | Value |
+| Thuộc tính | Giá trị |
 |----------|-------|
-| Lookup | O(k) where k = key length |
-| Insert | O(k) |
-| Prefix search | O(k + results) — find all keys with prefix in one traversal |
-| Space | O(n × k) worst case, but shared prefixes save significantly |
+| Tra cứu | O(k) trong đó k = độ dài key |
+| Chèn | O(k) |
+| Tìm prefix | O(k + kết quả) — tìm mọi key có prefix trong một lần duyệt |
+| Bộ nhớ | O(n × k) tệ nhất, nhưng prefix chung tiết kiệm đáng kể |
 
-**Try it yourself** — insert words and search to see how shared prefixes create a compact tree:
+**Thử ngay** — chèn từ và tìm để xem các prefix chung tạo cây gọn:
 
 <TrieViz />
 
-## Production Proof
+## Bằng chứng production
 
-| Project | Source | Usage |
+| Dự án | Nguồn | Cách dùng |
 |---------|--------|-------|
-| Linux Kernel | [fib_trie.c#L80-L120](https://github.com/torvalds/linux/blob/acb7500801e98639f6d8c2d796ed9f64cba83d3a/net/ipv4/fib_trie.c#L80-L120) | IP routing table — a compressed trie (LC-trie) stores the kernel's forwarding information base (FIB). `key_vector` nodes with variable-length prefix matching for O(log n) longest-prefix-match lookups on every packet forwarded. |
-| Redis | [rax.h#L80-L130](https://github.com/redis/redis/blob/df63a65d4d4ee33ae67e9f101885074febe0bccb/src/rax.h#L80-L130) | Radix tree (`rax`) — a compressed trie used for Redis Streams keys, cluster slot-to-node mapping, and sorted set iterator. `raxNode` stores compressed prefixes with iskey/isnull flags. |
+| Nhân Linux | [fib_trie.c#L80-L120](https://github.com/torvalds/linux/blob/acb7500801e98639f6d8c2d796ed9f64cba83d3a/net/ipv4/fib_trie.c#L80-L120) | Bảng định tuyến IP — trie nén (LC-trie) lưu FIB của kernel. Node `key_vector` với match prefix độ dài thay đổi cho tra cứu longest-prefix-match O(log n) trên mỗi gói được chuyển. |
+| Redis | [rax.h#L80-L130](https://github.com/redis/redis/blob/df63a65d4d4ee33ae67e9f101885074febe0bccb/src/rax.h#L80-L130) | Radix tree (`rax`) — trie nén dùng cho key Streams Redis, ánh xạ slot-tới-node cluster và iterator sorted set. `raxNode` lưu prefix nén với cờ iskey/isnull. |
 
-## Implementation
+## Triển khai
 
 ::: code-group
 
@@ -227,69 +227,69 @@ class Trie:
 
 :::
 
-## Exercises
+## Bài tập
 
-| Level | Exercise | File |
+| Cấp độ | Bài tập | File |
 |-------|----------|------|
-| Basic | Implement a trie with insert/search/startsWith | `exercises/typescript/trie/01-basic.test.ts` |
-| Intermediate | Autocomplete with frequency-ranked results | `exercises/typescript/trie/02-intermediate.test.ts` |
+| Cơ bản | Triển khai trie với insert/search/startsWith | `exercises/typescript/trie/01-basic.test.ts` |
+| Trung bình | Autocomplete với kết quả xếp theo tần suất | `exercises/typescript/trie/02-intermediate.test.ts` |
 
-Run exercises: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
+Chạy bài tập: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
 
-Exercise files: Rust `exercises/rust/src/trie/mod.rs` · Go `exercises/go/trie/trie_test.go` · Python `exercises/python/trie/test_trie.py`
+File bài tập: Rust `exercises/rust/src/trie/mod.rs` · Go `exercises/go/trie/trie_test.go` · Python `exercises/python/trie/test_trie.py`
 
-## When to Use
+## Khi nào nên dùng
 
-- **Autocomplete / type-ahead** — find all completions for a prefix
-- **IP routing** — longest prefix match for packet forwarding (Linux FIB)
-- **Spell checking** — fast word validation and suggestion
-- **DNS resolution** — domain name lookup with hierarchical labels
-- **Deduplication** — efficiently detect duplicate strings
+- **Autocomplete / type-ahead** — tìm mọi hoàn thành cho prefix
+- **Định tuyến IP** — match prefix dài nhất cho chuyển gói (FIB Linux)
+- **Kiểm tra chính tả** — kiểm tra và gợi ý từ nhanh
+- **Phân giải DNS** — tra cứu tên miền với nhãn phân cấp
+- **Khử trùng lặp** — phát hiện chuỗi trùng hiệu quả
 
-## When NOT to Use
+## Khi nào KHÔNG nên dùng
 
-- **Exact key lookup only** — a hash map is O(1) vs trie's O(k)
-- **Numeric keys** — binary search tree or sorted array is more space-efficient
-- **Memory-constrained** — tries can use significant memory for sparse key distributions
-- **Short, unique keys** — if keys share few prefixes, tries waste nodes
+- **Chỉ tra cứu key chính xác** — hash map O(1) so với trie O(k)
+- **Key số** — BST hoặc mảng đã sắp xếp tiết kiệm không gian hơn
+- **Eo hẹp bộ nhớ** — trie có thể tốn nhiều bộ nhớ với phân bố key thưa
+- **Key ngắn, duy nhất** — nếu key chia sẻ ít prefix, trie lãng phí node
 
-## More Production Uses
+## Thêm các ứng dụng production
 
-- [Chromium](https://chromium.googlesource.com/chromium/src) — URL autocomplete trie
-- [Go `net` package](https://github.com/golang/go) — domain name matching
-- [Apache Lucene](https://github.com/apache/lucene) — FST (finite state transducer) for term index
-- [iptables/nftables](https://github.com/torvalds/linux) — IP set matching with tries
+- [Chromium](https://chromium.googlesource.com/chromium/src) — trie autocomplete URL
+- [Package `net` Go](https://github.com/golang/go) — match tên miền
+- [Apache Lucene](https://github.com/apache/lucene) — FST (finite state transducer) cho index term
+- [iptables/nftables](https://github.com/torvalds/linux) — match IP set với trie
 
-## Related Patterns
+## Pattern liên quan
 
-| Pattern | Relationship |
+| Pattern | Quan hệ |
 |---------|-------------|
-| [Bloom Filter](/patterns/bloom-filter/) | Bloom filters pre-filter before expensive trie lookups |
-| [Registry](/patterns/registry/) | Tries can implement registries with prefix-based routing |
-| [Skip List](/patterns/skip-list/) | Alternative sorted lookup — skip lists are ordered by value, tries by key characters |
+| [Bloom Filter](/patterns/bloom-filter/) | Bloom filter lọc trước khi tra cứu trie tốn kém |
+| [Registry](/patterns/registry/) | Trie có thể triển khai registry với định tuyến dựa trên prefix |
+| [Skip List](/patterns/skip-list/) | Tra cứu sắp xếp thay thế — skip list sắp theo giá trị, trie theo ký tự key |
 
-## Challenge Questions
+## Câu hỏi thử thách
 
-::: details Q1: You build a trie to store 100,000 English words. Each node has a `Map<string, TrieNode>` with one entry per child character. A colleague points out this uses far more memory than a simple hash set of the same words. Is the trie's memory overhead justified?
-**Answer:** For pure exact-match lookups, no — a hash set is more memory-efficient and O(1). The trie's memory overhead is only justified when you need prefix operations.
+::: details Câu 1: Bạn xây trie để lưu 100.000 từ tiếng Anh. Mỗi node có `Map<string, TrieNode>` với một entry mỗi ký tự con. Đồng nghiệp nói cái này tốn nhiều bộ nhớ hơn hash set đơn giản với cùng từ. Overhead bộ nhớ của trie có hợp lý không?
+**Trả lời:** Cho tra cứu match chính xác thuần, không — hash set tiết kiệm bộ nhớ hơn và O(1). Overhead bộ nhớ trie chỉ hợp lý khi bạn cần thao tác prefix.
 
-A naive trie with one node per character creates many small objects with map/pointer overhead. For 100k English words, a hash set stores 100k strings; a trie might create 500k+ nodes. The trie becomes worthwhile when your use case requires prefix search ("find all words starting with 'pre'"), autocomplete, or longest-prefix matching — operations a hash set cannot do efficiently. If you only need "is this exact word in the set?", use a hash set.
+Trie ngây thơ với một node mỗi ký tự tạo nhiều object nhỏ với overhead map/con trỏ. Cho 100k từ tiếng Anh, hash set lưu 100k chuỗi; trie có thể tạo 500k+ node. Trie đáng giá khi use case yêu cầu tìm prefix ("tìm mọi từ bắt đầu bằng 'pre'"), autocomplete hoặc match prefix dài nhất — thao tác hash set không làm hiệu quả được. Nếu chỉ cần "từ chính xác này có trong set không?", dùng hash set.
 :::
 
-::: details Q2: Redis uses a radix tree (compressed trie) instead of a standard trie. What does "compressed" mean, and why does it matter for memory?
-**Answer:** A compressed trie (radix tree) merges chains of single-child nodes into one node with a multi-character label, dramatically reducing node count.
+::: details Câu 2: Redis dùng radix tree (trie nén) thay vì trie chuẩn. "Nén" nghĩa là gì, và tại sao quan trọng cho bộ nhớ?
+**Trả lời:** Trie nén (radix tree) gộp chuỗi node một con thành một node với nhãn đa ký tự, giảm đáng kể số node.
 
-In a standard trie storing "application", you create 11 nodes — one per character. If no other word shares the prefix "applicat", the first 8 nodes each have exactly one child, wasting 8 nodes of overhead. A radix tree compresses this into a single node labeled "applicat" followed by branching at "i"→"on" and potentially other suffixes. Redis's `rax` implementation stores compressed prefixes inline in the node struct, reducing memory by 5-10x for typical string sets with long shared prefixes.
+Trong trie chuẩn lưu "application", bạn tạo 11 node — một mỗi ký tự. Nếu không từ nào khác chia sẻ prefix "applicat", 8 node đầu mỗi cái có chính xác một con, lãng phí 8 node overhead. Radix tree nén thành một node với nhãn "applicat" theo sau bởi rẽ nhánh ở "i"→"on" và có thể các suffix khác. Triển khai `rax` của Redis lưu prefix nén inline trong struct node, giảm bộ nhớ 5-10 lần cho tập chuỗi điển hình với prefix chung dài.
 :::
 
-::: details Q3: The Linux kernel uses a trie for IP routing table lookups. A hash map would give O(1) exact-match lookup. Why does the kernel use a trie instead?
-**Answer:** IP routing requires longest-prefix matching, not exact matching — a trie naturally supports this while a hash map does not.
+::: details Câu 3: Nhân Linux dùng trie cho tra cứu bảng định tuyến IP. Hash map cho match chính xác O(1). Sao kernel dùng trie?
+**Trả lời:** Định tuyến IP yêu cầu match prefix dài nhất, không phải match chính xác — trie tự nhiên hỗ trợ điều này còn hash map thì không.
 
-When the kernel routes a packet to `192.168.1.42`, it needs to find the most specific matching route. The routing table might contain `0.0.0.0/0` (default), `192.168.0.0/16`, and `192.168.1.0/24`. The correct match is the longest prefix: `192.168.1.0/24`. A hash map would require checking all possible prefix lengths (up to 32 for IPv4), needing 32 lookups per packet. A trie traverses from root to the deepest matching node in a single pass, naturally finding the longest prefix. This is why every major OS uses a trie variant for IP routing.
+Khi kernel định tuyến gói tới `192.168.1.42`, nó cần tìm route khớp cụ thể nhất. Bảng định tuyến có thể chứa `0.0.0.0/0` (default), `192.168.0.0/16` và `192.168.1.0/24`. Match đúng là prefix dài nhất: `192.168.1.0/24`. Hash map cần kiểm tra mọi độ dài prefix khả dĩ (lên tới 32 cho IPv4), cần 32 tra cứu mỗi gói. Trie duyệt từ root tới node match sâu nhất một lần, tự nhiên tìm prefix dài nhất. Đó là lý do mọi OS lớn dùng biến thể trie cho định tuyến IP.
 :::
 
-::: details Q4: Your autocomplete system stores 10 million product names in a trie. Searching for prefix "ip" returns 50,000 results. Users only see the top 10. How would you avoid collecting all 50,000 results?
-**Answer:** Store a "top-k results" list at each trie node, precomputed during insertion, so prefix queries return ranked results in O(k) time without traversing the subtree.
+::: details Câu 4: Hệ autocomplete của bạn lưu 10 triệu tên sản phẩm trong trie. Tìm prefix "ip" trả 50.000 kết quả. User chỉ thấy top 10. Bạn tránh thu thập 50.000 kết quả thế nào?
+**Trả lời:** Lưu danh sách "top-k kết quả" ở mỗi node trie, tính trước khi chèn, nên truy vấn prefix trả kết quả đã xếp hạng trong O(k) mà không cần duyệt subtree.
 
-Naively, prefix search requires traversing the entire subtree below the prefix node, collecting all `isEnd` nodes — O(results) time that's wasteful when you only need 10. By maintaining a bounded priority queue of the top-k results at each node (updated on insertion), you can answer "top 10 for prefix 'ip'" by reading the list at the 'p' node under 'i'. This trades insertion time and memory for query speed. Google's search suggestions use a similar approach with frequency-weighted tries.
+Ngây thơ, tìm prefix cần duyệt toàn subtree dưới node prefix, thu thập mọi node `isEnd` — O(kết quả) lãng phí khi chỉ cần 10. Bằng cách duy trì priority queue giới hạn top-k kết quả tại mỗi node (cập nhật khi chèn), bạn có thể trả lời "top 10 cho prefix 'ip'" bằng cách đọc danh sách tại node 'p' dưới 'i'. Đánh đổi thời gian chèn và bộ nhớ lấy tốc độ truy vấn. Gợi ý tìm kiếm Google dùng cách tương tự với trie có trọng số tần suất.
 :::
