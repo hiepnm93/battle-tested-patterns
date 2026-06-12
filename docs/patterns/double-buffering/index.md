@@ -1,6 +1,6 @@
 ---
 title: "Pattern: Double Buffering"
-description: "Maintain two copies of state and atomically swap between them so readers always see a consistent snapshot."
+description: "Duy trì hai bản sao state và hoán đổi nguyên tử giữa chúng để reader luôn thấy snapshot nhất quán."
 difficulty: "beginner"
 ---
 
@@ -8,19 +8,19 @@ difficulty: "beginner"
 
 <DifficultyBadge />
 
-## One Liner
+## Mô tả một câu
 
-Maintain two copies of state and atomically swap between them so readers always see a consistent snapshot.
+Duy trì hai bản sao state và hoán đổi nguyên tử giữa chúng để reader luôn thấy snapshot nhất quán.
 
 <DemoBadge />
 
-## Real-World Analogy
+## Tương tự thực tế
 
-A restaurant kitchen with two serving windows. The chef prepares the next order on one counter while the waiter picks up the current order from the other. When the new order is ready, they swap — the customer never sees half-prepared food.
+Bếp nhà hàng có hai cửa sổ phục vụ. Đầu bếp chuẩn bị order tiếp theo trên một quầy trong khi bồi bàn lấy order hiện tại từ quầy kia. Khi order mới sẵn, họ hoán đổi — khách không bao giờ thấy thức ăn nửa chừng.
 
-## Core Idea
+## Ý tưởng cốt lõi
 
-Double buffering keeps two versions of a data structure: one "current" (being read) and one "work-in-progress" (being written). When the write is complete, the two are swapped atomically. This avoids tearing — readers never see a half-updated state.
+Double buffering giữ hai phiên bản của cấu trúc dữ liệu: một "current" (đang đọc) và một "work-in-progress" (đang ghi). Khi ghi xong, hai cái được hoán đổi nguyên tử. Điều này tránh tearing — reader không bao giờ thấy state cập nhật nửa chừng.
 
 ```mermaid
 stateDiagram-v2
@@ -33,27 +33,27 @@ stateDiagram-v2
     B --> A : swap
 ```
 
-After swap: old "current" becomes new "work-in-progress" (reused, not GC'd). The same two objects are recycled forever — **zero allocation** on the hot path.
+Sau swap: "current" cũ trở thành "work-in-progress" mới (tái dùng, không GC). Cùng hai object được tái chế mãi — **không cấp phát** trên hot path.
 
-| Property | Value |
+| Thuộc tính | Giá trị |
 |----------|-------|
-| Swap | O(1) — pointer/reference swap |
-| Allocations on hot path | Zero — both buffers are pre-allocated and recycled |
-| Memory | 2× single buffer — exactly two copies |
-| Tearing | Impossible — readers see a consistent snapshot |
+| Swap | O(1) — hoán đổi con trỏ/reference |
+| Cấp phát trên hot path | Không — cả hai buffer cấp phát trước và tái chế |
+| Bộ nhớ | 2× một buffer — chính xác hai bản sao |
+| Tearing | Không thể — reader thấy snapshot nhất quán |
 
-**Try it yourself** — draw frames and swap buffers to see double buffering prevent tearing:
+**Thử ngay** — vẽ frame và hoán đổi buffer để xem double buffering chặn tearing:
 
 <DoubleBufferingViz />
 
-## Production Proof
+## Bằng chứng production
 
-| Project | Source | Usage |
+| Dự án | Nguồn | Cách dùng |
 |---------|--------|-------|
-| React | [ReactFiber.js#L327-L355](https://github.com/facebook/react/blob/34b78a2897cc208260a88e6b62ecaf9ca2a9dfe4/packages/react-reconciler/src/ReactFiber.js#L327-L355) | `createWorkInProgress` — creates or reuses an alternate fiber. The comment says: *"We use a double buffering pooling technique because we know that we'll only ever need at most two versions of a tree."* `current.alternate = workInProgress` and `workInProgress.alternate = current` establish the mutual link. |
-| SDL | [SDL_render.c#L5535-L5570](https://github.com/libsdl-org/SDL/blob/14b0e9d922da78001223e563efd2f54f473a4115/src/render/SDL_render.c#L5535-L5570) | `SDL_RenderPresent` — flushes queued render commands, calls the backend's `RenderPresent` to swap front/back buffers for tear-free frame presentation, and handles vsync simulation. |
+| React | [ReactFiber.js#L327-L355](https://github.com/facebook/react/blob/34b78a2897cc208260a88e6b62ecaf9ca2a9dfe4/packages/react-reconciler/src/ReactFiber.js#L327-L355) | `createWorkInProgress` — tạo hoặc tái dùng fiber alternate. Comment nói: *"Chúng tôi dùng kỹ thuật pool double buffering vì biết sẽ chỉ cần tối đa hai phiên bản cây."* `current.alternate = workInProgress` và `workInProgress.alternate = current` thiết lập liên kết qua lại. |
+| SDL | [SDL_render.c#L5535-L5570](https://github.com/libsdl-org/SDL/blob/14b0e9d922da78001223e563efd2f54f473a4115/src/render/SDL_render.c#L5535-L5570) | `SDL_RenderPresent` — flush các lệnh render đã queue, gọi `RenderPresent` của backend để hoán đổi buffer front/back cho trình bày frame không tearing và xử lý mô phỏng vsync. |
 
-## Implementation
+## Triển khai
 
 ::: code-group
 
@@ -79,7 +79,7 @@ class DoubleBuffer<T> {
   }
 }
 
-// React-style fiber double buffering
+// Double buffering fiber kiểu React
 interface Fiber {
   tag: string;
   pendingProps: Record<string, unknown>;
@@ -91,7 +91,7 @@ function createWorkInProgress(current: Fiber, pendingProps: Record<string, unkno
   let wip = current.alternate;
 
   if (wip === null) {
-    // First render: create the alternate
+    // Lần render đầu: tạo alternate
     wip = {
       tag: current.tag,
       pendingProps,
@@ -100,7 +100,7 @@ function createWorkInProgress(current: Fiber, pendingProps: Record<string, unkno
     };
     current.alternate = wip;
   } else {
-    // Subsequent renders: reuse the alternate (zero allocation)
+    // Render tiếp: tái dùng alternate (không cấp phát)
     wip.pendingProps = pendingProps;
     wip.memoizedState = current.memoizedState;
   }
@@ -178,80 +178,80 @@ class DoubleBuffer:
     def swap(self):
         self._current = 1 - self._current
 
-# Usage
+# Cách dùng
 buf = DoubleBuffer(lambda: {"pixels": [0, 0]})
-buf.next()["pixels"] = [255, 128]  # write to back buffer
-assert buf.current()["pixels"] == [0, 0]  # front unchanged
+buf.next()["pixels"] = [255, 128]  # ghi vào back buffer
+assert buf.current()["pixels"] == [0, 0]  # front không đổi
 buf.swap()
-assert buf.current()["pixels"] == [255, 128]  # now visible
+assert buf.current()["pixels"] == [255, 128]  # giờ hiển thị
 ```
 
 :::
 
-## Exercises
+## Bài tập
 
-| Level | Exercise | File |
+| Cấp độ | Bài tập | File |
 |-------|----------|------|
-| Basic | Implement a generic double buffer with swap | `exercises/typescript/double-buffering/01-basic.test.ts` |
-| Intermediate | Build React-style fiber alternates | `exercises/typescript/double-buffering/02-fiber-alternate.test.ts` |
+| Cơ bản | Triển khai double buffer tổng quát với swap | `exercises/typescript/double-buffering/01-basic.test.ts` |
+| Trung bình | Xây fiber alternate kiểu React | `exercises/typescript/double-buffering/02-fiber-alternate.test.ts` |
 
-Run exercises: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
+Chạy bài tập: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
 
-Exercise files: Rust `exercises/rust/src/double_buffering/mod.rs` · Go `exercises/go/double_buffering/double_buffering_test.go` · Python `exercises/python/double_buffering/test_double_buffering.py`
+File bài tập: Rust `exercises/rust/src/double_buffering/mod.rs` · Go `exercises/go/double_buffering/double_buffering_test.go` · Python `exercises/python/double_buffering/test_double_buffering.py`
 
-## When to Use
+## Khi nào nên dùng
 
-- **Render pipelines** — GPU front/back buffer, game frame rendering
-- **Concurrent reads and writes** — readers see consistent state while writers prepare the next version
-- **Tree reconciliation** — React's fiber architecture uses this to diff old and new trees
-- **Zero-allocation hot paths** — reuse two buffers forever instead of allocating new ones
-- **Database MVCC** — readers see a snapshot while writers prepare a new version
+- **Pipeline render** — buffer front/back GPU, render frame game
+- **Đọc và ghi đồng thời** — reader thấy state nhất quán trong khi writer chuẩn bị phiên bản tiếp
+- **Reconciliation cây** — kiến trúc fiber React dùng để diff cây cũ và mới
+- **Hot path không cấp phát** — tái dùng hai buffer mãi thay vì cấp phát mới
+- **MVCC database** — reader thấy snapshot trong khi writer chuẩn bị phiên bản mới
 
-## When NOT to Use
+## Khi nào KHÔNG nên dùng
 
-- **Simple state updates** — if your state is a single value and updates are atomic, double buffering adds unnecessary complexity
-- **Memory-constrained environments** — you're paying 2x memory cost
-- **Frequent partial reads** — if readers need real-time access to in-progress writes, double buffering hides updates until the swap
+- **Update state đơn giản** — nếu state là giá trị đơn và update nguyên tử, double buffering thêm phức tạp không cần
+- **Môi trường eo hẹp bộ nhớ** — bạn trả 2x chi phí bộ nhớ
+- **Đọc một phần thường xuyên** — nếu reader cần truy cập realtime vào ghi đang dang dở, double buffering ẩn update tới khi swap
 
-## More Production Uses
+## Thêm các ứng dụng production
 
-- [OpenGL](https://www.khronos.org/opengl/) / Vulkan — swap chains
-- [PostgreSQL](https://github.com/postgres/postgres) — MVCC snapshot isolation
-- [Godot Engine](https://github.com/godotengine/godot/blob/ec67cbe92628bdaf979b10594359ba6f02cf8838/servers/rendering/renderer_rd/renderer_scene_render_rd.cpp) — double-buffered frame rendering
-- [Linux fbdev](https://github.com/torvalds/linux/blob/acb7500801e98639f6d8c2d796ed9f64cba83d3a/drivers/video/fbdev/core/fbmem.c) — framebuffer double buffering for console and display output
+- [OpenGL](https://www.khronos.org/opengl/) / Vulkan — swap chain
+- [PostgreSQL](https://github.com/postgres/postgres) — cô lập snapshot MVCC
+- [Godot Engine](https://github.com/godotengine/godot/blob/ec67cbe92628bdaf979b10594359ba6f02cf8838/servers/rendering/renderer_rd/renderer_scene_render_rd.cpp) — render frame double-buffer
+- [Linux fbdev](https://github.com/torvalds/linux/blob/acb7500801e98639f6d8c2d796ed9f64cba83d3a/drivers/video/fbdev/core/fbmem.c) — double buffer framebuffer cho output console và display
 
-## Related Patterns
+## Pattern liên quan
 
-| Pattern | Relationship |
+| Pattern | Quan hệ |
 |---------|-------------|
-| [Copy-on-Write (CoW)](/patterns/copy-on-write/) | Both defer mutation costs — double buffering swaps whole copies, CoW copies on write |
-| [Ring Buffer (Circular Buffer)](/patterns/ring-buffer/) | Ring buffers can be seen as multi-slot generalizations of double buffering |
-| [Dirty Flag](/patterns/dirty-flag/) | Dirty flags track which buffer has changed and needs to be swapped |
-| [Bitmask](/patterns/bitmask/) | Bitmasks can track which buffer is active in a double-buffering scheme |
-| [Diff & Patch](/patterns/diff-patch/) | Diff-patch can compute the delta between the front and back buffer |
+| [Copy-on-Write (CoW)](/patterns/copy-on-write/) | Cả hai hoãn chi phí sửa — double buffering hoán đổi bản sao toàn bộ, CoW copy khi ghi |
+| [Ring Buffer (Buffer vòng)](/patterns/ring-buffer/) | Ring buffer có thể xem như tổng quát hoá đa-slot của double buffering |
+| [Dirty Flag](/patterns/dirty-flag/) | Dirty flag theo dõi buffer nào đã đổi và cần hoán đổi |
+| [Bitmask](/patterns/bitmask/) | Bitmask có thể theo dõi buffer nào active trong scheme double-buffer |
+| [Diff & Patch](/patterns/diff-patch/) | Diff-patch có thể tính delta giữa buffer front và back |
 
-## Challenge Questions
+## Câu hỏi thử thách
 
-::: details Q1: If double buffering eliminates tearing, why do GPUs use triple buffering?
-**Answer:** Triple buffering decouples the swap timing from vsync, reducing input latency without reintroducing tearing.
+::: details Câu 1: Nếu double buffering loại bỏ tearing, sao GPU dùng triple buffering?
+**Trả lời:** Triple buffering tách thời điểm swap khỏi vsync, giảm input latency mà không tái nhập tearing.
 
-With double buffering and vsync enabled, if the GPU finishes a frame early, it must wait for the next vsync interval before swapping — the CPU/GPU pipeline stalls. A third buffer lets the GPU keep rendering into a spare back buffer while the front buffer waits for vsync. The display always gets the most recently completed frame, so latency drops while tearing stays eliminated.
+Với double buffering và vsync bật, nếu GPU xong frame sớm, phải chờ khoảng vsync tiếp theo trước khi swap — pipeline CPU/GPU dừng. Buffer thứ ba cho GPU tiếp tục render vào back buffer dự phòng trong khi front buffer chờ vsync. Display luôn nhận frame mới nhất, nên latency giảm còn tearing vẫn loại bỏ.
 :::
 
-::: details Q2: A junior developer proposes calling `swap()` in the middle of writing to the back buffer to "publish partial progress." What goes wrong?
-**Answer:** This reintroduces the exact tearing problem double buffering is designed to prevent.
+::: details Câu 2: Dev junior đề nghị gọi `swap()` giữa lúc đang ghi vào back buffer để "publish tiến độ một phần." Có gì sai?
+**Trả lời:** Điều này tái nhập đúng vấn đề tearing mà double buffering được thiết kế để chặn.
 
-The whole point of double buffering is that the swap happens only after the back buffer is fully written. If you swap mid-write, readers now see a half-updated buffer — some pixels from the old frame, some from the new. The invariant is: the back buffer is private to the writer until the swap makes it public atomically.
+Toàn bộ ý của double buffering là swap chỉ xảy ra sau khi back buffer được ghi đầy đủ. Nếu swap giữa chừng ghi, reader giờ thấy buffer cập nhật nửa chừng — vài pixel từ frame cũ, vài từ frame mới. Invariant là: back buffer riêng tư cho writer cho tới khi swap làm nó công khai nguyên tử.
 :::
 
-::: details Q3: React's fiber tree uses double buffering, but it never actually swaps two screen buffers. What is being "swapped" and why does it still qualify?
-**Answer:** React swaps which fiber tree is "current" and which is "work-in-progress" by reassigning a single pointer (`root.current = finishedWork`).
+::: details Câu 3: Cây fiber React dùng double buffering, nhưng thực tế không bao giờ swap hai buffer màn hình. Cái gì đang được "swap" và sao vẫn đủ điều kiện?
+**Trả lời:** React swap cây fiber nào là "current" và cái nào là "work-in-progress" bằng cách gán lại một con trỏ duy nhất (`root.current = finishedWork`).
 
-The pattern is structural, not visual. React maintains two fiber trees linked via `.alternate`. During rendering, it builds the work-in-progress tree without affecting what is displayed. On commit, it atomically designates the WIP tree as "current." The old current becomes the next WIP tree (recycled, not GC'd). This is the same principle as GPU buffer swapping: prepare privately, publish atomically, recycle the old version.
+Pattern là cấu trúc, không phải hình ảnh. React duy trì hai cây fiber liên kết qua `.alternate`. Khi render, xây cây work-in-progress mà không ảnh hưởng cái đang hiển thị. Khi commit, nguyên tử chỉ định cây WIP là "current." Current cũ trở thành WIP tiếp (tái chế, không GC). Đây là cùng nguyên tắc với swap buffer GPU: chuẩn bị riêng tư, publish nguyên tử, tái chế phiên bản cũ.
 :::
 
-::: details Q4: Double buffering uses 2x memory. Under what condition does this cost become zero effective overhead?
-**Answer:** When you would have needed a separate "scratch" buffer anyway to prepare the next state.
+::: details Câu 4: Double buffering dùng 2x bộ nhớ. Điều kiện nào làm chi phí này thành overhead hiệu quả bằng 0?
+**Trả lời:** Khi dù sao bạn cũng cần một buffer "tạm" riêng để chuẩn bị state tiếp theo.
 
-If the alternative to double buffering is allocating a new buffer every frame and discarding the old one, double buffering actually saves memory by reusing two fixed buffers forever. The 2x cost only hurts when compared to an in-place update scenario — and in-place updates risk tearing. So the real cost comparison is: 2 persistent buffers vs. N short-lived allocations plus GC pressure.
+Nếu lựa chọn thay double buffering là cấp phát buffer mới mỗi frame và bỏ cái cũ, double buffering thực sự tiết kiệm bộ nhớ bằng cách tái dùng hai buffer cố định mãi. Chi phí 2x chỉ đau khi so với kịch bản update in-place — và update in-place có nguy cơ tearing. Vậy so sánh chi phí thực: 2 buffer bền vững vs N cấp phát ngắn cộng áp lực GC.
 :::
