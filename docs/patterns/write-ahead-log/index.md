@@ -1,6 +1,6 @@
 ---
 title: "Pattern: Write-Ahead Log (WAL)"
-description: "Log every mutation to durable storage before applying it — replay the log to recover from crashes without data loss."
+description: "Log mọi mutation vào lưu trữ bền vững trước khi áp dụng — replay log để khôi phục sau crash không mất dữ liệu."
 difficulty: "intermediate"
 ---
 
@@ -8,51 +8,51 @@ difficulty: "intermediate"
 
 <DifficultyBadge />
 
-## One Liner
+## Mô tả một câu
 
-Log every mutation to durable storage before applying it — replay the log to recover from crashes without data loss.
+Log mọi mutation vào lưu trữ bền vững trước khi áp dụng — replay log để khôi phục sau crash không mất dữ liệu.
 
 <DemoBadge />
 
-## Real-World Analogy
+## Tương tự thực tế
 
-A captain's logbook. Before changing course, the captain writes the intended change in the log. If the ship loses power mid-turn, the crew can read the log and complete or undo the maneuver. The log is the source of truth.
+Logbook thuyền trưởng. Trước khi đổi hướng, thuyền trưởng ghi thay đổi dự kiến vào log. Nếu tàu mất điện giữa lúc rẽ, thuỷ thủ đoàn có thể đọc log và hoàn thành hoặc huỷ bỏ thao tác. Log là nguồn sự thật.
 
-## Core Idea
+## Ý tưởng cốt lõi
 
-A write-ahead log records every state change as a sequential append before the actual state is modified. If the system crashes mid-operation, the log survives and can be replayed to reconstruct the exact state. The key insight: **sequential writes are fast** (disk-friendly), and **replay is idempotent** (safe to redo).
+WAL ghi mọi thay đổi state thành append tuần tự trước khi state thực được sửa. Nếu hệ thống crash giữa thao tác, log sống sót và có thể replay để dựng lại state chính xác. Insight then chốt: **ghi tuần tự nhanh** (thân thiện đĩa), và **replay idempotent** (an toàn để làm lại).
 
 ```text
-  Client                  WAL (on disk)              State (in memory)
+  Client                  WAL (trên đĩa)             State (trong bộ nhớ)
   ──────                  ────────────              ─────────────────
   SET x=1  ──────►  [1] SET x=1    ──────►  { x: 1 }
   SET y=2  ──────►  [2] SET y=2    ──────►  { x: 1, y: 2 }
   DEL x    ──────►  [3] DEL x      ──────►  { y: 2 }
                          ▲
-              *** CRASH HERE ***
+              *** CRASH TẠI ĐÂY ***
 
-  Recovery: replay log entries 1, 2, 3 → { y: 2 } ✓
+  Khôi phục: replay entry log 1, 2, 3 → { y: 2 } ✓
 ```
 
-| Property | Value |
+| Thuộc tính | Giá trị |
 |----------|-------|
-| Write pattern | Sequential append (optimal for disk) |
-| Durability | Survives crashes — log is on durable storage |
-| Recovery | Replay from beginning or last checkpoint |
-| Overhead | One extra write per mutation (log + state) |
+| Mẫu ghi | Append tuần tự (tối ưu cho đĩa) |
+| Bền vững | Sống sót crash — log trên lưu trữ bền vững |
+| Khôi phục | Replay từ đầu hoặc từ checkpoint cuối |
+| Overhead | Một ghi thêm mỗi mutation (log + state) |
 
-**Try it yourself** — write operations to the WAL, flush to table, then simulate a crash and recover:
+**Thử ngay** — ghi thao tác vào WAL, flush tới bảng, rồi mô phỏng crash và khôi phục:
 
 <WriteAheadLogViz />
 
-## Production Proof
+## Bằng chứng production
 
-| Project | Source | Usage |
+| Dự án | Nguồn | Cách dùng |
 |---------|--------|-------|
-| etcd | [wal.go#L72-L95](https://github.com/etcd-io/etcd/blob/e9b62f804766edf77cfa918d600cb6fb2c56b401/server/storage/wal/wal.go#L72-L95) | `WAL` struct (L72) holds dir, encoder, mutex, and file pipeline. `Save` method (L958-L1000) persists Raft hard state and entries, syncs to disk, and rotates segments when exceeding `SegmentSizeBytes`. The WAL is the source of truth for etcd's distributed consensus. |
-| PostgreSQL | [xlog.c#L783-L1128](https://github.com/postgres/postgres/blob/e18b0cb7344cb4bd28468f6c0aeeb9b9241d30aa/src/backend/access/transam/xlog.c#L783-L1128) | `XLogInsertRecord` — the core WAL insert entry point. Reserves space, copies record data into WAL buffers, triggers flush if needed. `XLogWrite` (L2324-L2622) writes WAL pages from shared buffers to disk. Enables crash recovery, replication, and PITR. |
+| etcd | [wal.go#L72-L95](https://github.com/etcd-io/etcd/blob/e9b62f804766edf77cfa918d600cb6fb2c56b401/server/storage/wal/wal.go#L72-L95) | Struct `WAL` (L72) giữ dir, encoder, mutex và file pipeline. Method `Save` (L958-L1000) lưu hard state Raft và entry, sync ra đĩa, và xoay segment khi vượt `SegmentSizeBytes`. WAL là nguồn sự thật cho đồng thuận phân tán etcd. |
+| PostgreSQL | [xlog.c#L783-L1128](https://github.com/postgres/postgres/blob/e18b0cb7344cb4bd28468f6c0aeeb9b9241d30aa/src/backend/access/transam/xlog.c#L783-L1128) | `XLogInsertRecord` — entry point chèn WAL cốt lõi. Đặt chỗ, copy dữ liệu record vào buffer WAL, kích hoạt flush nếu cần. `XLogWrite` (L2324-L2622) ghi page WAL từ buffer chia sẻ ra đĩa. Cho phép khôi phục crash, replication và PITR. |
 
-## Implementation
+## Triển khai
 
 ::: code-group
 
@@ -240,71 +240,71 @@ class WriteAheadLog:
 
 :::
 
-## Exercises
+## Bài tập
 
-| Level | Exercise | File |
+| Cấp độ | Bài tập | File |
 |-------|----------|------|
-| Basic | Implement an in-memory write-ahead log | `exercises/typescript/write-ahead-log/01-basic.test.ts` |
-| Intermediate | Checkpoint recovery — replay only after last checkpoint | `exercises/typescript/write-ahead-log/02-intermediate.test.ts` |
+| Cơ bản | Triển khai WAL trong bộ nhớ | `exercises/typescript/write-ahead-log/01-basic.test.ts` |
+| Trung bình | Khôi phục checkpoint — chỉ replay sau checkpoint cuối | `exercises/typescript/write-ahead-log/02-intermediate.test.ts` |
 
-Run exercises: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
+Chạy bài tập: `pnpm test:exercises` (TypeScript) · `cargo test` (Rust) · `go test ./...` (Go) · `pytest` (Python)
 
-Exercise files: Rust `exercises/rust/src/write_ahead_log/mod.rs` · Go `exercises/go/write_ahead_log/write_ahead_log_test.go` · Python `exercises/python/write_ahead_log/test_write_ahead_log.py`
+File bài tập: Rust `exercises/rust/src/write_ahead_log/mod.rs` · Go `exercises/go/write_ahead_log/write_ahead_log_test.go` · Python `exercises/python/write_ahead_log/test_write_ahead_log.py`
 
-## When to Use
+## Khi nào nên dùng
 
-- **Databases** — crash recovery for transactions (PostgreSQL, SQLite, MySQL InnoDB)
-- **Distributed consensus** — Raft/Paxos log replication (etcd, ZooKeeper)
-- **Message queues** — durable message storage (Kafka, Pulsar)
-- **File systems** — journaling for metadata integrity (ext4, NTFS)
-- **Event sourcing** — the event log IS the write-ahead log
+- **Database** — khôi phục crash cho transaction (PostgreSQL, SQLite, MySQL InnoDB)
+- **Đồng thuận phân tán** — replication log Raft/Paxos (etcd, ZooKeeper)
+- **Message queue** — lưu trữ message bền vững (Kafka, Pulsar)
+- **Filesystem** — journaling cho toàn vẹn metadata (ext4, NTFS)
+- **Event sourcing** — log event LÀ write-ahead log
 
-## When NOT to Use
+## Khi nào KHÔNG nên dùng
 
-- **Ephemeral data** — cache entries or session data don't need crash recovery
-- **Idempotent operations** — if you can safely re-derive state, a WAL adds unnecessary overhead
-- **High-frequency updates to same key** — WAL grows fast; consider LSM tree or periodic snapshots
-- **Read-heavy workloads** — WAL is write-optimized; reads still go through the in-memory state
+- **Dữ liệu tạm** — entry cache hoặc dữ liệu session không cần khôi phục crash
+- **Thao tác idempotent** — nếu có thể an toàn dẫn xuất lại state, WAL thêm overhead không cần
+- **Update cùng key tần suất cao** — WAL tăng nhanh; cân nhắc LSM tree hoặc snapshot định kỳ
+- **Tải nặng đọc** — WAL tối ưu ghi; đọc vẫn qua state trong bộ nhớ
 
-## More Production Uses
+## Thêm các ứng dụng production
 
-- [SQLite](https://www.sqlite.org/wal.html) — WAL mode for concurrent readers with a single writer
-- [RocksDB](https://github.com/facebook/rocksdb) — WAL for LSM-tree based storage
-- [CockroachDB](https://github.com/cockroachdb/cockroach) — Raft WAL for distributed SQL
-- [Apache Kafka](https://github.com/apache/kafka) — commit log as the core storage abstraction
+- [SQLite](https://www.sqlite.org/wal.html) — mode WAL cho reader đồng thời với một writer
+- [RocksDB](https://github.com/facebook/rocksdb) — WAL cho lưu trữ nền LSM-tree
+- [CockroachDB](https://github.com/cockroachdb/cockroach) — Raft WAL cho SQL phân tán
+- [Apache Kafka](https://github.com/apache/kafka) — commit log như trừu tượng lưu trữ cốt lõi
 
-## Related Patterns
+## Pattern liên quan
 
-| Pattern | Relationship |
+| Pattern | Quan hệ |
 |---------|-------------|
-| [Checkpointing](/patterns/checkpointing/) | Checkpoints truncate the WAL — recover from checkpoint + replay remaining log |
-| [LSM Tree (Log-Structured Merge Tree)](/patterns/lsm-tree/) | LSM trees use WAL to ensure memtable writes survive crashes before flushing |
-| [Merkle Tree](/patterns/merkle-tree/) | Merkle trees verify the state that WAL helps reconstruct after recovery |
-| [Logical Clock](/patterns/logical-clock/) | WAL entries are sequenced by logical clock for ordering guarantees |
-| [MVCC](/patterns/mvcc/) | WAL records all mutations that MVCC versions are based on, enabling crash recovery |
+| [Checkpointing](/patterns/checkpointing/) | Checkpoint cắt WAL — khôi phục từ checkpoint + replay log còn lại |
+| [LSM Tree (Log-Structured Merge Tree)](/patterns/lsm-tree/) | LSM tree dùng WAL để đảm bảo ghi memtable sống sót crash trước khi flush |
+| [Merkle Tree](/patterns/merkle-tree/) | Merkle tree xác minh state mà WAL giúp dựng lại sau khôi phục |
+| [Logical Clock](/patterns/logical-clock/) | Entry WAL được sắp xếp bởi logical clock cho đảm bảo thứ tự |
+| [MVCC](/patterns/mvcc/) | WAL ghi mọi mutation mà phiên bản MVCC dựa trên, cho phép khôi phục crash |
 
-## Challenge Questions
+## Câu hỏi thử thách
 
-::: details Q1: Your WAL implementation calls write() but not fsync(). The OS crashes (not just the process). Is your data safe?
-**Answer:** No. Without fsync, data may be in the OS page cache but not on disk. An OS crash or power loss loses the unflushed writes.
+::: details Câu 1: Triển khai WAL của bạn gọi write() nhưng không fsync(). OS crash (không chỉ process). Dữ liệu có an toàn không?
+**Trả lời:** Không. Không có fsync, dữ liệu có thể trong page cache OS nhưng không trên đĩa. OS crash hoặc mất điện mất ghi chưa flush.
 
-`write()` transfers data to the kernel's page cache, which is volatile memory. Only `fsync()` (or `fdatasync()`) forces it to durable storage. This is why databases like PostgreSQL have `synchronous_commit` and etcd calls `sync()` after every WAL write. The trade-off: fsync on every write is slow (especially on spinning disks), so many systems batch writes and fsync periodically, accepting a small window of potential data loss.
+`write()` chuyển dữ liệu vào page cache kernel, là bộ nhớ tạm. Chỉ `fsync()` (hoặc `fdatasync()`) buộc nó vào lưu trữ bền vững. Đó là lý do database như PostgreSQL có `synchronous_commit` và etcd gọi `sync()` sau mỗi ghi WAL. Đánh đổi: fsync mỗi ghi chậm (đặc biệt trên đĩa quay), nên nhiều hệ thống batch ghi và fsync định kỳ, chấp nhận cửa sổ nhỏ tiềm năng mất dữ liệu.
 :::
 
-::: details Q2: Your WAL has been running for 6 months and contains 200 million log entries. Recovery after a crash takes 45 minutes. How do you fix this?
-**Answer:** Take periodic snapshots (checkpoints) of the current state and truncate the WAL up to that point. Recovery replays only entries after the last snapshot.
+::: details Câu 2: WAL của bạn đã chạy 6 tháng và chứa 200 triệu entry log. Khôi phục sau crash mất 45 phút. Sửa thế nào?
+**Trả lời:** Lấy snapshot định kỳ (checkpoint) state hiện tại và cắt WAL tới điểm đó. Khôi phục chỉ replay entry sau snapshot cuối.
 
-This is log compaction or checkpointing. Instead of replaying the entire history, you serialize the current state to a snapshot file, record the WAL position, and delete older log entries. Recovery loads the snapshot and replays only the entries after it. etcd does this with its snapshot mechanism; PostgreSQL uses checkpoints. Without it, WAL-based systems become progressively slower to recover.
+Đây là compaction log hoặc checkpointing. Thay vì replay cả lịch sử, bạn serialize state hiện tại thành file snapshot, ghi vị trí WAL, và xoá entry log cũ. Khôi phục nạp snapshot và replay chỉ entry sau đó. etcd làm vậy với cơ chế snapshot; PostgreSQL dùng checkpoint. Không có nó, hệ thống nền WAL chậm khôi phục dần.
 :::
 
-::: details Q3: A teammate suggests using periodic full-state snapshots instead of a WAL. "Just snapshot every 5 seconds." What does the WAL give you that snapshots alone don't?
-**Answer:** The WAL gives you point-in-time recovery with zero data loss. A 5-second snapshot interval means you can lose up to 5 seconds of writes on crash.
+::: details Câu 3: Đồng đội đề nghị dùng snapshot toàn-state định kỳ thay vì WAL. "Cứ snapshot mỗi 5 giây." WAL cho bạn gì mà snapshot riêng không cho?
+**Trả lời:** WAL cho khôi phục thời điểm với không mất dữ liệu. Khoảng snapshot 5 giây nghĩa bạn có thể mất tới 5 giây ghi khi crash.
 
-Snapshots capture state at discrete intervals, so any writes between the last snapshot and the crash are lost. The WAL records every individual mutation, so recovery replays up to the last successfully written entry — typically losing at most one operation. Most production systems use both: the WAL for durability between snapshots, and snapshots to bound WAL size and speed up recovery.
+Snapshot bắt state ở khoảng rời rạc, nên mọi ghi giữa snapshot cuối và crash bị mất. WAL ghi mọi mutation riêng, nên khôi phục replay tới entry ghi thành công cuối — thường mất tối đa một thao tác. Hầu hết hệ thống production dùng cả hai: WAL cho bền vững giữa snapshot, và snapshot để giới hạn size WAL và tăng tốc khôi phục.
 :::
 
-::: details Q4: Two operations in the WAL are: (1) SET balance=100, (2) SET balance=200. During recovery, the system replays both. Does the replay order matter, and why?
-**Answer:** Yes, order matters. Replaying (2) before (1) would set balance to 100, which is incorrect. WAL entries must be replayed in the exact order they were written.
+::: details Câu 4: Hai thao tác trong WAL là: (1) SET balance=100, (2) SET balance=200. Khi khôi phục, hệ thống replay cả hai. Thứ tự replay có quan trọng không, và sao?
+**Trả lời:** Có, thứ tự quan trọng. Replay (2) trước (1) sẽ set balance về 100, sai. Entry WAL phải replay đúng thứ tự được ghi.
 
-WAL correctness depends on sequential replay reproducing the exact same state transitions as the original execution. This is why the WAL is an ordered, append-only log — not a set of unordered operations. If operations were commutative and idempotent (like "increment by 5"), order might not matter, but most real mutations (SET, DELETE) are order-dependent.
+Tính đúng WAL phụ thuộc vào replay tuần tự tái tạo chính xác cùng chuyển trạng thái như thực thi gốc. Đó là lý do WAL là log có thứ tự, append-only — không phải tập thao tác không thứ tự. Nếu thao tác giao hoán và idempotent (như "tăng thêm 5"), thứ tự có thể không quan trọng, nhưng hầu hết mutation thực (SET, DELETE) phụ thuộc thứ tự.
 :::
