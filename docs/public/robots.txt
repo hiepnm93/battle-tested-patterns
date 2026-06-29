@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://totoro-jam.github.io/battle-tested-patterns/sitemap.xml
+Sitemap: https://github.hetsach.com/battle-tested-patterns/sitemap.xml

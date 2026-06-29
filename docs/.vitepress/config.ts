@@ -1,7 +1,7 @@
 import { defineConfig, type HeadConfig } from 'vitepress';
 import { mermaidMarkdownPlugin } from './plugins/mermaid-markdown-it';
 
-const SITE_URL = 'https://totoro-jam.github.io/battle-tested-patterns';
+const SITE_URL = 'https://github.hetsach.com/battle-tested-patterns';
 const DEFAULT_TITLE = 'Battle-Tested Patterns — Code from React, Linux, Go & More';
 const DEFAULT_DESC = '46 production-proven patterns with interactive visualizations, precise source links, multi-language implementations, and exercises.';
 const OG_IMAGE = `${SITE_URL}/og-image.png`;
@@ -14,7 +14,7 @@ export default defineConfig({
   base: '/battle-tested-patterns/',
 
   sitemap: {
-    hostname: 'https://totoro-jam.github.io',
+    hostname: 'https://github.hetsach.com',
     transformItems: (items) =>
       items.map((item) => ({
         ...item,

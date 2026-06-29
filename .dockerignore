@@ -1,0 +1,10 @@
+**/node_modules
+**/dist
+.github
+exercises/rust/target
+exercises/go
+exercises/python/.venv
+**/__pycache__
+*.log
+.DS_Store
+scratchpad

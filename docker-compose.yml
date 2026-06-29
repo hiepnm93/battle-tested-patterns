@@ -1,0 +1,10 @@
+services:
+  docs:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: battle-tested-patterns:latest
+    container_name: btp-docs
+    restart: unless-stopped
+    ports:
+      - "8181:80"
